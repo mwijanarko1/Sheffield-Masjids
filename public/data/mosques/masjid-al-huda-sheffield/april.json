@@ -1,0 +1,14 @@
+{
+  "month": "APRIL",
+  "prayer_times": [
+    {"date": 1, "fajr": "04:57", "shurooq": "06:36", "dhuhr": "13:11", "asr": "16:44", "maghrib": "19:45", "isha": "21:15"},
+    {"date": 15, "fajr": "04:20", "shurooq": "06:02", "dhuhr": "13:06", "asr": "16:56", "maghrib": "20:10", "isha": "21:40"},
+    {"date": 30, "fajr": "03:42", "shurooq": "05:28", "dhuhr": "13:04", "asr": "17:09", "maghrib": "20:37", "isha": "22:07"}
+  ],
+  "iqamah_times": [
+    {"date_range": "1-11", "fajr": "05:15", "dhuhr": "13:30", "asr": "17:15", "isha": "Entry Time"},
+    {"date_range": "12-21", "fajr": "04:45", "dhuhr": "13:30", "asr": "17:15", "isha": "Entry Time"},
+    {"date_range": "22-30", "fajr": "04:30", "dhuhr": "13:30", "asr": "17:30", "isha": "Entry Time"}
+  ],
+  "jummah_iqamah": "13:15"
+}

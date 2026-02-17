@@ -1,0 +1,14 @@
+{
+  "month": "DECEMBER",
+  "prayer_times": [
+    {"date": 1, "fajr": "06:05", "shurooq": "07:57", "dhuhr": "11:57", "asr": "13:36", "maghrib": "15:55", "isha": "17:40"},
+    {"date": 15, "fajr": "06:19", "shurooq": "08:14", "dhuhr": "12:03", "asr": "13:34", "maghrib": "15:50", "isha": "17:38"},
+    {"date": 31, "fajr": "06:26", "shurooq": "08:20", "dhuhr": "12:10", "asr": "13:42", "maghrib": "15:59", "isha": "17:46"}
+  ],
+  "iqamah_times": [
+    {"date_range": "1-10", "fajr": "06:30", "dhuhr": "12:30", "asr": "14:00", "isha": "18:15"},
+    {"date_range": "11-20", "fajr": "06:45", "dhuhr": "12:30", "asr": "14:00", "isha": "18:15"},
+    {"date_range": "21-31", "fajr": "06:45", "dhuhr": "12:30", "asr": "14:00", "isha": "18:15"}
+  ],
+  "jummah_iqamah": "12:30"
+}

@@ -1,0 +1,14 @@
+{
+  "month": "SEPTEMBER",
+  "prayer_times": [
+    {"date": 1, "fajr": "04:34", "shurooq": "06:14", "dhuhr": "13:08", "asr": "16:51", "maghrib": "19:59", "isha": "21:29"},
+    {"date": 15, "fajr": "04:59", "shurooq": "06:38", "dhuhr": "13:03", "asr": "16:29", "maghrib": "19:25", "isha": "20:55"},
+    {"date": 30, "fajr": "05:26", "shurooq": "07:04", "dhuhr": "12:57", "asr": "16:03", "maghrib": "18:48", "isha": "20:18"}
+  ],
+  "iqamah_times": [
+    {"date_range": "1-10", "fajr": "05:00", "dhuhr": "13:30", "asr": "17:15", "isha": "Entry Time"},
+    {"date_range": "11-20", "fajr": "05:30", "dhuhr": "13:30", "asr": "17:00", "isha": "Entry Time"},
+    {"date_range": "21-30", "fajr": "05:45", "dhuhr": "13:30", "asr": "16:45", "isha": "Entry Time"}
+  ],
+  "jummah_iqamah": "13:15"
+}

@@ -1,0 +1,49 @@
+{
+  "mosques": [
+    {
+      "id": "muslim-welfare-house",
+      "name": "Muslim Welfare House Sheffield",
+      "address": "10-12 Severn Rd, Sheffield S10 2SU",
+      "lat": 53.3811,
+      "lng": -1.4925,
+      "slug": "muslim-welfare-house",
+      "website": "https://www.mwhs.org.uk"
+    },
+    {
+      "id": "masjid-risalah",
+      "name": "Masjid Risalah",
+      "address": "128-130 Attercliffe Rd, Sheffield S4 7WW",
+      "lat": 53.3885,
+      "lng": -1.4542,
+      "slug": "masjid-risalah",
+      "website": "https://www.mosquepay.co.uk/4279/masjid-risalah"
+    },
+    {
+      "id": "sheffield-grand-mosque",
+      "name": "Sheffield Grand Mosque",
+      "address": "The Former Bodmin Street School, Bodmin St, Sheffield S9 2HN",
+      "lat": 53.3892,
+      "lng": -1.4332,
+      "slug": "sheffield-grand-mosque",
+      "website": "https://sheffieldgrandmosque.org"
+    },
+    {
+      "id": "masjid-sunnah-sheffield",
+      "name": "Masjid Sunnah Sheffield",
+      "address": "40 Gower St, Sheffield S4 7JW",
+      "lat": 53.3912,
+      "lng": -1.4521,
+      "slug": "masjid-sunnah-sheffield",
+      "website": "https://masjidsunnahsheffield.co.uk"
+    },
+    {
+      "id": "masjid-al-huda-sheffield",
+      "name": "Masjid al Huda Sheffield",
+      "address": "62-64 Earsham St, Sheffield S4 7LS",
+      "lat": 53.3921,
+      "lng": -1.4632,
+      "slug": "masjid-al-huda-sheffield",
+      "website": "https://masjidhudasheff.com"
+    }
+  ]
+}

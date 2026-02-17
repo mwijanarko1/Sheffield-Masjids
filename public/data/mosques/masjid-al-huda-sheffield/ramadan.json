@@ -1,0 +1,18 @@
+{
+  "month": "RAMADAN 1447",
+  "gregorian_start": "2025-02-18",
+  "gregorian_end": "2025-03-19",
+  "prayer_times": [
+    {"ramadan_day": 1, "gregorian": "Feb 18", "fajr": "05:35", "shurooq": "07:16", "dhuhr": "12:20", "asr": "14:50", "maghrib": "17:24", "isha": "18:59"},
+    {"ramadan_day": 10, "gregorian": "Feb 27", "fajr": "05:17", "shurooq": "06:56", "dhuhr": "12:20", "asr": "15:04", "maghrib": "17:42", "isha": "19:15"},
+    {"ramadan_day": 20, "gregorian": "Mar 9", "fajr": "04:51", "shurooq": "06:31", "dhuhr": "12:18", "asr": "15:18", "maghrib": "18:03", "isha": "19:35"},
+    {"ramadan_day": 30, "gregorian": "Mar 19", "fajr": "04:26", "shurooq": "06:07", "dhuhr": "12:15", "asr": "15:30", "maghrib": "18:21", "isha": "19:53"}
+  ],
+  "iqamah_times": [
+    {"date_range": "1-21", "fajr": "Various", "dhuhr": "12:45", "asr": "15:30", "isha": "Straight after Maghrib"},
+    {"date_range": "22-29", "fajr": "Various", "dhuhr": "12:45", "asr": "15:45", "isha": "Straight after Maghrib"},
+    {"date_range": "30", "fajr": "04:46", "dhuhr": "12:45", "asr": "15:45", "isha": "19:53"}
+  ],
+  "jummah_iqamah": "12:30",
+  "taraweeh": "Straight after Ishaa each night"
+}
