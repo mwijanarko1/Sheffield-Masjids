@@ -58,10 +58,16 @@ interface RamadanData {
   jummah_iqamah: string;
 }
 
+type RamadanLoadResult =
+  | { data: RamadanData; inRange: true }
+  | { data: RamadanData; inRange: false }
+  | null;
+
 /**
- * Load Ramadan prayer times if the mosque has a ramadan.json and the date falls within the range
+ * Load Ramadan prayer times. Returns data + whether the date falls within Ramadan.
+ * When inRange is false, the mosque has a Ramadan calendar but the date is outside it.
  */
-async function loadRamadanData(slug: string, date: Date): Promise<RamadanData | null> {
+async function loadRamadanData(slug: string, date: Date): Promise<RamadanLoadResult> {
   try {
     const response = await fetch(`/data/mosques/${slug}/ramadan.json`);
     if (!response.ok) return null;
@@ -74,12 +80,22 @@ async function loadRamadanData(slug: string, date: Date): Promise<RamadanData | 
     const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
     if (dateOnly >= start && dateOnly <= end) {
-      return data;
+      return { data, inRange: true };
     }
-    return null;
+    return { data, inRange: false };
   } catch {
     return null;
   }
+}
+
+/**
+ * Format Ramadan date range for display (e.g. "19 Feb – 19 Mar 2025")
+ */
+function formatRamadanDateRange(gregorianStart: string, gregorianEnd: string): string {
+  const start = new Date(gregorianStart);
+  const end = new Date(gregorianEnd);
+  const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return `${fmt(start)} – ${fmt(end)}`;
 }
 
 /**
@@ -197,10 +213,10 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
   const date = today.getDate();
 
   try {
-    const ramadanData = await loadRamadanData(slug, today);
-    if (ramadanData) {
-      const ramadanDay = getRamadanDay(today, ramadanData);
-      const dayData = findRamadanDayData(ramadanData.prayer_times, ramadanDay);
+    const ramadanResult = await loadRamadanData(slug, today);
+    if (ramadanResult?.inRange) {
+      const ramadanDay = getRamadanDay(today, ramadanResult.data);
+      const dayData = findRamadanDayData(ramadanResult.data.prayer_times, ramadanDay);
       if (dayData) {
         return {
           date: today.toISOString().split('T')[0],
@@ -214,22 +230,29 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
       }
     }
 
-    const monthlyData = await loadMonthlyPrayerTimes(slug, month);
-    const dayData = findDayData(monthlyData.prayer_times, date);
+    try {
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const dayData = findDayData(monthlyData.prayer_times, date);
 
-    if (!dayData) {
-      throw new Error(`Prayer times not found for date: ${date}`);
+      if (!dayData) {
+        throw new Error(`Prayer times not found for date: ${date}`);
+      }
+
+      return {
+        date: today.toISOString().split('T')[0],
+        fajr: dayData.fajr,
+        sunrise: dayData.shurooq,
+        dhuhr: dayData.dhuhr,
+        asr: dayData.asr,
+        maghrib: dayData.maghrib,
+        isha: dayData.isha
+      };
+    } catch (monthlyError) {
+      if (ramadanResult && !ramadanResult.inRange) {
+        throw new Error(`RAMADAN_ONLY:${formatRamadanDateRange(ramadanResult.data.gregorian_start, ramadanResult.data.gregorian_end)}`);
+      }
+      throw monthlyError;
     }
-
-    return {
-      date: today.toISOString().split('T')[0],
-      fajr: dayData.fajr,
-      sunrise: dayData.shurooq,
-      dhuhr: dayData.dhuhr,
-      asr: dayData.asr,
-      maghrib: dayData.maghrib,
-      isha: dayData.isha
-    };
   } catch (error) {
     console.error('Error getting today\'s prayer times:', error);
     throw error;
@@ -245,23 +268,30 @@ export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTim
   const date = today.getDate();
 
   try {
-    const ramadanData = await loadRamadanData(slug, today);
-    if (ramadanData) {
-      const ramadanDay = getRamadanDay(today, ramadanData);
-      const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanData.iqamah_times);
+    const ramadanResult = await loadRamadanData(slug, today);
+    if (ramadanResult?.inRange) {
+      const ramadanDay = getRamadanDay(today, ramadanResult.data);
+      const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanResult.data.iqamah_times);
       return {
         ...iqamahTimes,
-        jummah: ramadanData.jummah_iqamah
+        jummah: ramadanResult.data.jummah_iqamah
       };
     }
 
-    const monthlyData = await loadMonthlyPrayerTimes(slug, month);
-    const iqamahTimes = getIqamahTimesForDate(date, monthlyData.iqamah_times);
+    try {
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const iqamahTimes = getIqamahTimesForDate(date, monthlyData.iqamah_times);
 
-    return {
-      ...iqamahTimes,
-      jummah: monthlyData.jummah_iqamah
-    };
+      return {
+        ...iqamahTimes,
+        jummah: monthlyData.jummah_iqamah
+      };
+    } catch (monthlyError) {
+      if (ramadanResult && !ramadanResult.inRange) {
+        throw new Error(`RAMADAN_ONLY:${formatRamadanDateRange(ramadanResult.data.gregorian_start, ramadanResult.data.gregorian_end)}`);
+      }
+      throw monthlyError;
+    }
   } catch (error) {
     console.error('Error getting today\'s Iqamah times:', error);
     throw error;
@@ -276,10 +306,10 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
   const dayOfMonth = date.getDate();
 
   try {
-    const ramadanData = await loadRamadanData(slug, date);
-    if (ramadanData) {
-      const ramadanDay = getRamadanDay(date, ramadanData);
-      const dayData = findRamadanDayData(ramadanData.prayer_times, ramadanDay);
+    const ramadanResult = await loadRamadanData(slug, date);
+    if (ramadanResult?.inRange) {
+      const ramadanDay = getRamadanDay(date, ramadanResult.data);
+      const dayData = findRamadanDayData(ramadanResult.data.prayer_times, ramadanDay);
       if (dayData) {
         return {
           date: date.toISOString().split('T')[0],
@@ -293,22 +323,29 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
       }
     }
 
-    const monthlyData = await loadMonthlyPrayerTimes(slug, month);
-    const dayData = findDayData(monthlyData.prayer_times, dayOfMonth);
+    try {
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const dayData = findDayData(monthlyData.prayer_times, dayOfMonth);
 
-    if (!dayData) {
-      throw new Error(`Prayer times not found for date: ${dayOfMonth}`);
+      if (!dayData) {
+        throw new Error(`Prayer times not found for date: ${dayOfMonth}`);
+      }
+
+      return {
+        date: date.toISOString().split('T')[0],
+        fajr: dayData.fajr,
+        sunrise: dayData.shurooq,
+        dhuhr: dayData.dhuhr,
+        asr: dayData.asr,
+        maghrib: dayData.maghrib,
+        isha: dayData.isha
+      };
+    } catch (monthlyError) {
+      if (ramadanResult && !ramadanResult.inRange) {
+        throw new Error(`RAMADAN_ONLY:${formatRamadanDateRange(ramadanResult.data.gregorian_start, ramadanResult.data.gregorian_end)}`);
+      }
+      throw monthlyError;
     }
-
-    return {
-      date: date.toISOString().split('T')[0],
-      fajr: dayData.fajr,
-      sunrise: dayData.shurooq,
-      dhuhr: dayData.dhuhr,
-      asr: dayData.asr,
-      maghrib: dayData.maghrib,
-      isha: dayData.isha
-    };
   } catch (error) {
     console.error(`Error getting prayer times for date ${date.toDateString()}:`, error);
     throw error;
@@ -323,23 +360,30 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
   const dayOfMonth = date.getDate();
 
   try {
-    const ramadanData = await loadRamadanData(slug, date);
-    if (ramadanData) {
-      const ramadanDay = getRamadanDay(date, ramadanData);
-      const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanData.iqamah_times);
+    const ramadanResult = await loadRamadanData(slug, date);
+    if (ramadanResult?.inRange) {
+      const ramadanDay = getRamadanDay(date, ramadanResult.data);
+      const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanResult.data.iqamah_times);
       return {
         ...iqamahTimes,
-        jummah: ramadanData.jummah_iqamah
+        jummah: ramadanResult.data.jummah_iqamah
       };
     }
 
-    const monthlyData = await loadMonthlyPrayerTimes(slug, month);
-    const iqamahTimes = getIqamahTimesForDate(dayOfMonth, monthlyData.iqamah_times);
+    try {
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const iqamahTimes = getIqamahTimesForDate(dayOfMonth, monthlyData.iqamah_times);
 
-    return {
-      ...iqamahTimes,
-      jummah: monthlyData.jummah_iqamah
-    };
+      return {
+        ...iqamahTimes,
+        jummah: monthlyData.jummah_iqamah
+      };
+    } catch (monthlyError) {
+      if (ramadanResult && !ramadanResult.inRange) {
+        throw new Error(`RAMADAN_ONLY:${formatRamadanDateRange(ramadanResult.data.gregorian_start, ramadanResult.data.gregorian_end)}`);
+      }
+      throw monthlyError;
+    }
   } catch (error) {
     console.error(`Error getting Iqamah times for date ${date.toDateString()}:`, error);
     throw error;
