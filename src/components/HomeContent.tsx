@@ -30,7 +30,6 @@ export default function HomeContent() {
               const m = mosques.find((x) => x.id === value);
               if (m) setSelectedMosque(m);
             }}
-            className="[&>button]:bg-gradient-to-b [&>button]:from-[var(--theme-primary)] [&>button]:via-[var(--theme-primary)] [&>button]:via-[15%] [&>button]:to-[var(--theme-accent)] [&>button]:text-white [&>button]:border-white/40 sm:[&>button]:border-2 sm:[&>button]:border-white/60 [&>button]:shadow-lg [&>button]:ring-white/40 [&>button]:ring-offset-transparent [&>button>svg]:opacity-80"
             ariaLabel="Select mosque"
           />
           <PrayerTimesWidget initialMosque={selectedMosque} showDropdown={false} />
