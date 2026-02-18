@@ -278,6 +278,7 @@
       "fajr": "6:00",
       "dhuhr": "13:10",
       "asr": "14:15",
+      "maghrib": "5 mins after adhan",
       "isha": "19:30"
     },
     {
@@ -285,6 +286,7 @@
       "fajr": "6:15",
       "dhuhr": "13:10",
       "asr": "14:00",
+      "maghrib": "5 mins after adhan",
       "isha": "19:30"
     },
     {
@@ -292,6 +294,7 @@
       "fajr": "6:30",
       "dhuhr": "13:10",
       "asr": "13:50",
+      "maghrib": "5 mins after adhan",
       "isha": "19:30"
     }
   ],

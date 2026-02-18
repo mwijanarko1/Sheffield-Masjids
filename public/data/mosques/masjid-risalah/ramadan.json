@@ -307,23 +307,26 @@
   "iqamah_times": [
     {
       "date_range": "1-11",
-      "fajr": "10 mins after adhan",
+      "fajr": "15 mins after adhan",
       "dhuhr": "13:00",
-      "asr": "10 mins after adhan",
+      "asr": "15 mins after adhan",
+      "maghrib": "10 mins after adhan",
       "isha": "20:00"
     },
     {
       "date_range": "12-21",
-      "fajr": "10 mins after adhan",
+      "fajr": "15 mins after adhan",
       "dhuhr": "13:00",
-      "asr": "10 mins after adhan",
+      "asr": "15 mins after adhan",
+      "maghrib": "10 mins after adhan",
       "isha": "20:15"
     },
     {
       "date_range": "22-30",
-      "fajr": "10 mins after adhan",
+      "fajr": "15 mins after adhan",
       "dhuhr": "13:00",
-      "asr": "10 mins after adhan",
+      "asr": "15 mins after adhan",
+      "maghrib": "10 mins after adhan",
       "isha": "20:30"
     }
   ],
