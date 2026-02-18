@@ -18,3 +18,5 @@
 - Rule: When user specifies exact placement ("in X component, after Y element"), implement location literally and avoid equivalent-but-different placement in parent containers.
 - Correction pattern: User requested an additional timing to appear in a specific sequence position, but prior pass did not add it to the core rendered row list.
 - Rule: When user requests timing order changes ("show X under Y"), implement it by updating the underlying ordered timings array so render order is guaranteed.
+- Correction pattern: User requested visual highlighting only, but prior pass added extra label text ("Today") that was not requested.
+- Rule: For UI requests phrased as style-only ("highlight"), avoid adding new visible copy/labels unless explicitly asked.

@@ -15,6 +15,8 @@ html {
   --theme-highlight-bright: #e8c49a;
   --theme-bg: #ffffff;
   --theme-bg-dark: #0a0a0a;
+  --font-sans-local: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --font-mono-local: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* shadcn/ui CSS variables */
@@ -215,13 +217,13 @@ pre {
   border-radius: 0.5rem;
   background-color: #1e1e1e;
   color: #d4d4d4;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono-local);
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
 code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono-local);
 }
 
 /* Focus styles */
@@ -239,7 +241,7 @@ code {
 
 /* Base styles */
 body {
-  font-family: 'Geist', sans-serif;
+  font-family: var(--font-sans-local);
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   line-height: 1.5;

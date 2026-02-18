@@ -1,5 +1,22 @@
 # Todo
 
+## Plan (Pre-Share Efficiency Pass)
+
+- [x] Audit and remove duplicate timetable/Ramadan fetch paths in runtime-critical components.
+- [x] Add in-memory caching for static JSON timetable assets in `src/lib/prayer-times.ts`.
+- [x] Remove dead/unused widget work that causes unnecessary client-side requests.
+- [x] Re-run verification and capture findings + residual risk.
+
+## Review (Pre-Share Efficiency Pass)
+
+- Added in-memory cache + in-flight request dedup in `src/lib/prayer-times.ts` for monthly and Ramadan JSON sources to avoid repeated fetch/parse work per mosque/date.
+- Replaced array sort/filter fallback lookups with single-pass nearest-match logic for monthly and Ramadan day resolution.
+- Updated `src/components/PrayerTimesWidget.tsx` to use `isDateInRamadanPeriod(...)` from the prayer-times library instead of issuing a second direct `ramadan.json` fetch in the component.
+- Removed the unused DST JSON fetch state path from `PrayerTimesWidget`.
+- Replaced `moment-hijri` usage in `src/components/HomeHeaderCards.tsx` with `Intl.DateTimeFormat` (`islamic` calendar) to reduce client bundle work for the header date card.
+- Verification: `npx tsc --noEmit` passed.
+- Residual blocker: `npm run lint` still fails in this environment because `next lint` is being interpreted as a directory argument by the installed Next.js CLI behavior.
+
 ## Plan (Closest Masjid Reliability)
 
 - [x] Audit `HomeHeaderCards` geolocation + nearest-masjid state flow and identify failure points.
@@ -189,3 +206,80 @@
 - Verification:
   - `npx tsc --noEmit` passed.
   - `npm run lint` fails due existing script behavior (`next lint` treated `lint` as a directory argument in this environment).
+
+## Plan (Ramadan CTA Split)
+
+- [x] Detect Ramadan period in `PrayerTimesWidget` using mosque `ramadan.json` date range.
+- [x] Render Ramadan-only two-column CTA row with full month and Ramadan timetable buttons.
+- [x] Add a dedicated Ramadan timetable route/component and verify with type-check.
+
+## Review (Ramadan CTA Split)
+
+- Updated `src/components/PrayerTimesWidget.tsx` to check `ramadan.json` for the selected mosque/date and switch the timetable CTA area to a two-button grid only during Ramadan.
+- Added a new Ramadan timetable route at `/mosques/[slug]/ramadan-timetable` in `src/app/mosques/[slug]/ramadan-timetable/page.tsx`.
+- Added `src/components/RamadanTimetable.tsx` to render Ramadan day rows (desktop table + mobile cards) from `ramadan.json`, including iqamah resolution and optional taraweeh note.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Monthly Timetable A/I Split + Gradient Match)
+
+- [x] Replace combined `A/I` desktop columns with separate `Adhan` and `Iqamah` columns for each prayer.
+- [x] Update mobile monthly timetable rows to show separate `Adhan` and `Iqamah` values per prayer.
+- [x] Apply the prayer widget gradient shell style to the full month timetable container.
+- [x] Run `npx tsc --noEmit` and document the verification result.
+
+## Review (Monthly Timetable A/I Split + Gradient Match)
+
+- Updated `src/components/MonthlyTimetable.tsx` desktop headers and rows to use separate prayer columns (`Adhan` and `Iqamah`) instead of combined `A/I` values.
+- Updated mobile day cards in `src/components/MonthlyTimetable.tsx` to render dedicated `Adhan` and `Iqamah` lines for each prayer.
+- Applied the same gradient shell styling pattern from `PrayerTimesWidget` to the monthly timetable card for consistent visual parity.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Ramadan Timetable A/I Split + Gradient Match)
+
+- [x] Replace combined `A/I` desktop columns with separate `Adhan` and `Iqamah` columns for each prayer.
+- [x] Update mobile Ramadan timetable rows to show separate `Adhan` and `Iqamah` values per prayer.
+- [x] Apply the prayer widget gradient shell style to the Ramadan timetable container.
+- [x] Run `npx tsc --noEmit` and document the verification result.
+
+## Review (Ramadan Timetable A/I Split + Gradient Match)
+
+- Updated `src/components/RamadanTimetable.tsx` desktop headers and rows to use separate prayer columns (`Adhan` and `Iqamah`) instead of combined `A/I` values.
+- Updated mobile day cards in `src/components/RamadanTimetable.tsx` to render dedicated `Adhan` and `Iqamah` lines for each prayer.
+- Applied the same gradient shell styling pattern from `PrayerTimesWidget` to the Ramadan timetable card for consistent visual parity.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Ramadan Mobile Table Visibility)
+
+- [x] Keep Ramadan timetable in full table format on small screens instead of switching to mobile cards.
+- [x] Preserve the wide table layout so small screens show the same grid with overflow/cutoff behavior.
+- [x] Run `npx tsc --noEmit` and document verification.
+
+## Review (Ramadan Mobile Table Visibility)
+
+- Removed the small-screen card fallback in `src/components/RamadanTimetable.tsx` and kept the full Ramadan table visible across all breakpoints.
+- The same wide table now renders on mobile (`min-w-[1320px]`), so narrow screens keep the full-table structure with overflow/cutoff behavior.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Highlight Current Date In Timetables)
+
+- [x] Add a Sheffield/London "today" resolver in monthly and Ramadan timetable components.
+- [x] Mark each timetable row with an `isToday` flag and highlight the matching row.
+- [x] Verify with `npx tsc --noEmit` and record review notes.
+
+## Review (Highlight Current Date In Timetables)
+
+- Updated `src/components/MonthlyTimetable.tsx` to compute today in `Europe/London`, tag matching rows/cards as `isToday`, and apply a highlighted style with a `Today` badge.
+- Updated `src/components/RamadanTimetable.tsx` to compute the Gregorian date for each Ramadan day, match against today's `Europe/London` date, and highlight the matching table row with a `Today` badge.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Highlight-Only Adjustment)
+
+- [x] Remove visible `Today` text labels from monthly and Ramadan timetables.
+- [x] Keep current-date visual highlight behavior unchanged.
+- [x] Re-run `npx tsc --noEmit`.
+
+## Review (Highlight-Only Adjustment)
+
+- Removed `Today` badge text from both `src/components/MonthlyTimetable.tsx` and `src/components/RamadanTimetable.tsx`.
+- Current-date highlight styling remains active on the matching row/card only.
+- Verification: `npx tsc --noEmit` passed.
