@@ -225,10 +225,11 @@ export default function HomeHeaderCards() {
   }, [currentTime]);
 
   const timeString = useMemo(() => {
-    if (!currentTime) return "--:--";
+    if (!currentTime) return "--:--:--";
     return currentTime.toLocaleTimeString("en-GB", {
       hour: "numeric",
       minute: "2-digit",
+      second: "2-digit",
       hour12: true,
     });
   }, [currentTime]);
