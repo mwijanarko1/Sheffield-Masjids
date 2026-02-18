@@ -4,8 +4,8 @@
       "id": "muslim-welfare-house",
       "name": "Muslim Welfare House Sheffield",
       "address": "10-12 Severn Rd, Sheffield S10 2SU",
-      "lat": 53.3811,
-      "lng": -1.4925,
+      "lat": 53.37942065683938,
+      "lng": -1.4964534779182512,
       "slug": "muslim-welfare-house",
       "website": "https://www.mwhs.org.uk"
     },
@@ -13,8 +13,8 @@
       "id": "masjid-risalah",
       "name": "Masjid Risalah",
       "address": "51 Montgomery Terrace Rd, Sheffield S6 3BW, United Kingdom",
-      "lat": 53.3885,
-      "lng": -1.4542,
+      "lat": 53.3893364595497,
+      "lng": -1.4815868756857322, 
       "slug": "masjid-risalah"
     },
     {
@@ -30,8 +30,8 @@
       "id": "masjid-sunnah-sheffield",
       "name": "Masjid Sunnah Sheffield",
       "address": "18 Kirk St, Sheffield S4 7JX, United Kingdom",
-      "lat": 53.3912,
-      "lng": -1.4521,
+      "lat": 53.39261164313249,
+      "lng": -1.455033658492879,
       "slug": "masjid-sunnah-sheffield",
       "website": "https://masjidsunnahsheffield.co.uk"
     },
@@ -39,8 +39,8 @@
       "id": "masjid-al-huda-sheffield",
       "name": "Masjid al Huda Sheffield",
       "address": "(next to St Silas Church), Hanover St, Highfield, Sheffield S3 7WT",
-      "lat": 53.3921,
-      "lng": -1.4632,
+      "lat": 53.37556048193791,
+      "lng": -1.4832991315079853,
       "slug": "masjid-al-huda-sheffield",
       "website": "https://masjidhudasheff.com"
     }

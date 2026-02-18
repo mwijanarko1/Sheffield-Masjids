@@ -245,13 +245,13 @@ export default function HomeHeaderCards() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {/* Dates Card */}
-      <Card className="flex flex-col justify-center bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 shadow-lg">
+      <Card className="flex flex-col justify-center bg-background">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
           <div className="space-y-1">
-            <p className="text-lg font-bold text-white leading-tight">
+            <p className="text-lg font-bold text-foreground leading-tight">
               {gregorianDate}
             </p>
-            <p className="text-sm font-medium text-white/80">
+            <p className="text-sm font-medium text-muted-foreground">
               {hijriDate}
             </p>
           </div>
@@ -259,29 +259,29 @@ export default function HomeHeaderCards() {
       </Card>
 
       {/* Time Card */}
-      <Card className="flex flex-col justify-center bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 shadow-lg">
+      <Card className="flex flex-col justify-center bg-background">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="text-4xl font-black text-white tabular-nums tracking-tight">
+          <p className="text-4xl font-black text-foreground tabular-nums tracking-tight">
             {timeString}
           </p>
         </CardContent>
       </Card>
 
       {/* Closest Mosque Card */}
-      <Card className="flex flex-col justify-center bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 shadow-lg">
+      <Card className="flex flex-col justify-center bg-background">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="text-sm font-medium text-white/70 uppercase tracking-wider mb-1">Closest Masjid</p>
-          <p className="text-lg font-bold text-white leading-tight">
+          <p className="mb-1 text-sm font-medium uppercase tracking-wider text-muted-foreground">Closest Masjid</p>
+          <p className="text-lg font-bold text-foreground leading-tight">
             {closestMosqueMessage.title}
           </p>
           {closestMosqueMessage.subtitle ? (
-            <p className="text-xs text-white/75 mt-1">{closestMosqueMessage.subtitle}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{closestMosqueMessage.subtitle}</p>
           ) : null}
           {closestMosqueMessage.showRetry ? (
             <button
               type="button"
               onClick={requestUserLocation}
-              className="mt-2 text-xs font-semibold text-white underline underline-offset-4 hover:text-white/80 transition-colors"
+              className="mt-2 text-xs font-semibold text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
             >
               Retry location
             </button>
