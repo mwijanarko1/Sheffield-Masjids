@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getIqamahTime, getIqamahTimesForDate, loadMonthlyPrayerTimes, formatTo12Hour } from "@/lib/prayer-times";
+import { cn } from "@/lib/utils";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomSelect } from "@/components/ui/custom-select";
@@ -38,6 +39,14 @@ function getCurrentMonthInSheffield(): number {
   return now.getMonth() + 1;
 }
 
+function getTodayInSheffield() {
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
+  return {
+    day: now.getDate(),
+    month: now.getMonth() + 1,
+  };
+}
+
 function formatDayLabel(dayOfMonth: number, month: number): string {
   const monthName = MONTH_OPTIONS.find((option) => option.value === month)?.label ?? "";
   return `${dayOfMonth} ${monthName.slice(0, 3)}`;
@@ -46,6 +55,7 @@ function formatDayLabel(dayOfMonth: number, month: number): string {
 type TimetableRow = {
   day: number;
   dayLabel: string;
+  isToday: boolean;
   fajrAdhan: string;
   fajrIqamah: string;
   sunrise: string;
@@ -65,6 +75,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
   const [monthlyData, setMonthlyData] = useState<MonthlyPrayerTimes | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const today = useMemo(() => getTodayInSheffield(), []);
 
   useEffect(() => {
     let isMounted = true;
@@ -114,6 +125,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
       return {
         day: day.date,
         dayLabel: formatDayLabel(day.date, selectedMonth),
+        isToday: selectedMonth === today.month && day.date === today.day,
         fajrAdhan: day.fajr,
         fajrIqamah: getIqamahTime("fajr", day.fajr, iqamahTimes),
         sunrise: day.shurooq,
@@ -128,15 +140,15 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
         jummahIqamah: monthlyData.jummah_iqamah || "—",
       };
     });
-  }, [monthlyData, selectedMonth]);
+  }, [monthlyData, selectedMonth, today.day, today.month]);
 
   return (
-    <Card>
-      <CardHeader className="border-b border-border bg-muted/30">
+    <Card className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 text-white">
+      <CardHeader className="border-b border-white/10 bg-white/5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <CardTitle>Full month timetable</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-white">Full month timetable</CardTitle>
+            <CardDescription className="text-white/70">
               Adhan and iqamah schedule for {mosque.name}.
             </CardDescription>
           </div>
@@ -152,13 +164,13 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
 
       <CardContent className="p-4 sm:p-6">
         {isLoading && (
-          <p className="rounded-md border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+          <p className="rounded-md border border-white/10 bg-white/5 p-4 text-sm text-white/70">
             Loading timetable…
           </p>
         )}
 
         {!isLoading && error && (
-          <p className="rounded-md border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+          <p className="rounded-md border border-white/10 bg-white/5 p-4 text-sm text-white/70">
             {error}
           </p>
         )}
@@ -166,29 +178,45 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
         {!isLoading && !error && rows.length > 0 && (
           <>
             <div className="hidden md:block">
-              <Table>
+              <Table className="min-w-[1180px] text-white">
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[120px]">Date</TableHead>
-                    <TableHead>Fajr (A/I)</TableHead>
-                    <TableHead>Sunrise</TableHead>
-                    <TableHead>Dhuhr (A/I)</TableHead>
-                    <TableHead>Asr (A/I)</TableHead>
-                    <TableHead>Maghrib (A/I)</TableHead>
-                    <TableHead>Isha (A/I)</TableHead>
-                    <TableHead>Jummah</TableHead>
+                  <TableRow className="border-white/10 hover:bg-white/5">
+                    <TableHead className="w-[120px] text-white/80">Date</TableHead>
+                    <TableHead className="text-white/80">Fajr Adhan</TableHead>
+                    <TableHead className="text-white/80">Fajr Iqamah</TableHead>
+                    <TableHead className="text-white/80">Sunrise</TableHead>
+                    <TableHead className="text-white/80">Dhuhr Adhan</TableHead>
+                    <TableHead className="text-white/80">Dhuhr Iqamah</TableHead>
+                    <TableHead className="text-white/80">Asr Adhan</TableHead>
+                    <TableHead className="text-white/80">Asr Iqamah</TableHead>
+                    <TableHead className="text-white/80">Maghrib Adhan</TableHead>
+                    <TableHead className="text-white/80">Maghrib Iqamah</TableHead>
+                    <TableHead className="text-white/80">Isha Adhan</TableHead>
+                    <TableHead className="text-white/80">Isha Iqamah</TableHead>
+                    <TableHead className="text-white/80">Jummah Iqamah</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {rows.map((row) => (
-                    <TableRow key={`${selectedMonth}-${row.day}`}>
+                    <TableRow
+                      key={`${selectedMonth}-${row.day}`}
+                      className={cn(
+                        "border-white/10 hover:bg-white/5",
+                        row.isToday && "border-sky-200/40 bg-sky-300/20 hover:bg-sky-300/25",
+                      )}
+                    >
                       <TableCell className="font-medium">{row.dayLabel}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrAdhan)} / {formatTo12Hour(row.fajrIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrAdhan)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrIqamah)}</TableCell>
                       <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.sunrise)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrAdhan)} / {formatTo12Hour(row.dhuhrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrAdhan)} / {formatTo12Hour(row.asrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribAdhan)} / {formatTo12Hour(row.maghribIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaAdhan)} / {formatTo12Hour(row.ishaIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrAdhan)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrAdhan)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribAdhan)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaAdhan)}</TableCell>
+                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaIqamah)}</TableCell>
                       <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.jummahIqamah)}</TableCell>
                     </TableRow>
                   ))}
@@ -200,23 +228,36 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
               {rows.map((row) => (
                 <div
                   key={`mobile-${selectedMonth}-${row.day}`}
-                  className="rounded-md border border-border bg-muted/20 p-4"
+                  className={cn(
+                    "rounded-md border border-white/10 bg-white/5 p-4",
+                    row.isToday && "border-sky-200/50 bg-sky-300/20",
+                  )}
                 >
-                  <p className="mb-3 text-sm font-semibold text-foreground">{row.dayLabel}</p>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                    <span>Fajr</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.fajrAdhan)} / {formatTo12Hour(row.fajrIqamah)}</span>
+                  <p className="mb-3 text-sm font-semibold text-white">{row.dayLabel}</p>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-white/70">
+                    <span>Fajr Adhan</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.fajrAdhan)}</span>
+                    <span>Fajr Iqamah</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.fajrIqamah)}</span>
                     <span>Sunrise</span>
                     <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.sunrise)}</span>
-                    <span>Dhuhr</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.dhuhrAdhan)} / {formatTo12Hour(row.dhuhrIqamah)}</span>
-                    <span>Asr</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.asrAdhan)} / {formatTo12Hour(row.asrIqamah)}</span>
-                    <span>Maghrib</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.maghribAdhan)} / {formatTo12Hour(row.maghribIqamah)}</span>
-                    <span>Isha</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.ishaAdhan)} / {formatTo12Hour(row.ishaIqamah)}</span>
-                    <span>Jummah</span>
+                    <span>Dhuhr Adhan</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.dhuhrAdhan)}</span>
+                    <span>Dhuhr Iqamah</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.dhuhrIqamah)}</span>
+                    <span>Asr Adhan</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.asrAdhan)}</span>
+                    <span>Asr Iqamah</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.asrIqamah)}</span>
+                    <span>Maghrib Adhan</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.maghribAdhan)}</span>
+                    <span>Maghrib Iqamah</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.maghribIqamah)}</span>
+                    <span>Isha Adhan</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.ishaAdhan)}</span>
+                    <span>Isha Iqamah</span>
+                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.ishaIqamah)}</span>
+                    <span>Jummah Iqamah</span>
                     <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.jummahIqamah)}</span>
                   </div>
                 </div>

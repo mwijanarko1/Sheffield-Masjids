@@ -12,6 +12,8 @@ interface DSTDatesData {
 
 // Cache for DST dates
 let dstDatesCache: DSTDateRange[] | null = null;
+const monthlyPrayerTimesCache = new Map<string, MonthlyPrayerTimes>();
+const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyPrayerTimes>>();
 
 /**
  * Load DST dates from JSON file
@@ -58,34 +60,94 @@ interface RamadanData {
   jummah_iqamah: string;
 }
 
+const ramadanDataCache = new Map<string, RamadanData | null>();
+const ramadanDataInFlight = new Map<string, Promise<RamadanData | null>>();
+
+function toDateOnly(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function parseDateToLocalDay(value: string): Date | null {
+  const exactIso = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (exactIso) {
+    const [, y, m, d] = exactIso;
+    return new Date(Number(y), Number(m) - 1, Number(d));
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return toDateOnly(parsed);
+}
+
 type RamadanLoadResult =
   | { data: RamadanData; inRange: true }
   | { data: RamadanData; inRange: false }
   | null;
+
+async function loadRamadanCalendar(slug: string): Promise<RamadanData | null> {
+  if (ramadanDataCache.has(slug)) {
+    return ramadanDataCache.get(slug) ?? null;
+  }
+
+  const inFlight = ramadanDataInFlight.get(slug);
+  if (inFlight) {
+    return inFlight;
+  }
+
+  const loadPromise = (async (): Promise<RamadanData | null> => {
+    try {
+      const response = await fetch(`/data/mosques/${slug}/ramadan.json`);
+      if (!response.ok) {
+        ramadanDataCache.set(slug, null);
+        return null;
+      }
+
+      const data: RamadanData = await response.json();
+      if (!data.gregorian_start || !data.gregorian_end) {
+        ramadanDataCache.set(slug, null);
+        return null;
+      }
+
+      ramadanDataCache.set(slug, data);
+      return data;
+    } catch {
+      ramadanDataCache.set(slug, null);
+      return null;
+    }
+  })();
+
+  ramadanDataInFlight.set(slug, loadPromise);
+
+  try {
+    return await loadPromise;
+  } finally {
+    ramadanDataInFlight.delete(slug);
+  }
+}
+
+function isDateWithinRamadanRange(date: Date, ramadanData: RamadanData): boolean {
+  const start = parseDateToLocalDay(ramadanData.gregorian_start);
+  const end = parseDateToLocalDay(ramadanData.gregorian_end);
+  if (!start || !end) return false;
+
+  const dateOnly = toDateOnly(date);
+  return dateOnly >= start && dateOnly <= end;
+}
 
 /**
  * Load Ramadan prayer times. Returns data + whether the date falls within Ramadan.
  * When inRange is false, the mosque has a Ramadan calendar but the date is outside it.
  */
 async function loadRamadanData(slug: string, date: Date): Promise<RamadanLoadResult> {
-  try {
-    const response = await fetch(`/data/mosques/${slug}/ramadan.json`);
-    if (!response.ok) return null;
+  const data = await loadRamadanCalendar(slug);
+  if (!data) return null;
+  return { data, inRange: isDateWithinRamadanRange(date, data) };
+}
 
-    const data = await response.json();
-    if (!data.gregorian_start || !data.gregorian_end) return null;
-
-    const start = new Date(data.gregorian_start);
-    const end = new Date(data.gregorian_end);
-    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-    if (dateOnly >= start && dateOnly <= end) {
-      return { data, inRange: true };
-    }
-    return { data, inRange: false };
-  } catch {
-    return null;
-  }
+export async function isDateInRamadanPeriod(slug: string, date: Date): Promise<boolean> {
+  const data = await loadRamadanCalendar(slug);
+  if (!data) return false;
+  return isDateWithinRamadanRange(date, data);
 }
 
 /**
@@ -113,12 +175,24 @@ function getRamadanDay(date: Date, ramadanData: RamadanData): number {
  * Find prayer times for a Ramadan day, supporting sparse data (e.g. days 1, 10, 20, 30)
  */
 function findRamadanDayData(prayerTimes: { ramadan_day: number; [key: string]: unknown }[], ramadanDay: number): { ramadan_day: number; [key: string]: unknown } | undefined {
-  const exact = prayerTimes.find(day => day.ramadan_day === ramadanDay);
-  if (exact) return exact;
+  let closestPrevious: { ramadan_day: number; [key: string]: unknown } | undefined;
+  let earliest: { ramadan_day: number; [key: string]: unknown } | undefined;
 
-  const sorted = [...prayerTimes].sort((a, b) => a.ramadan_day - b.ramadan_day);
-  const prevOrEqual = sorted.filter(s => s.ramadan_day <= ramadanDay);
-  return prevOrEqual.length > 0 ? prevOrEqual[prevOrEqual.length - 1] : sorted[0];
+  for (const day of prayerTimes) {
+    if (!earliest || day.ramadan_day < earliest.ramadan_day) {
+      earliest = day;
+    }
+
+    if (day.ramadan_day === ramadanDay) {
+      return day;
+    }
+
+    if (day.ramadan_day <= ramadanDay && (!closestPrevious || day.ramadan_day > closestPrevious.ramadan_day)) {
+      closestPrevious = day;
+    }
+  }
+
+  return closestPrevious ?? earliest;
 }
 
 // Month names mapping
@@ -142,12 +216,24 @@ const MONTH_FILES: Record<number, string> = {
  * For sparse data (e.g. dates 1, 15, 31), uses the closest previous sample or first sample.
  */
 function findDayData(prayerTimes: PrayerTime[], dayOfMonth: number): PrayerTime | undefined {
-  const exact = prayerTimes.find(day => day.date === dayOfMonth);
-  if (exact) return exact;
+  let closestPrevious: PrayerTime | undefined;
+  let earliest: PrayerTime | undefined;
 
-  const sorted = [...prayerTimes].sort((a, b) => a.date - b.date);
-  const prevOrEqual = sorted.filter(s => s.date <= dayOfMonth);
-  return prevOrEqual.length > 0 ? prevOrEqual[prevOrEqual.length - 1] : sorted[0];
+  for (const day of prayerTimes) {
+    if (!earliest || day.date < earliest.date) {
+      earliest = day;
+    }
+
+    if (day.date === dayOfMonth) {
+      return day;
+    }
+
+    if (day.date <= dayOfMonth && (!closestPrevious || day.date > closestPrevious.date)) {
+      closestPrevious = day;
+    }
+  }
+
+  return closestPrevious ?? earliest;
 }
 
 /**
@@ -160,20 +246,41 @@ export async function loadMonthlyPrayerTimes(slug: string, month: number, year: 
     throw new Error(`Invalid month: ${month}`);
   }
 
-  try {
-    // Fetch from mosque-specific directory
-    const publicUrl = `/data/mosques/${slug}/${monthFile}.json`;
-    const response = await fetch(publicUrl);
+  const cacheKey = `${slug}:${monthFile}:${year}`;
+  const cached = monthlyPrayerTimesCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
 
-    if (!response.ok) {
-      throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
+  const inFlight = monthlyPrayerTimesInFlight.get(cacheKey);
+  if (inFlight) {
+    return inFlight;
+  }
+
+  const loadPromise = (async (): Promise<MonthlyPrayerTimes> => {
+    try {
+      const publicUrl = `/data/mosques/${slug}/${monthFile}.json`;
+      const response = await fetch(publicUrl);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
+      }
+
+      const data: MonthlyPrayerTimes = await response.json();
+      monthlyPrayerTimesCache.set(cacheKey, data);
+      return data;
+    } catch (error) {
+      console.error(`Error loading prayer times for ${monthFile}:`, error);
+      throw error;
     }
+  })();
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Error loading prayer times for ${monthFile}:`, error);
-    throw error;
+  monthlyPrayerTimesInFlight.set(cacheKey, loadPromise);
+
+  try {
+    return await loadPromise;
+  } finally {
+    monthlyPrayerTimesInFlight.delete(cacheKey);
   }
 }
 

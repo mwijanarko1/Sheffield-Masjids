@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDSTSettingsFromFirestore, isInDSTPeriodSync as isInDSTPeriod, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import mosquesData from '../../public/data/mosques.json';
 import { Button } from '@/components/ui/button';
@@ -36,9 +36,9 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
   const [isIqamahCountdown, setIsIqamahCountdown] = useState(false);
   const [isJummahCountdown, setIsJummahCountdown] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" })));
-  const [dstSettings, setDstSettings] = useState<{ enabled: boolean; customTimes: Record<string, string> } | null>(null);
+  const [dstSettings] = useState<{ enabled: boolean; customTimes: Record<string, string> } | null>(null);
   const [adjustedIqamahTimes, setAdjustedIqamahTimes] = useState<DailyIqamahTimes | null>(null);
-  const [dstData, setDstData] = useState<any>(null);
+  const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
 
   // Get Sheffield UK time
   const getSheffieldTime = () => {
@@ -314,14 +314,23 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
   }, [prayerTimes, iqamahTimes, isToday, mosque, adjustedIqamahTimes, getNextPrayerAndCountdown, selectedDate]);
 
   useEffect(() => {
-    const loadDSTData = async () => {
+    let isMounted = true;
+
+    const checkRamadanPeriod = async () => {
       try {
-        const response = await fetch('/docs/dst-start-end.json');
-        if (response.ok) setDstData(await response.json());
-      } catch (e) {}
+        const inRange = await isDateInRamadanPeriod(mosque.slug, selectedDate);
+        if (isMounted) setIsRamadanPeriod(inRange);
+      } catch {
+        if (isMounted) setIsRamadanPeriod(false);
+      }
     };
-    loadDSTData();
-  }, []);
+
+    checkRamadanPeriod();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [mosque.slug, selectedDate]);
 
   const prayers = useMemo(() => {
     if (!prayerTimes || !adjustedIqamahTimes) return [];
@@ -498,15 +507,38 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
           </div>
         )}
 
-        <Button
-          asChild
-          variant="secondary"
-          className="w-full min-h-[44px] touch-manipulation bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)] hover:opacity-90 shadow-md border-none"
-        >
-          <Link href={`/mosques/${mosque.slug}/timetable`}>
-            View full month timetable
-          </Link>
-        </Button>
+        {isRamadanPeriod ? (
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              asChild
+              variant="secondary"
+              className="w-full min-h-[44px] touch-manipulation bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)] hover:opacity-90 shadow-md border-none"
+            >
+              <Link href={`/mosques/${mosque.slug}/timetable`}>
+                View full month timetable
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="secondary"
+              className="w-full min-h-[44px] touch-manipulation bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)] hover:opacity-90 shadow-md border-none"
+            >
+              <Link href={`/mosques/${mosque.slug}/ramadan-timetable`}>
+                View Ramadan timetable
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <Button
+            asChild
+            variant="secondary"
+            className="w-full min-h-[44px] touch-manipulation bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)] hover:opacity-90 shadow-md border-none"
+          >
+            <Link href={`/mosques/${mosque.slug}/timetable`}>
+              View full month timetable
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -1,12 +1,16 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import moment from "moment-hijri";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mosque } from "@/types/prayer-times";
 import mosquesData from "../../public/data/mosques.json";
 
 const mosques = mosquesData.mosques as Mosque[];
+const HIJRI_DATE_FORMATTER = new Intl.DateTimeFormat("en-GB-u-ca-islamic", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
 type LocationStatus =
   | "idle"
   | "loading"
@@ -200,26 +204,13 @@ export default function HomeHeaderCards() {
   const hijriDate = useMemo(() => {
     if (!currentTime) return "";
     try {
-      const m = moment(currentTime);
-      const day = m.iDate();
-      const monthIdx = m.iMonth();
-      const year = m.iYear();
-      const months = [
-        "Muharram",
-        "Safar",
-        "Rabi' al-awwal",
-        "Rabi' al-thani",
-        "Jumada al-awwal",
-        "Jumada al-thani",
-        "Rajab",
-        "Sha'ban",
-        "Ramadan",
-        "Shawwal",
-        "Dhu al-Qi'dah",
-        "Dhu al-Hijjah",
-      ];
-      return `${day} ${months[monthIdx]} ${year}`;
-    } catch (e) {
+      const parts = HIJRI_DATE_FORMATTER.formatToParts(currentTime);
+      const day = parts.find((part) => part.type === "day")?.value;
+      const month = parts.find((part) => part.type === "month")?.value;
+      const year = parts.find((part) => part.type === "year")?.value;
+      if (!day || !month || !year) return "";
+      return `${day} ${month} ${year} AH`;
+    } catch {
       return "";
     }
   }, [currentTime]);
