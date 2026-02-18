@@ -310,6 +310,7 @@
       "fajr": "20 mins after adhan",
       "dhuhr": "12:45",
       "asr": "15:15",
+      "maghrib": "10 mins after adhan",
       "isha": "Entry Time"
     },
     {
@@ -317,6 +318,7 @@
       "fajr": "20 mins after adhan",
       "dhuhr": "12:45",
       "asr": "15:30",
+      "maghrib": "10 mins after adhan",
       "isha": "Entry Time"
     },
     {
@@ -324,6 +326,7 @@
       "fajr": "20 mins after adhan",
       "dhuhr": "12:45",
       "asr": "15:45",
+      "maghrib": "10 mins after adhan",
       "isha": "Entry Time"
     }
   ],

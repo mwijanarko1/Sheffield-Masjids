@@ -349,7 +349,7 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
       { name: 'SUNRISE', adhan: adjustedPT.sunrise, iqamah: '--:--' },
       { name: 'DHUHR', adhan: adjustedPT.dhuhr, iqamah: getIqamahTime('dhuhr', adjustedPT.dhuhr, iqamahToUse) },
       { name: 'ASR', adhan: adjustedPT.asr, iqamah: getIqamahTime('asr', adjustedPT.asr, iqamahToUse) },
-      { name: 'MAGHRIB', adhan: adjustedPT.maghrib, iqamah: adjustedPT.maghrib },
+      { name: 'MAGHRIB', adhan: adjustedPT.maghrib, iqamah: getIqamahTime('maghrib', adjustedPT.maghrib, iqamahToUse) },
       { name: 'ISHA', adhan: adjustedPT.isha, iqamah: getIshaIqamah() }
     ];
   }, [prayerTimes, adjustedIqamahTimes, isSummerPeriod]);

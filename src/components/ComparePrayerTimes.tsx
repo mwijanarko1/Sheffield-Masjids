@@ -143,7 +143,7 @@ export default function ComparePrayerTimes({ standalone = false }: ComparePrayer
       case "Asr":
         return getIqamahTime("asr", pt.asr, iq);
       case "Maghrib":
-        return pt.maghrib;
+        return getIqamahTime("maghrib", pt.maghrib, iq);
       case "Isha":
         if (isSummer) return "After Maghrib";
         return getIqamahTime("isha", pt.isha, iq, pt.maghrib);
