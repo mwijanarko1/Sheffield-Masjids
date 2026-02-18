@@ -2,11 +2,16 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import moment from 'moment-hijri';
 import JummahWidget from './JummahWidget';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDSTSettingsFromFirestore, isInDSTPeriodSync as isInDSTPeriod, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, getDSTAdjustmentIqamahDate, subtractOneHour } from '@/lib/prayer-times';
+import { CustomSelect } from './ui/custom-select';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDSTSettingsFromFirestore, isInDSTPeriodSync as isInDSTPeriod, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import mosquesData from '../../public/data/mosques.json';
+import { Button } from '@/components/ui/button';
+
+const VISIBLE_MOSQUES = (mosquesData.mosques as Mosque[]).filter(
+  (m) => m.id !== "sheffield-grand-mosque"
+);
 
 interface PrayerTimesWidgetProps {
   initialMosque: Mosque;
@@ -30,8 +35,6 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
   const [countdown, setCountdown] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
   const [isIqamahCountdown, setIsIqamahCountdown] = useState(false);
   const [isJummahCountdown, setIsJummahCountdown] = useState(false);
-  const [currentTime, setCurrentTime] = useState(() => new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" })));
-  const [hijriDate, setHijriDate] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState(() => new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" })));
   const [dstSettings, setDstSettings] = useState<{ enabled: boolean; customTimes: Record<string, string> } | null>(null);
   const [adjustedIqamahTimes, setAdjustedIqamahTimes] = useState<DailyIqamahTimes | null>(null);
@@ -220,23 +223,6 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
     };
   }, [dstSettings, isSummerPeriod]);
 
-  const getHijriDate = (date: Date = new Date()) => {
-    try {
-      const hijriMoment = moment(date);
-      const hijriDay = hijriMoment.iDate();
-      const hijriYear = hijriMoment.iYear();
-      const hijriMonthNum = hijriMoment.iMonth();
-      const hijriMonthsEnglish = [
-        'Muharram', 'Safar', 'Rabi\' al-awwal', 'Rabi\' al-thani',
-        'Jumada al-awwal', 'Jumada al-thani', 'Rajab', 'Sha\'ban',
-        'Ramadan', 'Shawwal', 'Dhu al-Qi\'dah', 'Dhu al-Hijjah'
-      ];
-      return `${hijriDay} ${hijriMonthsEnglish[hijriMonthNum]} ${hijriYear}`;
-    } catch (error) {
-      return 'Hijri date unavailable';
-    }
-  };
-
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
     prev.setDate(prev.getDate() - 1);
@@ -255,8 +241,8 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
   }, [selectedDate]);
 
   const isJummahDay = useMemo(() => {
-    return selectedDate.getDay() === 5; // Friday is day 5
-  }, [selectedDate]);
+    return true; // Show Jummah widget all days of the week
+  }, []);
 
   useEffect(() => {
     const fetchPrayerTimes = async () => {
@@ -285,7 +271,6 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
 
         if (isToday) {
           setCurrentPrayer(getCurrentPrayer(prayerTimesForDate));
-          setHijriDate(getHijriDate(selectedDate));
           const result = await getNextPrayerAndCountdown(prayerTimesForDate, finalIqamahTimes, selectedDate);
           setNextPrayer(result.nextPrayer);
           setCountdown(result.countdown);
@@ -295,7 +280,6 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
           setCurrentPrayer(null);
           setNextPrayer(null);
           setCountdown(null);
-          setHijriDate(getHijriDate(selectedDate));
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : '';
@@ -318,7 +302,6 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
     if (!prayerTimes || !iqamahTimes || !isToday) return;
 
     const interval = setInterval(async () => {
-      setCurrentTime(getSheffieldTime());
       const result = await getNextPrayerAndCountdown(prayerTimes, adjustedIqamahTimes || iqamahTimes!, selectedDate);
       setNextPrayer(result.nextPrayer);
       setCountdown(result.countdown);
@@ -372,38 +355,27 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
   }
 
   return (
-    <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60">
-      <div className="text-white/80 p-3 sm:p-6 relative">
+    <div className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60">
+      <div className="relative p-3 text-white/80 sm:p-6 xl:p-8">
         {showDropdown && (
           <div className="mb-4 sm:mb-6 flex justify-center">
-            <select 
-              value={mosque.id} 
-              onChange={(e) => {
-                const selected = mosquesData.mosques.find(m => m.id === e.target.value);
-                if (selected) setMosque(selected as Mosque);
+            <CustomSelect
+              options={VISIBLE_MOSQUES}
+              value={mosque.id}
+              onChange={(value) => {
+                const selected = VISIBLE_MOSQUES.find(m => m.id === value);
+                if (selected) setMosque(selected);
               }}
-              className="w-full max-w-[280px] sm:min-w-[250px] bg-white/10 text-white border border-white/20 rounded-xl px-4 py-3 sm:py-2 text-base font-bold outline-none focus:ring-2 focus:ring-white/50 cursor-pointer appearance-none text-center touch-manipulation min-h-[44px]"
-              aria-label="Select mosque"
-            >
-              {mosquesData.mosques.map(m => (
-                <option key={m.id} value={m.id} className="text-gray-900 bg-white">{m.name}</option>
-              ))}
-            </select>
+              className="max-w-[280px] sm:min-w-[250px]"
+              ariaLabel="Select mosque"
+            />
           </div>
         )}
-
-        <div className="flex justify-between items-center gap-2 text-[10px] sm:text-xs mb-3 sm:mb-4">
-          <div className="flex-1 min-w-0 text-left text-[var(--theme-accent-light)] truncate">{formatDateForDisplay(currentTime)}</div>
-          <div className="flex-shrink-0 font-bold text-sm sm:text-base">
-            {currentTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-          </div>
-          <div className="flex-1 min-w-0 text-right text-[var(--theme-accent-light)] truncate">{hijriDate}</div>
-        </div>
 
         <div className="text-center text-white">
           {isToday && nextPrayer && countdown ? (
             <>
-              <h2 className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4 font-bold tracking-tight leading-tight px-1">
+              <h2 className="mb-3 px-1 text-sm font-bold leading-tight tracking-tight sm:mb-4 sm:text-base md:text-lg xl:text-xl">
                 {isJummahCountdown ? (
                   <>Khutbah of <span className="text-[var(--theme-highlight-bright)]">JUMMAH</span> in</>
                 ) : isIqamahCountdown ? (
@@ -412,7 +384,7 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
                   <>Adhan of <span className="text-[var(--theme-highlight-bright)]">{nextPrayer.name.toUpperCase()}</span> in</>
                 )}
               </h2>
-              <div className="flex justify-center items-center gap-1 sm:gap-2 md:gap-4">
+              <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-4 xl:gap-5">
                 <button onClick={goToPreviousDay} className="p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white/40 hover:text-white active:text-white transition-colors touch-manipulation" aria-label="Previous day">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
                 </button>
@@ -442,7 +414,7 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
               <button onClick={goToPreviousDay} className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white/40 hover:text-white active:text-white transition-colors touch-manipulation" aria-label="Previous day">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
               </button>
-              <h2 className="text-sm sm:text-base md:text-lg font-bold text-center flex-1 min-w-0">Prayer Times for {formatDateForDisplay(selectedDate)}</h2>
+              <h2 className="flex-1 min-w-0 text-center text-sm font-bold sm:text-base md:text-lg xl:text-xl">Prayer Times for {formatDateForDisplay(selectedDate)}</h2>
               <button onClick={goToNextDay} className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white/40 hover:text-white active:text-white transition-colors touch-manipulation" aria-label="Next day">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" /></svg>
               </button>
@@ -451,54 +423,90 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
         </div>
       </div>
 
-      <div className="p-3 sm:p-6 md:p-8">
+      <div className="p-3 sm:p-6 md:p-8 xl:p-10">
         {error ? (
           <div className="p-6 sm:p-12 text-center text-white bg-white/5 rounded-xl border border-white/10 text-sm sm:text-base">{error}</div>
         ) : (
-          <div className={`flex flex-col gap-2 sm:gap-3 mb-4 sm:mb-6 transition-all duration-300 ${isTransitioning ? 'opacity-50 scale-[0.98]' : 'opacity-100 scale-100'}`}>
-            {prayers.map((prayer) => {
-              const isUpcoming = upcomingPrayer === prayer.name.toLowerCase();
-              return (
-                <div
-                  key={prayer.name}
-                  className={`flex items-center rounded-xl sm:rounded-2xl transition-all duration-300 shadow-md ${isUpcoming
-                    ? 'bg-[var(--theme-primary)] text-white ring-2 ring-white/20 scale-[1.02] shadow-xl z-10'
-                    : 'bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)]'
-                  }`}
-                >
-                  <div className="grid grid-cols-3 items-center w-full px-4 sm:px-6 py-3 sm:py-4 gap-2">
-                    <div className="flex flex-col items-start">
-                      <div className="text-[10px] sm:text-xs font-medium font-serif italic opacity-60 mb-0.5">Adhan</div>
-                      <div className="text-lg sm:text-2xl md:text-3xl font-sans font-black tracking-tighter leading-none">
-                        {prayer.adhan}
+          <>
+            <div className="mb-3 grid grid-cols-3 items-center border-b border-white/10 px-4 pb-2 sm:mb-4 sm:px-6 xl:px-8">
+              <div className="text-left text-[10px] font-bold uppercase tracking-widest text-white/40 sm:text-xs">
+                Prayer
+              </div>
+              <div className="text-center text-[10px] font-bold uppercase tracking-widest text-white/40 sm:text-xs">
+                Adhan
+              </div>
+              <div className="text-right text-[10px] font-bold uppercase tracking-widest text-white/40 sm:text-xs">
+                Iqamah
+              </div>
+            </div>
+
+            <div className={`mb-4 flex flex-col gap-2 transition-all duration-300 sm:mb-6 sm:gap-3 xl:gap-4 ${isTransitioning ? 'opacity-50 scale-[0.98]' : 'opacity-100 scale-100'}`}>
+              {prayers.map((prayer) => {
+                const isUpcoming = upcomingPrayer === prayer.name.toLowerCase();
+                return (
+                  <div
+                    key={prayer.name}
+                    className={`flex items-center rounded-xl sm:rounded-2xl transition-all duration-300 shadow-md ${isUpcoming
+                      ? 'bg-[var(--theme-primary)] text-white ring-2 ring-white/20 scale-[1.02] shadow-xl z-10'
+                      : 'bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)]'
+                    }`}
+                  >
+                    <div className="grid w-full grid-cols-3 items-center gap-2 px-4 py-3 sm:px-6 sm:py-4 xl:px-8 xl:py-5">
+                      <div className="flex flex-col items-start">
+                        <div className={`text-sm font-serif font-bold italic capitalize sm:text-base md:text-xl xl:text-2xl ${isUpcoming ? 'text-white' : 'text-[var(--theme-primary)]'}`}>
+                          {prayer.name.toLowerCase()}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className={`text-sm sm:text-base md:text-xl font-bold font-serif italic capitalize ${isUpcoming ? 'text-white' : 'text-[var(--theme-primary)]'}`}>
-                        {prayer.name.toLowerCase()}
+                      <div className="flex flex-col items-center">
+                        <div className="text-lg font-sans font-black leading-none tracking-tighter sm:text-2xl md:text-3xl xl:text-4xl">
+                          {formatTo12Hour(prayer.adhan)}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <div className="text-[10px] sm:text-xs font-medium font-serif italic opacity-60 mb-0.5">
-                        {prayer.name === 'SUNRISE' ? '' : 'Iqamah'}
-                      </div>
-                      <div className="text-lg sm:text-2xl md:text-3xl font-sans font-black tracking-tighter leading-none">
-                        {prayer.name === 'SUNRISE' ? '--:--' : (prayer.iqamah === '-' ? '--:--' : prayer.iqamah)}
+                      <div className="flex flex-col items-end">
+                        <div className="text-lg font-sans font-black leading-none tracking-tighter sm:text-2xl md:text-3xl xl:text-4xl">
+                          {prayer.name === 'SUNRISE' ? '--:--' : (prayer.iqamah === '-' ? '--:--' : formatTo12Hour(prayer.iqamah))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {(isJummahDay || isSummerPeriod) && (
+          <div className="mb-4 flex gap-3 sm:gap-4 flex-wrap sm:flex-nowrap sm:mb-6">
+            {isJummahDay && (
+              <div className="flex-1 min-w-[200px]">
+                <JummahWidget 
+                  jummahTime={adjustedIqamahTimes?.jummah || ''} 
+                  isActive={upcomingPrayer === 'jummah'} 
+                />
+              </div>
+            )}
+            {isSummerPeriod && (
+              <div className="flex-1 min-w-[200px] bg-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-center items-center text-center backdrop-blur-sm border border-white/10 shadow-lg">
+                <p className="text-[10px] sm:text-xs font-medium font-serif italic text-white/40 uppercase tracking-widest mb-0.5 sm:mb-1">
+                  Summer Schedule
+                </p>
+                <p className="text-sm sm:text-base md:text-lg text-white font-bold">
+                  Maghrib & Isha combined
+                </p>
+              </div>
+            )}
           </div>
         )}
 
-        {isJummahDay && (
-          <JummahWidget 
-            jummahTime={adjustedIqamahTimes?.jummah || ''} 
-            isActive={upcomingPrayer === 'jummah'} 
-          />
-        )}
+        <Button
+          asChild
+          variant="secondary"
+          className="w-full min-h-[44px] touch-manipulation bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)] hover:opacity-90 shadow-md border-none"
+        >
+          <Link href={`/mosques/${mosque.slug}/timetable`}>
+            View full month timetable
+          </Link>
+        </Button>
       </div>
     </div>
   );

@@ -1,22 +1,31 @@
+import type { Metadata } from "next";
 import HomeContent from "@/components/HomeContent";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
   return (
-    <main className="min-h-[100dvh] sm:min-h-screen bg-[var(--theme-bg)] dark:bg-[var(--theme-bg-dark)]">
-      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-10 sm:px-6 lg:px-8 pb-safe">
-        <header className="mb-8 sm:mb-10">
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-            Sheffield Masjids
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            Prayer times, locations, and links for mosques across Sheffield.
-          </p>
-        </header>
-
+    <main className="min-h-[100dvh] bg-background sm:min-h-screen">
+      <div className="mx-auto w-full max-w-6xl px-4 py-4 pb-safe sm:px-6 sm:py-8 lg:px-8 xl:max-w-7xl">
         <HomeContent />
 
-        <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-gray-500 text-xs sm:text-sm">
-          <p>© {new Date().getFullYear()} Sheffield Masjids</p>
+        <footer className="mt-12 flex flex-row items-center justify-between gap-4 border-t border-border py-6 text-xs text-muted-foreground sm:text-sm">
+          <p className="m-0">© {new Date().getFullYear()} Sheffield Masjids</p>
+          <p className="m-0">
+            Made by{" "}
+            <a
+              href="https://mikhailwijanarko.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)] transition-colors"
+            >
+              mikhailbuilds
+            </a>
+          </p>
         </footer>
       </div>
     </main>
