@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
-/* Force light theme for consistent contrast */
+/* Match browser/system light-dark preference */
 html {
-  color-scheme: light;
+  color-scheme: light dark;
 }
 
 /* Sheffield Masjids theme */
@@ -14,7 +14,7 @@ html {
   --theme-highlight: #c4956a;
   --theme-highlight-bright: #e8c49a;
   --theme-bg: #ffffff;
-  --theme-bg-dark: #ffffff;
+  --theme-bg-dark: #0a0a0a;
 }
 
 /* shadcn/ui CSS variables */
@@ -40,6 +40,30 @@ html {
     --input: 0 0% 89.8%;
     --ring: 174 25% 14%;
     --radius: 0.75rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0 0% 5%;
+      --foreground: 0 0% 98%;
+      --card: 0 0% 10%;
+      --card-foreground: 0 0% 98%;
+      --popover: 0 0% 10%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 174 25% 14%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 0 0% 14.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 0 0% 14.9%;
+      --muted-foreground: 0 0% 63.9%;
+      --accent: 0 0% 14.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 0 0% 18%;
+      --input: 0 0% 18%;
+      --ring: 174 25% 30%;
+    }
   }
 }
 
@@ -216,7 +240,8 @@ code {
 /* Base styles */
 body {
   font-family: 'Geist', sans-serif;
-  color: #1f2937;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
 }
