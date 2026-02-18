@@ -67,7 +67,7 @@ export default async function MosquePage({ params }: MosquePageProps) {
   }
 
   return (
-    <main className="min-h-[100dvh] sm:min-h-screen bg-white pb-8 sm:pb-16">
+    <main className="min-h-[100dvh] sm:min-h-screen bg-background pb-8 sm:pb-16">
       <div className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-10 lg:px-8 xl:max-w-6xl">
         <Button
           variant="link"

@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import moment from "moment-hijri";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mosque } from "@/types/prayer-times";
 import mosquesData from "../../public/data/mosques.json";
 
-const mosques = (mosquesData.mosques as Mosque[]).filter(
-  (m) => m.id !== "sheffield-grand-mosque"
-);
+const mosques = mosquesData.mosques as Mosque[];
+type LocationStatus =
+  | "idle"
+  | "loading"
+  | "success"
+  | "unsupported"
+  | "denied"
+  | "error";
 
 // Haversine formula to calculate distance between two points in km
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -30,13 +35,26 @@ function deg2rad(deg: number) {
   return deg * (Math.PI / 180);
 }
 
+function isValidCoordinate(value: number) {
+  return Number.isFinite(value);
+}
+
+function formatDistance(distanceKm: number) {
+  if (distanceKm < 1) return `${Math.round(distanceKm * 1000)} m away`;
+  return `${distanceKm.toFixed(1)} km away`;
+}
+
 export default function HomeHeaderCards() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  const [closestMosque, setClosestMosque] = useState<Mosque | null>(null);
+  const [closestMosque, setClosestMosque] = useState<{
+    mosque: Mosque;
+    distanceKm: number;
+  } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>("idle");
 
   // Set initial time and start interval
   useEffect(() => {
@@ -52,47 +70,132 @@ export default function HomeHeaderCards() {
     return () => clearInterval(interval);
   }, []);
 
-  // Get user location
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
+  const requestUserLocation = useCallback(() => {
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      setLocationStatus("unsupported");
+      setUserLocation(null);
+      return;
     }
+
+    setLocationStatus("loading");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setLocationStatus("success");
+      },
+      (error) => {
+        setUserLocation(null);
+        setLocationStatus(
+          error.code === error.PERMISSION_DENIED ? "denied" : "error"
+        );
+        console.error("Error getting location:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
+    );
   }, []);
+
+  // Get user location on initial render
+  useEffect(() => {
+    requestUserLocation();
+  }, [requestUserLocation]);
 
   // Find closest mosque when user location is available
   useEffect(() => {
-    if (userLocation) {
-      let minDistance = Infinity;
-      let closest: Mosque | null = null;
-
-      mosques.forEach((mosque) => {
-        if (mosque.lat && mosque.lng) {
-          const distance = getDistance(
-            userLocation.lat,
-            userLocation.lng,
-            mosque.lat,
-            mosque.lng
-          );
-          if (distance < minDistance) {
-            minDistance = distance;
-            closest = mosque;
-          }
-        }
-      });
-
-      setClosestMosque(closest);
+    if (!userLocation) {
+      setClosestMosque(null);
+      return;
     }
+
+    let minDistance = Number.POSITIVE_INFINITY;
+    let closest: Mosque | null = null;
+
+    for (const mosque of mosques) {
+      if (!isValidCoordinate(mosque.lat) || !isValidCoordinate(mosque.lng)) {
+        continue;
+      }
+
+      const distance = getDistance(
+        userLocation.lat,
+        userLocation.lng,
+        mosque.lat,
+        mosque.lng
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closest = mosque;
+      }
+    }
+
+    if (closest) {
+      setClosestMosque({ mosque: closest, distanceKm: minDistance });
+      return;
+    }
+
+    setClosestMosque(null);
   }, [userLocation]);
+
+  const closestMosqueMessage = useMemo(() => {
+    if (closestMosque) {
+      return {
+        title: closestMosque.mosque.name,
+        subtitle: formatDistance(closestMosque.distanceKm),
+        showRetry: false,
+      };
+    }
+
+    switch (locationStatus) {
+      case "loading":
+        return {
+          title: "Finding nearest masjid...",
+          subtitle: "",
+          showRetry: false,
+        };
+      case "denied":
+        return {
+          title: "Location permission blocked",
+          subtitle: "Allow location to detect nearest masjid",
+          showRetry: true,
+        };
+      case "unsupported":
+        return {
+          title: "Location is not supported",
+          subtitle: "Your browser cannot provide location",
+          showRetry: false,
+        };
+      case "error":
+        return {
+          title: "Could not get your location",
+          subtitle: "Try again",
+          showRetry: true,
+        };
+      case "idle":
+        return {
+          title: "Enable location for nearby",
+          subtitle: "",
+          showRetry: true,
+        };
+      case "success":
+        return {
+          title: "No masjid location data",
+          subtitle: "",
+          showRetry: false,
+        };
+      default:
+        return {
+          title: "Enable location for nearby",
+          subtitle: "",
+          showRetry: true,
+        };
+    }
+  }, [closestMosque, locationStatus]);
 
   const hijriDate = useMemo(() => {
     if (!currentTime) return "";
@@ -142,13 +245,13 @@ export default function HomeHeaderCards() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {/* Dates Card */}
-      <Card className="flex flex-col justify-center bg-card/50 backdrop-blur-sm">
+      <Card className="flex flex-col justify-center bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 shadow-lg">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
           <div className="space-y-1">
-            <p className="text-lg font-bold text-foreground leading-tight">
+            <p className="text-lg font-bold text-white leading-tight">
               {gregorianDate}
             </p>
-            <p className="text-sm font-medium text-primary">
+            <p className="text-sm font-medium text-white/80">
               {hijriDate}
             </p>
           </div>
@@ -156,27 +259,33 @@ export default function HomeHeaderCards() {
       </Card>
 
       {/* Time Card */}
-      <Card className="flex flex-col justify-center bg-card/50 backdrop-blur-sm border-primary/20">
+      <Card className="flex flex-col justify-center bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 shadow-lg">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="text-4xl font-black text-foreground tabular-nums tracking-tight">
+          <p className="text-4xl font-black text-white tabular-nums tracking-tight">
             {timeString}
           </p>
         </CardContent>
       </Card>
 
       {/* Closest Mosque Card */}
-      <Card className="flex flex-col justify-center bg-card/50 backdrop-blur-sm">
+      <Card className="flex flex-col justify-center bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 shadow-lg">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-1">Closest Masjid</p>
-          {closestMosque ? (
-            <p className="text-lg font-bold text-foreground leading-tight">
-              {closestMosque.name}
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground italic">
-              {userLocation ? "Finding..." : "Enable location for nearby"}
-            </p>
-          )}
+          <p className="text-sm font-medium text-white/70 uppercase tracking-wider mb-1">Closest Masjid</p>
+          <p className="text-lg font-bold text-white leading-tight">
+            {closestMosqueMessage.title}
+          </p>
+          {closestMosqueMessage.subtitle ? (
+            <p className="text-xs text-white/75 mt-1">{closestMosqueMessage.subtitle}</p>
+          ) : null}
+          {closestMosqueMessage.showRetry ? (
+            <button
+              type="button"
+              onClick={requestUserLocation}
+              className="mt-2 text-xs font-semibold text-white underline underline-offset-4 hover:text-white/80 transition-colors"
+            >
+              Retry location
+            </button>
+          ) : null}
         </CardContent>
       </Card>
     </div>

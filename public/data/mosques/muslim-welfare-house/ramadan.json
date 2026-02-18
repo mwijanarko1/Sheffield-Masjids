@@ -1,1 +1,79 @@
-{"month":"RAMADAN 2026/1447","gregorian_start":"2026-02-18","gregorian_end":"2026-03-19","prayer_times":[{"ramadan_day":1,"gregorian":"Feb 18","fajr":"05:26","shurooq":"07:13","dhuhr":"12:20","asr":"14:52","maghrib":"17:27","isha":"19:15"},{"ramadan_day":10,"gregorian":"Feb 27","fajr":"05:14","shurooq":"06:53","dhuhr":"12:18","asr":"15:04","maghrib":"17:44","isha":"19:25"},{"ramadan_day":20,"gregorian":"Mar 9","fajr":"04:57","shurooq":"06:30","dhuhr":"12:16","asr":"15:17","maghrib":"18:03","isha":"19:37"},{"ramadan_day":30,"gregorian":"Mar 19","fajr":"04:39","shurooq":"06:06","dhuhr":"12:13","asr":"15:29","maghrib":"18:22","isha":"19:49"}],"iqamah_times":[{"date_range":"1-30","fajr":"10 mins after adhan","dhuhr":"10 mins after adhan","asr":"10 mins after adhan","isha":"10 mins after adhan"}],"jummah_iqamah":"12:45","taraweeh":"Straight after Isha each night"}
+{
+  "month": "RAMADAN 2026/1447",
+  "gregorian_start": "2026-02-18",
+  "gregorian_end": "2026-03-19",
+  "prayer_times": [
+    {
+      "ramadan_day": 1,
+      "gregorian": "Feb 18",
+      "fajr": "05:27",
+      "shurooq": "07:15",
+      "dhuhr": "12:20",
+      "asr": "14:50",
+      "maghrib": "17:25",
+      "isha": "19:14"
+    },
+    {
+      "ramadan_day": 10,
+      "gregorian": "Feb 27",
+      "fajr": "05:16",
+      "shurooq": "06:56",
+      "dhuhr": "12:19",
+      "asr": "15:03",
+      "maghrib": "17:43",
+      "isha": "19:24"
+    },
+    {
+      "ramadan_day": 20,
+      "gregorian": "Mar 9",
+      "fajr": "05:00",
+      "shurooq": "06:32",
+      "dhuhr": "12:16",
+      "asr": "15:16",
+      "maghrib": "18:01",
+      "isha": "19:36"
+    },
+    {
+      "ramadan_day": 30,
+      "gregorian": "Mar 19",
+      "fajr": "04:41",
+      "shurooq": "06:09",
+      "dhuhr": "12:14",
+      "asr": "15:28",
+      "maghrib": "18:20",
+      "isha": "19:48"
+    }
+  ],
+  "iqamah_times": [
+    {
+      "date_range": "1",
+      "fajr": "06:15",
+      "dhuhr": "13:10",
+      "asr": "15:10",
+      "isha": "19:45"
+    },
+    {
+      "date_range": "2-11",
+      "fajr": "10 mins after adhan",
+      "dhuhr": "13:10",
+      "asr": "15:10",
+      "isha": "19:45"
+    },
+    {
+      "date_range": "12-21",
+      "fajr": "10 mins after adhan",
+      "dhuhr": "13:10",
+      "asr": "15:30",
+      "isha": "20:00"
+    },
+    {
+      "date_range": "22-30",
+      "fajr": "10 mins after adhan",
+      "dhuhr": "13:10",
+      "asr": "15:45",
+      "isha": "20:15"
+    }
+  ],
+  "jummah_iqamah": "12:45",
+  "taraweeh": "Straight after Isha each night"
+}

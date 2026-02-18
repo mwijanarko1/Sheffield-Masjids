@@ -1,5 +1,20 @@
 # Todo
 
+## Plan (Closest Masjid Reliability)
+
+- [x] Audit `HomeHeaderCards` geolocation + nearest-masjid state flow and identify failure points.
+- [x] Implement resilient location handling (loading/error/unsupported/permission-denied/retry) and robust nearest-masjid selection.
+- [x] Run `npx tsc --noEmit` and capture review notes for the fix.
+
+## Review (Closest Masjid Reliability)
+
+- Removed the hidden-mosque filter from `HomeHeaderCards` so nearest lookup now considers every masjid in `public/data/mosques.json`.
+- Replaced implicit location behavior with explicit status handling (`idle`, `loading`, `success`, `unsupported`, `denied`, `error`) to avoid ambiguous stuck states.
+- Added a `Retry location` action so users can re-request geolocation after denial/failure without reloading the page.
+- Hardened nearest-masjid calculation by validating coordinates with `Number.isFinite` before distance math.
+- Closest card now shows both masjid name and computed proximity (`m`/`km`) for transparent behavior.
+- Verification: `npx tsc --noEmit` passed.
+
 ## Plan (Persist Mosque Choice)
 
 - [x] Add a dedicated persistence hook for selected mosque in `src/hooks/use-persisted-mosque.ts`.
