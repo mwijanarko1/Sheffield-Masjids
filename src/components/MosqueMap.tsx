@@ -15,7 +15,7 @@ export default function MosqueMap({ mosque }: MosqueMapProps) {
   const embedUrl = `https://www.google.com/maps?q=${encodedAddress}&output=embed`;
 
   return (
-    <div className="w-full min-h-[280px] h-[50vh] sm:h-[360px] md:h-[400px] max-h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 ">
+    <div className="h-[50vh] min-h-[280px] w-full max-h-[400px] sm:h-[360px] md:h-[400px]">
       <iframe
         width="100%"
         height="100%"

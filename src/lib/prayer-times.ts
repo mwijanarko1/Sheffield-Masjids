@@ -416,6 +416,32 @@ export function getCurrentPrayer(prayerTimes: DailyPrayerTimes): string | null {
   return currentPrayerTime?.prayer || null;
 }
 
+function addMinutesToTime(time: string, minutesToAdd: number): string | null {
+  const [hours, minutes] = time.split(':').map(Number);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+
+  const totalMinutes = (((hours * 60 + minutes + minutesToAdd) % 1440) + 1440) % 1440;
+  const nextHours = Math.floor(totalMinutes / 60);
+  const nextMinutes = totalMinutes % 60;
+
+  return `${String(nextHours).padStart(2, '0')}:${String(nextMinutes).padStart(2, '0')}`;
+}
+
+function resolveRelativeIqamah(iqamahValue: string, adhanTime: string): string {
+  const value = iqamahValue.trim();
+
+  const adhanPlusMatch = value.match(/^adhan\s*\+\s*(\d+)\s*(?:mins?|minutes?)?$/i);
+  const afterAdhanMatch = value.match(/^(\d+)\s*(?:mins?|minutes?)\s*after\s*adhan$/i);
+  const minutesString = adhanPlusMatch?.[1] ?? afterAdhanMatch?.[1];
+
+  if (!minutesString) return iqamahValue;
+
+  const parsed = Number.parseInt(minutesString, 10);
+  if (!Number.isFinite(parsed)) return iqamahValue;
+
+  return addMinutesToTime(adhanTime, parsed) ?? iqamahValue;
+}
+
 /**
  * Get Iqamah time for a specific prayer using mosque's schedule
  * @param maghribAdhan - Optional Maghrib adhan time, needed when Isha is "Straight after Maghrib"
@@ -426,11 +452,11 @@ export function getIqamahTime(prayer: string, adhanTime: string, iqamahTimes: Da
   switch (prayerLower) {
     case 'fajr':
       // "Various" means time varies - use adhan time as fallback for display/countdown
-      return iqamahTimes.fajr === "Various" ? adhanTime : iqamahTimes.fajr;
+      return resolveRelativeIqamah(iqamahTimes.fajr === "Various" ? adhanTime : iqamahTimes.fajr, adhanTime);
     case 'dhuhr':
-      return iqamahTimes.dhuhr;
+      return resolveRelativeIqamah(iqamahTimes.dhuhr, adhanTime);
     case 'asr':
-      return iqamahTimes.asr;
+      return resolveRelativeIqamah(iqamahTimes.asr, adhanTime);
     case 'maghrib':
       // Maghrib Iqamah is same as Adhan time
       return adhanTime;
@@ -439,7 +465,7 @@ export function getIqamahTime(prayer: string, adhanTime: string, iqamahTimes: Da
       if (iqamahTimes.isha === "Straight after Maghrib" && maghribAdhan) return maghribAdhan;
       if (iqamahTimes.isha === "Entry Time") return adhanTime;
       if (iqamahTimes.isha === "Straight after Maghrib") return adhanTime; // Fallback if no maghrib
-      return iqamahTimes.isha;
+      return resolveRelativeIqamah(iqamahTimes.isha, adhanTime);
     case 'jummah':
       return iqamahTimes.jummah;
     default:
@@ -714,4 +740,22 @@ export async function getDSTAdjustmentIqamahDate(date?: Date): Promise<{ month: 
   }
 
   return null;
+}
+
+/**
+ * Format a 24-hour time string (HH:MM) to 12-hour format (h:mm AM/PM)
+ */
+export function formatTo12Hour(timeString: string): string {
+  if (!timeString || timeString === '-' || timeString === '--:--' || timeString === 'Various' || timeString === 'Straight after Maghrib' || timeString === 'Entry Time' || timeString === 'After Maghrib') {
+    return timeString;
+  }
+
+  const [hours, minutes] = timeString.split(':').map(Number);
+  if (isNaN(hours) || isNaN(minutes)) return timeString;
+
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  const displayHours = hours % 12 || 12;
+  const displayMinutes = minutes.toString().padStart(2, '0');
+
+  return `${displayHours}:${displayMinutes}${ampm}`;
 }
