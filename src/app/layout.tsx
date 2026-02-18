@@ -6,6 +6,7 @@ import {
   SITE_NAME,
   SITE_TITLE,
 } from "@/lib/site";
+import { ConvexProvider } from "@/providers/ConvexProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -71,8 +72,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased bg-background text-foreground">
-        <Header />
-        {children}
+        <ConvexProvider>
+          <Header />
+          {children}
+        </ConvexProvider>
       </body>
     </html>
   );

@@ -6,20 +6,21 @@ import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
 import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
-import mosquesData from '../../public/data/mosques.json';
 import { Button } from '@/components/ui/button';
-
-const VISIBLE_MOSQUES = (mosquesData.mosques as Mosque[]).filter(
-  (m) => m.id !== "sheffield-grand-mosque"
-);
 
 interface PrayerTimesWidgetProps {
   initialMosque: Mosque;
   showDropdown?: boolean;
+  mosques?: Mosque[];
 }
 
-export default function PrayerTimesWidget({ initialMosque, showDropdown = false }: PrayerTimesWidgetProps) {
+export default function PrayerTimesWidget({
+  initialMosque,
+  showDropdown = false,
+  mosques = [],
+}: PrayerTimesWidgetProps) {
   const [mosque, setMosque] = useState<Mosque>(initialMosque);
+  const selectableMosques = mosques.length > 0 ? mosques : [initialMosque];
 
   // Sync mosque when parent passes a new initialMosque (e.g. from HomeContent dropdown)
   useEffect(() => {
@@ -369,10 +370,10 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
         {showDropdown && (
           <div className="mb-4 sm:mb-6 flex justify-center">
             <CustomSelect
-              options={VISIBLE_MOSQUES}
+              options={selectableMosques}
               value={mosque.id}
               onChange={(value) => {
-                const selected = VISIBLE_MOSQUES.find(m => m.id === value);
+                const selected = selectableMosques.find(m => m.id === value);
                 if (selected) setMosque(selected);
               }}
               className="max-w-[280px] sm:min-w-[250px]"

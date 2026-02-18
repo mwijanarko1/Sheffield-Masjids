@@ -102,11 +102,8 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
       setError(null);
 
       try {
-        const response = await fetch(`/data/mosques/${mosque.slug}/ramadan.json`);
-        if (!response.ok) {
-          throw new Error("missing");
-        }
-        const data = await response.json();
+        const { loadRamadanCalendar } = await import("@/lib/prayer-times");
+        const data = await loadRamadanCalendar(mosque.slug);
         if (!isMounted) return;
         setRamadanData(data);
       } catch {

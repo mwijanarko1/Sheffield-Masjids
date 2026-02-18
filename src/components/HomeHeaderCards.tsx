@@ -3,9 +3,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mosque } from "@/types/prayer-times";
-import mosquesData from "../../public/data/mosques.json";
-
-const mosques = mosquesData.mosques as Mosque[];
 const HIJRI_DATE_FORMATTER = new Intl.DateTimeFormat("en-GB-u-ca-islamic", {
   day: "numeric",
   month: "long",
@@ -48,7 +45,11 @@ function formatDistance(distanceKm: number) {
   return `${distanceKm.toFixed(1)} km away`;
 }
 
-export default function HomeHeaderCards() {
+interface HomeHeaderCardsProps {
+  mosques: Mosque[];
+}
+
+export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -144,7 +145,7 @@ export default function HomeHeaderCards() {
     }
 
     setClosestMosque(null);
-  }, [userLocation]);
+  }, [userLocation, mosques]);
 
   const closestMosqueMessage = useMemo(() => {
     if (closestMosque) {

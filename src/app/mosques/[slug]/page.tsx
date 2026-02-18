@@ -3,12 +3,11 @@ import type { Metadata } from "next";
 import { notFound } from 'next/navigation';
 import PrayerTimesWidget from '@/components/PrayerTimesWidget';
 import MosqueMap from '@/components/MosqueMap';
-import mosquesData from '../../../../public/data/mosques.json';
-import { Mosque } from '@/types/prayer-times';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { HIDDEN_MOSQUE_SLUGS, SITE_NAME } from '@/lib/site';
+import { getMosqueBySlug } from '@/lib/mosques';
+import { SITE_NAME } from '@/lib/site';
 
 interface MosquePageProps {
   params: Promise<{
@@ -16,13 +15,15 @@ interface MosquePageProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: MosquePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const mosque = (mosquesData.mosques as Mosque[]).find((m) => m.slug === slug);
+  const mosque = await getMosqueBySlug(slug);
 
-  if (!mosque || HIDDEN_MOSQUE_SLUGS.has(slug)) {
+  if (!mosque) {
     return {
       title: "Mosque Not Found",
       robots: {
@@ -57,10 +58,7 @@ export async function generateMetadata({
 
 export default async function MosquePage({ params }: MosquePageProps) {
   const { slug } = await params;
-  if (HIDDEN_MOSQUE_SLUGS.has(slug)) {
-    notFound();
-  }
-  const mosque = mosquesData.mosques.find((m: Mosque) => m.slug === slug);
+  const mosque = await getMosqueBySlug(slug);
 
   if (!mosque) {
     notFound();

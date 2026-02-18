@@ -1,5 +1,52 @@
 import { MonthlyPrayerTimes, DailyPrayerTimes, DailyIqamahTimes, IqamahTimeRange, PrayerTime } from '@/types/prayer-times';
 
+// Convex client for prayer times (when NEXT_PUBLIC_CONVEX_URL is set)
+let convexClient: InstanceType<typeof import('convex/browser').ConvexHttpClient> | null = null;
+let convexClientUrl: string | null = null;
+
+const PRAYER_TIMES_CACHE_TTL_MS = 5 * 60 * 1000;
+
+type TimedCacheEntry<T> = {
+  value: T;
+  expiresAt: number;
+};
+
+function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
+  return {
+    value,
+    expiresAt: Date.now() + PRAYER_TIMES_CACHE_TTL_MS,
+  };
+}
+
+function getCurrentYearInSheffield(): number {
+  return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" })).getFullYear();
+}
+
+async function getConvexClient(): Promise<InstanceType<typeof import('convex/browser').ConvexHttpClient> | null> {
+  const url = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_CONVEX_URL : undefined;
+  if (!url) {
+    convexClient = null;
+    convexClientUrl = null;
+    return null;
+  }
+
+  if (convexClient && convexClientUrl === url) {
+    return convexClient;
+  }
+
+  try {
+    const { ConvexHttpClient } = await import('convex/browser');
+    convexClient = new ConvexHttpClient(url);
+    convexClientUrl = url;
+  } catch {
+    convexClient = null;
+    convexClientUrl = null;
+    return null;
+  }
+
+  return convexClient;
+}
+
 interface DSTDateRange {
   year: number;
   start_date: string;
@@ -11,16 +58,16 @@ interface DSTDatesData {
 }
 
 // Cache for DST dates
-let dstDatesCache: DSTDateRange[] | null = null;
-const monthlyPrayerTimesCache = new Map<string, MonthlyPrayerTimes>();
+let dstDatesCache: TimedCacheEntry<DSTDateRange[]> | null = null;
+const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyPrayerTimes>>();
 const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyPrayerTimes>>();
 
 /**
  * Load DST dates from JSON file
  */
 async function loadDSTDates(): Promise<DSTDateRange[]> {
-  if (dstDatesCache) {
-    return dstDatesCache;
+  if (dstDatesCache && dstDatesCache.expiresAt > Date.now()) {
+    return dstDatesCache.value;
   }
 
   try {
@@ -31,8 +78,8 @@ async function loadDSTDates(): Promise<DSTDateRange[]> {
         throw new Error(`Failed to load DST dates: ${response.status}`);
       }
       const data: DSTDatesData = await response.json();
-      dstDatesCache = data.uk_dst_dates;
-      return dstDatesCache;
+      dstDatesCache = createTimedEntry(data.uk_dst_dates);
+      return dstDatesCache.value;
     }
 
     // For server-side usage (Node.js)
@@ -41,8 +88,8 @@ async function loadDSTDates(): Promise<DSTDateRange[]> {
     const filePath = path.join(process.cwd(), 'public', 'docs', 'dst-start-end.json');
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data: DSTDatesData = JSON.parse(fileContent);
-    dstDatesCache = data.uk_dst_dates;
-    return dstDatesCache;
+    dstDatesCache = createTimedEntry(data.uk_dst_dates);
+    return dstDatesCache.value;
   } catch (error) {
     console.error('Error loading DST dates:', error);
     // Fallback to empty array if file can't be loaded
@@ -60,7 +107,7 @@ interface RamadanData {
   jummah_iqamah: string;
 }
 
-const ramadanDataCache = new Map<string, RamadanData | null>();
+const ramadanDataCache = new Map<string, TimedCacheEntry<RamadanData | null>>();
 const ramadanDataInFlight = new Map<string, Promise<RamadanData | null>>();
 
 function toDateOnly(date: Date): Date {
@@ -84,9 +131,14 @@ type RamadanLoadResult =
   | { data: RamadanData; inRange: false }
   | null;
 
-async function loadRamadanCalendar(slug: string): Promise<RamadanData | null> {
-  if (ramadanDataCache.has(slug)) {
-    return ramadanDataCache.get(slug) ?? null;
+/** Load Ramadan timetable for a mosque (Convex or static JSON). Exported for RamadanTimetable. */
+export async function loadRamadanCalendar(slug: string): Promise<RamadanData | null> {
+  const cachedEntry = ramadanDataCache.get(slug);
+  if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
+    return cachedEntry.value;
+  }
+  if (cachedEntry) {
+    ramadanDataCache.delete(slug);
   }
 
   const inFlight = ramadanDataInFlight.get(slug);
@@ -96,22 +148,36 @@ async function loadRamadanCalendar(slug: string): Promise<RamadanData | null> {
 
   const loadPromise = (async (): Promise<RamadanData | null> => {
     try {
+      const client = await getConvexClient();
+      if (client) {
+        try {
+          const { api } = await import('../../convex/_generated/api');
+          const data = await client.query(api.prayerTimes.getRamadan, { mosqueSlug: slug });
+          if (data) {
+            ramadanDataCache.set(slug, createTimedEntry(data));
+            return data;
+          }
+        } catch {
+          /* Convex not initialized, fall through to fetch */
+        }
+      }
+
       const response = await fetch(`/data/mosques/${slug}/ramadan.json`);
       if (!response.ok) {
-        ramadanDataCache.set(slug, null);
+        ramadanDataCache.set(slug, createTimedEntry(null));
         return null;
       }
 
       const data: RamadanData = await response.json();
       if (!data.gregorian_start || !data.gregorian_end) {
-        ramadanDataCache.set(slug, null);
+        ramadanDataCache.set(slug, createTimedEntry(null));
         return null;
       }
 
-      ramadanDataCache.set(slug, data);
+      ramadanDataCache.set(slug, createTimedEntry(data));
       return data;
     } catch {
-      ramadanDataCache.set(slug, null);
+      ramadanDataCache.set(slug, createTimedEntry(null));
       return null;
     }
   })();
@@ -239,7 +305,11 @@ function findDayData(prayerTimes: PrayerTime[], dayOfMonth: number): PrayerTime 
 /**
  * Load monthly prayer times from JSON file
  */
-export async function loadMonthlyPrayerTimes(slug: string, month: number, year: number = 2024): Promise<MonthlyPrayerTimes> {
+export async function loadMonthlyPrayerTimes(
+  slug: string,
+  month: number,
+  year: number = getCurrentYearInSheffield(),
+): Promise<MonthlyPrayerTimes> {
   const monthFile = MONTH_FILES[month];
 
   if (!monthFile) {
@@ -247,9 +317,12 @@ export async function loadMonthlyPrayerTimes(slug: string, month: number, year: 
   }
 
   const cacheKey = `${slug}:${monthFile}:${year}`;
-  const cached = monthlyPrayerTimesCache.get(cacheKey);
-  if (cached) {
-    return cached;
+  const cachedEntry = monthlyPrayerTimesCache.get(cacheKey);
+  if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
+    return cachedEntry.value;
+  }
+  if (cachedEntry) {
+    monthlyPrayerTimesCache.delete(cacheKey);
   }
 
   const inFlight = monthlyPrayerTimesInFlight.get(cacheKey);
@@ -259,6 +332,24 @@ export async function loadMonthlyPrayerTimes(slug: string, month: number, year: 
 
   const loadPromise = (async (): Promise<MonthlyPrayerTimes> => {
     try {
+      const client = await getConvexClient();
+      if (client) {
+        try {
+          const { api } = await import('../../convex/_generated/api');
+          const data = await client.query(api.prayerTimes.getMonthly, {
+            mosqueSlug: slug,
+            month: monthFile,
+            year,
+          });
+          if (data) {
+            monthlyPrayerTimesCache.set(cacheKey, createTimedEntry(data));
+            return data;
+          }
+        } catch {
+          /* Convex not initialized, fall through to fetch */
+        }
+      }
+
       const publicUrl = `/data/mosques/${slug}/${monthFile}.json`;
       const response = await fetch(publicUrl);
 
@@ -267,7 +358,7 @@ export async function loadMonthlyPrayerTimes(slug: string, month: number, year: 
       }
 
       const data: MonthlyPrayerTimes = await response.json();
-      monthlyPrayerTimesCache.set(cacheKey, data);
+      monthlyPrayerTimesCache.set(cacheKey, createTimedEntry(data));
       return data;
     } catch (error) {
       console.error(`Error loading prayer times for ${monthFile}:`, error);
@@ -338,7 +429,7 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, today.getFullYear());
       const dayData = findDayData(monthlyData.prayer_times, date);
 
       if (!dayData) {
@@ -386,7 +477,7 @@ export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTim
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, today.getFullYear());
       const iqamahTimes = getIqamahTimesForDate(date, monthlyData.iqamah_times);
 
       return {
@@ -431,7 +522,7 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, date.getFullYear());
       const dayData = findDayData(monthlyData.prayer_times, dayOfMonth);
 
       if (!dayData) {
@@ -478,7 +569,7 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, date.getFullYear());
       const iqamahTimes = getIqamahTimesForDate(dayOfMonth, monthlyData.iqamah_times);
 
       return {
@@ -657,13 +748,13 @@ export async function isInDSTPeriod(date?: Date): Promise<boolean> {
  * Legacy function for backward compatibility - now uses async version
  */
 export function isInDSTPeriodSync(date?: Date): boolean {
-  if (!dstDatesCache) {
+  if (!dstDatesCache || dstDatesCache.expiresAt <= Date.now()) {
     return false;
   }
 
   const checkDate = date || new Date();
   const checkYear = checkDate.getFullYear();
-  const yearData = dstDatesCache.find(d => d.year === checkYear);
+  const yearData = dstDatesCache.value.find(d => d.year === checkYear);
 
   if (!yearData) {
     return false;
@@ -743,13 +834,13 @@ export async function isInDSTAdjustmentPeriod(date?: Date): Promise<boolean> {
  * Check if we're in a DST adjustment period (from DST change date until end of month) - synchronous version
  */
 export function isInDSTAdjustmentPeriodSync(date?: Date): boolean {
-  if (!dstDatesCache) return false;
+  if (!dstDatesCache || dstDatesCache.expiresAt <= Date.now()) return false;
   
   const checkDate = date || new Date();
   const checkYear = checkDate.getFullYear();
   const checkMonth = checkDate.getMonth() + 1; // 1-12
 
-  const yearData = dstDatesCache.find(d => d.year === checkYear);
+  const yearData = dstDatesCache.value.find(d => d.year === checkYear);
   if (!yearData) return false;
 
   const startDate = new Date(yearData.start_date);

@@ -1,5 +1,20 @@
 # Todo
 
+## Plan (Prod Prayer Times Parity + Cache Policy)
+
+- [x] Remove hardcoded Convex year selection in prayer-time fetches.
+- [x] Replace forced `no-store` fetch behavior with bounded in-memory TTL caching.
+- [x] Document Netlify/Convex production mismatch verification steps.
+- [x] Run `npx tsc --noEmit` and capture review notes.
+
+## Review (Prod Prayer Times Parity + Cache Policy)
+
+- Fixed root-cause risk in `src/lib/prayer-times.ts`: monthly Convex queries were pinned to `year = 2024`; calls now pass the selected date/today year and default to current Sheffield year.
+- Updated Convex client initialization to recreate the client if `NEXT_PUBLIC_CONVEX_URL` changes, preventing stale URL reuse in long-lived sessions.
+- Replaced force-`no-store` fetch usage with a bounded 5-minute in-memory TTL cache for monthly/Ramadan/DST payloads to balance freshness and request volume.
+- Added an explicit production mismatch checklist in `CONVEX_SETUP.md` covering Netlify env var validation, cache-clearing deploy, and year-specific seeding checks.
+- Verification: `npx tsc --noEmit` passed.
+
 ## Plan (Compare Table Gradient + Swipe Overlap)
 
 - [x] Apply prayer-widget gradient shell styling to `ComparePrayerTimes`.
@@ -310,4 +325,90 @@
 
 - Removed `Today` badge text from both `src/components/MonthlyTimetable.tsx` and `src/components/RamadanTimetable.tsx`.
 - Current-date highlight styling remains active on the matching row/card only.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Database-Driven Mosque Registry)
+
+- [x] Add Convex-backed mosque registry (`mosques` table + query/mutation) for runtime reads.
+- [x] Add a shared mosque loader that prefers Convex and falls back to static JSON safely.
+- [x] Refactor routes/components to consume runtime mosque data instead of importing `mosques.json`.
+- [x] Update seed/docs so mosque metadata can be managed from Convex in production.
+- [x] Run `npx tsc --noEmit` and capture review notes.
+
+## Review (Database-Driven Mosque Registry)
+
+- Added Convex mosque registry support:
+  - schema table `mosques` in `convex/schema.ts`
+  - runtime functions in `convex/mosques.js` (`list`, `upsert`)
+- Added server loader `src/lib/mosques.ts`:
+  - fetches mosques from Convex at runtime
+  - merges with `public/data/mosques.json` fallback/bootstrap data
+  - filters hidden slugs by default and supports slug lookup helpers
+- Refactored runtime consumers to stop static `mosques.json` imports:
+  - home + compare pages now fetch mosques server-side and pass as props
+  - `/mosques/[slug]`, `/mosques/[slug]/timetable`, and `/mosques/[slug]/ramadan-timetable` resolve mosque records via runtime lookup
+  - `sitemap` now builds mosque URLs from runtime data
+  - `HomeContent`, `HomeHeaderCards`, and `ComparePrayerTimes` now consume mosque props
+  - `usePersistedMosque` now handles empty or changing mosque lists safely
+- Updated seeding/docs:
+  - `scripts/seed-convex.ts` now seeds mosque registry via `mosques:upsert` before timetable data
+  - updated `CONVEX_SETUP.md` and `README.md` to describe database-driven mosque updates
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Grand Mosque Ramadan Data)
+
+- [x] Convert provided Sheffield Grand Mosque Ramadan timetable into project `ramadan.json` schema.
+- [x] Add static data file under `public/data/mosques/sheffield-grand-mosque/`.
+- [x] Validate JSON parse + run type-check.
+
+## Review (Grand Mosque Ramadan Data)
+
+- Added `/public/data/mosques/sheffield-grand-mosque/ramadan.json` with Ramadan prayer times for 2026.
+- Normalized times to `HH:MM` 24-hour format expected by app logic.
+- Added schema-compatible placeholders for `iqamah_times` and `jummah_iqamah` so runtime loaders and Convex seeding remain valid.
+- Verification: JSON parse check passed and `npx tsc --noEmit` passed.
+
+## Plan (Grand Mosque Full-Year Sync)
+
+- [ ] Copy MWHS monthly + Ramadan timetable files to Sheffield Grand Mosque.
+- [ ] Verify Sheffield Grand Mosque directory now contains full-year files matching MWHS.
+- [ ] Run `npx tsc --noEmit` and record review notes.
+
+## Plan (Grand Mosque Ramadan Preservation)
+
+- [ ] Restore Sheffield Grand Mosque custom Ramadan timetable file.
+- [ ] Copy only January-December files from MWHS to Sheffield Grand Mosque.
+- [ ] Verify Jan-Dec match MWHS while Ramadan remains unique.
+- [ ] Run `npx tsc --noEmit` and capture review notes.
+
+## Review (Grand Mosque Ramadan Preservation)
+
+- Restored `/public/data/mosques/sheffield-grand-mosque/ramadan.json` as a custom (non-MWHS) Ramadan timetable.
+- Synced only January-December files from `muslim-welfare-house` to `sheffield-grand-mosque`.
+- Verification:
+  - All monthly files `january.json` through `december.json` match MWHS.
+  - `ramadan.json` intentionally differs from MWHS.
+  - Ramadan JSON parse check passed.
+  - `npx tsc --noEmit` passed.
+
+## Plan (DB Mosque Visibility Flag)
+
+- [ ] Add `isHidden` field to Convex `mosques` table and mosque mutations/queries.
+- [ ] Update runtime mosque loader/filtering to respect DB `isHidden`.
+- [ ] Update seed script and types for optional `isHidden`.
+- [ ] Run `npx tsc --noEmit` and capture review notes.
+
+## Review (DB Mosque Visibility Flag)
+
+- Added optional `isHidden` field to Convex `mosques` table schema in `convex/schema.ts`.
+- Updated Convex mosque API in `convex/mosques.js`:
+  - `upsert` accepts `isHidden` and stores a default of `false` when omitted.
+  - `list` returns normalized boolean `isHidden`.
+- Updated runtime mosque handling in `src/lib/mosques.ts`:
+  - parses `isHidden` from Convex/static records.
+  - `getMosques()` now excludes `isHidden: true` entries by default.
+  - `getMosqueBySlug()` also blocks hidden mosques unless `includeHidden` is passed.
+- Updated shared/seed types for compatibility:
+  - `src/types/prayer-times.ts` adds optional `isHidden?: boolean`.
+  - `scripts/seed-convex.ts` supports optional `isHidden` when seeding.
 - Verification: `npx tsc --noEmit` passed.

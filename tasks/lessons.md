@@ -20,3 +20,7 @@
 - Rule: When user requests timing order changes ("show X under Y"), implement it by updating the underlying ordered timings array so render order is guaranteed.
 - Correction pattern: User requested visual highlighting only, but prior pass added extra label text ("Today") that was not requested.
 - Rule: For UI requests phrased as style-only ("highlight"), avoid adding new visible copy/labels unless explicitly asked.
+- Correction pattern: Convex deployment failed because schema used reserved index name `by_id`.
+- Rule: Before adding Convex indexes, validate names against reserved keywords (`by_id`, `by_creation_time`, `_` prefix disallowed) and use domain-specific names like `by_mosque_id`.
+- Correction pattern: Copied Ramadan data while user intended only non-Ramadan yearly files to be synced.
+- Rule: For scope-specific data sync requests, explicitly preserve excluded datasets (e.g., `ramadan.json`) and copy only named file groups.
