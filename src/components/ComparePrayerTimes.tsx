@@ -10,7 +10,6 @@ import {
   formatTo12Hour,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from "@/types/prayer-times";
-import mosquesData from "../../public/data/mosques.json";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import {
@@ -21,10 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const mosques = (mosquesData.mosques as Mosque[]).filter(
-  (m) => m.id !== "sheffield-grand-mosque"
-);
 
 interface MosquePrayerData {
   mosque: Mosque;
@@ -45,9 +40,13 @@ function isSummerPeriod(date: Date): boolean {
 interface ComparePrayerTimesProps {
   /** When true, always show the table (for dedicated compare page) */
   standalone?: boolean;
+  mosques: Mosque[];
 }
 
-export default function ComparePrayerTimes({ standalone = false }: ComparePrayerTimesProps) {
+export default function ComparePrayerTimes({
+  standalone = false,
+  mosques,
+}: ComparePrayerTimesProps) {
   const [isOpen, setIsOpen] = useState(standalone);
   const [selectedDate, setSelectedDate] = useState(
     () => new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }))
@@ -110,7 +109,7 @@ export default function ComparePrayerTimes({ standalone = false }: ComparePrayer
     };
 
     fetchAll();
-  }, [isOpen, selectedDate, standalone]);
+  }, [isOpen, selectedDate, standalone, mosques]);
 
   const goToPrevDay = () => {
     const prev = new Date(selectedDate);
@@ -254,7 +253,11 @@ export default function ComparePrayerTimes({ standalone = false }: ComparePrayer
           </CardHeader>
 
           <CardContent className="p-0">
-            {isLoading ? (
+            {mosques.length === 0 ? (
+              <div className="p-12 text-center text-white/70">
+                No mosques available to compare.
+              </div>
+            ) : isLoading ? (
               <div className="p-12 text-center text-white/70">Loading prayer times…</div>
             ) : (
               <Table className="min-w-[920px] text-white">

@@ -61,6 +61,8 @@ If not set, the app falls back to `http://localhost:3000`.
 - `/` Home (selector + prayer times + map)
 - `/compare` Cross-masjid prayer comparison
 - `/mosques/[slug]` Individual masjid detail page
+- `/mosques/[slug]/timetable` Monthly prayer timetable
+- `/mosques/[slug]/ramadan-timetable` Ramadan timetable
 
 ## Data Source Structure
 
@@ -76,7 +78,9 @@ public/
     dst-start-end.json
 ```
 
-`mosques.json` defines each masjid (`id`, `name`, `address`, `lat`, `lng`, `slug`, optional `website`).
+`mosques.json` defines each masjid (`id`, `name`, `address`, `lat`, `lng`, `slug`, optional `website`) and is used as fallback/bootstrap data.
+
+When Convex is configured, production reads mosque metadata from the `mosques` table and prayer data from `monthlyPrayerTimes` / `ramadanTimetables`, so new masjids can be added without redeploying the site.
 
 Each monthly JSON file contains:
 - `prayer_times`
@@ -95,6 +99,7 @@ Each monthly JSON file contains:
 
 - `scripts/fetch-masjid-sunnah-timetable.mjs` - fetch + convert Masjid Sunnah timetable data
 - `scripts/convert-masjid-huda-docs.mjs` - convert Masjid Huda timetable docs into project JSON format
+- `scripts/seed-convex.ts` - seed Convex mosque registry + prayer datasets from `public/data`
 
 ## License
 

@@ -3,23 +3,33 @@
 import PrayerTimesWidget from "./PrayerTimesWidget";
 import MosqueMap from "./MosqueMap";
 import HomeHeaderCards from "./HomeHeaderCards";
-import mosquesData from "../../public/data/mosques.json";
 import { Mosque } from "@/types/prayer-times";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { Card, CardContent } from "@/components/ui/card";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
 
-const mosques = (mosquesData.mosques as Mosque[]).filter(
-  (m) => m.id !== "sheffield-grand-mosque"
-);
+interface HomeContentProps {
+  mosques: Mosque[];
+}
 
-export default function HomeContent() {
+export default function HomeContent({ mosques }: HomeContentProps) {
   const { selectedMosque, setSelectedMosque } = usePersistedMosque(mosques);
+
+  if (!selectedMosque) {
+    return (
+      <Card className="border border-white/10 bg-background">
+        <CardContent className="p-6 text-sm text-muted-foreground">
+          No mosques are currently available. Add mosque records in Convex to show
+          them here.
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-8 sm:space-y-12">
       <div className="space-y-4 sm:space-y-6">
-        <HomeHeaderCards />
+        <HomeHeaderCards mosques={mosques} />
 
         {/* Mosque selector + Prayer times */}
         <section className="space-y-4">

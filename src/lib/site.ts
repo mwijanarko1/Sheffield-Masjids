@@ -5,7 +5,7 @@ export const SITE_DESCRIPTION =
 
 const DEFAULT_SITE_URL = "http://localhost:3000";
 
-export const HIDDEN_MOSQUE_SLUGS = new Set(["sheffield-grand-mosque"]);
+export const HIDDEN_MOSQUE_SLUGS = new Set<string>();
 
 export function getBaseUrl(): string {
   const rawUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();

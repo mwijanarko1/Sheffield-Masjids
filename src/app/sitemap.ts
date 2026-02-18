@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import mosquesData from "../../public/data/mosques.json";
-import { Mosque } from "@/types/prayer-times";
-import { getBaseUrl, HIDDEN_MOSQUE_SLUGS } from "@/lib/site";
+import { getMosques } from "@/lib/mosques";
+import { getBaseUrl } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
   const lastModified = new Date();
+  const mosques = await getMosques();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -22,9 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const mosqueRoutes: MetadataRoute.Sitemap = (mosquesData.mosques as Mosque[])
-    .filter((mosque) => !HIDDEN_MOSQUE_SLUGS.has(mosque.slug))
-    .map((mosque) => ({
+  const mosqueRoutes: MetadataRoute.Sitemap = mosques.map((mosque) => ({
       url: `${baseUrl}/mosques/${mosque.slug}`,
       lastModified,
       changeFrequency: "daily" as const,
@@ -33,4 +33,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticRoutes, ...mosqueRoutes];
 }
-

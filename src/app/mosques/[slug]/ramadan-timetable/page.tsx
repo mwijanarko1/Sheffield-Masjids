@@ -2,8 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import RamadanTimetable from "@/components/RamadanTimetable";
 import { Button } from "@/components/ui/button";
-import mosquesData from "../../../../../public/data/mosques.json";
-import { Mosque } from "@/types/prayer-times";
+import { getMosqueBySlug } from "@/lib/mosques";
 
 interface RamadanTimetablePageProps {
   params: Promise<{
@@ -11,15 +10,11 @@ interface RamadanTimetablePageProps {
   }>;
 }
 
-const HIDDEN_MOSQUES = ["sheffield-grand-mosque"];
+export const dynamic = "force-dynamic";
 
 export default async function RamadanTimetablePage({ params }: RamadanTimetablePageProps) {
   const { slug } = await params;
-  if (HIDDEN_MOSQUES.includes(slug)) {
-    notFound();
-  }
-
-  const mosque = mosquesData.mosques.find((m: Mosque) => m.slug === slug);
+  const mosque = await getMosqueBySlug(slug);
   if (!mosque) {
     notFound();
   }

@@ -51,4 +51,5 @@ export interface Mosque {
   lng: number;
   slug: string;
   website?: string;
-} 
+  isHidden?: boolean;
+}
