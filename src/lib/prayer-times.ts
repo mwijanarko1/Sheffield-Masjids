@@ -305,7 +305,7 @@ export function getIqamahTimesForDate(date: number, iqamahRanges: IqamahTimeRang
     fajr: range.fajr,
     dhuhr: range.dhuhr,
     asr: range.asr,
-    maghrib: "sunset", // Maghrib Iqamah is same as Adhan time
+    maghrib: range.maghrib || "sunset", // Use maghrib iqamah from data, fallback to adhan time
     isha: range.isha, // This will be "Entry Time" for summer months
     jummah: "" // Will be set separately
   };
@@ -565,8 +565,8 @@ export function getIqamahTime(prayer: string, adhanTime: string, iqamahTimes: Da
     case 'asr':
       return resolveRelativeIqamah(iqamahTimes.asr, adhanTime);
     case 'maghrib':
-      // Maghrib Iqamah is same as Adhan time
-      return adhanTime;
+      // Use the specified iqamah time, fallback to adhan time if not specified
+      return resolveRelativeIqamah(iqamahTimes.maghrib === "sunset" ? adhanTime : iqamahTimes.maghrib, adhanTime);
     case 'isha':
       // "Straight after Maghrib" = Iqamah at Maghrib time; "Entry Time" = Iqamah at Isha adhan
       if (iqamahTimes.isha === "Straight after Maghrib" && maghribAdhan) return maghribAdhan;
