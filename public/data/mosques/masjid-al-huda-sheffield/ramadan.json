@@ -1,7 +1,7 @@
 {
   "month": "RAMADAN 1447",
-  "gregorian_start": "2025-02-18",
-  "gregorian_end": "2025-03-19",
+  "gregorian_start": "2026-02-18",
+  "gregorian_end": "2026-03-19",
   "prayer_times": [
     {
       "ramadan_day": 1,
@@ -307,21 +307,21 @@
   "iqamah_times": [
     {
       "date_range": "1-3",
-      "fajr": "Various",
+      "fajr": "20 mins after adhan",
       "dhuhr": "12:45",
       "asr": "15:15",
       "isha": "Entry Time"
     },
     {
       "date_range": "4-21",
-      "fajr": "Various",
+      "fajr": "20 mins after adhan",
       "dhuhr": "12:45",
       "asr": "15:30",
       "isha": "Entry Time"
     },
     {
       "date_range": "22-30",
-      "fajr": "Various",
+      "fajr": "20 mins after adhan",
       "dhuhr": "12:45",
       "asr": "15:45",
       "isha": "Entry Time"
