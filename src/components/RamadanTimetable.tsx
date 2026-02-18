@@ -180,9 +180,6 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
         <CardDescription className="text-white/70">
           {ramadanData?.month ?? "Ramadan"} schedule for {mosque.name}.
         </CardDescription>
-        {ramadanData?.taraweeh && (
-          <p className="text-xs text-white/70">{ramadanData.taraweeh}</p>
-        )}
       </CardHeader>
 
       <CardContent className="p-4 sm:p-6">

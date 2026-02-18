@@ -1,5 +1,33 @@
 # Todo
 
+## Plan (Compare Table Gradient + Swipe Overlap)
+
+- [x] Apply prayer-widget gradient shell styling to `ComparePrayerTimes`.
+- [x] Fix horizontal swipe overlap behavior in the compare table on small screens.
+- [x] Run `npx tsc --noEmit` and record review notes.
+
+## Review (Compare Table Gradient + Swipe Overlap)
+
+- Updated `src/components/ComparePrayerTimes.tsx` to use the same gradient shell treatment as `PrayerTimesWidget` (rounded gradient card, white/overlay borders, and consistent dark-header/footer treatment).
+- Restyled compare controls/table typography for contrast parity on the gradient surface.
+- Fixed swipe overlap behavior by disabling sticky first-column layering on small screens (`md:sticky` only), while preserving sticky labels on larger breakpoints.
+- Set an explicit table minimum width (`min-w-[920px]`) so horizontal swipe behavior is stable and columns no longer collapse into overlap on narrow screens.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Production Map Blank Fix)
+
+- [x] Audit `MosqueMap` embed strategy for production reliability risks.
+- [x] Implement a resilient map embed flow (coordinate-based URL + fallback behavior).
+- [x] Run type-check verification and document fix outcome.
+
+## Review (Production Map Blank Fix)
+
+- Root cause risk: map iframe depended on address-geocoding query URL (`maps?q=<address>&output=embed`), which is less reliable in production than coordinate embeds.
+- Updated `src/components/MosqueMap.tsx` to build the primary iframe URL from precise `lat,lng` coordinates.
+- Added automatic provider fallback: if Google iframe load errors, the component switches to an OpenStreetMap embed for continuity.
+- Added a persistent `Open location in Google Maps` external link so users can still navigate if embedded rendering is blocked by browser/privacy policies.
+- Verification: `npx tsc --noEmit` passed.
+
 ## Plan (Pre-Share Efficiency Pass)
 
 - [x] Audit and remove duplicate timetable/Ramadan fetch paths in runtime-critical components.

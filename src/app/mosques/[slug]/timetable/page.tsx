@@ -31,9 +31,6 @@ export default async function TimetablePage({ params }: TimetablePageProps) {
           <Button variant="link" asChild className="h-auto p-0 text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)]">
             <Link href="/">Back to home</Link>
           </Button>
-          <Button variant="outline" asChild>
-            <Link href={`/mosques/${mosque.slug}`}>Live prayer view</Link>
-          </Button>
         </div>
 
         <header className="mb-6 sm:mb-8">
