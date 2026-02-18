@@ -194,18 +194,22 @@ export default function ComparePrayerTimes({ standalone = false }: ComparePrayer
       )}
 
       {(isOpen || standalone) && (
-        <Card id="compare-mosques-table">
-          <CardHeader className="border-b border-border bg-muted/50 p-4 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h3 className="text-lg font-bold text-foreground">
+        <Card
+          id="compare-mosques-table"
+          className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] text-white shadow-lg sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl"
+        >
+          <CardHeader className="border-b border-white/10 bg-white/5 p-4 sm:p-6">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <h3 className="text-lg font-bold text-white">
                 Prayer times comparison
               </h3>
               <div className="flex items-center gap-2">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={goToPrevDay}
                   aria-label="Previous day"
+                  className="border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
                 >
                   <svg
                     className="size-5"
@@ -221,14 +225,15 @@ export default function ComparePrayerTimes({ standalone = false }: ComparePrayer
                     />
                   </svg>
                 </Button>
-                <span className="min-w-[140px] text-center font-medium text-foreground">
+                <span className="min-w-[140px] text-center font-medium text-white">
                   {formatDateForDisplay(selectedDate)}
                 </span>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={goToNextDay}
                   aria-label="Next day"
+                  className="border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
                 >
                   <svg
                     className="size-5"
@@ -249,77 +254,71 @@ export default function ComparePrayerTimes({ standalone = false }: ComparePrayer
           </CardHeader>
 
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              {isLoading ? (
-                <div className="p-12 text-center text-muted-foreground">
-                  Loading prayer times…
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="sticky left-0 z-10 bg-background">
-                        Prayer
+            {isLoading ? (
+              <div className="p-12 text-center text-white/70">Loading prayer times…</div>
+            ) : (
+              <Table className="min-w-[920px] text-white">
+                <TableHeader>
+                  <TableRow className="border-white/10 hover:bg-white/5">
+                    <TableHead className="md:sticky md:left-0 md:z-20 md:bg-[var(--theme-primary)] md:backdrop-blur-md">
+                      Prayer
+                    </TableHead>
+                    {data.map(({ mosque, error }) => (
+                      <TableHead
+                        key={mosque.id}
+                        className="min-w-[130px] text-center text-white"
+                      >
+                        <div className="truncate" title={mosque.name}>
+                          {mosque.name.replace(/ Sheffield$/, "")}
+                        </div>
+                        {error && (
+                          <span className="mt-0.5 block text-xs font-normal text-amber-200">
+                            {error}
+                          </span>
+                        )}
                       </TableHead>
-                      {data.map(({ mosque, error }) => (
-                        <TableHead
-                          key={mosque.id}
-                          className="min-w-[100px] text-center"
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {PRAYER_NAMES.map((prayer) => (
+                    <TableRow key={prayer} className="border-white/10 hover:bg-white/5">
+                      <TableCell className="font-medium text-white/80 md:sticky md:left-0 md:z-10 md:bg-[var(--theme-primary)] md:backdrop-blur-md">
+                        {prayer}
+                      </TableCell>
+                      {data.map((mosqueData) => (
+                        <TableCell
+                          key={mosqueData.mosque.id}
+                          className="text-center"
                         >
-                          <div className="truncate" title={mosque.name}>
-                            {mosque.name.replace(/ Sheffield$/, "")}
-                          </div>
-                          {error && (
-                            <span className="mt-0.5 block text-xs font-normal text-amber-700">
-                              {error}
+                          {mosqueData.error ? (
+                            <span className="text-white/50">—</span>
+                          ) : prayer === "Jummah" ? (
+                            <span className="font-mono text-white">
+                              {formatTo12Hour(getIqamahDisplay(prayer, mosqueData))}
                             </span>
-                          )}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {PRAYER_NAMES.map((prayer) => (
-                      <TableRow key={prayer}>
-                        <TableCell className="sticky left-0 z-10 font-medium text-muted-foreground">
-                          {prayer}
-                        </TableCell>
-                        {data.map((mosqueData) => (
-                          <TableCell
-                            key={mosqueData.mosque.id}
-                            className="text-center"
-                          >
-                            {mosqueData.error ? (
-                              <span className="text-muted-foreground">—</span>
-                            ) : (
-                              prayer === "Jummah" ? (
-                                <span className="font-mono text-foreground">
+                          ) : (
+                            <div className="flex flex-col gap-0.5">
+                              <span className="font-mono text-white">
+                                {formatTo12Hour(getAdhanDisplay(prayer, mosqueData))}
+                              </span>
+                              {prayer !== "Sunrise" && (
+                                <span className="font-mono text-xs text-white/65">
                                   {formatTo12Hour(getIqamahDisplay(prayer, mosqueData))}
                                 </span>
-                              ) : (
-                                <div className="flex flex-col gap-0.5">
-                                  <span className="font-mono text-foreground">
-                                    {formatTo12Hour(getAdhanDisplay(prayer, mosqueData))}
-                                  </span>
-                                  {prayer !== "Sunrise" && (
-                                    <span className="font-mono text-xs text-muted-foreground">
-                                      {formatTo12Hour(getIqamahDisplay(prayer, mosqueData))}
-                                    </span>
-                                  )}
-                                </div>
-                              )
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
+                              )}
+                            </div>
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
 
-          <CardFooter className="border-t border-border bg-muted/50 px-4 py-2 text-xs text-muted-foreground">
+          <CardFooter className="border-t border-white/10 bg-white/5 px-4 py-2 text-xs text-white/70">
             Top row: Adhan · Bottom row: Iqamah · Jummah: single time
           </CardFooter>
         </Card>
