@@ -397,17 +397,21 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
                 <button onClick={goToPreviousDay} className="p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white/40 hover:text-white active:text-white transition-colors touch-manipulation" aria-label="Previous day">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
+                <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-4">
                   <div className="flex flex-col items-center">
                     <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.hours.toString().padStart(2, '0')}</div>
                     <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[var(--theme-accent-light)]">hr</div>
                   </div>
-                  <div className="text-2xl sm:text-4xl md:text-5xl font-bold">:</div>
+                  <div className="flex flex-col items-center">
+                    <div className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">:</div>
+                  </div>
                   <div className="flex flex-col items-center">
                     <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.minutes.toString().padStart(2, '0')}</div>
                     <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[var(--theme-accent-light)]">min</div>
                   </div>
-                  <div className="text-2xl sm:text-4xl md:text-5xl font-bold">:</div>
+                  <div className="flex flex-col items-center">
+                    <div className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">:</div>
+                  </div>
                   <div className="flex flex-col items-center">
                     <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.seconds.toString().padStart(2, '0')}</div>
                     <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[var(--theme-accent-light)]">sec</div>
@@ -508,7 +512,7 @@ export default function PrayerTimesWidget({ initialMosque, showDropdown = false 
         )}
 
         {isRamadanPeriod ? (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Button
               asChild
               variant="secondary"
