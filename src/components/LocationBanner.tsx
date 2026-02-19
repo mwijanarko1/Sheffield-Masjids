@@ -145,7 +145,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // If we found the closest mosque
   if (closestMosque) {
     return (
-      <div className="w-full bg-muted border-b border-border py-2 px-4 flex items-center justify-between text-sm">
+      <div className="w-full bg-muted border border-border rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <MapPin className="h-4 w-4 shrink-0" />
           <span>
@@ -179,7 +179,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // If no location access or error, show a small button/banner to enable it
   if (locationStatus !== "loading" && locationStatus !== "success") {
     return (
-      <div className="w-full bg-muted/50 border-b border-border py-2 px-4 flex items-center justify-between text-sm">
+      <div className="w-full bg-muted/50 border border-border rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <MapPin className="h-4 w-4 shrink-0" />
           <span>Enable location to find the nearest masjid</span>
@@ -210,7 +210,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // Loading state
   if (locationStatus === "loading") {
     return (
-      <div className="w-full bg-muted/50 border-b border-border py-2 px-4 flex items-center justify-center text-sm text-muted-foreground">
+      <div className="w-full bg-muted/50 border border-border rounded-lg py-3 px-4 flex items-center justify-center text-sm text-muted-foreground shadow-sm">
         <MapPin className="h-4 w-4 mr-2 animate-pulse" />
         <span>Finding nearest masjid...</span>
       </div>
