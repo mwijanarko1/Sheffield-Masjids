@@ -3,11 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mosque } from "@/types/prayer-times";
-const HIJRI_DATE_FORMATTER = new Intl.DateTimeFormat("en-GB-u-ca-islamic", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+
 type LocationStatus =
   | "idle"
   | "loading"
@@ -50,7 +46,6 @@ interface HomeHeaderCardsProps {
 }
 
 export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -60,20 +55,6 @@ export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
     distanceKm: number;
   } | null>(null);
   const [locationStatus, setLocationStatus] = useState<LocationStatus>("idle");
-
-  // Set initial time and start interval
-  useEffect(() => {
-    const getSheffieldTime = () => {
-      return new Date(
-        new Date().toLocaleString("en-US", { timeZone: "Europe/London" })
-      );
-    };
-    setCurrentTime(getSheffieldTime());
-    const interval = setInterval(() => {
-      setCurrentTime(getSheffieldTime());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const requestUserLocation = useCallback(() => {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
@@ -202,64 +183,8 @@ export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
     }
   }, [closestMosque, locationStatus]);
 
-  const hijriDate = useMemo(() => {
-    if (!currentTime) return "";
-    try {
-      const parts = HIJRI_DATE_FORMATTER.formatToParts(currentTime);
-      const day = parts.find((part) => part.type === "day")?.value;
-      const month = parts.find((part) => part.type === "month")?.value;
-      const year = parts.find((part) => part.type === "year")?.value;
-      if (!day || !month || !year) return "";
-      return `${day} ${month} ${year} AH`;
-    } catch {
-      return "";
-    }
-  }, [currentTime]);
-
-  const gregorianDate = useMemo(() => {
-    if (!currentTime) return "";
-    return currentTime.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  }, [currentTime]);
-
-  const timeString = useMemo(() => {
-    if (!currentTime) return "--:--:--";
-    return currentTime.toLocaleTimeString("en-GB", {
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
-  }, [currentTime]);
-
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {/* Dates Card */}
-      <Card className="flex flex-col justify-center bg-background">
-        <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <div className="space-y-1">
-            <p className="text-lg font-bold text-foreground leading-tight">
-              {gregorianDate}
-            </p>
-            <p className="text-sm font-medium text-muted-foreground">
-              {hijriDate}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Time Card */}
-      <Card className="flex flex-col justify-center bg-background">
-        <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="text-4xl font-black text-foreground tabular-nums tracking-tight">
-            {timeString}
-          </p>
-        </CardContent>
-      </Card>
-
+    <div className="grid grid-cols-1">
       {/* Closest Mosque Card */}
       <Card className="flex flex-col justify-center bg-background">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
