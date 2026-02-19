@@ -48,6 +48,7 @@ interface LocationBannerProps {
 }
 
 export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps) {
+  const [mounted, setMounted] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -92,8 +93,14 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
 
   // Get user location on initial render
   useEffect(() => {
+    setMounted(true);
     requestUserLocation();
   }, [requestUserLocation]);
+
+  // Prevent hydration mismatch by only rendering on client
+  if (!mounted) {
+    return null;
+  }
 
   // Find closest mosque when user location is available
   useEffect(() => {
