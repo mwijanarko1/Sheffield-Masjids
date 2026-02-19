@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour, isValidTimeForMarkup } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -40,6 +40,7 @@ export default function PrayerTimesWidget({
   const [dstSettings] = useState<{ enabled: boolean; customTimes: Record<string, string> } | null>(null);
   const [adjustedIqamahTimes, setAdjustedIqamahTimes] = useState<DailyIqamahTimes | null>(null);
   const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
+  const latestFetchRequestRef = useRef(0);
 
   // Get Sheffield UK time
   const getSheffieldTime = () => {
@@ -246,6 +247,11 @@ export default function PrayerTimesWidget({
   }, []);
 
   useEffect(() => {
+    const requestId = ++latestFetchRequestRef.current;
+    let isActive = true;
+    const isCurrentRequest = () =>
+      isActive && latestFetchRequestRef.current === requestId;
+
     const fetchPrayerTimes = async () => {
       try {
         if (prayerTimes === null) setIsLoading(true);
@@ -258,6 +264,8 @@ export default function PrayerTimesWidget({
           isToday ? getTodaysIqamahTimes(mosque.slug) : getIqamahTimesForSpecificDate(mosque.slug, selectedDate)
         ]);
 
+        if (!isCurrentRequest()) return;
+
         let finalIqamahTimes = iqamahTimesForDate;
         if (dstIqamahDate) {
           try {
@@ -266,13 +274,16 @@ export default function PrayerTimesWidget({
           } catch (e) {}
         }
 
+        if (!isCurrentRequest()) return;
+
         setAdjustedIqamahTimes(finalIqamahTimes);
         setPrayerTimes(prayerTimesForDate);
         setIqamahTimes(iqamahTimesForDate);
 
         if (isToday) {
-          setCurrentPrayer(getCurrentPrayer(prayerTimesForDate));
           const result = await getNextPrayerAndCountdown(prayerTimesForDate, finalIqamahTimes, selectedDate);
+          if (!isCurrentRequest()) return;
+          setCurrentPrayer(getCurrentPrayer(prayerTimesForDate));
           setNextPrayer(result.nextPrayer);
           setCountdown(result.countdown);
           setIsIqamahCountdown(result.isIqamah);
@@ -283,6 +294,8 @@ export default function PrayerTimesWidget({
           setCountdown(null);
         }
       } catch (err) {
+        if (!isCurrentRequest()) return;
+
         const msg = err instanceof Error ? err.message : '';
         if (msg.startsWith('RAMADAN_ONLY:')) {
           const range = msg.replace('RAMADAN_ONLY:', '');
@@ -291,12 +304,17 @@ export default function PrayerTimesWidget({
           setError(`Data not available for ${mosque.name} for this period.`);
         }
       } finally {
+        if (!isCurrentRequest()) return;
         setIsLoading(false);
         setIsTransitioning(false);
       }
     };
 
     fetchPrayerTimes();
+
+    return () => {
+      isActive = false;
+    };
   }, [selectedDate, isToday, mosque]);
 
   useEffect(() => {
@@ -439,7 +457,13 @@ export default function PrayerTimesWidget({
 
       <div className="p-3 sm:p-6 md:p-8 xl:p-10">
         {error ? (
-          <div className="p-6 sm:p-12 text-center text-white bg-white/5 rounded-xl border border-white/10 text-sm sm:text-base">{error}</div>
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="p-6 sm:p-12 text-center text-white bg-white/5 rounded-xl border border-white/10 text-sm sm:text-base"
+          >
+            {error}
+          </div>
         ) : (
           <>
             <div className="mb-3 grid grid-cols-3 items-center border-b border-white/10 px-4 pb-2 sm:mb-4 sm:px-6 xl:px-8">
@@ -473,12 +497,24 @@ export default function PrayerTimesWidget({
                       </div>
                       <div className="flex flex-col items-center">
                         <div className="text-lg font-sans font-black leading-none tracking-tighter sm:text-2xl md:text-3xl xl:text-4xl">
-                          {formatTo12Hour(prayer.adhan)}
+                          {isValidTimeForMarkup(prayer.adhan) ? (
+                            <time dateTime={prayer.adhan}>{formatTo12Hour(prayer.adhan)}</time>
+                          ) : (
+                            formatTo12Hour(prayer.adhan)
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
                         <div className="text-lg font-sans font-black leading-none tracking-tighter sm:text-2xl md:text-3xl xl:text-4xl">
-                          {prayer.name === 'SUNRISE' ? '--:--' : (prayer.iqamah === '-' ? '--:--' : formatTo12Hour(prayer.iqamah))}
+                          {prayer.name === 'SUNRISE' ? (
+                            '--:--'
+                          ) : prayer.iqamah === '-' ? (
+                            '--:--'
+                          ) : isValidTimeForMarkup(prayer.iqamah) ? (
+                            <time dateTime={prayer.iqamah}>{formatTo12Hour(prayer.iqamah)}</time>
+                          ) : (
+                            formatTo12Hour(prayer.iqamah)
+                          )}
                         </div>
                       </div>
                     </div>

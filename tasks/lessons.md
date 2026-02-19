@@ -24,3 +24,23 @@
 - Rule: Before adding Convex indexes, validate names against reserved keywords (`by_id`, `by_creation_time`, `_` prefix disallowed) and use domain-specific names like `by_mosque_id`.
 - Correction pattern: Copied Ramadan data while user intended only non-Ramadan yearly files to be synced.
 - Rule: For scope-specific data sync requests, explicitly preserve excluded datasets (e.g., `ramadan.json`) and copy only named file groups.
+
+## 2026-02-19
+
+- Correction pattern: Frontend input validation was added, but equivalent backend validation on Convex queries was missing.
+- Rule: When hardening any externally callable input, enforce the same validation rules in both frontend utility code and backend query/mutation handlers.
+- Correction pattern: Cache limits were added, but access patterns still behaved as FIFO rather than true LRU.
+- Rule: If eviction is Map-order based, always update entry order on cache hits so eviction semantics match intended LRU behavior.
+- Correction pattern: Retry logic initially retried broad failures with linear delays.
+- Rule: Retry only retriable status/error classes and use exponential backoff with jitter by default.
+
+## 2026-02-19
+
+- Correction pattern: Ramadan extraction used inferred/offset values and incorrect Gregorian alignment instead of literal timetable rows.
+- Rule: When user provides a mosque timetable image, transcribe day-by-day values directly; do not infer missing offsets for columns that are explicitly provided.
+- Rule: Validate Gregorian day progression against the real calendar (no impossible dates like `Feb 29` in non-leap years) and confirm Ramadan start/end boundaries before finalizing.
+- Rule: For mosques that publish Jamaat-only schedules, preserve Jamaat semantics in extracted data and map `Fajr` adhan to `Sehri Ends` when explicitly stated.
+- Correction pattern: User clarified that Ramadan tables may provide only partial adhan fields, with other adhan values expected from normal monthly timetables.
+- Rule: When a Ramadan source omits specific adhan columns, backfill only those omitted adhan fields from the corresponding normal monthly files by exact Gregorian date mapping; keep provided Ramadan fields unchanged.
+- Correction pattern: Persisted selector state restored correctly after refresh, but async widget fetches from the default initial mosque could still overwrite the restored mosque data.
+- Rule: In client components that fetch on key state changes, guard async state writes with request IDs or cancellation so stale responses cannot win race conditions.

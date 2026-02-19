@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { formatTo12Hour, getIqamahTime, getIqamahTimesForDate } from "@/lib/prayer-times";
+import { getIqamahTime, getIqamahTimesForDate } from "@/lib/prayer-times";
+import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { IqamahTimeRange, Mosque } from "@/types/prayer-times";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -225,18 +226,18 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
                     >
                       <TableCell className="font-medium">Day {row.day}</TableCell>
                       <TableCell className="font-medium">{row.dayLabel}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.sunrise)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.jummahIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.sunrise} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.jummahIqamah} className="font-mono tabular-nums" /></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

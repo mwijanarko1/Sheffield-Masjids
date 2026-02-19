@@ -1,5 +1,42 @@
 # Todo
 
+## Plan (Post-Review Hardening Follow-Up)
+
+- [x] Upgrade in-memory cache reads in `src/lib/prayer-times.ts` to true LRU behavior.
+- [x] Improve fetch retry policy in `src/lib/prayer-times.ts` with retriable filtering and exponential backoff + jitter.
+- [x] Add Convex-side request validation in `convex/prayerTimes.ts` and security headers in `src/middleware.ts`.
+- [x] Re-run `npx tsc --noEmit` and document residual items from the review.
+
+## Review (Post-Review Hardening Follow-Up)
+
+- Added `getValidCacheEntry(...)` in `src/lib/prayer-times.ts` to bump cache entries on read, so map-order eviction is now LRU (least recently used) instead of write-order FIFO.
+- Updated fetch retry behavior to retry only retriable status codes (`408`, `425`, `429`, and `5xx`) and retriable fetch errors (timeout/network), using exponential backoff with jitter.
+- Reduced `MAX_RAMADAN_CACHE_ENTRIES` from `90` to `45`.
+- Updated invalid slug error messaging to include a bounded input snippet for easier debugging.
+- Added backend validation in `convex/prayerTimes.ts` for `mosqueSlug`, `month`, `year`, and optional `date` before querying data.
+- Added security headers in `src/middleware.ts` (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) plus production CSP and conditional HSTS.
+- Verification: `npx tsc --noEmit` passed.
+- Residual note: rate limiting is still not implemented; this codebase currently exposes no `src/app/api` prayer-time route handlers, so a route-level limiter is deferred until those endpoints exist.
+
+## Plan (Security Hardening: Middleware + Prayer Times + Seed Script)
+
+- [x] Harden host/domain matching and rewrite exclusions in `src/middleware.ts`.
+- [x] Add slug validation/sanitization, bounded cache insertion, and fetch timeout+retry in `src/lib/prayer-times.ts`.
+- [x] Replace custom env parsing and add Zod JSON validation in `scripts/seed-convex.ts`.
+- [x] Run `npx tsc --noEmit` and targeted lint/check commands; document outcomes in review notes.
+
+## Review (Security Hardening: Middleware + Prayer Times + Seed Script)
+
+- Replaced substring host matching in `src/middleware.ts` with strict normalized domain checks (`NEXT_PUBLIC_LEGACY_NETLIFY_DOMAIN` override + safe default) to block spoofed hostnames.
+- Narrowed rewrite exclusions to known static-asset extensions instead of broad dot-based path blocking, so dotted content routes are not accidentally excluded.
+- Added `normalizeMosqueSlug(...)` validation in `src/lib/prayer-times.ts` and routed cache keys + Convex/static lookups through sanitized slugs to prevent traversal/cache poisoning inputs.
+- Added bounded cache insertion for monthly and Ramadan maps to prevent unbounded in-memory growth while preserving existing TTL behavior.
+- Added fetch timeout + retry helpers and applied them to DST/monthly/Ramadan fetch paths.
+- Replaced custom `.env.local` parser in `scripts/seed-convex.ts` with `loadEnvConfig(process.cwd())` from `@next/env`.
+- Added Zod schema validation for mosque registry, monthly files, and Ramadan files before seeding mutations.
+- Verification: `npx tsc --noEmit` passed.
+- Verification gap: `npx eslint ...` failed due an existing ESLint config circular-serialization error unrelated to these changes.
+
 ## Plan (Prod Prayer Times Parity + Cache Policy)
 
 - [x] Remove hardcoded Convex year selection in prayer-time fetches.
@@ -411,4 +448,53 @@
 - Updated shared/seed types for compatibility:
   - `src/types/prayer-times.ts` adds optional `isHidden?: boolean`.
   - `scripts/seed-convex.ts` supports optional `isHidden` when seeding.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Madina Ramadan Timetable Extraction Fix)
+
+- [x] Re-extract Madina Ramadan daily times from provided timetable image.
+- [x] Map `fajr` adhan to `Sehri Ends` and use Jamaat times for congregational schedule.
+- [x] Correct Gregorian mapping so Ramadan day 1 is `2026-02-19` and day 30 is `2026-03-20`.
+- [x] Rebuild `iqamah_times` date ranges to match actual Madina Jamaat transitions.
+- [x] Validate JSON parse and day-count integrity.
+
+## Review (Madina Ramadan Timetable Extraction Fix)
+
+- Updated `public/data/mosques/madina-masjid-sheffield/ramadan.json` using the user-provided timetable.
+- Corrected date boundary to `gregorian_start: 2026-02-19` and `gregorian_end: 2026-03-20` (30 days).
+- Replaced all `prayer_times` rows with extracted timetable values:
+  - `fajr` = `Sehri Ends`
+  - `shurooq` = `Sunrise`
+  - `dhuhr`, `asr`, `isha` = Jamaat values
+  - `maghrib` = Iftari time
+- Rebuilt `iqamah_times` into accurate contiguous ranges based on Madina's Jamaat changes.
+- Verification: Node JSON parse check passed (`30` Ramadan days, expected start/end dates).
+
+## Plan (Madina Ramadan Adhan Backfill Alignment)
+
+- [x] Keep Madina Ramadan-only columns sourced from provided image (Sehri/Fajr, Sunrise, Maghrib, Jamaat).
+- [x] Backfill missing adhan fields (`dhuhr`, `asr`, `isha`) from normal monthly Madina February/March files.
+- [x] Validate day-by-day date mapping from `2026-02-19` to `2026-03-20`.
+
+## Review (Madina Ramadan Adhan Backfill Alignment)
+
+- Updated `public/data/mosques/madina-masjid-sheffield/ramadan.json` so `dhuhr`, `asr`, and `isha` adhan values now come from normal monthly timetable data:
+  - `february.json` for Feb 19-28
+  - `march.json` for Mar 1-20
+- Preserved Ramadan-table sourced values for:
+  - Fajr adhan (`Sehri Ends`), Sunrise, Maghrib adhan
+  - Jamaat-derived congregational schedule in `iqamah_times`
+- Verification: 30 days confirmed, date span remains `2026-02-19` through `2026-03-20`.
+
+## Plan (Refresh Mosque Timetable Sync Bug)
+
+- [x] Confirm and isolate the stale-timetable-on-refresh path between persisted selector state and widget data fetches.
+- [x] Guard `PrayerTimesWidget` async fetch updates so stale responses cannot overwrite the latest selected mosque data.
+- [x] Run `npx tsc --noEmit` and record verification/review notes.
+
+## Review (Refresh Mosque Timetable Sync Bug)
+
+- Root cause: on refresh, `PrayerTimesWidget` could kick off overlapping async fetches (default first mosque, then restored persisted mosque), and stale responses were still allowed to call `setState`.
+- Updated `src/components/PrayerTimesWidget.tsx` to track the latest fetch request with `useRef` and ignore stale response/error/finally state updates.
+- This keeps selector state and rendered timetable data consistent after hydration-time mosque restoration.
 - Verification: `npx tsc --noEmit` passed.

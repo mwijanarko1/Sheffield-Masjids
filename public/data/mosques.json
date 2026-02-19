@@ -14,7 +14,7 @@
       "name": "Masjid Risalah",
       "address": "51 Montgomery Terrace Rd, Sheffield S6 3BW, United Kingdom",
       "lat": 53.3893364595497,
-      "lng": -1.4815868756857322, 
+      "lng": -1.4815868756857322,
       "slug": "masjid-risalah"
     },
     {
@@ -43,6 +43,24 @@
       "lng": -1.4832991315079853,
       "slug": "masjid-al-huda-sheffield",
       "website": "https://masjidhudasheff.com"
+    },
+    {
+      "id": "andalus-community-centre",
+      "name": "Andalus Community Centre",
+      "address": "43 Townhead Street, Sheffield S1 2EB, United Kingdom",
+      "lat": 53.38334305719299,
+      "lng": -1.4741565180146554,
+      "slug": "andalus-community-centre",
+      "website": "https://www.andalus.org.uk"
+    },
+    {
+      "id": "madina-masjid-sheffield",
+      "name": "Madina Masjid Sheffield",
+      "address": "24 Wolseley Rd, Lowfield, Sheffield S8 0ZU, United Kingdom",
+      "lat": 53.364138901927774,
+      "lng": -1.473326602699712,
+      "slug": "madina-masjid-sheffield",
+      "website": "https://www.madinamasjid.org.uk"
     }
   ]
 }

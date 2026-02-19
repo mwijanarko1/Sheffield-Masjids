@@ -1,6 +1,57 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 
+const MOSQUE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const VALID_MONTHS = new Set([
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+]);
+
+function validateMosqueSlug(slug: string): string {
+  const normalized = slug.trim().toLowerCase();
+  if (normalized.length === 0 || normalized.length > 64 || !MOSQUE_SLUG_RE.test(normalized)) {
+    throw new Error("Invalid mosqueSlug");
+  }
+  return normalized;
+}
+
+function validateMonth(month: string): string {
+  const normalized = month.trim().toLowerCase();
+  if (!VALID_MONTHS.has(normalized)) {
+    throw new Error("Invalid month");
+  }
+  return normalized;
+}
+
+function validateYear(year: number): number {
+  if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+    throw new Error("Invalid year");
+  }
+  return year;
+}
+
+function parseOptionalDate(date?: string): Date | null {
+  if (!date) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    throw new Error("Invalid date format");
+  }
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error("Invalid date");
+  }
+  return parsed;
+}
+
 /**
  * Get monthly prayer times for a mosque.
  * Returns data in the same shape as the static JSON for compatibility with lib/prayer-times.
@@ -12,13 +63,16 @@ export const getMonthly = query({
     year: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const year = args.year ?? new Date().getFullYear();
+    const mosqueSlug = validateMosqueSlug(args.mosqueSlug);
+    const month = validateMonth(args.month);
+    const year = validateYear(args.year ?? new Date().getFullYear());
+
     const doc = await ctx.db
       .query("monthlyPrayerTimes")
       .withIndex("by_mosque_month_year", (q) =>
         q
-          .eq("mosqueSlug", args.mosqueSlug)
-          .eq("month", args.month)
+          .eq("mosqueSlug", mosqueSlug)
+          .eq("month", month)
           .eq("year", year)
       )
       .unique();
@@ -45,19 +99,21 @@ export const getRamadan = query({
     date: v.optional(v.string()), // ISO date string YYYY-MM-DD to find Ramadan covering this date
   },
   handler: async (ctx, args) => {
+    const mosqueSlug = validateMosqueSlug(args.mosqueSlug);
+    const targetDate = parseOptionalDate(args.date);
+
     const docs = await ctx.db
       .query("ramadanTimetables")
-      .withIndex("by_mosque", (q) => q.eq("mosqueSlug", args.mosqueSlug))
+      .withIndex("by_mosque", (q) => q.eq("mosqueSlug", mosqueSlug))
       .collect();
 
     if (docs.length === 0) return null;
 
-    if (args.date) {
-      const target = new Date(args.date);
+    if (targetDate) {
       const covering = docs.find((d) => {
         const start = new Date(d.gregorianStart);
         const end = new Date(d.gregorianEnd);
-        return target >= start && target <= end;
+        return targetDate >= start && targetDate <= end;
       });
       if (covering) {
         return {

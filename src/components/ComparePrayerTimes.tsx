@@ -8,6 +8,7 @@ import {
   getDSTAdjustmentIqamahDate,
   formatDateForDisplay,
   formatTo12Hour,
+  isValidTimeForMarkup,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from "@/types/prayer-times";
 import { Button } from "@/components/ui/button";
@@ -298,16 +299,37 @@ export default function ComparePrayerTimes({
                             <span className="text-white/50">—</span>
                           ) : prayer === "Jummah" ? (
                             <span className="font-mono text-white">
-                              {formatTo12Hour(getIqamahDisplay(prayer, mosqueData))}
+                              {(() => {
+                                const raw = getIqamahDisplay(prayer, mosqueData);
+                                return isValidTimeForMarkup(raw) ? (
+                                  <time dateTime={raw}>{formatTo12Hour(raw)}</time>
+                                ) : (
+                                  formatTo12Hour(raw)
+                                );
+                              })()}
                             </span>
                           ) : (
                             <div className="flex flex-col gap-0.5">
                               <span className="font-mono text-white">
-                                {formatTo12Hour(getAdhanDisplay(prayer, mosqueData))}
+                                {(() => {
+                                  const raw = getAdhanDisplay(prayer, mosqueData);
+                                  return isValidTimeForMarkup(raw) ? (
+                                    <time dateTime={raw}>{formatTo12Hour(raw)}</time>
+                                  ) : (
+                                    formatTo12Hour(raw)
+                                  );
+                                })()}
                               </span>
                               {prayer !== "Sunrise" && (
                                 <span className="font-mono text-xs text-white/65">
-                                  {formatTo12Hour(getIqamahDisplay(prayer, mosqueData))}
+                                  {(() => {
+                                    const raw = getIqamahDisplay(prayer, mosqueData);
+                                    return isValidTimeForMarkup(raw) ? (
+                                      <time dateTime={raw}>{formatTo12Hour(raw)}</time>
+                                    ) : (
+                                      formatTo12Hour(raw)
+                                    );
+                                  })()}
                                 </span>
                               )}
                             </div>
