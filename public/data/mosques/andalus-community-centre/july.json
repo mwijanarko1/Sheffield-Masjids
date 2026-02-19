@@ -1,0 +1,303 @@
+{
+  "month": "JULY",
+  "prayer_times": [
+    {
+      "date": 1,
+      "fajr": "03:25",
+      "shurooq": "05:30",
+      "dhuhr": "13:11",
+      "asr": "17:38",
+      "maghrib": "09:42",
+      "isha": "22:57"
+    },
+    {
+      "date": 2,
+      "fajr": "03:26",
+      "shurooq": "05:31",
+      "dhuhr": "13:11",
+      "asr": "17:38",
+      "maghrib": "09:42",
+      "isha": "22:56"
+    },
+    {
+      "date": 3,
+      "fajr": "03:27",
+      "shurooq": "05:32",
+      "dhuhr": "13:12",
+      "asr": "17:38",
+      "maghrib": "09:42",
+      "isha": "22:55"
+    },
+    {
+      "date": 4,
+      "fajr": "03:28",
+      "shurooq": "05:33",
+      "dhuhr": "13:12",
+      "asr": "17:38",
+      "maghrib": "09:41",
+      "isha": "22:54"
+    },
+    {
+      "date": 5,
+      "fajr": "03:30",
+      "shurooq": "05:35",
+      "dhuhr": "13:12",
+      "asr": "17:37",
+      "maghrib": "09:40",
+      "isha": "22:53"
+    },
+    {
+      "date": 6,
+      "fajr": "03:31",
+      "shurooq": "05:36",
+      "dhuhr": "13:12",
+      "asr": "17:37",
+      "maghrib": "09:40",
+      "isha": "22:52"
+    },
+    {
+      "date": 7,
+      "fajr": "03:32",
+      "shurooq": "05:37",
+      "dhuhr": "13:12",
+      "asr": "17:37",
+      "maghrib": "09:39",
+      "isha": "22:51"
+    },
+    {
+      "date": 8,
+      "fajr": "03:34",
+      "shurooq": "05:39",
+      "dhuhr": "13:12",
+      "asr": "17:37",
+      "maghrib": "09:38",
+      "isha": "22:50"
+    },
+    {
+      "date": 9,
+      "fajr": "03:35",
+      "shurooq": "05:40",
+      "dhuhr": "13:13",
+      "asr": "17:37",
+      "maghrib": "09:37",
+      "isha": "22:48"
+    },
+    {
+      "date": 10,
+      "fajr": "03:37",
+      "shurooq": "05:42",
+      "dhuhr": "13:13",
+      "asr": "17:37",
+      "maghrib": "09:36",
+      "isha": "22:47"
+    },
+    {
+      "date": 11,
+      "fajr": "03:39",
+      "shurooq": "05:44",
+      "dhuhr": "13:13",
+      "asr": "17:36",
+      "maghrib": "09:35",
+      "isha": "22:46"
+    },
+    {
+      "date": 12,
+      "fajr": "03:40",
+      "shurooq": "05:45",
+      "dhuhr": "13:13",
+      "asr": "17:36",
+      "maghrib": "09:34",
+      "isha": "22:44"
+    },
+    {
+      "date": 13,
+      "fajr": "03:42",
+      "shurooq": "05:47",
+      "dhuhr": "13:13",
+      "asr": "17:36",
+      "maghrib": "09:33",
+      "isha": "22:43"
+    },
+    {
+      "date": 14,
+      "fajr": "03:44",
+      "shurooq": "05:49",
+      "dhuhr": "13:13",
+      "asr": "17:36",
+      "maghrib": "09:32",
+      "isha": "22:41"
+    },
+    {
+      "date": 15,
+      "fajr": "03:46",
+      "shurooq": "05:51",
+      "dhuhr": "13:13",
+      "asr": "17:35",
+      "maghrib": "09:31",
+      "isha": "22:39"
+    },
+    {
+      "date": 16,
+      "fajr": "03:48",
+      "shurooq": "05:53",
+      "dhuhr": "13:13",
+      "asr": "17:35",
+      "maghrib": "09:30",
+      "isha": "22:38"
+    },
+    {
+      "date": 17,
+      "fajr": "03:49",
+      "shurooq": "05:54",
+      "dhuhr": "13:13",
+      "asr": "17:35",
+      "maghrib": "09:29",
+      "isha": "22:36"
+    },
+    {
+      "date": 18,
+      "fajr": "03:51",
+      "shurooq": "05:56",
+      "dhuhr": "13:14",
+      "asr": "17:34",
+      "maghrib": "09:27",
+      "isha": "22:34"
+    },
+    {
+      "date": 19,
+      "fajr": "03:53",
+      "shurooq": "05:58",
+      "dhuhr": "13:14",
+      "asr": "17:34",
+      "maghrib": "09:26",
+      "isha": "22:32"
+    },
+    {
+      "date": 20,
+      "fajr": "03:55",
+      "shurooq": "06:00",
+      "dhuhr": "13:14",
+      "asr": "17:33",
+      "maghrib": "09:25",
+      "isha": "22:31"
+    },
+    {
+      "date": 21,
+      "fajr": "03:57",
+      "shurooq": "06:02",
+      "dhuhr": "13:14",
+      "asr": "17:33",
+      "maghrib": "09:23",
+      "isha": "22:29"
+    },
+    {
+      "date": 22,
+      "fajr": "03:59",
+      "shurooq": "06:04",
+      "dhuhr": "13:14",
+      "asr": "17:32",
+      "maghrib": "09:22",
+      "isha": "22:27"
+    },
+    {
+      "date": 23,
+      "fajr": "04:01",
+      "shurooq": "06:06",
+      "dhuhr": "13:14",
+      "asr": "17:32",
+      "maghrib": "09:20",
+      "isha": "22:25"
+    },
+    {
+      "date": 24,
+      "fajr": "04:03",
+      "shurooq": "06:08",
+      "dhuhr": "13:14",
+      "asr": "17:31",
+      "maghrib": "09:19",
+      "isha": "22:23"
+    },
+    {
+      "date": 25,
+      "fajr": "04:05",
+      "shurooq": "06:10",
+      "dhuhr": "13:14",
+      "asr": "17:31",
+      "maghrib": "09:17",
+      "isha": "22:21"
+    },
+    {
+      "date": 26,
+      "fajr": "04:08",
+      "shurooq": "06:13",
+      "dhuhr": "13:14",
+      "asr": "17:30",
+      "maghrib": "09:16",
+      "isha": "22:18"
+    },
+    {
+      "date": 27,
+      "fajr": "04:10",
+      "shurooq": "06:15",
+      "dhuhr": "13:14",
+      "asr": "17:29",
+      "maghrib": "09:14",
+      "isha": "22:16"
+    },
+    {
+      "date": 28,
+      "fajr": "04:12",
+      "shurooq": "06:17",
+      "dhuhr": "13:14",
+      "asr": "17:29",
+      "maghrib": "09:12",
+      "isha": "22:14"
+    },
+    {
+      "date": 29,
+      "fajr": "04:14",
+      "shurooq": "06:19",
+      "dhuhr": "13:14",
+      "asr": "17:28",
+      "maghrib": "09:11",
+      "isha": "22:12"
+    },
+    {
+      "date": 30,
+      "fajr": "04:16",
+      "shurooq": "06:21",
+      "dhuhr": "13:14",
+      "asr": "17:27",
+      "maghrib": "09:09",
+      "isha": "22:10"
+    },
+    {
+      "date": 31,
+      "fajr": "04:18",
+      "shurooq": "06:23",
+      "dhuhr": "13:14",
+      "asr": "17:26",
+      "maghrib": "09:07",
+      "isha": "22:07"
+    }
+  ],
+  "iqamah_times": [
+    {
+      "date_range": "1-14",
+      "fajr": "04:00",
+      "dhuhr": "13:30",
+      "asr": "Entry Time",
+      "maghrib": "sunset",
+      "isha": "Entry Time"
+    },
+    {
+      "date_range": "15-31",
+      "fajr": "04:15",
+      "dhuhr": "13:30",
+      "asr": "Entry Time",
+      "maghrib": "sunset",
+      "isha": "Entry Time"
+    }
+  ],
+  "jummah_iqamah": "13:30"
+}

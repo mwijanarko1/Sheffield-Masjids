@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getIqamahTime, getIqamahTimesForDate, loadMonthlyPrayerTimes, formatTo12Hour } from "@/lib/prayer-times";
+import { getIqamahTime, getIqamahTimesForDate, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
+import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -206,18 +207,18 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
                       )}
                     >
                       <TableCell className="font-medium">{row.dayLabel}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.fajrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.sunrise)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.dhuhrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.asrIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.maghribIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaAdhan)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.ishaIqamah)}</TableCell>
-                      <TableCell className="font-mono tabular-nums">{formatTo12Hour(row.jummahIqamah)}</TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.sunrise} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaAdhan} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaIqamah} className="font-mono tabular-nums" /></TableCell>
+                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.jummahIqamah} className="font-mono tabular-nums" /></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -236,29 +237,29 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
                   <p className="mb-3 text-sm font-semibold text-white">{row.dayLabel}</p>
                   <div className="grid grid-cols-2 gap-2 text-xs text-white/70">
                     <span>Fajr Adhan</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.fajrAdhan)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.fajrAdhan} className="font-mono tabular-nums text-right" /></span>
                     <span>Fajr Iqamah</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.fajrIqamah)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.fajrIqamah} className="font-mono tabular-nums text-right" /></span>
                     <span>Sunrise</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.sunrise)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.sunrise} className="font-mono tabular-nums text-right" /></span>
                     <span>Dhuhr Adhan</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.dhuhrAdhan)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.dhuhrAdhan} className="font-mono tabular-nums text-right" /></span>
                     <span>Dhuhr Iqamah</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.dhuhrIqamah)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.dhuhrIqamah} className="font-mono tabular-nums text-right" /></span>
                     <span>Asr Adhan</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.asrAdhan)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.asrAdhan} className="font-mono tabular-nums text-right" /></span>
                     <span>Asr Iqamah</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.asrIqamah)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.asrIqamah} className="font-mono tabular-nums text-right" /></span>
                     <span>Maghrib Adhan</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.maghribAdhan)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.maghribAdhan} className="font-mono tabular-nums text-right" /></span>
                     <span>Maghrib Iqamah</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.maghribIqamah)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.maghribIqamah} className="font-mono tabular-nums text-right" /></span>
                     <span>Isha Adhan</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.ishaAdhan)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.ishaAdhan} className="font-mono tabular-nums text-right" /></span>
                     <span>Isha Iqamah</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.ishaIqamah)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.ishaIqamah} className="font-mono tabular-nums text-right" /></span>
                     <span>Jummah Iqamah</span>
-                    <span className="font-mono tabular-nums text-right">{formatTo12Hour(row.jummahIqamah)}</span>
+                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.jummahIqamah} className="font-mono tabular-nums text-right" /></span>
                   </div>
                 </div>
               ))}

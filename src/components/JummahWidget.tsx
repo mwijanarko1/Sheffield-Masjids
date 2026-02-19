@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatTo12Hour } from '@/lib/prayer-times';
+import { formatTo12Hour, isValidTimeForMarkup } from '@/lib/prayer-times';
 
 interface JummahWidgetProps {
   jummahTime: string;
@@ -7,10 +7,12 @@ interface JummahWidgetProps {
 }
 
 export default function JummahWidget({ jummahTime, isActive }: JummahWidgetProps) {
-  // Format time for display (using 12-hour format)
-  const formatJummahTime = (time: string) => {
-    return formatTo12Hour(time);
-  };
+  const displayTime = formatTo12Hour(jummahTime);
+  const timeContent = isValidTimeForMarkup(jummahTime) ? (
+    <time dateTime={jummahTime}>{displayTime}</time>
+  ) : (
+    displayTime
+  );
 
   return (
     <div className={`flex flex-col rounded-xl sm:rounded-2xl transition-all duration-500 shadow-sm overflow-hidden ${isActive
@@ -23,7 +25,7 @@ export default function JummahWidget({ jummahTime, isActive }: JummahWidgetProps
           jummah prayer
         </div>
         <div className="text-3xl sm:text-4xl lg:text-5xl font-sans font-extrabold tracking-tighter leading-none">
-          {formatJummahTime(jummahTime)}
+          {timeContent}
         </div>
       </div>
     </div>

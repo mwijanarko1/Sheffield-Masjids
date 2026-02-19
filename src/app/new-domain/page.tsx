@@ -34,7 +34,12 @@ export default function NewDomainPage() {
           </div>
 
           <Button asChild size="lg" className="w-full gap-2 text-lg h-14">
-            <a href={newDomain}>
+            <a
+              href={newDomain}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visit new site at ${newDomain.replace("https://", "")} (opens in new window)`}
+            >
               Go to New Site
               <svg 
                 className="w-5 h-5" 
@@ -56,6 +61,10 @@ export default function NewDomainPage() {
 
         <p className="text-sm text-muted-foreground">
           Please update your bookmarks to the new address.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          The old domain will remain accessible during the transition. For
+          questions, visit the new site.
         </p>
       </div>
     </div>

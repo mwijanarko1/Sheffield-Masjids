@@ -283,26 +283,40 @@
   ],
   "iqamah_times": [
     {
-      "date_range": "1-10",
+      "date_range": "1-2",
+      "fajr": "04:30",
+      "dhuhr": "13:30",
+      "asr": "17:45",
+      "isha": "22:04"
+    },
+    {
+      "date_range": "3-11",
       "fajr": "04:45",
       "dhuhr": "13:30",
-      "asr": "18:00",
-      "isha": "Entry Time"
+      "asr": "17:45",
+      "isha": "22:00"
     },
     {
-      "date_range": "11-20",
-      "fajr": "05:00",
-      "dhuhr": "13:30",
-      "asr": "18:00",
-      "isha": "Entry Time"
-    },
-    {
-      "date_range": "21-31",
-      "fajr": "05:15",
+      "date_range": "12-17",
+      "fajr": "04:45",
       "dhuhr": "13:30",
       "asr": "17:30",
-      "isha": "Entry Time"
+      "isha": "22:00"
+    },
+    {
+      "date_range": "18-26",
+      "fajr": "05:00",
+      "dhuhr": "13:30",
+      "asr": "17:30",
+      "isha": "21:45"
+    },
+    {
+      "date_range": "27-31",
+      "fajr": "05:15",
+      "dhuhr": "13:30",
+      "asr": "17:15",
+      "isha": "21:30"
     }
   ],
-  "jummah_iqamah": "13:10"
+  "jummah_iqamah": "12:30"
 }

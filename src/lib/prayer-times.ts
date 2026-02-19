@@ -4,7 +4,14 @@ import { MonthlyPrayerTimes, DailyPrayerTimes, DailyIqamahTimes, IqamahTimeRange
 let convexClient: InstanceType<typeof import('convex/browser').ConvexHttpClient> | null = null;
 let convexClientUrl: string | null = null;
 
-const PRAYER_TIMES_CACHE_TTL_MS = 5 * 60 * 1000;
+const PRAYER_TIMES_CACHE_TTL_MS = 10 * 60 * 1000;
+const MAX_MONTHLY_CACHE_ENTRIES = 180;
+const MAX_RAMADAN_CACHE_ENTRIES = 45;
+const FETCH_TIMEOUT_MS = 6_000;
+const FETCH_RETRY_ATTEMPTS = 3;
+const FETCH_RETRY_BACKOFF_MS = 250;
+const FETCH_RETRY_MAX_BACKOFF_MS = 4_000;
+const MOSQUE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 type TimedCacheEntry<T> = {
   value: T;
@@ -16,6 +23,117 @@ function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
     value,
     expiresAt: Date.now() + PRAYER_TIMES_CACHE_TTL_MS,
   };
+}
+
+function normalizeMosqueSlug(slug: string): string {
+  const normalized = slug.trim().toLowerCase();
+  if (normalized.length === 0 || normalized.length > 64 || !MOSQUE_SLUG_RE.test(normalized)) {
+    const snippet = slug.slice(0, 80);
+    throw new Error(`Invalid mosque slug: "${snippet}"`);
+  }
+  return normalized;
+}
+
+function getValidCacheEntry<T>(cache: Map<string, TimedCacheEntry<T>>, key: string): TimedCacheEntry<T> | null {
+  const cachedEntry = cache.get(key);
+  if (!cachedEntry) {
+    return null;
+  }
+
+  if (cachedEntry.expiresAt <= Date.now()) {
+    cache.delete(key);
+    return null;
+  }
+
+  // Bump to most-recently-used so eviction is LRU rather than insertion-order FIFO.
+  cache.delete(key);
+  cache.set(key, cachedEntry);
+  return cachedEntry;
+}
+
+function setBoundedCacheEntry<T>(
+  cache: Map<string, TimedCacheEntry<T>>,
+  key: string,
+  value: TimedCacheEntry<T>,
+  maxEntries: number,
+): void {
+  if (cache.has(key)) {
+    cache.delete(key);
+  }
+
+  cache.set(key, value);
+
+  while (cache.size > maxEntries) {
+    const oldestKey = cache.keys().next().value;
+    if (!oldestKey) {
+      break;
+    }
+    cache.delete(oldestKey);
+  }
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getRetryDelayMs(attempt: number): number {
+  const exponentialDelay = Math.min(
+    FETCH_RETRY_BACKOFF_MS * 2 ** (attempt - 1),
+    FETCH_RETRY_MAX_BACKOFF_MS,
+  );
+  const jitter = Math.floor(Math.random() * 150);
+  return exponentialDelay + jitter;
+}
+
+function isRetriableStatus(status: number): boolean {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+function isRetriableFetchError(error: unknown): boolean {
+  if (error instanceof DOMException && error.name === 'AbortError') {
+    return true;
+  }
+  return error instanceof TypeError;
+}
+
+async function fetchWithTimeout(input: string, timeoutMs = FETCH_TIMEOUT_MS): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(input, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function fetchWithRetry(input: string, attempts = FETCH_RETRY_ATTEMPTS): Promise<Response> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      const response = await fetchWithTimeout(input);
+
+      if (!response.ok && isRetriableStatus(response.status) && attempt < attempts) {
+        await wait(getRetryDelayMs(attempt));
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts && isRetriableFetchError(error)) {
+        await wait(getRetryDelayMs(attempt));
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  if (lastError instanceof Error) {
+    throw lastError;
+  }
+  throw new Error(`Failed to fetch ${input}`);
 }
 
 function getCurrentYearInSheffield(): number {
@@ -73,7 +191,7 @@ async function loadDSTDates(): Promise<DSTDateRange[]> {
   try {
     // For client-side usage
     if (typeof window !== 'undefined') {
-      const response = await fetch('/docs/dst-start-end.json');
+      const response = await fetchWithRetry('/docs/dst-start-end.json');
       if (!response.ok) {
         throw new Error(`Failed to load DST dates: ${response.status}`);
       }
@@ -133,15 +251,13 @@ type RamadanLoadResult =
 
 /** Load Ramadan timetable for a mosque (Convex or static JSON). Exported for RamadanTimetable. */
 export async function loadRamadanCalendar(slug: string): Promise<RamadanData | null> {
-  const cachedEntry = ramadanDataCache.get(slug);
-  if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
+  const safeSlug = normalizeMosqueSlug(slug);
+  const cachedEntry = getValidCacheEntry(ramadanDataCache, safeSlug);
+  if (cachedEntry) {
     return cachedEntry.value;
   }
-  if (cachedEntry) {
-    ramadanDataCache.delete(slug);
-  }
 
-  const inFlight = ramadanDataInFlight.get(slug);
+  const inFlight = ramadanDataInFlight.get(safeSlug);
   if (inFlight) {
     return inFlight;
   }
@@ -152,42 +268,66 @@ export async function loadRamadanCalendar(slug: string): Promise<RamadanData | n
       if (client) {
         try {
           const { api } = await import('../../convex/_generated/api');
-          const data = await client.query(api.prayerTimes.getRamadan, { mosqueSlug: slug });
-          if (data) {
-            ramadanDataCache.set(slug, createTimedEntry(data));
-            return data;
-          }
-        } catch {
-          /* Convex not initialized, fall through to fetch */
+          const data = await client.query(api.prayerTimes.getRamadan, { mosqueSlug: safeSlug });
+          setBoundedCacheEntry(
+            ramadanDataCache,
+            safeSlug,
+            createTimedEntry(data),
+            MAX_RAMADAN_CACHE_ENTRIES,
+          );
+          return data;
+        } catch (error) {
+          console.warn('Convex Ramadan query failed, falling back to static JSON.', error);
         }
       }
 
-      const response = await fetch(`/data/mosques/${slug}/ramadan.json`);
+      const response = await fetchWithRetry(`/data/mosques/${safeSlug}/ramadan.json`);
       if (!response.ok) {
-        ramadanDataCache.set(slug, createTimedEntry(null));
+        setBoundedCacheEntry(
+          ramadanDataCache,
+          safeSlug,
+          createTimedEntry(null),
+          MAX_RAMADAN_CACHE_ENTRIES,
+        );
         return null;
       }
 
       const data: RamadanData = await response.json();
       if (!data.gregorian_start || !data.gregorian_end) {
-        ramadanDataCache.set(slug, createTimedEntry(null));
+        setBoundedCacheEntry(
+          ramadanDataCache,
+          safeSlug,
+          createTimedEntry(null),
+          MAX_RAMADAN_CACHE_ENTRIES,
+        );
         return null;
       }
 
-      ramadanDataCache.set(slug, createTimedEntry(data));
+      setBoundedCacheEntry(
+        ramadanDataCache,
+        safeSlug,
+        createTimedEntry(data),
+        MAX_RAMADAN_CACHE_ENTRIES,
+      );
       return data;
-    } catch {
-      ramadanDataCache.set(slug, createTimedEntry(null));
+    } catch (error) {
+      console.warn(`Error loading Ramadan data for "${safeSlug}".`, error);
+      setBoundedCacheEntry(
+        ramadanDataCache,
+        safeSlug,
+        createTimedEntry(null),
+        MAX_RAMADAN_CACHE_ENTRIES,
+      );
       return null;
     }
   })();
 
-  ramadanDataInFlight.set(slug, loadPromise);
+  ramadanDataInFlight.set(safeSlug, loadPromise);
 
   try {
     return await loadPromise;
   } finally {
-    ramadanDataInFlight.delete(slug);
+    ramadanDataInFlight.delete(safeSlug);
   }
 }
 
@@ -310,19 +450,17 @@ export async function loadMonthlyPrayerTimes(
   month: number,
   year: number = getCurrentYearInSheffield(),
 ): Promise<MonthlyPrayerTimes> {
+  const safeSlug = normalizeMosqueSlug(slug);
   const monthFile = MONTH_FILES[month];
 
   if (!monthFile) {
     throw new Error(`Invalid month: ${month}`);
   }
 
-  const cacheKey = `${slug}:${monthFile}:${year}`;
-  const cachedEntry = monthlyPrayerTimesCache.get(cacheKey);
-  if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
-    return cachedEntry.value;
-  }
+  const cacheKey = `${safeSlug}:${monthFile}:${year}`;
+  const cachedEntry = getValidCacheEntry(monthlyPrayerTimesCache, cacheKey);
   if (cachedEntry) {
-    monthlyPrayerTimesCache.delete(cacheKey);
+    return cachedEntry.value;
   }
 
   const inFlight = monthlyPrayerTimesInFlight.get(cacheKey);
@@ -337,28 +475,38 @@ export async function loadMonthlyPrayerTimes(
         try {
           const { api } = await import('../../convex/_generated/api');
           const data = await client.query(api.prayerTimes.getMonthly, {
-            mosqueSlug: slug,
+            mosqueSlug: safeSlug,
             month: monthFile,
             year,
           });
           if (data) {
-            monthlyPrayerTimesCache.set(cacheKey, createTimedEntry(data));
+            setBoundedCacheEntry(
+              monthlyPrayerTimesCache,
+              cacheKey,
+              createTimedEntry(data),
+              MAX_MONTHLY_CACHE_ENTRIES,
+            );
             return data;
           }
-        } catch {
-          /* Convex not initialized, fall through to fetch */
+        } catch (error) {
+          console.warn('Convex monthly query failed, falling back to static JSON.', error);
         }
       }
 
-      const publicUrl = `/data/mosques/${slug}/${monthFile}.json`;
-      const response = await fetch(publicUrl);
+      const publicUrl = `/data/mosques/${safeSlug}/${monthFile}.json`;
+      const response = await fetchWithRetry(publicUrl);
 
       if (!response.ok) {
         throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
       }
 
       const data: MonthlyPrayerTimes = await response.json();
-      monthlyPrayerTimesCache.set(cacheKey, createTimedEntry(data));
+      setBoundedCacheEntry(
+        monthlyPrayerTimesCache,
+        cacheKey,
+        createTimedEntry(data),
+        MAX_MONTHLY_CACHE_ENTRIES,
+      );
       return data;
     } catch (error) {
       console.error(`Error loading prayer times for ${monthFile}:`, error);
@@ -599,8 +747,13 @@ export function getCurrentPrayer(prayerTimes: DailyPrayerTimes): string | null {
     const timeVal = prayerTimes[prayer as keyof DailyPrayerTimes];
     if (!timeVal) return { prayer, time: new Date(0) };
     const [hours, minutes] = timeVal.split(':');
+    const parsedHours = parseInt(hours, 10);
+    const parsedMinutes = parseInt(minutes, 10);
+    if (!Number.isFinite(parsedHours) || !Number.isFinite(parsedMinutes)) {
+      return { prayer, time: new Date(0) };
+    }
     const prayerTime = new Date(now);
-    prayerTime.setHours(parseInt(hours), parseInt(minutes), 0);
+    prayerTime.setHours(parsedHours, parsedMinutes, 0);
     return { prayer, time: prayerTime };
   });
 
@@ -654,6 +807,7 @@ export function getIqamahTime(prayer: string, adhanTime: string, iqamahTimes: Da
     case 'dhuhr':
       return resolveRelativeIqamah(iqamahTimes.dhuhr, adhanTime);
     case 'asr':
+      if ((iqamahTimes.asr?.trim() ?? '').toLowerCase() === 'entry time') return adhanTime;
       return resolveRelativeIqamah(iqamahTimes.asr, adhanTime);
     case 'maghrib':
       // Use the specified iqamah time, fallback to adhan time if not specified
@@ -938,6 +1092,17 @@ export async function getDSTAdjustmentIqamahDate(date?: Date): Promise<{ month: 
   }
 
   return null;
+}
+
+/**
+ * Returns true if the string is a valid HH:MM or H:MM time for semantic <time> markup.
+ */
+export function isValidTimeForMarkup(timeString: string): boolean {
+  if (!timeString || timeString === '-' || timeString === '--:--' || timeString === 'Various' || timeString === 'Straight after Maghrib' || timeString === 'Entry Time' || timeString === 'After Maghrib') {
+    return false;
+  }
+  const [hours, minutes] = timeString.split(':').map(Number);
+  return !isNaN(hours) && !isNaN(minutes) && hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
 }
 
 /**
