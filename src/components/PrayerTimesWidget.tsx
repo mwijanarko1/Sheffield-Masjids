@@ -14,6 +14,12 @@ interface PrayerTimesWidgetProps {
   mosques?: Mosque[];
 }
 
+const HIJRI_DATE_FORMATTER = new Intl.DateTimeFormat("en-GB-u-ca-islamic", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
 export default function PrayerTimesWidget({
   initialMosque,
   showDropdown = false,
@@ -46,6 +52,50 @@ export default function PrayerTimesWidget({
   const getSheffieldTime = () => {
     return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
   };
+
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+
+  // Set initial time and start interval for the real-time clock
+  useEffect(() => {
+    setCurrentTime(getSheffieldTime());
+    const interval = setInterval(() => {
+      setCurrentTime(getSheffieldTime());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const hijriDate = useMemo(() => {
+    if (!currentTime) return "";
+    try {
+      const parts = HIJRI_DATE_FORMATTER.formatToParts(currentTime);
+      const day = parts.find((part) => part.type === "day")?.value;
+      const month = parts.find((part) => part.type === "month")?.value;
+      const year = parts.find((part) => part.type === "year")?.value;
+      if (!day || !month || !year) return "";
+      return `${day} ${month} ${year} AH`;
+    } catch {
+      return "";
+    }
+  }, [currentTime]);
+
+  const gregorianDate = useMemo(() => {
+    if (!currentTime) return "";
+    return currentTime.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, [currentTime]);
+
+  const timeString = useMemo(() => {
+    if (!currentTime) return "--:--:--";
+    return currentTime.toLocaleTimeString("en-GB", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+  }, [currentTime]);
 
   // Get the prayer that should be highlighted
   const getHighlightedPrayer = useCallback((prayers: any[]): string | null => {
@@ -384,9 +434,26 @@ export default function PrayerTimesWidget({
 
   return (
     <div className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60">
-      <div className="relative p-3 text-white/80 sm:p-6 xl:p-8">
+      {/* Dashboard Header: Clock, Date, and Mosque Selector */}
+      <div className="border-b border-white/10 bg-black/10 backdrop-blur-sm p-4 sm:p-6 xl:p-8">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-8">
+          <div className="text-center md:text-left">
+            <p className="text-lg sm:text-xl font-bold text-white leading-tight">
+              {gregorianDate || "Loading date..."}
+            </p>
+            <p className="text-sm sm:text-base font-medium text-white/80">
+              {hijriDate}
+            </p>
+          </div>
+          <div className="text-center">
+            <p className="text-4xl sm:text-5xl md:text-6xl font-black text-white tabular-nums tracking-tight">
+              {timeString}
+            </p>
+          </div>
+        </div>
+
         {showDropdown && (
-          <div className="mb-4 sm:mb-6 flex justify-center">
+          <div className="mt-4 sm:mt-6 flex justify-center border-t border-white/10 pt-4 sm:pt-6">
             <CustomSelect
               options={selectableMosques}
               value={mosque.id}
@@ -394,12 +461,14 @@ export default function PrayerTimesWidget({
                 const selected = selectableMosques.find(m => m.id === value);
                 if (selected) setMosque(selected);
               }}
-              className="max-w-[280px] sm:min-w-[250px]"
+              className="w-full max-w-sm sm:min-w-[300px]"
               ariaLabel="Select mosque"
             />
           </div>
         )}
+      </div>
 
+      <div className="relative p-3 text-white/80 sm:p-6 xl:p-8">
         <div className="text-center text-white">
           {isToday && nextPrayer && countdown ? (
             <>
