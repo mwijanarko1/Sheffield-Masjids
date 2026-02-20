@@ -97,12 +97,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
     requestUserLocation();
   }, [requestUserLocation]);
 
-  // Prevent hydration mismatch by only rendering on client
-  if (!mounted) {
-    return null;
-  }
-
-  // Find closest mosque when user location is available
+  // Find closest mosque when user location is available (must run after all other hooks)
   useEffect(() => {
     if (!userLocation) {
       setClosestMosque(null);
@@ -138,6 +133,11 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
     setClosestMosque(null);
   }, [userLocation, mosques]);
 
+  // Prevent hydration mismatch by only rendering on client (after all hooks)
+  if (!mounted) {
+    return null;
+  }
+
   if (isDismissed) {
     return null;
   }
@@ -145,19 +145,18 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // If we found the closest mosque
   if (closestMosque) {
     return (
-      <div className="w-full bg-muted border border-border rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
+      <div className="w-full bg-black/20 backdrop-blur-md border border-white/10 rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-lg text-white">
+        <div className="flex items-center gap-2 text-white/80">
           <MapPin className="h-4 w-4 shrink-0" />
           <span>
-            Closest masjid is <strong>{closestMosque.mosque.name}</strong>{" "}
+            Closest masjid is <strong className="text-white">{closestMosque.mosque.name}</strong>{" "}
             ({formatDistance(closestMosque.distanceKm)})
           </span>
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="default"
             size="sm"
-            className="h-7 text-xs"
+            className="h-7 text-xs bg-white/20 hover:bg-white/30 text-white border-0"
             onClick={() => onSelectMosque(closestMosque.mosque)}
           >
             Switch to {closestMosque.mosque.name}
@@ -165,7 +164,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
+            className="h-7 w-7 text-white/60 hover:text-white hover:bg-white/10"
             onClick={() => setIsDismissed(true)}
             aria-label="Dismiss banner"
           >
@@ -179,16 +178,15 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // If no location access or error, show a small button/banner to enable it
   if (locationStatus !== "loading" && locationStatus !== "success") {
     return (
-      <div className="w-full bg-muted/50 border border-border rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
+      <div className="w-full bg-black/20 backdrop-blur-md border border-white/10 rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-lg text-white">
+        <div className="flex items-center gap-2 text-white/80">
           <MapPin className="h-4 w-4 shrink-0" />
           <span>Enable location to find the nearest masjid</span>
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
             size="sm"
-            className="h-7 text-xs"
+            className="h-7 text-xs bg-white/20 hover:bg-white/30 text-white border-0"
             onClick={requestUserLocation}
           >
             Enable Location
@@ -196,7 +194,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
+            className="h-7 w-7 text-white/60 hover:text-white hover:bg-white/10"
             onClick={() => setIsDismissed(true)}
             aria-label="Dismiss banner"
           >
@@ -210,7 +208,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // Loading state
   if (locationStatus === "loading") {
     return (
-      <div className="w-full bg-muted/50 border border-border rounded-lg py-3 px-4 flex items-center justify-center text-sm text-muted-foreground shadow-sm">
+      <div className="w-full bg-black/20 backdrop-blur-md border border-white/10 rounded-lg py-3 px-4 flex items-center justify-center text-sm text-white/80 shadow-lg">
         <MapPin className="h-4 w-4 mr-2 animate-pulse" />
         <span>Finding nearest masjid...</span>
       </div>
