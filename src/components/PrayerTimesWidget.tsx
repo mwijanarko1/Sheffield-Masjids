@@ -428,26 +428,13 @@ export default function PrayerTimesWidget({
     return getHighlightedPrayer(prayers);
   }, [prayers, isToday, getHighlightedPrayer, prayerTimes]);
 
-  const backgroundTheme = useMemo(() => {
-    switch (upcomingPrayer) {
-      case 'fajr': return 'from-slate-900 via-purple-900 to-slate-800';
-      case 'sunrise': return 'from-orange-400 via-rose-400 to-purple-500';
-      case 'dhuhr': return 'from-sky-400 via-blue-500 to-indigo-500';
-      case 'asr': return 'from-amber-500 via-orange-500 to-rose-500';
-      case 'maghrib': return 'from-violet-600 via-fuchsia-600 to-orange-500';
-      case 'isha': return 'from-slate-900 via-blue-900 to-slate-900';
-      case 'jummah': return 'from-emerald-500 via-teal-500 to-cyan-600';
-      default: return 'from-slate-900 to-slate-800';
-    }
-  }, [upcomingPrayer]);
-
   if (isLoading) {
     return <div className="p-12 text-center text-white bg-white/10 backdrop-blur-md rounded-2xl animate-pulse">Loading {mosque.name}...</div>;
   }
 
   return (
     <>
-      <div className={`fixed inset-0 -z-10 bg-gradient-to-br transition-all duration-1000 ${backgroundTheme}`} />
+      <div className="fixed inset-0 -z-10 bg-slate-950" />
       <div className="overflow-hidden rounded-xl shadow-2xl sm:rounded-2xl xl:rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20">
       {/* Dashboard Header: Clock, Date, and Mosque Selector */}
       <div className="border-b border-white/10 bg-black/10 backdrop-blur-sm p-4 sm:p-6 xl:p-8">
