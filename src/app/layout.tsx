@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import DynamicBackground from "@/components/DynamicBackground";
 import {
   getBaseUrl,
+  MOSQUE_NAMES,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_TITLE,
@@ -19,6 +20,10 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: [
+    "Sheffield mosque prayer times",
+    "Sheffield masjid prayer times",
+    "prayer times Sheffield",
+    "iqamah times Sheffield",
     "Sheffield",
     "Masjid",
     "Mosque",
@@ -26,6 +31,8 @@ export const metadata: Metadata = {
     "Iqamah Times",
     "Salah",
     "Islam",
+    ...MOSQUE_NAMES,
+    ...MOSQUE_NAMES.map((n) => `${n} prayer times`),
   ],
   authors: [{ name: SITE_NAME }],
   openGraph: {

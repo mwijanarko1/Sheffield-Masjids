@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from 'next/navigation';
 import PrayerTimesWidget from '@/components/PrayerTimesWidget';
 import MosqueMap from '@/components/MosqueMap';
+import MosqueJsonLd from '@/components/MosqueJsonLd';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,24 +34,31 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${mosque.name} | ${SITE_NAME}`;
-  const description = `Prayer and iqamah times, location, and mosque details for ${mosque.name} in Sheffield.`;
+  const title = `${mosque.name} Prayer Times`;
+  const fullTitle = `${mosque.name} Prayer Times | ${SITE_NAME}`;
+  const description = `Prayer times and iqamah times for ${mosque.name} in Sheffield. Daily timetables, monthly schedules, Ramadan times, and location.`;
 
   return {
-    title: mosque.name,
+    title,
     description,
+    keywords: [
+      `${mosque.name} prayer times`,
+      `${mosque.name} Sheffield`,
+      `${mosque.name} iqamah times`,
+      "Sheffield mosque prayer times",
+    ],
     alternates: {
       canonical: `/mosques/${mosque.slug}`,
     },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url: `/mosques/${mosque.slug}`,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: fullTitle,
       description,
     },
   };
@@ -66,6 +74,7 @@ export default async function MosquePage({ params }: MosquePageProps) {
 
   return (
     <main className="relative min-h-[100dvh] sm:min-h-screen pb-8 sm:pb-16 text-white">
+      <MosqueJsonLd mosque={mosque} />
       <div className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-10 lg:px-8 xl:max-w-6xl">
         <Button
           variant="link"
@@ -82,7 +91,7 @@ export default async function MosquePage({ params }: MosquePageProps) {
 
         <header className="mb-6 sm:mb-10">
           <h1 className="mb-3 text-xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
-            {mosque.name}
+            {mosque.name} Prayer Times
           </h1>
           <p className="mb-4 flex items-start gap-2 text-sm text-muted-foreground sm:text-base">
             <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-[var(--theme-highlight)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -4,11 +4,12 @@ import AppLayout from "@/components/AppLayout";
 import { getMosques } from "@/lib/mosques";
 import { SITE_NAME } from "@/lib/site";
 
-const title = `Compare Mosques | ${SITE_NAME}`;
-const description = "Compare prayer and iqamah times across Sheffield mosques.";
+const title = `Compare Sheffield Mosque Prayer Times | ${SITE_NAME}`;
+const description =
+  "Compare prayer times and iqamah times across all Sheffield mosques. Madina Masjid, Sheffield Grand Mosque, Al-Huda Academy, and more.";
 
 export const metadata: Metadata = {
-  title: "Compare Mosques",
+  title: "Compare Sheffield Mosque Prayer Times",
   description,
   alternates: {
     canonical: "/compare",
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
     title,
     description,
   },
+  keywords: [
+    "compare Sheffield mosque prayer times",
+    "Sheffield mosque prayer times comparison",
+    "Sheffield masjid iqamah times",
+  ],
 };
 
 export const revalidate = 60;

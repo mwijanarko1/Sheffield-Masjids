@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RamadanTimetable from "@/components/RamadanTimetable";
 import { Button } from "@/components/ui/button";
 import { getMosqueBySlug } from "@/lib/mosques";
+import { SITE_NAME } from "@/lib/site";
 
 interface RamadanTimetablePageProps {
   params: Promise<{
@@ -11,6 +13,36 @@ interface RamadanTimetablePageProps {
 }
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: RamadanTimetablePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const mosque = await getMosqueBySlug(slug);
+
+  if (!mosque) {
+    return { title: "Not Found" };
+  }
+
+  const title = `${mosque.name} Ramadan Timetable`;
+  const fullTitle = `${mosque.name} Ramadan Timetable | ${SITE_NAME}`;
+  const description = `Ramadan prayer times and iqamah times for ${mosque.name} in Sheffield.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/mosques/${mosque.slug}/ramadan-timetable`,
+    },
+    openGraph: {
+      title: fullTitle,
+      description,
+      url: `/mosques/${mosque.slug}/ramadan-timetable`,
+      type: "website",
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export default async function RamadanTimetablePage({ params }: RamadanTimetablePageProps) {
   const { slug } = await params;
