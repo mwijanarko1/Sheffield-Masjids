@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="min-h-[100dvh] bg-gradient-to-b from-[#0A1128] via-[#121c38] to-[#1A2642] text-slate-100">
+    <main className="relative min-h-[100dvh] text-white">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <Link
           href="/settings"

@@ -14,7 +14,7 @@ export default async function Home() {
   const mosques = await getMosques();
 
   return (
-    <main className="h-[100dvh] min-h-[100svh] w-full overflow-hidden bg-[#0A1128]">
+    <main className="relative h-[100dvh] min-h-[100svh] w-full overflow-hidden">
       <AppHomePage mosques={mosques} />
     </main>
   );
