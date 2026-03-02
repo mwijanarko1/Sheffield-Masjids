@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 
 const menuItems = [
   { href: "/", label: "Home" },
+  { href: "/timetable", label: "Timetable" },
   { href: "/compare", label: "Compare" },
   { href: "/settings", label: "Settings" },
 ];
@@ -34,8 +35,8 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  const appRoutes = ["/", "/compare", "/settings"];
-  if (appRoutes.includes(pathname)) {
+  const appRoutes = new Set(["/", "/timetable", "/compare", "/settings"]);
+  if (appRoutes.has(pathname)) {
     return null;
   }
 
@@ -50,6 +51,12 @@ export default function Header() {
 
         {/* Desktop: visible links */}
         <nav className="hidden items-center gap-6 sm:flex">
+          <Link
+            href="/timetable"
+            className="text-sm font-medium text-white/70 transition-colors hover:text-[#FFB380]"
+          >
+            Timetable
+          </Link>
           <Link
             href="/compare"
             className="text-sm font-medium text-white/70 transition-colors hover:text-[#FFB380]"

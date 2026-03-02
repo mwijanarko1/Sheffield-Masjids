@@ -168,9 +168,12 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
     }).filter((row): row is RamadanRow => row !== null);
   }, [ramadanData, todayKey]);
 
+  const todayRowClass =
+    "border-[#FFB380]/45 bg-[#FFB380]/12 hover:bg-[#FFB380]/18";
+
   return (
-    <Card className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 text-white">
-      <CardHeader className="border-b border-white/10 bg-white/5">
+    <Card className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-lg backdrop-blur-md sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl">
+      <CardHeader className="border-b border-white/10 bg-white/5 p-4 sm:p-6">
         <CardTitle className="text-white">Ramadan timetable</CardTitle>
         <CardDescription className="text-white/70">
           {ramadanData?.month ?? "Ramadan"} schedule for {mosque.name}.
@@ -192,8 +195,8 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
 
         {!isLoading && !error && rows.length > 0 && (
           <>
-            <div>
-              <Table className="min-w-[1320px] text-white">
+            <div className="overflow-x-auto">
+              <Table className="min-w-[1320px] text-white text-sm sm:text-base">
                 <TableHeader>
                   <TableRow className="border-white/10 hover:bg-white/5">
                     <TableHead className="w-[120px] text-white/80">Day</TableHead>
@@ -218,7 +221,7 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
                       key={`ramadan-${row.day}`}
                       className={cn(
                         "border-white/10 hover:bg-white/5",
-                        row.isToday && "border-sky-200/40 bg-sky-300/20 hover:bg-sky-300/25",
+                        row.isToday && todayRowClass,
                       )}
                     >
                       <TableCell className="font-medium">Day {row.day}</TableCell>

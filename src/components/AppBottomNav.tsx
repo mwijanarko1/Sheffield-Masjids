@@ -2,10 +2,10 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarClock, Scale, SlidersHorizontal } from "lucide-react";
+import { CalendarClock, CalendarRange, Scale, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type AppTab = "prayer" | "compare" | "settings";
+export type AppTab = "prayer" | "timetable" | "compare" | "settings";
 
 interface AppBottomNavProps {
   activeTab: AppTab;
@@ -18,6 +18,7 @@ const navItems: {
   Icon: typeof CalendarClock;
 }[] = [
   { tab: "prayer", href: "/", label: "Prayer", Icon: CalendarClock },
+  { tab: "timetable", href: "/timetable", label: "Timetable", Icon: CalendarRange },
   { tab: "compare", href: "/compare", label: "Compare", Icon: Scale },
   { tab: "settings", href: "/settings", label: "Settings", Icon: SlidersHorizontal },
 ];
