@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { href: "/", label: "Home" },
   { href: "/compare", label: "Compare" },
+  { href: "/settings", label: "Settings" },
 ];
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -27,14 +28,22 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
+import { usePathname } from "next/navigation";
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const appRoutes = ["/", "/compare", "/settings"];
+  if (appRoutes.includes(pathname)) {
+    return null;
+  }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0A1128]/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8 xl:max-w-7xl">
         <Link href="/" className="block">
-          <h1 className="text-xl font-extrabold tracking-tight text-foreground transition-colors hover:text-[var(--theme-primary)] sm:text-2xl">
+          <h1 className="text-xl font-extrabold tracking-tight text-white transition-colors hover:text-[#FFB380] sm:text-2xl">
             Sheffield Masjids
           </h1>
         </Link>
@@ -43,9 +52,15 @@ export default function Header() {
         <nav className="hidden items-center gap-6 sm:flex">
           <Link
             href="/compare"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-[var(--theme-primary)]"
+            className="text-sm font-medium text-white/70 transition-colors hover:text-[#FFB380]"
           >
             Compare
+          </Link>
+          <Link
+            href="/settings"
+            className="text-sm font-medium text-white/70 transition-colors hover:text-[#FFB380]"
+          >
+            Settings
           </Link>
         </nav>
 
@@ -62,7 +77,7 @@ export default function Header() {
               <MenuIcon open={isOpen} />
             </Button>
           </SheetTrigger>
-          <SheetContent side="top" className="border-t">
+          <SheetContent side="top" className="border-t border-white/10 bg-[#0A1128]/95 backdrop-blur-xl">
             <nav className="flex flex-col gap-1">
               {menuItems.map((item) => (
                 <Link
@@ -70,8 +85,8 @@ export default function Header() {
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "rounded-lg px-3 py-2.5 font-medium text-foreground transition-colors",
-                    "hover:bg-accent hover:text-[var(--theme-primary)]"
+                    "rounded-lg px-3 py-2.5 font-medium text-white transition-colors",
+                    "hover:bg-white/10 hover:text-[#FFB380]"
                   )}
                 >
                   {item.label}

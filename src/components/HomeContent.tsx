@@ -17,8 +17,8 @@ export default function HomeContent({ mosques }: HomeContentProps) {
 
   if (!selectedMosque) {
     return (
-      <Card className="border border-white/10 bg-background">
-        <CardContent className="p-6 text-sm text-muted-foreground">
+      <Card className="border border-white/20 bg-[#0A1128]/80 backdrop-blur-md">
+        <CardContent className="p-6 text-sm text-white/60">
           No mosques are currently available. Add mosque records in Convex to show
           them here.
         </CardContent>
@@ -48,10 +48,10 @@ export default function HomeContent({ mosques }: HomeContentProps) {
 
       {/* Map */}
       <section>
-        <h2 className="mb-4 text-lg font-bold text-foreground">
+        <h2 className="mb-4 text-lg font-bold text-white">
           Location
         </h2>
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border border-white/20 bg-white/5 shadow-lg backdrop-blur-md">
           <CardContent className="p-0">
             <MosqueMap mosque={selectedMosque} />
           </CardContent>

@@ -54,12 +54,12 @@ export default function MosqueMap({ mosque }: MosqueMapProps) {
           }
         }}
       />
-      <div className="shrink-0 px-3 pt-2 text-center text-xs text-muted-foreground">
+      <div className="shrink-0 px-3 pt-2 text-center text-xs text-white/60">
         <a
           href={externalMapUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)]"
+          className="font-medium text-[#FFB380] hover:text-[#FFB380]/80"
         >
           Open location in Google Maps
         </a>

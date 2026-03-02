@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getIqamahTime, getIqamahTimesForDate } from "@/lib/prayer-times";
+import { getIqamahTime, getIqamahTimesForDate, getDateInSheffield } from "@/lib/prayer-times";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { IqamahTimeRange, Mosque } from "@/types/prayer-times";
@@ -75,11 +75,8 @@ function formatGregorianLabel(start: Date, day: number): string {
 }
 
 function getTodayInSheffieldKey(): string {
-  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  const { year, month, day } = getDateInSheffield(new Date());
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 function getRamadanDateKey(gregorianStart: string, day: number): string | null {
