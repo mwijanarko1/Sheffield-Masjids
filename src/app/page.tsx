@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import HomeContent from "@/components/HomeContent";
+import AppHomePage from "@/components/AppHomePage";
 import { getMosques } from "@/lib/mosques";
 
 export const metadata: Metadata = {
@@ -8,31 +8,14 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Home() {
   const mosques = await getMosques();
 
   return (
-    <main className="min-h-[100dvh] bg-background sm:min-h-screen">
-      <div className="mx-auto w-full max-w-6xl px-4 py-4 pb-safe sm:px-6 sm:py-8 lg:px-8 xl:max-w-7xl">
-        <HomeContent mosques={mosques} />
-
-        <footer className="mt-12 flex flex-row items-center justify-between gap-4 border-t border-border py-6 text-xs text-muted-foreground sm:text-sm">
-          <p className="m-0">© {new Date().getFullYear()} Sheffield Masjids</p>
-          <p className="m-0">
-            Made by{" "}
-            <a
-              href="https://mikhailwijanarko.xyz"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)] transition-colors"
-            >
-              mikhailbuilds
-            </a>
-          </p>
-        </footer>
-      </div>
+    <main className="h-[100dvh] min-h-[100svh] w-full overflow-hidden bg-[#0A1128]">
+      <AppHomePage mosques={mosques} />
     </main>
   );
 }

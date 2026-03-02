@@ -20,7 +20,7 @@ export default async function RamadanTimetablePage({ params }: RamadanTimetableP
   }
 
   return (
-    <main className="min-h-[100dvh] bg-background sm:min-h-screen">
+    <main className="min-h-[100dvh] bg-gradient-to-b from-[#0A1128] via-[#121c38] to-[#1A2642] sm:min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 sm:px-6 lg:px-8 pb-safe">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Button variant="link" asChild className="h-auto p-0 text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)]">

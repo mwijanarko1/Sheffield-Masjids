@@ -24,9 +24,9 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c; // Distance in km
   return d;
@@ -238,13 +238,13 @@ export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {/* Dates Card */}
-      <Card className="flex flex-col justify-center bg-background">
+      <Card className="flex flex-col justify-center border border-white/20 bg-white/5 backdrop-blur-md shadow-lg">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
           <div className="space-y-1">
-            <p className="text-lg font-bold text-foreground leading-tight">
+            <p className="text-lg font-bold text-white leading-tight">
               {gregorianDate}
             </p>
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-sm font-medium text-white/60">
               {hijriDate}
             </p>
           </div>
@@ -252,29 +252,29 @@ export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
       </Card>
 
       {/* Time Card */}
-      <Card className="flex flex-col justify-center bg-background">
+      <Card className="flex flex-col justify-center border border-white/20 bg-white/5 backdrop-blur-md shadow-lg">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="text-4xl font-black text-foreground tabular-nums tracking-tight">
+          <p className="text-4xl font-black text-white tabular-nums tracking-tight">
             {timeString}
           </p>
         </CardContent>
       </Card>
 
       {/* Closest Mosque Card */}
-      <Card className="flex flex-col justify-center bg-background">
+      <Card className="flex flex-col justify-center border border-white/20 bg-white/5 backdrop-blur-md shadow-lg">
         <CardContent className="flex flex-col items-center justify-center p-4 text-center h-full min-h-[100px]">
-          <p className="mb-1 text-sm font-medium uppercase tracking-wider text-muted-foreground">Closest Masjid</p>
-          <p className="text-lg font-bold text-foreground leading-tight">
+          <p className="mb-1 text-sm font-medium uppercase tracking-wider text-white/60">Closest Masjid</p>
+          <p className="text-lg font-bold text-white leading-tight">
             {closestMosqueMessage.title}
           </p>
           {closestMosqueMessage.subtitle ? (
-            <p className="mt-1 text-xs text-muted-foreground">{closestMosqueMessage.subtitle}</p>
+            <p className="mt-1 text-xs text-white/60">{closestMosqueMessage.subtitle}</p>
           ) : null}
           {closestMosqueMessage.showRetry ? (
             <button
               type="button"
               onClick={requestUserLocation}
-              className="mt-2 text-xs font-semibold text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
+              className="mt-2 min-h-[44px] py-2 text-xs font-semibold text-white underline underline-offset-4 hover:text-white/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128] rounded touch-manipulation"
             >
               Retry location
             </button>

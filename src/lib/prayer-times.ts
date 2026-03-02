@@ -136,8 +136,20 @@ async function fetchWithRetry(input: string, attempts = FETCH_RETRY_ATTEMPTS): P
   throw new Error(`Failed to fetch ${input}`);
 }
 
+const SHEFFIELD_TZ = 'Europe/London';
+
+/** Calendar date in Sheffield (Europe/London). Use for lookups, not for moment-in-time. */
+export function getDateInSheffield(date: Date): { year: number; month: number; day: number } {
+  const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: SHEFFIELD_TZ, year: 'numeric', month: 'numeric', day: 'numeric' });
+  const parts = formatter.formatToParts(date);
+  const year = Number(parts.find((p) => p.type === 'year')?.value ?? 0);
+  const month = Number(parts.find((p) => p.type === 'month')?.value ?? 0);
+  const day = Number(parts.find((p) => p.type === 'day')?.value ?? 0);
+  return { year, month, day };
+}
+
 function getCurrentYearInSheffield(): number {
-  return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" })).getFullYear();
+  return getDateInSheffield(new Date()).year;
 }
 
 async function getConvexClient(): Promise<InstanceType<typeof import('convex/browser').ConvexHttpClient> | null> {
@@ -332,12 +344,9 @@ export async function loadRamadanCalendar(slug: string): Promise<RamadanData | n
 }
 
 function isDateWithinRamadanRange(date: Date, ramadanData: RamadanData): boolean {
-  const start = parseDateToLocalDay(ramadanData.gregorian_start);
-  const end = parseDateToLocalDay(ramadanData.gregorian_end);
-  if (!start || !end) return false;
-
-  const dateOnly = toDateOnly(date);
-  return dateOnly >= start && dateOnly <= end;
+  const { year, month, day } = getDateInSheffield(date);
+  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  return dateStr >= ramadanData.gregorian_start && dateStr <= ramadanData.gregorian_end;
 }
 
 /**
@@ -367,12 +376,13 @@ function formatRamadanDateRange(gregorianStart: string, gregorianEnd: string): s
 }
 
 /**
- * Get Ramadan day (1-30) for a date within the Ramadan period
+ * Get Ramadan day (1-30) for a date within the Ramadan period (uses Sheffield date).
  */
 function getRamadanDay(date: Date, ramadanData: RamadanData): number {
-  const start = new Date(ramadanData.gregorian_start);
-  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const diffMs = dateOnly.getTime() - start.getTime();
+  const { year, month, day } = getDateInSheffield(date);
+  const start = new Date(ramadanData.gregorian_start + 'T12:00:00.000Z');
+  const dateAtNoon = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+  const diffMs = dateAtNoon.getTime() - start.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   return Math.min(30, Math.max(1, diffDays + 1));
 }
@@ -554,9 +564,9 @@ export function getIqamahTimesForDate(date: number, iqamahRanges: IqamahTimeRang
  * Get today's prayer times with Iqamah times (based on Sheffield UK time)
  */
 export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTimes> {
-  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
-  const month = today.getMonth() + 1;
-  const date = today.getDate();
+  const { year, month, day } = getDateInSheffield(new Date());
+  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const today = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
 
   try {
     const ramadanResult = await loadRamadanData(slug, today);
@@ -565,7 +575,7 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
       const dayData = findRamadanDayData(ramadanResult.data.prayer_times, ramadanDay);
       if (dayData) {
         return {
-          date: today.toISOString().split('T')[0],
+          date: dateStr,
           fajr: dayData.fajr as string,
           sunrise: dayData.shurooq as string,
           dhuhr: dayData.dhuhr as string,
@@ -577,15 +587,15 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month, today.getFullYear());
-      const dayData = findDayData(monthlyData.prayer_times, date);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
+      const dayData = findDayData(monthlyData.prayer_times, day);
 
       if (!dayData) {
-        throw new Error(`Prayer times not found for date: ${date}`);
+        throw new Error(`Prayer times not found for date: ${day}`);
       }
 
       return {
-        date: today.toISOString().split('T')[0],
+        date: dateStr,
         fajr: dayData.fajr,
         sunrise: dayData.shurooq,
         dhuhr: dayData.dhuhr,
@@ -609,9 +619,8 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
  * Get today's Iqamah times (based on Sheffield UK time)
  */
 export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTimes> {
-  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
-  const month = today.getMonth() + 1;
-  const date = today.getDate();
+  const { year, month, day } = getDateInSheffield(new Date());
+  const today = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
 
   try {
     const ramadanResult = await loadRamadanData(slug, today);
@@ -625,8 +634,8 @@ export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTim
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month, today.getFullYear());
-      const iqamahTimes = getIqamahTimesForDate(date, monthlyData.iqamah_times);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
+      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times);
 
       return {
         ...iqamahTimes,
@@ -645,20 +654,21 @@ export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTim
 }
 
 /**
- * Get prayer times for a specific date
+ * Get prayer times for a specific date (date interpreted in Sheffield).
  */
 export async function getPrayerTimesForDate(slug: string, date: Date): Promise<DailyPrayerTimes> {
-  const month = date.getMonth() + 1;
-  const dayOfMonth = date.getDate();
+  const { year, month, day } = getDateInSheffield(date);
+  const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const dateAtNoon = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
 
   try {
-    const ramadanResult = await loadRamadanData(slug, date);
+    const ramadanResult = await loadRamadanData(slug, dateAtNoon);
     if (ramadanResult?.inRange) {
-      const ramadanDay = getRamadanDay(date, ramadanResult.data);
+      const ramadanDay = getRamadanDay(dateAtNoon, ramadanResult.data);
       const dayData = findRamadanDayData(ramadanResult.data.prayer_times, ramadanDay);
       if (dayData) {
         return {
-          date: date.toISOString().split('T')[0],
+          date: dateStr,
           fajr: dayData.fajr as string,
           sunrise: dayData.shurooq as string,
           dhuhr: dayData.dhuhr as string,
@@ -670,15 +680,15 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month, date.getFullYear());
-      const dayData = findDayData(monthlyData.prayer_times, dayOfMonth);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
+      const dayData = findDayData(monthlyData.prayer_times, day);
 
       if (!dayData) {
-        throw new Error(`Prayer times not found for date: ${dayOfMonth}`);
+        throw new Error(`Prayer times not found for date: ${day}`);
       }
 
       return {
-        date: date.toISOString().split('T')[0],
+        date: dateStr,
         fajr: dayData.fajr,
         sunrise: dayData.shurooq,
         dhuhr: dayData.dhuhr,
@@ -699,16 +709,16 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
 }
 
 /**
- * Get Iqamah times for a specific date
+ * Get Iqamah times for a specific date (date interpreted in Sheffield).
  */
 export async function getIqamahTimesForSpecificDate(slug: string, date: Date): Promise<DailyIqamahTimes> {
-  const month = date.getMonth() + 1;
-  const dayOfMonth = date.getDate();
+  const { year, month, day } = getDateInSheffield(date);
+  const dateAtNoon = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
 
   try {
-    const ramadanResult = await loadRamadanData(slug, date);
+    const ramadanResult = await loadRamadanData(slug, dateAtNoon);
     if (ramadanResult?.inRange) {
-      const ramadanDay = getRamadanDay(date, ramadanResult.data);
+      const ramadanDay = getRamadanDay(dateAtNoon, ramadanResult.data);
       const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanResult.data.iqamah_times);
       return {
         ...iqamahTimes,
@@ -717,8 +727,8 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
     }
 
     try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month, date.getFullYear());
-      const iqamahTimes = getIqamahTimesForDate(dayOfMonth, monthlyData.iqamah_times);
+      const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
+      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times);
 
       return {
         ...iqamahTimes,
@@ -765,6 +775,133 @@ export function getCurrentPrayer(prayerTimes: DailyPrayerTimes): string | null {
   }, null);
 
   return currentPrayerTime?.prayer || null;
+}
+
+/** Check if a time string is parseable as HH:MM for countdown */
+function isParseableTime(t: string): boolean {
+  if (!t || t === "-" || t === "—" || t === "--:--") return false;
+  if (/after maghrib|entry time|straight after/i.test(t)) return false;
+  const match = t.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return false;
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  return Number.isFinite(h) && Number.isFinite(m) && h >= 0 && h <= 23 && m >= 0 && m <= 59;
+}
+
+export interface NextPrayerCountdownResult {
+  nextPrayer: { name: string; time: string };
+  countdown: { hours: number; minutes: number; seconds: number };
+  isIqamah: boolean;
+  isJummah?: boolean;
+}
+
+/**
+ * Get next prayer/iqamah and countdown (MWHS-style).
+ * First checks Adhan; if passed, checks Iqamah. Returns countdown with seconds.
+ */
+export function getNextPrayerAndCountdown(
+  prayerTimes: DailyPrayerTimes,
+  iqamahTimes: DailyIqamahTimes,
+  options?: { selectedDate?: Date; isSummer?: boolean }
+): NextPrayerCountdownResult {
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
+  const checkDate = options?.selectedDate ?? now;
+  const isFriday = checkDate.getDay() === 5;
+  const isSummer = options?.isSummer ?? false;
+
+  const prayers: { name: string; adhanTime: string; iqamahTime: string }[] = [
+    {
+      name: "Fajr",
+      adhanTime: prayerTimes.fajr,
+      iqamahTime: getIqamahTime("fajr", prayerTimes.fajr, iqamahTimes),
+    },
+    {
+      name: isFriday ? "Jummah" : "Dhuhr",
+      adhanTime: prayerTimes.dhuhr,
+      iqamahTime: isFriday
+        ? (iqamahTimes.jummah || "-")
+        : getIqamahTime("dhuhr", prayerTimes.dhuhr, iqamahTimes),
+    },
+    {
+      name: "Asr",
+      adhanTime: prayerTimes.asr,
+      iqamahTime: getIqamahTime("asr", prayerTimes.asr, iqamahTimes),
+    },
+    {
+      name: "Maghrib",
+      adhanTime: prayerTimes.maghrib,
+      iqamahTime: getIqamahTime("maghrib", prayerTimes.maghrib, iqamahTimes),
+    },
+    {
+      name: "Isha",
+      adhanTime: prayerTimes.isha,
+      iqamahTime: isSummer
+        ? "After Maghrib"
+        : getIqamahTime("isha", prayerTimes.isha, iqamahTimes, prayerTimes.maghrib),
+    },
+  ];
+
+  for (const prayer of prayers) {
+    const isJummah = prayer.name === "Jummah";
+
+    if (!isJummah) {
+      const [adhanHours, adhanMinutes] = prayer.adhanTime.split(":").map(Number);
+      const adhanTime = new Date(now);
+      adhanTime.setHours(adhanHours, adhanMinutes, 0, 0);
+
+      if (adhanTime > now) {
+        const timeDiff = adhanTime.getTime() - now.getTime();
+        return {
+          nextPrayer: { name: prayer.name, time: prayer.adhanTime },
+          countdown: {
+            hours: Math.floor(timeDiff / (1000 * 60 * 60)),
+            minutes: Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds: Math.floor((timeDiff % (1000 * 60)) / 1000),
+          },
+          isIqamah: false,
+        };
+      }
+    }
+
+    if (
+      isParseableTime(prayer.iqamahTime) &&
+      prayer.iqamahTime !== prayer.adhanTime
+    ) {
+      const [iqamahHours, iqamahMinutes] = prayer.iqamahTime.split(":").map(Number);
+      const iqamahTime = new Date(now);
+      iqamahTime.setHours(iqamahHours, iqamahMinutes, 0, 0);
+
+      if (iqamahTime > now) {
+        const timeDiff = iqamahTime.getTime() - now.getTime();
+        return {
+          nextPrayer: { name: prayer.name, time: prayer.iqamahTime },
+          countdown: {
+            hours: Math.floor(timeDiff / (1000 * 60 * 60)),
+            minutes: Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds: Math.floor((timeDiff % (1000 * 60)) / 1000),
+          },
+          isIqamah: true,
+          isJummah: isJummah || undefined,
+        };
+      }
+    }
+  }
+
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const [hours, minutes] = prayers[0].adhanTime.split(":").map(Number);
+  tomorrow.setHours(hours, minutes, 0, 0);
+
+  const timeDiff = tomorrow.getTime() - now.getTime();
+  return {
+    nextPrayer: { name: "Fajr", time: prayers[0].adhanTime },
+    countdown: {
+      hours: Math.floor(timeDiff / (1000 * 60 * 60)),
+      minutes: Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds: Math.floor((timeDiff % (1000 * 60)) / 1000),
+    },
+    isIqamah: false,
+  };
 }
 
 function addMinutesToTime(time: string, minutesToAdd: number): string | null {
@@ -838,10 +975,12 @@ export async function getJummahTime(slug: string): Promise<string> {
   }
 }
 
+const SHEFFIELD_DISPLAY_TZ = 'Europe/London';
+
 /**
- * Format date for display
+ * Format date for display (Sheffield/UK timezone)
  */
-export function formatDateForDisplay(date: Date): string {
+export function formatDateForDisplay(date: Date, timeZone: string = SHEFFIELD_DISPLAY_TZ): string {
   const dayNames: Record<string, string> = {
     'Monday': 'Mon',
     'Tuesday': 'Tues',
@@ -852,16 +991,15 @@ export function formatDateForDisplay(date: Date): string {
     'Sunday': 'Sun'
   };
 
-  const longDay = date.toLocaleDateString('en-GB', { weekday: 'long' });
-  const shortDay = dayNames[longDay] || longDay;
+  const opts: Intl.DateTimeFormatOptions = { timeZone, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  const parts = new Intl.DateTimeFormat('en-GB', opts).formatToParts(date);
+  const weekday = parts.find((p) => p.type === 'weekday')?.value ?? '';
+  const day = parts.find((p) => p.type === 'day')?.value ?? '';
+  const month = parts.find((p) => p.type === 'month')?.value ?? '';
+  const year = parts.find((p) => p.type === 'year')?.value ?? '';
 
-  const restOfDate = date.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
-
-  return `${shortDay} ${restOfDate}`;
+  const shortDay = dayNames[weekday as keyof typeof dayNames] || weekday;
+  return `${shortDay} ${day} ${month} ${year}`;
 }
 
 /**

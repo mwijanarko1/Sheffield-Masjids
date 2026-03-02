@@ -6,6 +6,7 @@ import {
   getIqamahTimesForSpecificDate,
   getIqamahTime,
   getDSTAdjustmentIqamahDate,
+  getDateInSheffield,
   formatDateForDisplay,
   formatTo12Hour,
   isValidTimeForMarkup,
@@ -49,9 +50,10 @@ export default function ComparePrayerTimes({
   mosques,
 }: ComparePrayerTimesProps) {
   const [isOpen, setIsOpen] = useState(standalone);
-  const [selectedDate, setSelectedDate] = useState(
-    () => new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }))
-  );
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const { year, month, day } = getDateInSheffield(new Date());
+    return new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+  });
   const [data, setData] = useState<MosquePrayerData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -196,20 +198,20 @@ export default function ComparePrayerTimes({
       {(isOpen || standalone) && (
         <Card
           id="compare-mosques-table"
-          className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] text-white shadow-lg sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl"
+          className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-lg sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl backdrop-blur-md"
         >
-          <CardHeader className="border-b border-white/10 bg-white/5 p-4 sm:p-6">
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <h3 className="text-lg font-bold text-white">
+          <CardHeader className="border-b border-white/10 bg-white/5 p-3 sm:p-6">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <h3 className="text-base sm:text-lg font-bold text-white">
                 Prayer times comparison
               </h3>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={goToPrevDay}
                   aria-label="Previous day"
-                  className="border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+                  className="min-w-[44px] min-h-[44px] border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white touch-manipulation"
                 >
                   <svg
                     className="size-5"
@@ -225,7 +227,7 @@ export default function ComparePrayerTimes({
                     />
                   </svg>
                 </Button>
-                <span className="min-w-[140px] text-center font-medium text-white">
+                <span className="min-w-[100px] sm:min-w-[140px] text-center text-sm sm:text-base font-medium text-white">
                   {formatDateForDisplay(selectedDate)}
                 </span>
                 <Button
@@ -233,7 +235,7 @@ export default function ComparePrayerTimes({
                   size="icon"
                   onClick={goToNextDay}
                   aria-label="Next day"
-                  className="border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+                  className="min-w-[44px] min-h-[44px] border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white touch-manipulation"
                 >
                   <svg
                     className="size-5"
@@ -253,7 +255,7 @@ export default function ComparePrayerTimes({
             </div>
           </CardHeader>
 
-          <CardContent className="p-0">
+          <CardContent className="p-0 overflow-x-auto">
             {mosques.length === 0 ? (
               <div className="p-12 text-center text-white/70">
                 No mosques available to compare.
@@ -261,16 +263,16 @@ export default function ComparePrayerTimes({
             ) : isLoading ? (
               <div className="p-12 text-center text-white/70">Loading prayer times…</div>
             ) : (
-              <Table className="min-w-[920px] text-white">
+              <Table className="min-w-[640px] sm:min-w-[920px] text-white text-sm sm:text-base">
                 <TableHeader>
                   <TableRow className="border-white/10 hover:bg-white/5">
-                    <TableHead className="md:sticky md:left-0 md:z-20 md:bg-[var(--theme-primary)] md:backdrop-blur-md">
+                    <TableHead className="md:sticky md:left-0 md:z-20 md:bg-[#0A1128]/80 md:backdrop-blur-md">
                       Prayer
                     </TableHead>
                     {data.map(({ mosque, error }) => (
                       <TableHead
                         key={mosque.id}
-                        className="min-w-[130px] text-center text-white"
+                        className="min-w-[90px] sm:min-w-[130px] text-center text-white text-xs sm:text-sm"
                       >
                         <div className="truncate" title={mosque.name}>
                           {mosque.name.replace(/ Sheffield$/, "")}
@@ -287,7 +289,7 @@ export default function ComparePrayerTimes({
                 <TableBody>
                   {PRAYER_NAMES.map((prayer) => (
                     <TableRow key={prayer} className="border-white/10 hover:bg-white/5">
-                      <TableCell className="font-medium text-white/80 md:sticky md:left-0 md:z-10 md:bg-[var(--theme-primary)] md:backdrop-blur-md">
+                      <TableCell className="font-medium text-white/80 md:sticky md:left-0 md:z-10 md:bg-[#0A1128]/80 md:backdrop-blur-md">
                         {prayer}
                       </TableCell>
                       {data.map((mosqueData) => (
@@ -343,7 +345,7 @@ export default function ComparePrayerTimes({
             )}
           </CardContent>
 
-          <CardFooter className="border-t border-white/10 bg-white/5 px-4 py-2 text-xs text-white/70">
+          <CardFooter className="border-t border-white/10 bg-white/5 px-3 sm:px-4 py-2 text-[10px] sm:text-xs text-white/70">
             Top row: Adhan · Bottom row: Iqamah · Jummah: single time
           </CardFooter>
         </Card>

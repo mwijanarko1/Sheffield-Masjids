@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getIqamahTime, getIqamahTimesForDate, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
+import { getIqamahTime, getIqamahTimesForDate, getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
@@ -36,16 +36,12 @@ const MONTH_OPTIONS = [
 ];
 
 function getCurrentMonthInSheffield(): number {
-  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
-  return now.getMonth() + 1;
+  return getDateInSheffield(new Date()).month;
 }
 
 function getTodayInSheffield() {
-  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
-  return {
-    day: now.getDate(),
-    month: now.getMonth() + 1,
-  };
+  const { month, day } = getDateInSheffield(new Date());
+  return { day, month };
 }
 
 function formatDayLabel(dayOfMonth: number, month: number): string {

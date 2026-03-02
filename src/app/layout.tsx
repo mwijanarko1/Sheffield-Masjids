@@ -58,9 +58,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
+  userScalable: true,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A1128" },
   ],
 };
 
@@ -71,10 +72,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-background text-foreground">
+      <body className="antialiased bg-[#0A1128] text-foreground">
         <ConvexProvider>
+          <a
+            href="#main-content"
+            className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#FFB380] px-4 py-2 font-medium text-[#0A1128] focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0A1128]"
+          >
+            Skip to main content
+          </a>
           <Header />
-          {children}
+          <div id="main-content" tabIndex={-1}>
+            {children}
+          </div>
         </ConvexProvider>
       </body>
     </html>
