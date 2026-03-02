@@ -2,8 +2,47 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Mosque } from "@/types/prayer-times";
-import { MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+function MapPinIcon(props: React.SVGAttributes<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function XIcon(props: React.SVGAttributes<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
 
 type LocationStatus =
   | "idle"
@@ -21,9 +60,9 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c; // Distance in km
   return d;
@@ -145,18 +184,18 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // If we found the closest mosque
   if (closestMosque) {
     return (
-      <div className="w-full bg-black/20 backdrop-blur-md border border-white/10 rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-lg text-white">
+      <div className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white/80 shadow-md backdrop-blur-xl sm:flex sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 text-white/80">
-          <MapPin className="h-4 w-4 shrink-0" />
+          <MapPinIcon className="h-4 w-4 shrink-0" aria-hidden />
           <span>
             Closest masjid is <strong className="text-white">{closestMosque.mosque.name}</strong>{" "}
             ({formatDistance(closestMosque.distanceKm)})
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="mt-3 flex items-center gap-2 sm:mt-0">
           <Button
             size="sm"
-            className="h-7 text-xs bg-white/20 hover:bg-white/30 text-white border-0"
+            className="h-8 border border-white/20 bg-white/10 px-3 text-xs text-white hover:bg-white/20"
             onClick={() => onSelectMosque(closestMosque.mosque)}
           >
             Switch to {closestMosque.mosque.name}
@@ -164,11 +203,11 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-white/60 hover:text-white hover:bg-white/10"
+            className="h-8 w-8 text-white/60 hover:bg-white/10 hover:text-white"
             onClick={() => setIsDismissed(true)}
             aria-label="Dismiss banner"
           >
-            <X className="h-4 w-4" />
+            <XIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -178,15 +217,15 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // If no location access or error, show a small button/banner to enable it
   if (locationStatus !== "loading" && locationStatus !== "success") {
     return (
-      <div className="w-full bg-black/20 backdrop-blur-md border border-white/10 rounded-lg py-3 px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 text-sm shadow-lg text-white">
+      <div className="w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white/80 shadow-md backdrop-blur-xl sm:flex sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 text-white/80">
-          <MapPin className="h-4 w-4 shrink-0" />
+          <MapPinIcon className="h-4 w-4 shrink-0" aria-hidden />
           <span>Enable location to find the nearest masjid</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="mt-3 flex items-center gap-2 sm:mt-0">
           <Button
             size="sm"
-            className="h-7 text-xs bg-white/20 hover:bg-white/30 text-white border-0"
+            className="h-8 border border-white/20 bg-white/10 px-3 text-xs text-white hover:bg-white/20"
             onClick={requestUserLocation}
           >
             Enable Location
@@ -194,11 +233,11 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-white/60 hover:text-white hover:bg-white/10"
+            className="h-8 w-8 text-white/60 hover:bg-white/10 hover:text-white"
             onClick={() => setIsDismissed(true)}
             aria-label="Dismiss banner"
           >
-            <X className="h-4 w-4" />
+            <XIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -208,9 +247,9 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   // Loading state
   if (locationStatus === "loading") {
     return (
-      <div className="w-full bg-black/20 backdrop-blur-md border border-white/10 rounded-lg py-3 px-4 flex items-center justify-center text-sm text-white/80 shadow-lg">
-        <MapPin className="h-4 w-4 mr-2 animate-pulse" />
-        <span>Finding nearest masjid...</span>
+      <div className="flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white/80 shadow-md backdrop-blur-xl">
+        <MapPinIcon className="h-4 w-4 mr-2 animate-pulse" aria-hidden />
+        <span>Finding nearest masjid…</span>
       </div>
     );
   }
