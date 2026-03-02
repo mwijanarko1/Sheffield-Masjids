@@ -41,6 +41,8 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     const [hijriDate, setHijriDate] = useState("");
 
     const SHEFFIELD_TZ = "Europe/London";
+    const getSheffieldWallClockTime = (date: Date): Date =>
+        new Date(date.toLocaleString("en-US", { timeZone: SHEFFIELD_TZ }));
 
     const getHijriDate = (date: Date) => {
         try {
@@ -124,7 +126,12 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         return () => clearInterval(interval);
     }, [isToday]);
 
-    const isFriday = useMemo(() => currentTime.getDay() === 5, [currentTime]);
+    const sheffieldNow = useMemo(
+        () => getSheffieldWallClockTime(currentTime),
+        [currentTime],
+    );
+
+    const isFriday = useMemo(() => sheffieldNow.getDay() === 5, [sheffieldNow]);
 
     const prayers = useMemo(() => {
         if (!prayerTimes) return [];
@@ -160,7 +167,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
 
     const upcomingPrayer = useMemo(() => {
         if (!prayerTimes || !iqamahTimes || !isToday) return null;
-        const now = currentTime;
+        const now = sheffieldNow;
         const majorIndices = [0, 2, 3, 4, 5];
         const iqamahDates = prayers.map((p) => {
             if (p.iqamah === "-" || p.iqamah === "—" || p.iqamah === "After Maghrib") return null;
@@ -198,7 +205,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             if (now >= nextDayStart) return "fajr";
         }
         return null;
-    }, [prayerTimes, iqamahTimes, prayers, isToday, isFriday, currentTime]);
+    }, [prayerTimes, iqamahTimes, prayers, isToday, isFriday, sheffieldNow]);
 
     // Determine current active background and curve (use Sheffield timezone so slider matches)
     const { bgClass } = useMemo(() => {
