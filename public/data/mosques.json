@@ -61,6 +61,94 @@
       "lng": -1.473326602699712,
       "slug": "madina-masjid-sheffield",
       "website": "https://www.madinamasjid.org.uk"
+    },
+    {
+      "id": "al-rahman-mosque",
+      "name": "Al-Rahman Mosque",
+      "address": "9 Grower Street, Sheffield S4 7HA",
+      "lat": 53.398,
+      "lng": -1.442,
+      "slug": "al-rahman-mosque"
+    },
+    {
+      "id": "castle-asian-community-centre",
+      "name": "Castle Asian Community Centre",
+      "address": "84 Norfolk Road, Sheffield S2 2SZ",
+      "lat": 53.375,
+      "lng": -1.465,
+      "slug": "castle-asian-community-centre"
+    },
+    {
+      "id": "darululoom-siddiqia-masjid",
+      "name": "Dar Ul Uloom Siddiqia Masjid",
+      "address": "24 Burngreave Rd, Sheffield S3 9DD",
+      "lat": 53.392,
+      "lng": -1.468,
+      "slug": "darululoom-siddiqia-masjid"
+    },
+    {
+      "id": "jamia-masjid-ghausia",
+      "name": "Jamia Masjid Ghausia",
+      "address": "Firth Park Road, Sheffield S5 6WN",
+      "lat": 53.408,
+      "lng": -1.455,
+      "slug": "jamia-masjid-ghausia"
+    },
+    {
+      "id": "noor-al-hadi-mosque",
+      "name": "Noor Al Hadi Mosque",
+      "address": "275 Staniforth Rd, Darnall, Sheffield S9 3FE",
+      "lat": 53.382,
+      "lng": -1.438,
+      "slug": "noor-al-hadi-mosque"
+    },
+    {
+      "id": "al-shafeey-centre",
+      "name": "Al-Shafeey Centre",
+      "address": "Balfour Rd, Sheffield S9 4RX",
+      "lat": 53.385,
+      "lng": -1.435,
+      "slug": "al-shafeey-centre"
+    },
+    {
+      "id": "quba-mosque",
+      "name": "Quba Mosque",
+      "address": "120 Worksop Road, Attercliffe, Sheffield S9 3TN",
+      "lat": 53.392,
+      "lng": -1.428,
+      "slug": "quba-mosque"
+    },
+    {
+      "id": "masjid-umar-sheffield",
+      "name": "Masjid Umar Sheffield",
+      "address": "306 Barnsley Road, Sheffield S4 7AH",
+      "lat": 53.398,
+      "lng": -1.448,
+      "slug": "masjid-umar-sheffield"
+    },
+    {
+      "id": "high-hazels-community-centre",
+      "name": "High Hazels Community Centre",
+      "address": "285A Main Road, Darnall, Sheffield S9 4QD",
+      "lat": 53.382,
+      "lng": -1.438,
+      "slug": "high-hazels-community-centre"
+    },
+    {
+      "id": "al-huda-academy",
+      "name": "Al-Huda Academy",
+      "address": "Ouseburn Croft, Darnall, Sheffield S9 3FY",
+      "lat": 53.382,
+      "lng": -1.438,
+      "slug": "al-huda-academy"
+    },
+    {
+      "id": "firth-park-cultural-centre",
+      "name": "Firth Park Cultural Centre",
+      "address": "121 Bevercotes Road, Sheffield S5 6HB",
+      "lat": 53.412,
+      "lng": -1.458,
+      "slug": "firth-park-cultural-centre"
     }
   ]
 }

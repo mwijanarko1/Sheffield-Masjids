@@ -4,6 +4,7 @@
 html {
   color-scheme: dark;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 /* Sheffield Masjids theme */
@@ -236,6 +237,7 @@ body {
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 /* Prose styles for content */

@@ -198,7 +198,7 @@ export default function ComparePrayerTimes({
       {(isOpen || standalone) && (
         <Card
           id="compare-mosques-table"
-          className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-lg sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl backdrop-blur-md"
+          className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent backdrop-blur-md border border-white/20 sm:border-2 text-white"
         >
           <CardHeader className="border-b border-white/10 bg-white/5 p-3 sm:p-6">
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">

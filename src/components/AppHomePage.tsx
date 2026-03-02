@@ -16,6 +16,7 @@ import {
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import AppBottomNav from "@/components/AppBottomNav";
 import JummahWidget from "@/components/JummahWidget";
+import { CustomSelect } from "@/components/ui/custom-select";
 import { cn } from "@/lib/utils";
 
 interface AppHomePageProps {
@@ -23,7 +24,7 @@ interface AppHomePageProps {
 }
 
 export default function AppHomePage({ mosques }: AppHomePageProps) {
-    const { selectedMosque } = usePersistedMosque(mosques);
+    const { selectedMosque, setSelectedMosque } = usePersistedMosque(mosques);
     const mosque = selectedMosque || mosques[0];
 
     const [prayerTimes, setPrayerTimes] = useState<DailyPrayerTimes | null>(null);
@@ -222,7 +223,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
 
     return (
         <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
-            <div className="flex-1 flex flex-col z-10 px-4 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+1rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1.5rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] pb-0 overflow-hidden min-h-0">
+            <div className="flex-1 flex flex-col z-10 px-4 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+1rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1.5rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-3 sm:mb-5 md:mb-6 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
                     <div className="flex justify-between items-center text-sm sm:text-base mb-3 sm:mb-4 font-normal">
@@ -230,10 +231,19 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                             <div className="hidden sm:block">{formatDateForDisplay(currentTime)}</div>
                             <div className="sm:hidden text-xs">{formatDateForDisplay(currentTime).split(" ").slice(0, 3).join(" ")}</div>
                         </div>
-                        <div className="flex-1 text-center font-bold">
-                            <div className="text-base sm:text-lg">
-                                {currentTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: SHEFFIELD_TZ })}
-                            </div>
+                        <div className="flex-1 flex justify-center min-w-0 px-1 sm:px-2">
+                            <CustomSelect
+                                options={mosques}
+                                value={mosque.id}
+                                onChange={(id) => {
+                                    const m = mosques.find((x) => x.id === id);
+                                    if (m) setSelectedMosque(m);
+                                }}
+                                ariaLabel="Select mosque"
+                                truncateLabel={true}
+                                listFitsContent={true}
+                                className="max-w-full [&_button]:text-xs [&_button]:sm:text-sm [&_button]:font-semibold [&_button]:h-auto [&_button]:min-h-8 [&_button]:py-1"
+                            />
                         </div>
                         <div className="flex-1 text-right font-normal text-white/90">
                             <div className="hidden sm:block">{hijriDate}</div>
@@ -241,11 +251,11 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                         </div>
                     </div>
 
-                    {/* Countdown Section */}
-                    <div className="text-center text-white font-sans">
+                    {/* Countdown Section - centered and aligned with content gutters */}
+                    <div className="flex flex-col items-center justify-center text-center text-white font-sans w-full px-3 sm:px-4 md:px-5 lg:px-6">
                         {isToday && nextPrayer && countdown ? (
                             <>
-                                <h2 className="text-base sm:text-xl lg:text-2xl mb-3 sm:mb-4 font-bold tracking-[0.15px]">
+                                <h2 className="w-full mx-auto text-center text-base sm:text-xl lg:text-2xl mb-3 sm:mb-4 font-bold tracking-[0.15px]">
                                     {isJummahCountdown ? (
                                         <>The Khutbah of <span className="font-bold">JUMMAH</span> is in</>
                                     ) : isIqamahCountdown ? (
@@ -254,39 +264,42 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                         <>The Adhan of <span className="font-bold">{nextPrayer.name.toUpperCase()}</span> is in</>
                                     )}
                                 </h2>
-                                <div className="flex justify-center items-center gap-2 sm:gap-4 lg:gap-6">
+
+                                <div className="relative w-full">
                                     <button
                                         onClick={handlePrevDay}
-                                        className="bg-transparent border-none p-0 min-w-0 text-white/75 hover:text-white transition-colors z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded touch-manipulation"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-transparent border-none p-0 min-w-0 text-white/75 hover:text-white transition-colors z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded touch-manipulation"
                                         aria-label="Previous day"
                                     >
                                         <svg className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
                                     </button>
 
-                                    <div className="flex justify-center items-center gap-2 sm:gap-3 lg:gap-5">
-                                        <div className="flex flex-col items-center">
-                                            <div className="text-3xl sm:text-5xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.hours.toString().padStart(2, "0")}</div>
-                                            <div className="text-xs sm:text-sm uppercase tracking-widest text-[#FFB380]/70">Hours</div>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            <div className="text-2xl sm:text-4xl lg:text-6xl font-bold mb-1 sm:mb-2">:</div>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            <div className="text-3xl sm:text-5xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.minutes.toString().padStart(2, "0")}</div>
-                                            <div className="text-xs sm:text-sm uppercase tracking-widest text-[#FFB380]/70">Minutes</div>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            <div className="text-2xl sm:text-4xl lg:text-6xl font-bold mb-1 sm:mb-2">:</div>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            <div className="text-3xl sm:text-5xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.seconds.toString().padStart(2, "0")}</div>
-                                            <div className="text-xs sm:text-sm uppercase tracking-widest text-[#FFB380]/70">Seconds</div>
+                                    <div className="mx-auto flex w-full justify-center px-6 sm:px-10 md:px-14">
+                                        <div className="grid w-full max-w-[28rem] grid-cols-5 items-end">
+                                            <div className="flex flex-col items-center">
+                                                <div className="text-3xl sm:text-5xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.hours.toString().padStart(2, "0")}</div>
+                                                <div className="text-[10px] sm:text-sm uppercase tracking-widest text-[#FFB380]/70">Hours</div>
+                                            </div>
+                                            <div className="flex justify-center">
+                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-bold mb-5 sm:mb-6 md:mb-7">:</div>
+                                            </div>
+                                            <div className="flex flex-col items-center">
+                                                <div className="text-3xl sm:text-5xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.minutes.toString().padStart(2, "0")}</div>
+                                                <div className="text-[10px] sm:text-sm uppercase tracking-widest text-[#FFB380]/70">Minutes</div>
+                                            </div>
+                                            <div className="flex justify-center">
+                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-bold mb-5 sm:mb-6 md:mb-7">:</div>
+                                            </div>
+                                            <div className="flex flex-col items-center">
+                                                <div className="text-3xl sm:text-5xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.seconds.toString().padStart(2, "0")}</div>
+                                                <div className="text-[10px] sm:text-sm uppercase tracking-widest text-[#FFB380]/70">Seconds</div>
+                                            </div>
                                         </div>
                                     </div>
 
                                     <button
                                         onClick={handleNextDay}
-                                        className="bg-transparent border-none p-0 min-w-0 text-white/75 hover:text-white transition-colors z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded touch-manipulation"
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent border-none p-0 min-w-0 text-white/75 hover:text-white transition-colors z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded touch-manipulation"
                                         aria-label="Next day"
                                     >
                                         <svg className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" /></svg>
@@ -317,7 +330,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                     </div>
                 </div>
 
-                {/* Prayer List - flex-1 fills space; cards expand to fill */}
+                {/* Prayer List - flex-1 fills space; scroll when content overflows */}
                 <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-3 min-h-0 overflow-hidden">
                     {/* Header row - same grid/padding as cards for alignment */}
                     <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 text-[9px] sm:text-xs md:text-sm uppercase font-semibold tracking-widest text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] shrink-0">
@@ -325,7 +338,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                         <div className="text-center min-w-0">Prayer</div>
                         <div className="text-right min-w-0">Iqamah</div>
                     </div>
-                    <div className="flex flex-1 flex-col gap-2 sm:gap-3 md:gap-4 min-h-0 overflow-hidden">
+                    <div className="flex flex-1 flex-col gap-2 sm:gap-3 md:gap-4 min-h-0 overflow-y-auto overflow-x-hidden">
                     {prayers.map((prayer) => {
                         const isActive = prayer.id === (upcomingPrayer ?? currentPrayer);
                         return (

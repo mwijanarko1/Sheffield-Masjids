@@ -46,7 +46,7 @@ function applySecurityHeaders(response: NextResponse, request: NextRequest): Nex
   return response;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const hostname = normalizeDomain(request.nextUrl.hostname);
   const legacyDomain = normalizeDomain(
     process.env.NEXT_PUBLIC_LEGACY_NETLIFY_DOMAIN ?? DEFAULT_LEGACY_DOMAIN,
