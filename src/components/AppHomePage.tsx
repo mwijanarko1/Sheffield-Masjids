@@ -384,12 +384,12 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                 className="relative grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-3 min-h-[36px] flex-1 rounded-xl overflow-hidden transition-all duration-500"
                                 style={{
                                     background: isActive
-                                        ? "linear-gradient(145deg, rgba(255,179,128,0.18) 0%, rgba(255,120,60,0.08) 60%, rgba(255,200,150,0.04) 100%)"
+                                        ? "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)"
                                         : "linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
                                     backdropFilter: "blur(20px) saturate(140%)",
                                     WebkitBackdropFilter: "blur(20px) saturate(140%)",
                                     boxShadow: isActive
-                                        ? "inset 0 1px 0 rgba(255,210,170,0.25), 0 0 0 1px rgba(255,179,128,0.2)"
+                                        ? "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)"
                                         : "inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06)",
                                 }}
                             >
@@ -399,7 +399,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                     className="pointer-events-none absolute top-0 left-4 right-4 h-px"
                                     style={{
                                         background: isActive
-                                            ? "linear-gradient(90deg, transparent, rgba(255,210,160,0.4) 40%, rgba(255,255,255,0.5) 50%, rgba(255,210,160,0.4) 60%, transparent)"
+                                            ? "linear-gradient(90deg, transparent, rgba(255,225,196,0.6) 40%, rgba(255,255,255,0.78) 50%, rgba(255,225,196,0.6) 60%, transparent)"
                                             : "linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 60%, transparent)",
                                     }}
                                 />
@@ -407,7 +407,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                 <span className={`relative z-10 min-w-0 text-sm sm:text-base md:text-lg font-medium tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/90"}`}>
                                     {prayer.adhan}
                                 </span>
-                                <span className={`relative z-10 min-w-0 text-center text-sm sm:text-base md:text-lg tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/95"}`}>
+                                <span className={`relative z-10 min-w-0 text-center text-sm sm:text-base md:text-lg tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-[#FFE2CB] font-extrabold" : "text-white/95"}`}>
                                     {prayer.label}
                                 </span>
                                 <span className={`relative z-10 min-w-0 text-right text-sm sm:text-base md:text-lg font-bold tracking-tight tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white" : "text-white/90"}`}>

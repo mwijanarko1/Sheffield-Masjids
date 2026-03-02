@@ -139,9 +139,12 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
     });
   }, [monthlyData, selectedMonth, today.day, today.month]);
 
+  const todayRowClass =
+    "border-[#FFB380]/45 bg-[#FFB380]/12 hover:bg-[#FFB380]/18";
+
   return (
-    <Card className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60 text-white">
-      <CardHeader className="border-b border-white/10 bg-white/5">
+    <Card className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-lg backdrop-blur-md sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl">
+      <CardHeader className="border-b border-white/10 bg-white/5 p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <CardTitle className="text-white">Full month timetable</CardTitle>
@@ -174,8 +177,8 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
 
         {!isLoading && !error && rows.length > 0 && (
           <>
-            <div className="hidden md:block">
-              <Table className="min-w-[1180px] text-white">
+            <div className="hidden overflow-x-auto md:block">
+              <Table className="min-w-[1180px] text-white text-sm sm:text-base">
                 <TableHeader>
                   <TableRow className="border-white/10 hover:bg-white/5">
                     <TableHead className="w-[120px] text-white/80">Date</TableHead>
@@ -199,7 +202,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
                       key={`${selectedMonth}-${row.day}`}
                       className={cn(
                         "border-white/10 hover:bg-white/5",
-                        row.isToday && "border-sky-200/40 bg-sky-300/20 hover:bg-sky-300/25",
+                        row.isToday && todayRowClass,
                       )}
                     >
                       <TableCell className="font-medium">{row.dayLabel}</TableCell>
@@ -227,7 +230,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
                   key={`mobile-${selectedMonth}-${row.day}`}
                   className={cn(
                     "rounded-md border border-white/10 bg-white/5 p-4",
-                    row.isToday && "border-sky-200/50 bg-sky-300/20",
+                    row.isToday && "border-[#FFB380]/45 bg-[#FFB380]/12",
                   )}
                 >
                   <p className="mb-3 text-sm font-semibold text-white">{row.dayLabel}</p>
