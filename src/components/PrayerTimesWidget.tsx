@@ -14,12 +14,6 @@ interface PrayerTimesWidgetProps {
   mosques?: Mosque[];
 }
 
-const HIJRI_DATE_FORMATTER = new Intl.DateTimeFormat("en-GB-u-ca-islamic", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-
 export default function PrayerTimesWidget({
   initialMosque,
   showDropdown = false,
@@ -52,50 +46,6 @@ export default function PrayerTimesWidget({
   const getSheffieldTime = () => {
     return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
   };
-
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
-
-  // Set initial time and start interval for the real-time clock
-  useEffect(() => {
-    setCurrentTime(getSheffieldTime());
-    const interval = setInterval(() => {
-      setCurrentTime(getSheffieldTime());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const hijriDate = useMemo(() => {
-    if (!currentTime) return "";
-    try {
-      const parts = HIJRI_DATE_FORMATTER.formatToParts(currentTime);
-      const day = parts.find((part) => part.type === "day")?.value;
-      const month = parts.find((part) => part.type === "month")?.value;
-      const year = parts.find((part) => part.type === "year")?.value;
-      if (!day || !month || !year) return "";
-      return `${day} ${month} ${year} AH`;
-    } catch {
-      return "";
-    }
-  }, [currentTime]);
-
-  const gregorianDate = useMemo(() => {
-    if (!currentTime) return "";
-    return currentTime.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  }, [currentTime]);
-
-  const timeString = useMemo(() => {
-    if (!currentTime) return "--:--:--";
-    return currentTime.toLocaleTimeString("en-GB", {
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
-  }, [currentTime]);
 
   // Get the prayer that should be highlighted
   const getHighlightedPrayer = useCallback((prayers: any[]): string | null => {
@@ -429,33 +379,14 @@ export default function PrayerTimesWidget({
   }, [prayers, isToday, getHighlightedPrayer, prayerTimes]);
 
   if (isLoading) {
-    return <div className="p-12 text-center text-white bg-white/10 backdrop-blur-md rounded-2xl animate-pulse">Loading {mosque.name}...</div>;
+    return <div className="p-12 text-center text-white bg-[var(--theme-primary)] rounded-2xl animate-pulse">Loading {mosque.name}...</div>;
   }
 
   return (
-    <>
-      <div className="fixed inset-0 -z-10 bg-slate-950" />
-      <div className="overflow-hidden rounded-xl shadow-2xl sm:rounded-2xl xl:rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20">
-      {/* Dashboard Header: Clock, Date, and Mosque Selector */}
-      <div className="border-b border-white/10 bg-black/10 backdrop-blur-sm p-4 sm:p-6 xl:p-8">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-8">
-          <div className="text-center md:text-left">
-            <p className="text-lg sm:text-xl font-bold text-white leading-tight">
-              {gregorianDate || "Loading date..."}
-            </p>
-            <p className="text-sm sm:text-base font-medium text-white/80">
-              {hijriDate}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-4xl sm:text-5xl md:text-6xl font-black text-white tabular-nums tracking-tight">
-              {timeString}
-            </p>
-          </div>
-        </div>
-
+    <div className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-[var(--theme-primary)] via-[var(--theme-primary)] via-[15%] to-[var(--theme-accent)] border border-white/40 sm:border-2 sm:border-white/60">
+      <div className="relative p-3 text-white/80 sm:p-6 xl:p-8">
         {showDropdown && (
-          <div className="mt-4 sm:mt-6 flex justify-center border-t border-white/10 pt-4 sm:pt-6">
+          <div className="mb-4 sm:mb-6 flex justify-center">
             <CustomSelect
               options={selectableMosques}
               value={mosque.id}
@@ -463,14 +394,12 @@ export default function PrayerTimesWidget({
                 const selected = selectableMosques.find(m => m.id === value);
                 if (selected) setMosque(selected);
               }}
-              className="w-full max-w-sm sm:min-w-[300px]"
+              className="max-w-[280px] sm:min-w-[250px]"
               ariaLabel="Select mosque"
             />
           </div>
         )}
-      </div>
 
-      <div className="relative p-3 text-white/80 sm:p-6 xl:p-8">
         <div className="text-center text-white">
           {isToday && nextPrayer && countdown ? (
             <>
@@ -489,22 +418,22 @@ export default function PrayerTimesWidget({
                 </button>
                 <div className="flex items-center justify-center gap-1 sm:gap-2 md:gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tabular-nums tracking-tighter">{countdown.hours.toString().padStart(2, '0')}</div>
-                    <div className="text-[10px] sm:text-xs uppercase tracking-widest text-white/50 mt-1 sm:mt-2">hours</div>
+                    <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.hours.toString().padStart(2, '0')}</div>
+                    <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[var(--theme-accent-light)]">hr</div>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-8 text-white/30">:</div>
+                    <div className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">:</div>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tabular-nums tracking-tighter">{countdown.minutes.toString().padStart(2, '0')}</div>
-                    <div className="text-[10px] sm:text-xs uppercase tracking-widest text-white/50 mt-1 sm:mt-2">minutes</div>
+                    <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.minutes.toString().padStart(2, '0')}</div>
+                    <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[var(--theme-accent-light)]">min</div>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-8 text-white/30">:</div>
+                    <div className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">:</div>
                   </div>
                   <div className="flex flex-col items-center">
-                    <div className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tabular-nums tracking-tighter">{countdown.seconds.toString().padStart(2, '0')}</div>
-                    <div className="text-[10px] sm:text-xs uppercase tracking-widest text-white/50 mt-1 sm:mt-2">seconds</div>
+                    <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tabular-nums tracking-tighter">{countdown.seconds.toString().padStart(2, '0')}</div>
+                    <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[var(--theme-accent-light)]">sec</div>
                   </div>
                 </div>
                 <button onClick={goToNextDay} className="p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-white/40 hover:text-white active:text-white transition-colors touch-manipulation" aria-label="Next day">
@@ -555,14 +484,14 @@ export default function PrayerTimesWidget({
                 return (
                   <div
                     key={prayer.name}
-                    className={`flex items-center rounded-xl sm:rounded-2xl transition-all duration-300 ${isUpcoming
-                      ? 'bg-white/20 backdrop-blur-md text-white border border-white/30 scale-[1.02] shadow-xl z-10'
-                      : 'bg-white/5 border border-white/5 text-white/90 hover:bg-white/10'
+                    className={`flex items-center rounded-xl sm:rounded-2xl transition-all duration-300 shadow-md ${isUpcoming
+                      ? 'bg-[var(--theme-primary)] text-white ring-2 ring-white/20 scale-[1.02] shadow-xl z-10'
+                      : 'bg-gradient-to-br from-white to-[var(--theme-accent)] text-[var(--theme-primary)]'
                     }`}
                   >
                     <div className="grid w-full grid-cols-3 items-center gap-2 px-4 py-3 sm:px-6 sm:py-4 xl:px-8 xl:py-5">
                       <div className="flex flex-col items-start">
-                        <div className={`text-sm font-serif font-bold italic capitalize sm:text-base md:text-xl xl:text-2xl text-white`}>
+                        <div className={`text-sm font-serif font-bold italic capitalize sm:text-base md:text-xl xl:text-2xl ${isUpcoming ? 'text-white' : 'text-[var(--theme-primary)]'}`}>
                           {prayer.name.toLowerCase()}
                         </div>
                       </div>
@@ -653,6 +582,5 @@ export default function PrayerTimesWidget({
         )}
       </div>
     </div>
-    </>
   );
 }
