@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Header from "@/components/Header";
+import DynamicBackground from "@/components/DynamicBackground";
 import {
   getBaseUrl,
   SITE_DESCRIPTION,
@@ -72,8 +73,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-[#0A1128] text-foreground">
+      <body className="antialiased text-foreground">
         <ConvexProvider>
+          <DynamicBackground />
           <a
             href="#main-content"
             className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#FFB380] px-4 py-2 font-medium text-[#0A1128] focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0A1128]"
@@ -81,7 +83,7 @@ export default function RootLayout({
             Skip to main content
           </a>
           <Header />
-          <div id="main-content" tabIndex={-1}>
+          <div id="main-content" tabIndex={-1} className="relative z-10">
             {children}
           </div>
         </ConvexProvider>

@@ -14,7 +14,7 @@ export default function NewDomainPage() {
   const newDomain = "https://www.sheffieldmasjids.com";
 
   return (
-    <main className="min-h-[100dvh] bg-gradient-to-b from-[#0A1128] via-[#121c38] to-[#1A2642] text-white">
+    <main className="relative min-h-[100dvh] text-white">
       <div className="flex flex-col items-center justify-center min-h-[100dvh] px-4 text-center">
         <div className="max-w-md w-full space-y-8 p-8 rounded-2xl border border-border bg-card shadow-sm">
           <div className="space-y-4">

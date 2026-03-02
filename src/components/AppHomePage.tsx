@@ -207,36 +207,6 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         return null;
     }, [prayerTimes, iqamahTimes, prayers, isToday, isFriday, sheffieldNow]);
 
-    // Determine current active background and curve (use Sheffield timezone so slider matches)
-    const { bgClass } = useMemo(() => {
-        let cls = "bg-[#0A1128]";
-
-        const hourStr = currentTime.toLocaleTimeString("en-GB", { timeZone: SHEFFIELD_TZ, hour: "2-digit", hour12: false });
-        const hour = parseInt(hourStr, 10);
-
-        if (hour >= 5 && hour < 7) {
-            // Sunrise: 5:00 - 7:00
-            cls = "bg-gradient-to-b from-[#2e3159] via-[#8e5c77] to-[#f4935e]";
-        } else if (hour >= 7 && hour < 11) {
-            // Morning: 7:00 - 11:00
-            cls = "bg-gradient-to-b from-[#5698d6] via-[#3a75b8] to-[#1e528e]";
-        } else if (hour >= 11 && hour < 13) {
-            // Noon: 11:00 - 13:00
-            cls = "bg-gradient-to-b from-[#1ca3ec] via-[#1081cc] to-[#0459a3]";
-        } else if (hour >= 13 && hour < 17) {
-            // Afternoon: 13:00 - 17:00
-            cls = "bg-gradient-to-b from-[#3876b5] via-[#2a5d96] to-[#1a4168]";
-        } else if (hour >= 17 && hour < 19) {
-            // Sunset: 17:00 - 19:00
-            cls = "bg-gradient-to-b from-[#233568] via-[#8b3d6a] to-[#fd7534]";
-        } else {
-            // Night: 19:00 - 5:00
-            cls = "bg-gradient-to-b from-[#0A1128] via-[#121c38] to-[#1A2642]";
-        }
-
-        return { bgClass: cls };
-    }, [currentTime]);
-
     // Handle previous / Next day
     const handlePrevDay = () => {
         const d = new Date(selectedDate);
@@ -251,34 +221,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     };
 
     return (
-        <div className="relative isolate flex h-full w-full flex-col font-sans transition-colors duration-1000 text-white min-h-[100dvh]">
-            {/* Full-bleed background - extends to screen edges (iPhone bezels, notch) */}
-            <div
-                className={`fixed inset-0 z-0 pointer-events-none transition-colors duration-1000 ${bgClass}`}
-                style={{
-                    top: "calc(-1 * env(safe-area-inset-top, 0px))",
-                    left: "calc(-1 * env(safe-area-inset-left, 0px))",
-                    right: "calc(-1 * env(safe-area-inset-right, 0px))",
-                    bottom: "calc(-1 * env(safe-area-inset-bottom, 0px))",
-                }}
-            />
-            {/* Stars background - deterministic positions to avoid hydration mismatch */}
-            <div className="absolute top-0 left-0 w-full h-1/2 pointer-events-none">
-                {[...Array(15)].map((_, i) => {
-                    // Pseudo-random but deterministic from index (same on server and client)
-                    const top = ((i * 31 + 7) % 97) + 1;
-                    const left = ((i * 17 + 13) % 97) + 1;
-                    const opacity = 0.2 + ((i * 11 + 3) % 80) / 100;
-                    return (
-                        <div key={i} className="absolute w-1 h-1 bg-white/60 rounded-full" style={{
-                            top: `${top}%`,
-                            left: `${left}%`,
-                            opacity
-                        }} />
-                    );
-                })}
-            </div>
-
+        <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
             <div className="flex-1 flex flex-col z-10 px-4 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+1rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1.5rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] pb-0 overflow-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-3 sm:mb-5 md:mb-6 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
