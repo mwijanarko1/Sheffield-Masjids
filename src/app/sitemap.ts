@@ -24,12 +24,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const mosqueRoutes: MetadataRoute.Sitemap = mosques.map((mosque) => ({
+  const mosqueRoutes: MetadataRoute.Sitemap = mosques.flatMap((mosque) => [
+    {
       url: `${baseUrl}/mosques/${mosque.slug}`,
       lastModified,
       changeFrequency: "daily" as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/mosques/${mosque.slug}/timetable`,
+      lastModified,
+      changeFrequency: "weekly" as const,
       priority: 0.7,
-    }));
+    },
+    {
+      url: `${baseUrl}/mosques/${mosque.slug}/ramadan-timetable`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    },
+  ]);
 
   return [...staticRoutes, ...mosqueRoutes];
 }

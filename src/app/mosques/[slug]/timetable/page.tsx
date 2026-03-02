@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MonthlyTimetable from "@/components/MonthlyTimetable";
 import { Button } from "@/components/ui/button";
 import { getMosqueBySlug } from "@/lib/mosques";
+import { SITE_NAME } from "@/lib/site";
 
 interface TimetablePageProps {
   params: Promise<{
@@ -11,6 +13,36 @@ interface TimetablePageProps {
 }
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: TimetablePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const mosque = await getMosqueBySlug(slug);
+
+  if (!mosque) {
+    return { title: "Not Found" };
+  }
+
+  const title = `${mosque.name} Monthly Timetable`;
+  const fullTitle = `${mosque.name} Monthly Timetable | ${SITE_NAME}`;
+  const description = `Full monthly prayer times and iqamah times for ${mosque.name} in Sheffield.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/mosques/${mosque.slug}/timetable`,
+    },
+    openGraph: {
+      title: fullTitle,
+      description,
+      url: `/mosques/${mosque.slug}/timetable`,
+      type: "website",
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export default async function TimetablePage({ params }: TimetablePageProps) {
   const { slug } = await params;
