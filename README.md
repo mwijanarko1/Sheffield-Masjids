@@ -49,20 +49,21 @@ If not set, the app falls back to `http://localhost:3000`.
 ## SEO Setup
 
 - Global metadata in `src/app/layout.tsx` (title template, Open Graph, Twitter, robots)
-- Route-level canonical metadata:
-  - `/` in `src/app/page.tsx`
-  - `/compare` in `src/app/compare/page.tsx`
-  - `/mosques/[slug]` in `src/app/mosques/[slug]/page.tsx`
+- Route-level canonical metadata for `/`, `/compare`, `/mosques/[slug]`, and key static pages
 - Dynamic `robots.txt` in `src/app/robots.ts`
 - Dynamic `sitemap.xml` in `src/app/sitemap.ts` (includes home, compare, and indexable masjid pages)
 
 ## Routes
 
-- `/` Home (selector + prayer times + map)
+- `/` Home (mosque selector, prayer times, map, compare)
 - `/compare` Cross-masjid prayer comparison
 - `/mosques/[slug]` Individual masjid detail page
 - `/mosques/[slug]/timetable` Monthly prayer timetable
 - `/mosques/[slug]/ramadan-timetable` Ramadan timetable
+- `/settings` App settings (mosque preference, links to legal pages)
+- `/privacy` Privacy policy
+- `/terms` Terms & conditions
+- `/new-domain` New domain / redirect notice (if used)
 
 ## Data Source Structure
 
@@ -95,11 +96,16 @@ Each monthly JSON file contains:
 - `npm run lint` - run linter
 - `npx tsc --noEmit` - type-check
 
-## Data Update Scripts
+## Data & Scripts
 
-- `scripts/fetch-masjid-sunnah-timetable.mjs` - fetch + convert Masjid Sunnah timetable data
+- `scripts/seed-convex.ts` - seed Convex mosque registry and prayer datasets from `public/data`
+- `scripts/fetch-masjid-sunnah-timetable.mjs` - fetch and convert Masjid Sunnah timetable data
 - `scripts/convert-masjid-huda-docs.mjs` - convert Masjid Huda timetable docs into project JSON format
-- `scripts/seed-convex.ts` - seed Convex mosque registry + prayer datasets from `public/data`
+- `scripts/convert-andalus.ts` - convert Andalus timetable data
+- `scripts/fetch-madina-masjid-timetable.ts` - fetch Madina Masjid timetable data
+- `scripts/update-madina-masjid-from-mawaqit.ts` - update Madina Masjid data from Mawaqit
+- `scripts/compare-mawaqit-madina-masjid.ts` - compare Mawaqit vs local Madina Masjid data
+- `scripts/update-sgm-adhan.ts` - update Sheffield Grand Mosque adhan data
 
 ## License
 

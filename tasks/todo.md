@@ -1,5 +1,46 @@
 # Todo
 
+## Documentation refresh (March 2026)
+
+- [x] Update README.md with current routes (settings, privacy, terms, new-domain) and full script list.
+- [x] Update docs/PROMPT.txt for Sheffield Masjids project structure and CODEBASE_MAP reference.
+- [x] Add docs/CODEBASE_MAP.md with architecture, data flow, routes, and navigation guide.
+
+## Plan (Minimal Mobile-First Homepage Redesign)
+
+- [x] Simplify global theme/background tokens for a minimal glass-like look.
+- [x] Redesign homepage composition for clear mobile-first hierarchy with strong desktop scaling.
+- [x] Restyle key home UI elements (`Header`, `Footer`, selector, location banner, map shell, prayer widget container states) to match the minimal system.
+- [x] Run `npx tsc --noEmit` and document outcomes.
+
+## Review (Minimal Mobile-First Homepage Redesign)
+
+- Shifted the visual direction from dark-heavy gradients to a minimal light glass style using softer slate/teal tokens in `src/app/globals.css`.
+- Updated shell-level framing in `src/app/layout.tsx` and `src/app/page.tsx` to support cleaner spacing and mobile-first readability while preserving desktop width.
+- Redesigned core home composition in `src/components/HomeContent.tsx`:
+  - clearer section labels for mosque selection/location,
+  - improved responsive column split for widget + map.
+- Restyled supporting UI elements for consistency:
+  - `src/components/Header.tsx`
+  - `src/components/Footer.tsx`
+  - `src/components/ui/custom-select.tsx`
+  - `src/components/LocationBanner.tsx`
+  - `src/components/MosqueMap.tsx`
+- Restyled `src/components/PrayerTimesWidget.tsx` shell/loading/CTA color treatment while keeping prayer time logic unchanged.
+- Verification: `npx tsc --noEmit` passed.
+
+## Plan (Grand Mosque Ramadan Iqamah +10)
+
+- [x] Confirm where Grand Mosque Ramadan iqamah times are sourced and resolved.
+- [x] Update Grand Mosque Ramadan iqamah so `fajr` and `maghrib` are `Adhan + 10 mins`.
+- [x] Verify only those Ramadan iqamah fields changed and keep all other values the same.
+
+## Review (Grand Mosque Ramadan Iqamah +10)
+
+- Updated `public/data/mosques/sheffield-grand-mosque/ramadan.json` only.
+- Set `fajr` and `maghrib` to `Adhan + 10 mins` across all Ramadan `iqamah_times` date ranges (`1-8`, `9-11`, `12-13`, `14-21`, `22-30`).
+- Left all other Ramadan adhan/iqamah entries unchanged.
+
 ## Plan (Post-Review Hardening Follow-Up)
 
 - [x] Upgrade in-memory cache reads in `src/lib/prayer-times.ts` to true LRU behavior.
@@ -498,3 +539,27 @@
 - Updated `src/components/PrayerTimesWidget.tsx` to track the latest fetch request with `useRef` and ignore stale response/error/finally state updates.
 - This keeps selector state and rendered timetable data consistent after hydration-time mosque restoration.
 - Verification: `npx tsc --noEmit` passed.
+
+## Plan (React Doctor Warning Cleanup)
+
+- [x] Add route metadata for monthly and Ramadan timetable pages.
+- [x] Refactor `ComparePrayerTimes` to remove derived `useState`, split large render sections, and avoid cascading state updates.
+- [x] Refactor `MonthlyTimetable` and `RamadanTimetable` async loading state to avoid cascading `setState` patterns.
+- [x] Add keyboard interaction handling for clickable options in `CustomSelect` to satisfy a11y lint.
+- [x] Re-run `npx react-doctor@latest` and `npx tsc --noEmit`, then document results in review notes.
+
+## Review (React Doctor Warning Cleanup)
+
+- Added `generateMetadata` to:
+  - `src/app/mosques/[slug]/timetable/page.tsx`
+  - `src/app/mosques/[slug]/ramadan-timetable/page.tsx`
+  with mosque-aware SEO titles/descriptions and fallbacks when slug lookup fails.
+- Refactored `src/components/ComparePrayerTimes.tsx`:
+  - Removed prop-derived state (`useState(standalone)`), now derived via `isOpen = standalone || isExpanded`.
+  - Replaced cascading effect updates with a reducer-driven load state.
+  - Split heavy render sections into focused components (`CompareTableCard`, `CompareDataCell`, `DisplayTime`) to remove giant-component and inline render-function warnings.
+- Refactored `src/components/MonthlyTimetable.tsx` and `src/components/RamadanTimetable.tsx` to use reducer-based async state handling, removing multi-`setState` effect cascades.
+- Updated `src/components/ui/custom-select.tsx` option items with keyboard handling (`Enter`/`Space`) and `tabIndex={0}` for accessible activation.
+- Verification:
+  - `npx tsc --noEmit` passed.
+  - `npx react-doctor@latest` passed with `100/100` and `No issues found`.
