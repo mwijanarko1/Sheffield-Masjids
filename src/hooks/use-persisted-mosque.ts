@@ -2,10 +2,16 @@ import { useEffect, useState } from "react";
 import { Mosque } from "@/types/prayer-times";
 
 const SELECTED_MOSQUE_STORAGE_KEY = "selected-mosque-id";
+const DEFAULT_MOSQUE_SLUG = "muslim-welfare-house";
+
+function getDefaultMosque(mosques: Mosque[]): Mosque | null {
+  if (mosques.length === 0) return null;
+  return mosques.find((m) => m.slug === DEFAULT_MOSQUE_SLUG) ?? mosques[0];
+}
 
 export function usePersistedMosque(mosques: Mosque[]) {
   const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(
-    mosques[0] ?? null
+    () => getDefaultMosque(mosques)
   );
 
   useEffect(() => {
@@ -31,7 +37,7 @@ export function usePersistedMosque(mosques: Mosque[]) {
         const updated = mosques.find((mosque) => mosque.id === current.id);
         if (updated) return updated;
       }
-      return mosques[0];
+      return getDefaultMosque(mosques);
     });
   }, [mosques]);
 

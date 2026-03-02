@@ -143,7 +143,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
     "border-[#FFB380]/45 bg-[#FFB380]/12 hover:bg-[#FFB380]/18";
 
   return (
-    <Card className="overflow-hidden rounded-xl border border-white/40 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-lg backdrop-blur-md sm:rounded-2xl sm:border-2 sm:border-white/60 sm:shadow-xl xl:rounded-3xl">
+    <Card className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent backdrop-blur-md border border-white/20 sm:border-2 text-white">
       <CardHeader className="border-b border-white/10 bg-white/5 p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -229,36 +229,49 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
                 <div
                   key={`mobile-${selectedMonth}-${row.day}`}
                   className={cn(
-                    "rounded-md border border-white/10 bg-white/5 p-4",
-                    row.isToday && "border-[#FFB380]/45 bg-[#FFB380]/12",
+                    "flex flex-col rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur-md",
+                    row.isToday && "border-[#FFB380]/45 bg-[#FFB380]/12 ring-1 ring-[#FFB380]/30",
                   )}
                 >
-                  <p className="mb-3 text-sm font-semibold text-white">{row.dayLabel}</p>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-white/70">
-                    <span>Fajr Adhan</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.fajrAdhan} className="font-mono tabular-nums text-right" /></span>
-                    <span>Fajr Iqamah</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.fajrIqamah} className="font-mono tabular-nums text-right" /></span>
-                    <span>Sunrise</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.sunrise} className="font-mono tabular-nums text-right" /></span>
-                    <span>Dhuhr Adhan</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.dhuhrAdhan} className="font-mono tabular-nums text-right" /></span>
-                    <span>Dhuhr Iqamah</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.dhuhrIqamah} className="font-mono tabular-nums text-right" /></span>
-                    <span>Asr Adhan</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.asrAdhan} className="font-mono tabular-nums text-right" /></span>
-                    <span>Asr Iqamah</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.asrIqamah} className="font-mono tabular-nums text-right" /></span>
-                    <span>Maghrib Adhan</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.maghribAdhan} className="font-mono tabular-nums text-right" /></span>
-                    <span>Maghrib Iqamah</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.maghribIqamah} className="font-mono tabular-nums text-right" /></span>
-                    <span>Isha Adhan</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.ishaAdhan} className="font-mono tabular-nums text-right" /></span>
-                    <span>Isha Iqamah</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.ishaIqamah} className="font-mono tabular-nums text-right" /></span>
-                    <span>Jummah Iqamah</span>
-                    <span className="font-mono tabular-nums text-right"><TimeDisplay time={row.jummahIqamah} className="font-mono tabular-nums text-right" /></span>
+                  <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+                    <p className="text-sm font-bold tracking-wide text-white">{row.dayLabel}</p>
+                    {row.isToday && <span className="rounded-full bg-[#FFB380]/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-[#FFB380] uppercase">Today</span>}
+                  </div>
+
+                  <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-2.5 text-xs text-white/80">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1 col-span-1">Prayer</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1 text-right col-span-1">Adhan</div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1 text-right col-span-1">Iqamah</div>
+
+                    <div className="font-medium text-white">Fajr</div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.fajrAdhan} /></div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.fajrIqamah} /></div>
+
+                    <div className="font-medium text-white">Sunrise</div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.sunrise} /></div>
+                    <div className="text-right font-mono tabular-nums text-white/40">—</div>
+
+                    <div className="font-medium text-white">Dhuhr</div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.dhuhrAdhan} /></div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.dhuhrIqamah} /></div>
+
+                    <div className="font-medium text-white">Asr</div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.asrAdhan} /></div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.asrIqamah} /></div>
+
+                    <div className="font-medium text-white">Maghrib</div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.maghribAdhan} /></div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.maghribIqamah} /></div>
+
+                    <div className="font-medium text-white">Isha</div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.ishaAdhan} /></div>
+                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.ishaIqamah} /></div>
+
+                    <div className="col-span-3 my-1 h-px bg-white/10"></div>
+
+                    <div className="font-medium text-[#FFB380]">Jummah</div>
+                    <div className="text-right font-mono tabular-nums text-white/40">—</div>
+                    <div className="text-right font-mono tabular-nums text-[#FFB380]"><TimeDisplay time={row.jummahIqamah} /></div>
                   </div>
                 </div>
               ))}
