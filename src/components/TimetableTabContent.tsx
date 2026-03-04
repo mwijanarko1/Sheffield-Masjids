@@ -33,16 +33,10 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
   }, [mosque.slug]);
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-10 lg:px-8 xl:max-w-7xl">
-      <h2 className="mb-2 sm:mb-3 text-base sm:text-lg font-bold text-white">
-        Timetable
-      </h2>
-      <p className="mb-4 sm:mb-6 text-sm text-white/80">
-        {mosque.name}
-      </p>
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
       <MonthlyTimetable mosque={mosque} />
       {isRamadanPeriod && (
-        <p className="mt-4 text-sm">
+        <p className="mt-4 text-center text-sm">
           <Link
             href={`/mosques/${mosque.slug}/ramadan-timetable`}
             className="text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128] rounded"

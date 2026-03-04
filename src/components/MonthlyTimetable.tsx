@@ -5,8 +5,6 @@ import { getIqamahTime, getIqamahTimesForDate, getDateInSheffield, loadMonthlyPr
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CustomSelect } from "@/components/ui/custom-select";
 import {
   Table,
   TableBody,
@@ -73,6 +71,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const today = useMemo(() => getTodayInSheffield(), []);
+  const currentYear = useMemo(() => getDateInSheffield(new Date()).year, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -142,143 +141,123 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
   const todayRowClass =
     "border-[#FFB380]/45 bg-[#FFB380]/12 hover:bg-[#FFB380]/18";
 
-  return (
-    <Card className="overflow-hidden rounded-xl shadow-lg sm:rounded-2xl sm:shadow-xl xl:rounded-3xl bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent backdrop-blur-md border border-white/20 sm:border-2 text-white">
-      <CardHeader className="border-b border-white/10 bg-white/5 p-4 sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <CardTitle className="text-white">Full month timetable</CardTitle>
-            <CardDescription className="text-white/70">
-              Adhan and iqamah schedule for {mosque.name}.
-            </CardDescription>
-          </div>
-          <CustomSelect
-            options={MONTH_OPTIONS.map(m => ({ id: String(m.value), name: m.label }))}
-            value={String(selectedMonth)}
-            onChange={(value) => setSelectedMonth(Number(value))}
-            className="w-full sm:w-48"
-            ariaLabel="Select month"
-          />
-        </div>
-      </CardHeader>
+  const goToPreviousMonth = () => {
+    setSelectedMonth((month) => (month === 1 ? 12 : month - 1));
+  };
 
-      <CardContent className="p-4 sm:p-6">
+  const goToNextMonth = () => {
+    setSelectedMonth((month) => (month === 12 ? 1 : month + 1));
+  };
+
+  const selectedMonthName =
+    MONTH_OPTIONS.find((option) => option.value === selectedMonth)?.label ?? "Month";
+
+  return (
+    <section
+      className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-white/20 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-2xl backdrop-blur-md"
+      aria-label="Monthly prayer timetable"
+    >
+      <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-[#FFB380]/10 blur-3xl" />
+
+      <div className="relative z-10 px-4 pb-6 pt-6 md:px-8 md:pb-8 md:pt-8">
+        <div className="mb-5 flex items-center justify-between gap-3 md:mb-7">
+          <button
+            type="button"
+            onClick={goToPreviousMonth}
+            aria-label="Previous month"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380]/40 touch-manipulation"
+          >
+            <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <div className="text-center">
+            <span className="mb-2 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 shadow-sm md:text-xs">
+              Prayer Schedule
+            </span>
+            <h2 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
+              {selectedMonthName} {currentYear}
+            </h2>
+            <p className="mt-1 text-xs text-white/70 md:text-sm">
+              Adhan and iqamah schedule for {mosque.name}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={goToNextMonth}
+            aria-label="Next month"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380]/40 touch-manipulation"
+          >
+            <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
         {isLoading && (
-          <p className="rounded-md border border-white/10 bg-white/5 p-4 text-sm text-white/70">
+          <p className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur-md">
             Loading timetable…
           </p>
         )}
 
         {!isLoading && error && (
-          <p className="rounded-md border border-white/10 bg-white/5 p-4 text-sm text-white/70">
+          <p className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur-md">
             {error}
           </p>
         )}
 
         {!isLoading && !error && rows.length > 0 && (
-          <>
-            <div className="hidden overflow-x-auto md:block">
-              <Table className="min-w-[1180px] text-white text-sm sm:text-base">
-                <TableHeader>
-                  <TableRow className="border-white/10 hover:bg-white/5">
-                    <TableHead className="w-[120px] text-white/80">Date</TableHead>
-                    <TableHead className="text-white/80">Fajr Adhan</TableHead>
-                    <TableHead className="text-white/80">Fajr Iqamah</TableHead>
-                    <TableHead className="text-white/80">Sunrise</TableHead>
-                    <TableHead className="text-white/80">Dhuhr Adhan</TableHead>
-                    <TableHead className="text-white/80">Dhuhr Iqamah</TableHead>
-                    <TableHead className="text-white/80">Asr Adhan</TableHead>
-                    <TableHead className="text-white/80">Asr Iqamah</TableHead>
-                    <TableHead className="text-white/80">Maghrib Adhan</TableHead>
-                    <TableHead className="text-white/80">Maghrib Iqamah</TableHead>
-                    <TableHead className="text-white/80">Isha Adhan</TableHead>
-                    <TableHead className="text-white/80">Isha Iqamah</TableHead>
-                    <TableHead className="text-white/80">Jummah Iqamah</TableHead>
+          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+            <Table className="min-w-[1180px] text-sm text-white md:text-base">
+              <TableHeader className="bg-white/5">
+                <TableRow className="border-white/10 hover:bg-white/5">
+                  <TableHead className="w-[120px] font-bold uppercase tracking-wider text-white/80">Date</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Fajr Adhan</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Fajr Iqamah</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Sunrise</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Dhuhr Adhan</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Dhuhr Iqamah</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Asr Adhan</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Asr Iqamah</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Maghrib Adhan</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Maghrib Iqamah</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Isha Adhan</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Isha Iqamah</TableHead>
+                  <TableHead className="font-bold uppercase tracking-wider text-white/80">Jummah Iqamah</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={`${selectedMonth}-${row.day}`}
+                    className={cn(
+                      "border-white/10 transition-colors hover:bg-white/5",
+                      row.isToday && todayRowClass,
+                    )}
+                  >
+                    <TableCell className="font-semibold text-white">{row.dayLabel}</TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrAdhan} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrIqamah} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.sunrise} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrAdhan} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrIqamah} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrAdhan} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrIqamah} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribAdhan} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribIqamah} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaAdhan} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaIqamah} className="font-mono tabular-nums" /></TableCell>
+                    <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.jummahIqamah} className="font-mono tabular-nums" /></TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow
-                      key={`${selectedMonth}-${row.day}`}
-                      className={cn(
-                        "border-white/10 hover:bg-white/5",
-                        row.isToday && todayRowClass,
-                      )}
-                    >
-                      <TableCell className="font-medium">{row.dayLabel}</TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrAdhan} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.fajrIqamah} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.sunrise} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrAdhan} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.dhuhrIqamah} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrAdhan} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.asrIqamah} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribAdhan} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.maghribIqamah} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaAdhan} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.ishaIqamah} className="font-mono tabular-nums" /></TableCell>
-                      <TableCell className="font-mono tabular-nums"><TimeDisplay time={row.jummahIqamah} className="font-mono tabular-nums" /></TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="grid gap-3 md:hidden">
-              {rows.map((row) => (
-                <div
-                  key={`mobile-${selectedMonth}-${row.day}`}
-                  className={cn(
-                    "flex flex-col rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur-md",
-                    row.isToday && "border-[#FFB380]/45 bg-[#FFB380]/12 ring-1 ring-[#FFB380]/30",
-                  )}
-                >
-                  <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
-                    <p className="text-sm font-bold tracking-wide text-white">{row.dayLabel}</p>
-                    {row.isToday && <span className="rounded-full bg-[#FFB380]/20 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-[#FFB380] uppercase">Today</span>}
-                  </div>
-
-                  <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-2.5 text-xs text-white/80">
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1 col-span-1">Prayer</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1 text-right col-span-1">Adhan</div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1 text-right col-span-1">Iqamah</div>
-
-                    <div className="font-medium text-white">Fajr</div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.fajrAdhan} /></div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.fajrIqamah} /></div>
-
-                    <div className="font-medium text-white">Sunrise</div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.sunrise} /></div>
-                    <div className="text-right font-mono tabular-nums text-white/40">—</div>
-
-                    <div className="font-medium text-white">Dhuhr</div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.dhuhrAdhan} /></div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.dhuhrIqamah} /></div>
-
-                    <div className="font-medium text-white">Asr</div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.asrAdhan} /></div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.asrIqamah} /></div>
-
-                    <div className="font-medium text-white">Maghrib</div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.maghribAdhan} /></div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.maghribIqamah} /></div>
-
-                    <div className="font-medium text-white">Isha</div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.ishaAdhan} /></div>
-                    <div className="text-right font-mono tabular-nums"><TimeDisplay time={row.ishaIqamah} /></div>
-
-                    <div className="col-span-3 my-1 h-px bg-white/10"></div>
-
-                    <div className="font-medium text-[#FFB380]">Jummah</div>
-                    <div className="text-right font-mono tabular-nums text-white/40">—</div>
-                    <div className="text-right font-mono tabular-nums text-[#FFB380]"><TimeDisplay time={row.jummahIqamah} /></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
