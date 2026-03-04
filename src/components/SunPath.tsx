@@ -15,6 +15,14 @@ const CURVE_BOTTOM = 54;
 const SVG_HEIGHT = 72;
 const VIEW_WIDTH = 400;
 
+const LABEL_MAP: Record<string, string> = {
+  fajr: "Fajr",
+  dhuhr: "Dhuhr",
+  asr: "Asr",
+  maghrib: "Maghrib",
+  isha: "Isha",
+};
+
 const getPercentOfDay = (
   timeStr: string,
   minTimeStr: string,
@@ -92,6 +100,27 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
       });
   }, [prayers, prayerData]);
 
+  const sunriseMaghribLines = useMemo(() => {
+    if (!prayerData) return [];
+    const width = VIEW_WIDTH - 2 * PADDING;
+    const sunriseT = getPercentOfDay(prayerData.sunrise, prayerData.fajr, prayerData.isha);
+    const maghribT = getPercentOfDay(prayerData.maghrib, prayerData.fajr, prayerData.isha);
+    return [
+      {
+        id: "sunrise",
+        y: getYOnCurve(sunriseT),
+      },
+      {
+        id: "maghrib",
+        y: getYOnCurve(maghribT),
+      },
+    ].map((p) => ({
+      ...p,
+      x1: 0,
+      x2: VIEW_WIDTH,
+    }));
+  }, [prayerData]);
+
   const currentPoint = useMemo(() => {
     if (!prayerData) return null;
     const h = now.getHours();
@@ -119,13 +148,13 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
 
   return (
     <div
-      className={`w-full flex items-center justify-center shrink-0 ${compact ? "h-[72px] my-1" : "h-[72px] sm:h-[80px] my-1.5 sm:my-2"}`}
+      className={`w-full flex items-center justify-center shrink-0 ${compact ? "h-[88px] sm:h-[72px] my-1" : "h-[88px] sm:h-[80px] my-1.5 sm:my-2"}`}
       role="img"
       aria-label="Sun path across the day from Fajr to Isha with prayer time markers"
     >
       <svg
         width="100%"
-        height={compact ? 72 : 80}
+        height={compact ? 88 : 80}
         viewBox={`0 0 ${VIEW_WIDTH} ${SVG_HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
         className="max-w-full"
@@ -149,16 +178,49 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
           strokeWidth={compact ? 2 : 3}
           fill="none"
         />
+        {sunriseMaghribLines.map((line) => (
+          <g key={line.id}>
+            <line
+              x1={line.x1}
+              y1={line.y}
+              x2={line.x2}
+              y2={line.y}
+              stroke="rgba(255,179,128,0.5)"
+              strokeWidth={compact ? 1.5 : 2}
+            />
+            <text
+              x={line.id === "sunrise" ? 12 : VIEW_WIDTH - 12}
+              y={line.y - 4}
+              textAnchor={line.id === "sunrise" ? "start" : "end"}
+              fill="rgba(255,255,255,0.8)"
+              fontSize={compact ? 7 : 8}
+              fontWeight="500"
+            >
+              {line.id === "sunrise" ? "Sunrise" : "Sunset"}
+            </text>
+          </g>
+        ))}
         {points.map((pt) => (
-          <circle
-            key={pt.id}
-            cx={pt.x}
-            cy={pt.y}
-            r={compact ? 4 : 6}
-            fill="#B85C38"
-            stroke="#FFB380"
-            strokeWidth={compact ? 2 : 3}
-          />
+          <g key={pt.id}>
+            <circle
+              cx={pt.x}
+              cy={pt.y}
+              r={compact ? 4 : 6}
+              fill="#B85C38"
+              stroke="#FFB380"
+              strokeWidth={compact ? 2 : 3}
+            />
+            <text
+              x={pt.x}
+              y={pt.y + (compact ? 14 : 16)}
+              textAnchor="middle"
+              fill="rgba(255,255,255,0.9)"
+              fontSize={compact ? 8 : 9}
+              fontWeight="500"
+            >
+              {LABEL_MAP[pt.id] ?? pt.id}
+            </text>
+          </g>
         ))}
         {currentPoint && (
           <circle

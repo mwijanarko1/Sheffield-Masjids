@@ -341,13 +341,13 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                         <div className="text-center min-w-0">Prayer</div>
                         <div className="text-right min-w-0">Iqamah</div>
                     </div>
-                    <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-3 min-h-0 overflow-y-auto overflow-x-hidden">
+                    <div className="flex flex-1 flex-col gap-1 sm:gap-1.5 sm:gap-2 md:gap-3 min-h-0 overflow-y-auto overflow-x-hidden">
                     {prayers.map((prayer) => {
                         const isActive = prayer.id === (upcomingPrayer ?? currentPrayer);
                         return (
                             <div
                                 key={prayer.id}
-                                className="relative grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 min-h-[32px] sm:min-h-[36px] flex-1 rounded-xl overflow-hidden transition-all duration-500"
+                                className="relative grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1 sm:py-1.5 sm:py-2 md:py-2.5 min-h-[26px] sm:min-h-[32px] md:min-h-[36px] flex-1 rounded-xl overflow-hidden transition-all duration-500"
                                 style={{
                                     background: isActive
                                         ? "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)"
@@ -370,13 +370,13 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                     }}
                                 />
 
-                                <span className={`relative z-10 min-w-0 text-xs sm:text-sm md:text-base font-medium tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/90"}`}>
+                                <span className={`relative z-10 min-w-0 text-[11px] sm:text-xs md:text-sm font-medium tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/90"}`}>
                                     {prayer.adhan}
                                 </span>
-                                <span className={`relative z-10 min-w-0 text-center text-xs sm:text-sm md:text-base tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-[#FFE2CB] font-extrabold" : "text-white/95"}`}>
+                                <span className={`relative z-10 min-w-0 text-center text-[11px] sm:text-xs md:text-sm tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-[#FFE2CB] font-extrabold" : "text-white/95"}`}>
                                     {prayer.label}
                                 </span>
-                                <span className={`relative z-10 min-w-0 text-right text-xs sm:text-sm md:text-base font-bold tracking-tight tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white" : "text-white/90"}`}>
+                                <span className={`relative z-10 min-w-0 text-right text-[11px] sm:text-xs md:text-sm font-bold tracking-tight tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white" : "text-white/90"}`}>
                                     {prayer.iqamah}
                                 </span>
                             </div>
@@ -386,7 +386,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                     {/* Sunrise + Jummah summary row (Masjid Risalah style) */}
                     {prayerTimes && (
                         <div
-                            className="shrink-0 flex flex-row items-center justify-center gap-4 sm:gap-6 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-3 min-h-[32px] sm:min-h-[36px] rounded-xl overflow-hidden"
+                            className="shrink-0 flex flex-row items-center justify-center gap-4 sm:gap-6 px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-3 min-h-[26px] sm:min-h-[32px] md:min-h-[36px] rounded-xl overflow-hidden"
                             style={{
                                 background: "linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
                                 backdropFilter: "blur(20px) saturate(140%)",
@@ -395,15 +395,15 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                             }}
                         >
                             <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-left">
-                                <span className="text-[9px] sm:text-xs uppercase tracking-widest text-white/70">Sunrise</span>
-                                <span className="text-xs sm:text-sm md:text-base font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                                <span className="text-[8px] sm:text-[9px] md:text-xs uppercase tracking-widest text-white/70">Sunrise</span>
+                                <span className="text-[11px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
                                     {prayerTimes.sunrise || "—"}
                                 </span>
                             </div>
                             <div className="w-px h-5 sm:h-6 bg-white/30 rounded-full" aria-hidden="true" />
                             <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-right">
-                                <span className="text-[9px] sm:text-xs uppercase tracking-widest text-white/70">Jummah</span>
-                                <span className="text-xs sm:text-sm md:text-base font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                                <span className="text-[8px] sm:text-[9px] md:text-xs uppercase tracking-widest text-white/70">Jummah</span>
+                                <span className="text-[11px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
                                     {iqamahTimes?.jummah && iqamahTimes.jummah !== "-" && iqamahTimes.jummah !== "—" ? iqamahTimes.jummah : "—"}
                                 </span>
                             </div>
