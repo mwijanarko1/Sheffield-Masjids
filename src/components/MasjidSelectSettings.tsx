@@ -1,11 +1,10 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
-import { Check, ExternalLink } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 interface MasjidSelectSettingsProps {
   mosques: Mosque[];
@@ -23,28 +22,18 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
         Select your preferred mosque for prayer times on the home screen.
       </p>
 
-      <div className="flex flex-col gap-2 mb-12">
-        {mosques.map((mosque) => {
-          const isSelected = selectedMosque?.id === mosque.id;
-          return (
-            <button
-              key={mosque.id}
-              type="button"
-              onClick={() => setSelectedMosque(mosque)}
-              className={cn(
-                "flex items-center justify-between w-full min-h-[52px] px-4 py-4 rounded-xl border text-left transition-all touch-manipulation active:scale-[0.98]",
-                isSelected
-                  ? "bg-white/10 border-white/30 text-white shadow-[0_4px_16px_rgba(255,255,255,0.05)] backdrop-blur-md"
-                  : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20 backdrop-blur-sm"
-              )}
-            >
-              <span className="font-medium">{mosque.name}</span>
-              {isSelected && (
-                <Check className="w-5 h-5 text-[#FFB380] shrink-0" strokeWidth={2.5} aria-hidden />
-              )}
-            </button>
-          );
-        })}
+      <div className="mb-12">
+        <CustomSelect
+          options={mosques}
+          value={selectedMosque?.id || ""}
+          onChange={(id) => {
+            const selected = mosques.find((m) => m.id === id);
+            if (selected) setSelectedMosque(selected);
+          }}
+          ariaLabel="Select mosque"
+          truncateLabel={false}
+          listFitsContent
+        />
       </div>
 
       <section aria-labelledby="legal-heading">
