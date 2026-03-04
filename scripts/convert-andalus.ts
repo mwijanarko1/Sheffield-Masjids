@@ -3,7 +3,7 @@
  * Place source file at project root: andalus_prayer_timetable_2025_complete.json
  * (or update srcPath below). Output: public/data/mosques/andalus-community-centre/{month}.json
  *
- * Run: npx tsx scripts/convert-andalus.ts
+ * Run: bun scripts/convert-andalus.ts
  */
 
 import * as fs from "fs";

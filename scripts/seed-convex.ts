@@ -9,8 +9,8 @@
  * For production: add CONVEX_PROD_URL to .env.local (from Convex dashboard → Deployments → Production → URL)
  *
  * Run:
- *   npx tsx scripts/seed-convex.ts           # seeds dev (uses NEXT_PUBLIC_CONVEX_URL)
- *   npx tsx scripts/seed-convex.ts --prod   # seeds prod (uses CONVEX_PROD_URL)
+ *   bun scripts/seed-convex.ts           # seeds dev (uses NEXT_PUBLIC_CONVEX_URL)
+ *   bun scripts/seed-convex.ts --prod   # seeds prod (uses CONVEX_PROD_URL)
  */
 
 import { ConvexHttpClient } from "convex/browser";

@@ -2,7 +2,7 @@
  * Fetch prayer times from mawaqit.net for Madina Masjid Sheffield and compare
  * with local JSON files. Show detailed iqamah comparison.
  *
- * Run: npx tsx scripts/compare-mawaqit-madina-masjid.ts
+ * Run: bun scripts/compare-mawaqit-madina-masjid.ts
  */
 
 import * as fs from "fs";

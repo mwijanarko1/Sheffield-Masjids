@@ -4,7 +4,7 @@
  * This script fetches the official iqamah times from mawaqit.net and updates
  * the local JSON files. The adhan times already match perfectly.
  *
- * Run: npx tsx scripts/update-madina-masjid-from-mawaqit.ts
+ * Run: bun scripts/update-madina-masjid-from-mawaqit.ts
  */
 
 import * as fs from "fs";

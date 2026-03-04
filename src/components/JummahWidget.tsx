@@ -15,8 +15,8 @@ export default function JummahWidget({ jummahTime, isActive, compact, className 
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl transition-all duration-500 w-full ${
-        compact ? "py-3 sm:py-3.5 md:py-4 px-4 sm:px-5 md:px-6" : "py-4 sm:py-5 px-4 sm:px-6"
+      className={`relative overflow-hidden rounded-xl transition-all duration-500 w-full shrink-0 ${
+        compact ? "py-2 sm:py-3 md:py-4 px-3 sm:px-5 md:px-6" : "py-4 sm:py-5 px-4 sm:px-6"
       } ${className ?? ""}`}
       style={{
         background: isActive
@@ -43,14 +43,14 @@ export default function JummahWidget({ jummahTime, isActive, compact, className 
       <div className="relative z-10 text-center [text-shadow:0_1px_3px_rgba(0,0,0,0.6),0_0_8px_rgba(0,0,0,0.35)]">
         <div
           className={`font-serif italic font-bold capitalize mb-1 ${
-            compact ? "text-sm sm:text-base md:text-lg" : "text-base sm:text-lg"
+            compact ? "text-xs sm:text-sm md:text-base" : "text-base sm:text-lg"
           } ${isActive ? "text-white" : "text-white/95"}`}
         >
           Jummah prayer
         </div>
         <div
           className={`font-sans font-extrabold tracking-tighter tabular-nums ${
-            compact ? "text-xl sm:text-2xl md:text-3xl" : "text-3xl sm:text-4xl"
+            compact ? "text-lg sm:text-xl md:text-2xl" : "text-3xl sm:text-4xl"
           } ${isActive ? "text-white" : "text-white"}`}
         >
           {displayTime}
