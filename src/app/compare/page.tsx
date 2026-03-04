@@ -40,7 +40,6 @@ export default async function ComparePage() {
   return (
     <AppLayout activeTab="compare">
       <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-10 lg:px-8 xl:max-w-7xl">
-        <h2 className="mb-4 sm:mb-6 text-base sm:text-lg font-bold text-white">Compare prayer times</h2>
         <ComparePrayerTimes standalone mosques={mosques} />
       </div>
     </AppLayout>
