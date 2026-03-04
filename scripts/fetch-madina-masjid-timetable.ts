@@ -3,7 +3,7 @@
  * Mawaqit uses the same calculation methods, so times match their timetable.
  *
  * Prerequisites: npm install adhan
- * Run: npx tsx scripts/fetch-madina-masjid-timetable.ts
+ * Run: bun scripts/fetch-madina-masjid-timetable.ts
  *
  * Output: public/data/mosques/madina-masjid-sheffield/{month}.json
  */

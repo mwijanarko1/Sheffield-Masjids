@@ -21,17 +21,17 @@ Prayer times, iqamah times, and masjid locations for Sheffield, built with Next.
 ## Requirements
 
 - Node.js `>=20.9.0`
-- npm
+- [Bun](https://bun.sh)
 
 ## Quick Start
 
 1. Install dependencies:
    ```bash
-   npm install
+   bun install
    ```
 2. Run development server:
    ```bash
-   npm run dev
+   bun run dev
    ```
 3. Open [http://localhost:3000](http://localhost:3000)
 
@@ -90,11 +90,11 @@ Each monthly JSON file contains:
 
 ## Useful Commands
 
-- `npm run dev` - start local dev server
-- `npm run build` - production build
-- `npm start` - run production server
-- `npm run lint` - run linter
-- `npx tsc --noEmit` - type-check
+- `bun run dev` - start local dev server
+- `bun run build` - production build
+- `bun start` - run production server
+- `bun run lint` - run linter
+- `bunx tsc --noEmit` - type-check
 
 ## Data & Scripts
 

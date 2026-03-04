@@ -1,6 +1,6 @@
 /**
  * Update SGM JSON files with official adhan times from docs/sgm-adhan.md
- * Run: npx tsx scripts/update-sgm-adhan.ts
+ * Run: bun scripts/update-sgm-adhan.ts
  */
 
 import * as fs from "fs";

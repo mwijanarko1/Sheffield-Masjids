@@ -2,7 +2,7 @@
  * Convert various Ramadan timetable formats to canonical schema.
  * Reads from public/ (loose files), writes to public/data/mosques/[slug]/ramadan.json
  *
- * Run: npx tsx scripts/convert-ramadan-timetables.ts
+ * Run: bun scripts/convert-ramadan-timetables.ts
  */
 
 import * as fs from "fs";
@@ -624,7 +624,7 @@ function main() {
     console.log(`  ✓ ${slug} ${monthFile} → ${outPath}`);
   }
 
-  console.log("\nDone. Run: npx tsx scripts/seed-convex.ts");
+  console.log("\nDone. Run: bun scripts/seed-convex.ts");
 }
 
 main();
