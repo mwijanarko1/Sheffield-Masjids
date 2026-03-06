@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Header from "@/components/Header";
 import DynamicBackground from "@/components/DynamicBackground";
 import {
   getBaseUrl,
@@ -89,7 +88,6 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
-          <Header />
           <div id="main-content" tabIndex={-1} className="relative z-10">
             {children}
           </div>
