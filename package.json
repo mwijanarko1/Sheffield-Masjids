@@ -26,14 +26,14 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.3.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "adhan": "^4.4.3",
     "autoprefixer": "^10.4.27",
-    "eslint": "^10.0.2",
+    "eslint": "^10.0.3",
     "eslint-config-next": "16.1.6",
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
