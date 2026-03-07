@@ -25,10 +25,17 @@ function sanitizeChecklistState(raw: unknown): LastTenChecklistState {
 
     nextState[night] = Object.entries(value).reduce<Record<string, boolean>>(
       (items, [itemId, checked]) => {
-        if (typeof checked === "boolean") {
-          items[itemId] = checked;
+        if (typeof checked !== "boolean") return items;
+
+        // Migrate old blessings-on-prophet to new split ids
+        if (itemId === "blessings-on-prophet" && checked) {
+          items["blessings-on-prophet-5"] = true;
+          items["blessings-on-prophet-20"] = true;
+          items["blessings-on-prophet-100"] = true;
+          return items;
         }
 
+        items[itemId] = checked;
         return items;
       },
       {},
@@ -73,13 +80,26 @@ export function useLastTenChecklist() {
   const toggleItem = (night: number, itemId: string) => {
     const nightKey = String(night);
 
-    setState((currentState) => ({
-      ...currentState,
-      [nightKey]: {
-        ...currentState[nightKey],
-        [itemId]: !currentState[nightKey]?.[itemId],
-      },
-    }));
+    setState((currentState) => {
+      const current = currentState[nightKey] ?? {};
+      const isChecked = !current[itemId];
+      const updates: Record<string, boolean> = { ...current, [itemId]: isChecked };
+
+      // Cascade: checking 100 salawat implies 20 and 5; checking 20 implies 5
+      if (isChecked) {
+        if (itemId === "blessings-on-prophet-100") {
+          updates["blessings-on-prophet-20"] = true;
+          updates["blessings-on-prophet-5"] = true;
+        } else if (itemId === "blessings-on-prophet-20") {
+          updates["blessings-on-prophet-5"] = true;
+        }
+      }
+
+      return {
+        ...currentState,
+        [nightKey]: updates,
+      };
+    });
   };
 
   return {

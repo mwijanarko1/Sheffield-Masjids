@@ -11,12 +11,17 @@ import {
   DIFFICULTY_TABS,
   getCurrentRamadanNight,
   getItemsByDifficulty,
+  isItemEffectivelyChecked,
   LAST_TEN_NIGHTS,
 } from "@/lib/last-ten-content";
 import { cn } from "@/lib/utils";
 
 function countCompletedItems(items: Record<string, boolean>, itemIds: string[]) {
-  return itemIds.reduce((total, itemId) => total + (items[itemId] ? 1 : 0), 0);
+  return itemIds.reduce(
+    (total, itemId) =>
+      total + (isItemEffectivelyChecked(itemId, items) ? 1 : 0),
+    0,
+  );
 }
 
 function getInitialNight(): number {
@@ -119,6 +124,7 @@ export default function LastTenNightsPage() {
       <div className="flex-1 overflow-auto px-4 pb-[100px] sm:px-6">
         <LastTenChecklist
           night={selectedNight}
+          difficulty={selectedDifficulty}
           items={filteredItems}
           checkedItems={selectedNightItems}
           onToggleItem={(itemId) => toggleItem(selectedNight, itemId)}

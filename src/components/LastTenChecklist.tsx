@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import { ChevronDown, ExternalLink } from "lucide-react";
-import { LastTenChecklistItem } from "@/lib/last-ten-content";
+import {
+  type Difficulty,
+  isItemEffectivelyChecked,
+  LastTenChecklistItem,
+} from "@/lib/last-ten-content";
 import { cn } from "@/lib/utils";
 
 interface LastTenChecklistProps {
   night: number;
+  difficulty: Difficulty;
   items: LastTenChecklistItem[];
   checkedItems: Record<string, boolean>;
   onToggleItem: (itemId: string) => void;
@@ -22,6 +27,7 @@ function renderTextBlock(content?: string | string[]) {
 
 export default function LastTenChecklist({
   night,
+  difficulty,
   items,
   checkedItems,
   onToggleItem,
@@ -36,10 +42,12 @@ export default function LastTenChecklist({
       className="divide-y divide-white/8"
       tabIndex={0}
     >
-      {items.map((item, index) => {
-        const checked = Boolean(checkedItems[item.id]);
+      {items.map((item) => {
+        const checked = isItemEffectivelyChecked(item.id, checkedItems);
         const checkboxId = `night-${night}-${item.id}`;
         const isOpen = openId === item.id;
+        const actionPoint =
+          item.actionPointByDifficulty?.[difficulty] ?? item.actionPoint;
 
         return (
           <article key={item.id} className="py-3 first:pt-1">
@@ -76,7 +84,7 @@ export default function LastTenChecklist({
                   checked ? "text-white/50 line-through" : "text-white/90",
                 )}
               >
-                {item.actionPoint}
+                {actionPoint}
               </label>
 
               {/* Dropdown chevron */}
