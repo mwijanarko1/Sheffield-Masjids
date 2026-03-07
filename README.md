@@ -7,6 +7,7 @@ Prayer times, iqamah times, and masjid locations for Sheffield, built with Next.
 - Daily prayer + iqamah schedule per masjid
 - Friday Jummah handling
 - Compare view across Sheffield masjids (`/compare`)
+- Last 10 nights Ramadan checklist (`/last-ten`)
 - Dedicated masjid pages (`/mosques/[slug]`)
 - Ramadan-only timetable support (`ramadan.json`)
 - UK DST-aware prayer logic
@@ -57,6 +58,7 @@ If not set, the app falls back to `http://localhost:3000`.
 
 - `/` Home (mosque selector, prayer times, map, compare)
 - `/compare` Cross-masjid prayer comparison
+- `/last-ten` Last 10 nights Ramadan checklist with saved progress
 - `/mosques/[slug]` Individual masjid detail page
 - `/mosques/[slug]/timetable` Monthly prayer timetable
 - `/mosques/[slug]/ramadan-timetable` Ramadan timetable

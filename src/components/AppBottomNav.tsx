@@ -2,10 +2,16 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarClock, CalendarRange, Scale, SlidersHorizontal } from "lucide-react";
+import {
+  CalendarClock,
+  CalendarRange,
+  ListChecks,
+  Scale,
+  SlidersHorizontal,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type AppTab = "prayer" | "timetable" | "compare" | "settings";
+export type AppTab = "prayer" | "timetable" | "lastTen" | "compare" | "settings";
 
 interface AppBottomNavProps {
   activeTab: AppTab;
@@ -17,11 +23,12 @@ const navItems: {
   label: string;
   Icon: typeof CalendarClock;
 }[] = [
-  { tab: "prayer", href: "/", label: "Prayer", Icon: CalendarClock },
-  { tab: "timetable", href: "/timetable", label: "Timetable", Icon: CalendarRange },
-  { tab: "compare", href: "/compare", label: "Compare", Icon: Scale },
-  { tab: "settings", href: "/settings", label: "Settings", Icon: SlidersHorizontal },
-];
+    { tab: "prayer", href: "/", label: "Prayer", Icon: CalendarClock },
+    { tab: "timetable", href: "/timetable", label: "Timetable", Icon: CalendarRange },
+    { tab: "lastTen", href: "/last-ten", label: "Checklist", Icon: ListChecks },
+    { tab: "compare", href: "/compare", label: "Compare", Icon: Scale },
+    { tab: "settings", href: "/settings", label: "Settings", Icon: SlidersHorizontal },
+  ];
 
 export default function AppBottomNav({ activeTab }: AppBottomNavProps) {
   const router = useRouter();
@@ -41,7 +48,7 @@ export default function AppBottomNav({ activeTab }: AppBottomNavProps) {
       aria-label="Main navigation"
     >
       <div
-        className="mx-auto max-w-sm flex items-stretch rounded-2xl overflow-hidden"
+        className="mx-auto grid w-full max-w-lg grid-cols-5 items-stretch rounded-2xl overflow-hidden"
         style={{
           background: "linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)",
           backdropFilter: "blur(20px) saturate(160%)",
@@ -82,7 +89,7 @@ export default function AppBottomNav({ activeTab }: AppBottomNavProps) {
               )}
               <item.Icon
                 className={cn(
-                  "relative z-10 w-5 h-5 sm:w-[22px] sm:h-[22px] transition-colors duration-200",
+                  "relative z-10 h-5 w-5 transition-colors duration-200 sm:h-[22px] sm:w-[22px]",
                   isActive
                     ? "text-[#FFB380] [filter:drop-shadow(0_0_6px_rgba(255,179,128,0.5))]"
                     : "text-white/70 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.4))]"
@@ -91,7 +98,7 @@ export default function AppBottomNav({ activeTab }: AppBottomNavProps) {
               />
               <span
                 className={cn(
-                  "relative z-10 text-[10px] sm:text-[11px] font-medium tracking-wide transition-colors duration-200 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]",
+                  "relative z-10 text-[9px] font-medium tracking-wide transition-colors duration-200 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)] sm:text-[11px]",
                   isActive ? "text-[#FFB380]" : "text-white/80"
                 )}
               >
