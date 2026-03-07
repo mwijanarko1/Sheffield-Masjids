@@ -7,10 +7,13 @@ import LastTenWelcomeModal from "@/components/LastTenWelcomeModal";
 import NightCountdown from "@/components/NightCountdown";
 import { useLastTenChecklist } from "@/hooks/use-last-ten-checklist";
 import {
+  type Difficulty,
+  DIFFICULTY_TABS,
   getCurrentRamadanNight,
-  LAST_TEN_ITEMS,
+  getItemsByDifficulty,
   LAST_TEN_NIGHTS,
 } from "@/lib/last-ten-content";
+import { cn } from "@/lib/utils";
 
 function countCompletedItems(items: Record<string, boolean>, itemIds: string[]) {
   return itemIds.reduce((total, itemId) => total + (items[itemId] ? 1 : 0), 0);
@@ -27,12 +30,21 @@ function getInitialNight(): number {
 
 export default function LastTenNightsPage() {
   const [selectedNight, setSelectedNight] = useState<number>(getInitialNight);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("easy");
   const { state, isHydrated, toggleItem } = useLastTenChecklist();
-  const itemIds = useMemo(() => LAST_TEN_ITEMS.map((item) => item.id), []);
-  const totalItems = LAST_TEN_ITEMS.length;
+
+  const filteredItems = useMemo(
+    () => getItemsByDifficulty(selectedDifficulty),
+    [selectedDifficulty],
+  );
+  const filteredItemIds = useMemo(
+    () => filteredItems.map((item) => item.id),
+    [filteredItems],
+  );
+  const totalItems = filteredItems.length;
   const selectedNightItems = state[String(selectedNight)] ?? {};
 
-  const currentNightCompleted = countCompletedItems(selectedNightItems, itemIds);
+  const currentNightCompleted = countCompletedItems(selectedNightItems, filteredItemIds);
   const currentRamadanNight = getCurrentRamadanNight();
 
   return (
@@ -45,7 +57,7 @@ export default function LastTenNightsPage() {
         selectedNight={selectedNight}
         onSelectNight={setSelectedNight}
         getCompletedCount={(night) =>
-          countCompletedItems(state[String(night)] ?? {}, itemIds)
+          countCompletedItems(state[String(night)] ?? {}, filteredItemIds)
         }
         totalItems={totalItems}
         currentNight={currentRamadanNight}
@@ -53,6 +65,40 @@ export default function LastTenNightsPage() {
 
       {/* Night countdown */}
       <NightCountdown />
+
+      {/* Difficulty tabs */}
+      <div
+        className="flex shrink-0 items-center justify-center gap-2 px-4 py-2"
+        style={{
+          background: "linear-gradient(rgba(10, 17, 40, 0.8) 0%, rgba(10, 17, 40, 0.4) 100%)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+        }}
+      >
+        {DIFFICULTY_TABS.map((difficulty) => {
+          const count = getItemsByDifficulty(difficulty).length;
+          const isActive = selectedDifficulty === difficulty;
+          return (
+            <button
+              key={difficulty}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-label={`${difficulty} difficulty, ${count} items`}
+              onClick={() => setSelectedDifficulty(difficulty)}
+              className={cn(
+                "rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128]",
+                isActive
+                  ? "bg-[#FFB380] text-[#0A1128]"
+                  : "border border-white/20 bg-transparent text-white/40 hover:border-white/30 hover:text-white/60",
+              )}
+            >
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+              <span className="ml-1.5 text-xs opacity-80">({count})</span>
+            </button>
+          );
+        })}
+      </div>
 
       {/* Progress summary pill */}
       <div className="px-4 pt-3 pb-1 sm:px-6">
@@ -73,7 +119,7 @@ export default function LastTenNightsPage() {
       <div className="flex-1 overflow-auto px-4 pb-[100px] sm:px-6">
         <LastTenChecklist
           night={selectedNight}
-          items={LAST_TEN_ITEMS}
+          items={filteredItems}
           checkedItems={selectedNightItems}
           onToggleItem={(itemId) => toggleItem(selectedNight, itemId)}
         />

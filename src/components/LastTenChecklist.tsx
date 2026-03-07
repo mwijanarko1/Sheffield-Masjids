@@ -153,15 +153,15 @@ export default function LastTenChecklist({
                   {(item.link || item.charityLink) && (
                     <div className="flex flex-wrap gap-2 pt-1">
                       {item.link && (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-[#FFB380]/10 px-3 py-1.5 text-xs font-semibold text-[#FFB380] transition-colors hover:bg-[#FFB380]/20"
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        Explore Source
-                      </a>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-[#FFB380]/10 px-3 py-1.5 text-xs font-semibold text-[#FFB380] transition-colors hover:bg-[#FFB380]/20"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Explore Source
+                        </a>
                       )}
                       {item.charityLink && (
                         <a
