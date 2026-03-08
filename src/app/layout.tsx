@@ -92,7 +92,7 @@ export default function RootLayout({
           <div
             id="main-content"
             tabIndex={-1}
-            className="relative z-10 pb-[max(6rem,env(safe-area-inset-bottom))]"
+            className="relative z-10 h-[100dvh] overflow-hidden"
           >
             {children}
           </div>
