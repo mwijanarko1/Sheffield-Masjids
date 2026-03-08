@@ -104,7 +104,7 @@ export function CustomSelect({
         aria-expanded={isOpen}
         aria-label={ariaLabel}
       >
-        <span className={truncateLabel ? "truncate" : "break-words min-w-0"}>{selectedOption?.name || "Select…"}</span>
+        <span className={cn("flex-1 min-w-0 text-center", truncateLabel ? "truncate" : "break-words")}>{selectedOption?.name || "Select…"}</span>
         <svg
           className={cn("h-4 w-4 shrink-0 opacity-50 transition-transform duration-200", isOpen && "rotate-180")}
           fill="none"

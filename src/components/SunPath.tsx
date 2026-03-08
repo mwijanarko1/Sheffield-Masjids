@@ -100,25 +100,14 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
       });
   }, [prayers, prayerData]);
 
-  const sunriseMaghribLines = useMemo(() => {
-    if (!prayerData) return [];
-    const width = VIEW_WIDTH - 2 * PADDING;
-    const sunriseT = getPercentOfDay(prayerData.sunrise, prayerData.fajr, prayerData.isha);
-    const maghribT = getPercentOfDay(prayerData.maghrib, prayerData.fajr, prayerData.isha);
-    return [
-      {
-        id: "sunrise",
-        y: getYOnCurve(sunriseT),
-      },
-      {
-        id: "maghrib",
-        y: getYOnCurve(maghribT),
-      },
-    ].map((p) => ({
-      ...p,
-      x1: 0,
-      x2: VIEW_WIDTH,
-    }));
+  const horizonY = useMemo(() => {
+    if (!prayerData) return CURVE_BOTTOM;
+    const maghribT = getPercentOfDay(
+      prayerData.maghrib,
+      prayerData.fajr,
+      prayerData.isha
+    );
+    return getYOnCurve(maghribT);
   }, [prayerData]);
 
   const currentPoint = useMemo(() => {
@@ -178,28 +167,41 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
           strokeWidth={compact ? 2 : 3}
           fill="none"
         />
-        {sunriseMaghribLines.map((line) => (
-          <g key={line.id}>
+
+        {/* Horizon Line */}
+        {prayerData && (
+          <g>
             <line
-              x1={line.x1}
-              y1={line.y}
-              x2={line.x2}
-              y2={line.y}
+              x1={0}
+              y1={horizonY}
+              x2={VIEW_WIDTH}
+              y2={horizonY}
               stroke="rgba(255,179,128,0.5)"
               strokeWidth={compact ? 1.5 : 2}
             />
             <text
-              x={line.id === "sunrise" ? 12 : VIEW_WIDTH - 12}
-              y={line.y - 4}
-              textAnchor={line.id === "sunrise" ? "start" : "end"}
+              x={12}
+              y={horizonY - 4}
+              textAnchor="start"
               fill="rgba(255,255,255,0.8)"
               fontSize={compact ? 7 : 8}
               fontWeight="500"
             >
-              {line.id === "sunrise" ? "Sunrise" : "Sunset"}
+              Sunrise
+            </text>
+            <text
+              x={VIEW_WIDTH - 12}
+              y={horizonY - 4}
+              textAnchor="end"
+              fill="rgba(255,255,255,0.8)"
+              fontSize={compact ? 7 : 8}
+              fontWeight="500"
+            >
+              Sunset
             </text>
           </g>
-        ))}
+        )}
+
         {points.map((pt) => (
           <g key={pt.id}>
             <circle

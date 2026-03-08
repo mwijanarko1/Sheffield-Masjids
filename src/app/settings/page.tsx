@@ -21,7 +21,7 @@ export default async function SettingsPage() {
   const mosques = await getMosques();
 
   return (
-    <AppLayout activeTab="settings">
+    <AppLayout>
       <MasjidSelectSettings mosques={mosques} />
     </AppLayout>
   );

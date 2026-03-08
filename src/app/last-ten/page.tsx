@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function LastTenPage() {
   return (
-    <AppLayout activeTab="lastTen">
+    <AppLayout>
       <LastTenNightsPage />
     </AppLayout>
   );

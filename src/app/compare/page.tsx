@@ -38,7 +38,7 @@ export default async function ComparePage() {
   const mosques = await getMosques();
 
   return (
-    <AppLayout activeTab="compare">
+    <AppLayout>
       <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-10 lg:px-8 xl:max-w-7xl">
         <ComparePrayerTimes standalone mosques={mosques} />
       </div>

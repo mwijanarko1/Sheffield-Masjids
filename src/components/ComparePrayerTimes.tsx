@@ -208,9 +208,15 @@ export default function ComparePrayerTimes({
                 <span className="mb-2 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 shadow-sm md:text-xs">
                   Prayer Comparison
                 </span>
-                <h3 className="text-lg font-bold text-white md:text-2xl">
-                  Compare Mosques By Date
-                </h3>
+                {standalone ? (
+                  <h1 className="text-lg font-bold text-white md:text-2xl">
+                    Compare Sheffield Mosque Prayer Times
+                  </h1>
+                ) : (
+                  <h2 className="text-lg font-bold text-white md:text-2xl">
+                    Compare Mosques By Date
+                  </h2>
+                )}
               </div>
               <div className="mx-auto flex items-center gap-1.5 sm:mx-0 sm:gap-2">
                 <Button

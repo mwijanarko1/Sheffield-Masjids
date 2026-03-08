@@ -34,6 +34,9 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
+      <h1 className="mb-6 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+        Timetable
+      </h1>
       <MonthlyTimetable mosque={mosque} />
       {isRamadanPeriod && (
         <p className="mt-4 text-center text-sm">
