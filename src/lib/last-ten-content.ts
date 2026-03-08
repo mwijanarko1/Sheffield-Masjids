@@ -1,5 +1,7 @@
 export type Difficulty = "easy" | "medium" | "hard";
 
+export { RAMADAN_START_DATE, getCurrentRamadanNight } from "@/lib/ramadan-night";
+
 export const DIFFICULTY_TABS: Difficulty[] = ["easy", "medium", "hard"];
 
 export interface LastTenChecklistItem {
@@ -24,22 +26,6 @@ export const LAST_TEN_STORAGE_KEY = "sheffield-masjids:last-ten-checklist:v1";
 export const LAST_TEN_WELCOME_KEY = "sheffield-masjids:last-ten-welcome-seen:v1";
 
 export const LAST_TEN_NIGHTS = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30] as const;
-
-/** Canonical Ramadan 1447 start date (Gregorian). */
-export const RAMADAN_START_DATE = "2026-02-18";
-
-/**
- * Compute the current Ramadan night (1–30) based on today's date.
- * Returns null when outside the Ramadan window.
- */
-export function getCurrentRamadanNight(): number | null {
-  const now = new Date();
-  const start = new Date(RAMADAN_START_DATE + "T00:00:00");
-  const diffMs = now.getTime() - start.getTime();
-  const day = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
-  if (day < 1 || day > 30) return null;
-  return day;
-}
 
 export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
   {
