@@ -14,7 +14,6 @@ import {
     formatDateForDisplay,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
-import AppBottomNav from "@/components/AppBottomNav";
 import { SunPath } from "@/components/SunPath";
 import { CustomSelect } from "@/components/ui/custom-select";
 
@@ -221,6 +220,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
 
     return (
         <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
+            <h1 className="sr-only">Sheffield Mosque Prayer Times</h1>
             <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-2 sm:mb-3 md:mb-4 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
@@ -341,7 +341,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                         <div className="text-center min-w-0">Prayer</div>
                         <div className="text-right min-w-0">Iqamah</div>
                     </div>
-                    <div className="flex flex-1 flex-col gap-1 sm:gap-1.5 sm:gap-2 md:gap-3 min-h-0 overflow-y-auto overflow-x-hidden">
+                    <div className="flex flex-1 flex-col gap-1 sm:gap-1.5 sm:gap-2 md:gap-3 min-h-0 overflow-y-auto overflow-x-hidden pb-24">
                     {prayers.map((prayer) => {
                         const isActive = prayer.id === (upcomingPrayer ?? currentPrayer);
                         return (
@@ -413,7 +413,6 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                 </div>
             </div>
 
-            <AppBottomNav activeTab="prayer" />
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AppHomePage from "@/components/AppHomePage";
+import WebsiteJsonLd from "@/components/WebsiteJsonLd";
 import { getMosques } from "@/lib/mosques";
 import { MOSQUE_NAMES, SITE_NAME } from "@/lib/site";
 
@@ -39,6 +40,7 @@ export default async function Home() {
 
   return (
     <main className="relative h-[100dvh] min-h-[100svh] w-full overflow-hidden">
+      <WebsiteJsonLd />
       <AppHomePage mosques={mosques} />
     </main>
   );

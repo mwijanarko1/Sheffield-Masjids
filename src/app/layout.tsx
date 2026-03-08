@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import DynamicBackground from "@/components/DynamicBackground";
+import { FloatingTabBar } from "@/components/FloatingTabBar";
 import {
   getBaseUrl,
   MOSQUE_NAMES,
@@ -88,9 +89,14 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
-          <div id="main-content" tabIndex={-1} className="relative z-10">
+          <div
+            id="main-content"
+            tabIndex={-1}
+            className="relative z-10 pb-[max(6rem,env(safe-area-inset-bottom))]"
+          >
             {children}
           </div>
+          <FloatingTabBar />
         </ConvexProvider>
       </body>
     </html>

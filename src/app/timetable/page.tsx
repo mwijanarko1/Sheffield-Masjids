@@ -21,7 +21,7 @@ export default async function TimetablePage() {
   const mosques = await getMosques();
 
   return (
-    <AppLayout activeTab="timetable">
+    <AppLayout>
       <TimetableTabContent mosques={mosques} />
     </AppLayout>
   );
