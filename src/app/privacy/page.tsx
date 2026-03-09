@@ -42,9 +42,16 @@ export default function PrivacyPage() {
             </section>
 
             <section className="space-y-3">
+              <h2 className="text-lg font-semibold text-white">Analytics</h2>
+              <p>
+                We use Vercel Analytics to understand how visitors use the site (e.g. page views, referrers). This is privacy-friendly: no personal information or tracking identifiers are collected. Data is aggregated and processed by Vercel.
+              </p>
+            </section>
+
+            <section className="space-y-3">
               <h2 className="text-lg font-semibold text-white">Data We Do Not Collect</h2>
               <p>
-                We do not collect personal information, account data, or tracking identifiers. No analytics or advertising trackers are used.
+                We do not collect personal information, account data, or advertising trackers.
               </p>
             </section>
 
