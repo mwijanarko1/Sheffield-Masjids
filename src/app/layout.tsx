@@ -93,7 +93,7 @@ export default function RootLayout({
           <div
             id="main-content"
             tabIndex={-1}
-            className="relative z-10 h-[100dvh] overflow-hidden"
+            className="relative z-10 h-[100dvh] min-h-0 overflow-y-auto overflow-x-hidden"
           >
             {children}
           </div>
