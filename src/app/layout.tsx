@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import DynamicBackground from "@/components/DynamicBackground";
 import { FloatingTabBar } from "@/components/FloatingTabBar";
 import {
@@ -98,6 +99,7 @@ export default function RootLayout({
           </div>
           <FloatingTabBar />
         </ConvexProvider>
+        <Analytics />
       </body>
     </html>
   );
