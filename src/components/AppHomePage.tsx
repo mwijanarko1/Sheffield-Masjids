@@ -224,12 +224,12 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
-                    <div className="flex justify-between items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal">
-                        <div className="flex-1 text-left font-normal text-white/90">
-                            <div className="hidden sm:block">{formatDateForDisplay(currentTime)}</div>
-                            <div className="sm:hidden text-xs">{formatDateForDisplay(currentTime).split(" ").slice(0, 3).join(" ")}</div>
+                    <div className="flex justify-between items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal gap-1.5 sm:gap-2">
+                        <div className="flex-1 min-w-0 text-left font-normal text-white/90">
+                            <div className="hidden sm:block truncate">{formatDateForDisplay(currentTime)}</div>
+                            <div className="sm:hidden text-xs truncate">{formatDateForDisplay(currentTime).split(" ").slice(0, 3).join(" ")}</div>
                         </div>
-                        <div className="flex-1 flex justify-center min-w-0 px-1 sm:px-2">
+                        <div className="flex-[1.6] flex justify-center min-w-0 px-1 sm:px-2">
                             <CustomSelect
                                 options={mosques}
                                 value={mosque.id}
@@ -238,14 +238,14 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                     if (m) setSelectedMosque(m);
                                 }}
                                 ariaLabel="Select mosque"
-                                truncateLabel={true}
+                                truncateLabel={false}
                                 listFitsContent={true}
-                                className="max-w-full [&_button]:text-xs [&_button]:sm:text-sm [&_button]:font-semibold [&_button]:h-auto [&_button]:min-h-8 [&_button]:py-1"
+                                className="max-w-full [&_button]:text-xs [&_button]:sm:text-sm [&_button]:font-semibold [&_button]:h-auto [&_button]:min-h-8 [&_button]:py-1 [&_button_span]:whitespace-normal [&_button_span]:leading-tight"
                             />
                         </div>
-                        <div className="flex-1 text-right font-normal text-white/90">
-                            <div className="hidden sm:block">{hijriDate}</div>
-                            <div className="sm:hidden text-xs">{hijriDate.split(" ").slice(0, 2).join(" ")}</div>
+                        <div className="flex-1 min-w-0 text-right font-normal text-white/90">
+                            <div className="hidden sm:block truncate">{hijriDate}</div>
+                            <div className="sm:hidden text-xs truncate">{hijriDate.split(" ").slice(0, 2).join(" ")}</div>
                         </div>
                     </div>
 
