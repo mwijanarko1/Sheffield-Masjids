@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getIqamahTime, getIqamahTimesForDate, getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
+import { getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
+import { buildMonthlyTimetableRows } from "@/features/calendar-export/lib/build-monthly-calendar-events";
+import type { MonthlyTimetableRow } from "@/features/calendar-export/types";
 import {
   Table,
   TableBody,
@@ -16,6 +18,8 @@ import {
 
 interface MonthlyTimetableProps {
   mosque: Mosque;
+  selectedMonth?: number;
+  onSelectedMonthChange?: (month: number) => void;
 }
 
 const MONTH_OPTIONS = [
@@ -33,45 +37,24 @@ const MONTH_OPTIONS = [
   { value: 12, label: "December" },
 ];
 
-function getCurrentMonthInSheffield(): number {
-  return getDateInSheffield(new Date()).month;
-}
-
 function getTodayInSheffield() {
   const { month, day } = getDateInSheffield(new Date());
   return { day, month };
 }
 
-function formatDayLabel(dayOfMonth: number, month: number): string {
-  const monthName = MONTH_OPTIONS.find((option) => option.value === month)?.label ?? "";
-  return `${dayOfMonth} ${monthName.slice(0, 3)}`;
-}
-
-type TimetableRow = {
-  day: number;
-  dayLabel: string;
-  isToday: boolean;
-  fajrAdhan: string;
-  fajrIqamah: string;
-  sunrise: string;
-  dhuhrAdhan: string;
-  dhuhrIqamah: string;
-  asrAdhan: string;
-  asrIqamah: string;
-  maghribAdhan: string;
-  maghribIqamah: string;
-  ishaAdhan: string;
-  ishaIqamah: string;
-  jummahIqamah: string;
-};
-
-export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
-  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthInSheffield);
+export default function MonthlyTimetable({
+  mosque,
+  selectedMonth,
+  onSelectedMonthChange,
+}: MonthlyTimetableProps) {
+  const [internalSelectedMonth, setInternalSelectedMonth] = useState(getDateInSheffield(new Date()).month);
   const [monthlyData, setMonthlyData] = useState<MonthlyPrayerTimes | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const today = useMemo(() => getTodayInSheffield(), []);
   const currentYear = useMemo(() => getDateInSheffield(new Date()).year, []);
+  const activeMonth = selectedMonth ?? internalSelectedMonth;
+  const setActiveMonth = onSelectedMonthChange ?? setInternalSelectedMonth;
 
   useEffect(() => {
     let isMounted = true;
@@ -81,7 +64,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
       setError(null);
 
       try {
-        const data = await loadMonthlyPrayerTimes(mosque.slug, selectedMonth);
+        const data = await loadMonthlyPrayerTimes(mosque.slug, activeMonth);
         if (!isMounted) return;
         setMonthlyData(data);
       } catch {
@@ -98,59 +81,31 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
     return () => {
       isMounted = false;
     };
-  }, [mosque.slug, selectedMonth]);
+  }, [mosque.slug, activeMonth]);
 
-  const rows = useMemo<TimetableRow[]>(() => {
+  const rows = useMemo<MonthlyTimetableRow[]>(() => {
     if (!monthlyData) return [];
 
-    return monthlyData.prayer_times.map((day) => {
-      let iqamahTimes;
-      try {
-        iqamahTimes = getIqamahTimesForDate(day.date, monthlyData.iqamah_times);
-      } catch {
-        iqamahTimes = {
-          fajr: "-",
-          dhuhr: "-",
-          asr: "-",
-          maghrib: "-",
-          isha: "-",
-          jummah: monthlyData.jummah_iqamah,
-        };
-      }
-
-      return {
-        day: day.date,
-        dayLabel: formatDayLabel(day.date, selectedMonth),
-        isToday: selectedMonth === today.month && day.date === today.day,
-        fajrAdhan: day.fajr,
-        fajrIqamah: getIqamahTime("fajr", day.fajr, iqamahTimes),
-        sunrise: day.shurooq,
-        dhuhrAdhan: day.dhuhr,
-        dhuhrIqamah: getIqamahTime("dhuhr", day.dhuhr, iqamahTimes),
-        asrAdhan: day.asr,
-        asrIqamah: getIqamahTime("asr", day.asr, iqamahTimes),
-        maghribAdhan: day.maghrib,
-        maghribIqamah: getIqamahTime("maghrib", day.maghrib, iqamahTimes),
-        ishaAdhan: day.isha,
-        ishaIqamah: getIqamahTime("isha", day.isha, iqamahTimes, day.maghrib),
-        jummahIqamah: monthlyData.jummah_iqamah || "—",
-      };
+    return buildMonthlyTimetableRows({
+      monthlyData,
+      selectedMonth: activeMonth,
+      today,
     });
-  }, [monthlyData, selectedMonth, today.day, today.month]);
+  }, [monthlyData, activeMonth, today.day, today.month]);
 
   const todayRowClass =
     "border-[#FFB380]/45 bg-[#FFB380]/12 hover:bg-[#FFB380]/18";
 
   const goToPreviousMonth = () => {
-    setSelectedMonth((month) => (month === 1 ? 12 : month - 1));
+    setActiveMonth(activeMonth === 1 ? 12 : activeMonth - 1);
   };
 
   const goToNextMonth = () => {
-    setSelectedMonth((month) => (month === 12 ? 1 : month + 1));
+    setActiveMonth(activeMonth === 12 ? 1 : activeMonth + 1);
   };
 
   const selectedMonthName =
-    MONTH_OPTIONS.find((option) => option.value === selectedMonth)?.label ?? "Month";
+    MONTH_OPTIONS.find((option) => option.value === activeMonth)?.label ?? "Month";
 
   return (
     <section
@@ -184,17 +139,18 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
               Adhan and iqamah schedule for {mosque.name}
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={goToNextMonth}
-            aria-label="Next month"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380]/40 touch-manipulation"
-          >
-            <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={goToNextMonth}
+              aria-label="Next month"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380]/40 touch-manipulation"
+            >
+              <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {isLoading && (
@@ -232,7 +188,7 @@ export default function MonthlyTimetable({ mosque }: MonthlyTimetableProps) {
               <TableBody>
                 {rows.map((row) => (
                   <TableRow
-                    key={`${selectedMonth}-${row.day}`}
+                    key={`${activeMonth}-${row.day}`}
                     className={cn(
                       "border-white/10 transition-colors hover:bg-white/5",
                       row.isToday && todayRowClass,

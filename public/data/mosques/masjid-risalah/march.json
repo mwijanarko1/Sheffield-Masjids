@@ -285,7 +285,7 @@
     {
       "date_range": "1-10",
       "fajr": "05:30",
-      "dhuhr": "13:10",
+      "dhuhr": "12:45",
       "asr": "15:30",
       "maghrib": "5 mins after adhan",
       "isha": "19:45"
@@ -293,18 +293,26 @@
     {
       "date_range": "11-20",
       "fajr": "05:15",
-      "dhuhr": "13:10",
+      "dhuhr": "12:45",
       "asr": "15:45",
       "maghrib": "5 mins after adhan",
       "isha": "20:00"
     },
     {
-      "date_range": "21-31",
-      "fajr": "05:00",
-      "dhuhr": "13:10",
+      "date_range": "21-26",
+      "fajr": "20 minutes after adhan",
+      "dhuhr": "12:45",
       "asr": "16:00",
       "maghrib": "5 mins after adhan",
-      "isha": "20:15"
+      "isha": "20:30"
+    },
+    {
+      "date_range": "27-31",
+      "fajr": "20 minutes after adhan",
+      "dhuhr": "13:30",
+      "asr": "16:00",
+      "maghrib": "5 mins after adhan",
+      "isha": "20:30"
     }
   ],
   "jummah_iqamah": "12:45"

@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import {
   CalendarClock,
   CalendarRange,
-  ListChecks,
   Scale,
   SlidersHorizontal,
 } from "lucide-react";
@@ -24,12 +23,6 @@ const TABS = [
     label: "Timetable",
     href: "/timetable",
     icon: CalendarRange,
-  },
-  {
-    id: "lastTen",
-    label: "Checklist",
-    href: "/last-ten",
-    icon: ListChecks,
   },
   {
     id: "compare",
@@ -54,7 +47,6 @@ export function FloatingTabBar() {
   function getActiveTab() {
     if (pathname === "/") return "prayer";
     if (pathname.startsWith("/timetable")) return "timetable";
-    if (pathname.startsWith("/last-ten")) return "lastTen";
     if (pathname.startsWith("/compare")) return "compare";
     if (pathname.startsWith("/settings")) return "settings";
     return null;
