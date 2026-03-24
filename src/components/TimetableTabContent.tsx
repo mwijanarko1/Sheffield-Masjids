@@ -59,6 +59,7 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
         </h1>
         <MonthlyCalendarExportModal
           mosque={mosque}
+          mosques={mosques}
           month={selectedMonth}
           year={currentYear}
           monthLabel={monthLabel}
