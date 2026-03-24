@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
-import { isDateInRamadanPeriod } from "@/lib/prayer-times";
+import { getDateInSheffield, isDateInRamadanPeriod } from "@/lib/prayer-times";
 import MonthlyTimetable from "@/components/MonthlyTimetable";
+import MonthlyCalendarExportModal from "@/features/calendar-export/components/MonthlyCalendarExportModal";
 
 interface TimetableTabContentProps {
   mosques: Mosque[];
@@ -15,6 +16,24 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
   const { selectedMosque } = usePersistedMosque(mosques);
   const mosque = selectedMosque ?? mosques[0];
   const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(() => getDateInSheffield(new Date()).month);
+  const currentYear = getDateInSheffield(new Date()).year;
+
+  const monthLabel =
+    [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ][selectedMonth - 1] ?? "Month";
 
   useEffect(() => {
     let isMounted = true;
@@ -34,10 +53,23 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-        Timetable
-      </h1>
-      <MonthlyTimetable mosque={mosque} />
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          Timetable
+        </h1>
+        <MonthlyCalendarExportModal
+          mosque={mosque}
+          month={selectedMonth}
+          year={currentYear}
+          monthLabel={monthLabel}
+          triggerClassName="h-11 rounded-full border-white/20 bg-white/10 px-4 text-white hover:bg-white/20"
+        />
+      </div>
+      <MonthlyTimetable
+        mosque={mosque}
+        selectedMonth={selectedMonth}
+        onSelectedMonthChange={setSelectedMonth}
+      />
       {isRamadanPeriod && (
         <p className="mt-4 text-center text-sm">
           <Link
