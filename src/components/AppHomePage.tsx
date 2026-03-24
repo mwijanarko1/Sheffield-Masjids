@@ -144,16 +144,6 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
 
     const isFriday = useMemo(() => sheffieldNow.getDay() === 5, [sheffieldNow]);
 
-    if (!isHydrated || !mosque) {
-        return (
-            <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
-                <div className="flex flex-1 items-center justify-center px-4 text-center text-white/70">
-                    Loading mosque prayer times...
-                </div>
-            </div>
-        );
-    }
-
     const prayers = useMemo(() => {
         if (!prayerTimes) return [];
         const iq = iqamahTimes;
@@ -226,6 +216,16 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         }
         return null;
     }, [prayerTimes, iqamahTimes, prayers, isToday, isFriday, sheffieldNow]);
+
+    if (!isHydrated || !mosque) {
+        return (
+            <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
+                <div className="flex flex-1 items-center justify-center px-4 text-center text-white/70">
+                    Loading mosque prayer times...
+                </div>
+            </div>
+        );
+    }
 
     // Handle previous / Next day
     const handlePrevDay = () => {
