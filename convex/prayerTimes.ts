@@ -144,3 +144,23 @@ export const getRamadan = query({
     };
   },
 });
+
+/**
+ * UK DST calendar for prayer-time logic (same shape as public/docs/dst-start-end.json).
+ * Returns null if not seeded yet — callers fall back to static JSON.
+ */
+export const getUkDstDates = query({
+  args: {},
+  handler: async (ctx) => {
+    const doc = await ctx.db
+      .query("ukDstCalendar")
+      .withIndex("by_key", (q) => q.eq("key", "singleton"))
+      .unique();
+
+    if (!doc || doc.ukDstDates.length === 0) {
+      return null;
+    }
+
+    return { uk_dst_dates: doc.ukDstDates };
+  },
+});

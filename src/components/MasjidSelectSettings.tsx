@@ -11,7 +11,7 @@ interface MasjidSelectSettingsProps {
 }
 
 export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsProps) {
-  const { selectedMosque, setSelectedMosque } = usePersistedMosque(mosques);
+  const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-5 sm:px-6 sm:py-10 text-white">
@@ -25,7 +25,7 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
       <div className="mb-12">
         <CustomSelect
           options={mosques}
-          value={selectedMosque?.id || ""}
+          value={isHydrated ? selectedMosque?.id || "" : ""}
           onChange={(id) => {
             const selected = mosques.find((m) => m.id === id);
             if (selected) setSelectedMosque(selected);

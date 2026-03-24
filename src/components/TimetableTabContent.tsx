@@ -13,8 +13,8 @@ interface TimetableTabContentProps {
 }
 
 export default function TimetableTabContent({ mosques }: TimetableTabContentProps) {
-  const { selectedMosque } = usePersistedMosque(mosques);
-  const mosque = selectedMosque ?? mosques[0];
+  const { selectedMosque, isHydrated } = usePersistedMosque(mosques);
+  const mosque = selectedMosque;
   const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(() => getDateInSheffield(new Date()).month);
   const currentYear = getDateInSheffield(new Date()).year;
@@ -36,6 +36,8 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
     ][selectedMonth - 1] ?? "Month";
 
   useEffect(() => {
+    if (!isHydrated || !mosque) return;
+
     let isMounted = true;
     const check = async () => {
       try {
@@ -49,7 +51,17 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
     return () => {
       isMounted = false;
     };
-  }, [mosque.slug]);
+  }, [isHydrated, mosque]);
+
+  if (!isHydrated || !mosque) {
+    return (
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
+        <p className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70 backdrop-blur-md">
+          Loading your saved mosque...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">

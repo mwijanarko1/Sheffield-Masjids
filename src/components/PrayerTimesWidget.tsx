@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, subtractOneHour, formatTo12Hour, isValidTimeForMarkup } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -41,6 +41,7 @@ export default function PrayerTimesWidget({
     return new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
   });
   const [dstSettings] = useState<{ enabled: boolean; customTimes: Record<string, string> } | null>(null);
+  const [dstData, setDstData] = useState<{ uk_dst_dates: { year: number; start_date: string; end_date: string }[] } | null>(null);
   const [adjustedIqamahTimes, setAdjustedIqamahTimes] = useState<DailyIqamahTimes | null>(null);
   const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
   const latestFetchRequestRef = useRef(0);
@@ -49,6 +50,69 @@ export default function PrayerTimesWidget({
   const getSheffieldTime = () => {
     return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
   };
+
+  useEffect(() => {
+    const loadDSTData = async () => {
+      try {
+        const data = await getDSTDatesData();
+        if (data) setDstData(data);
+      } catch (error) {
+        console.error('Failed to load DST data:', error);
+      }
+    };
+    loadDSTData();
+  }, []);
+
+  /** MWHS: client-side adjustment window using loaded DST JSON (sync with table display). */
+  const isInDSTAdjustmentPeriodClient = useCallback((date: Date): boolean => {
+    if (!dstData?.uk_dst_dates) return false;
+
+    const checkDate = date;
+    const checkYear = checkDate.getFullYear();
+    const checkMonth = checkDate.getMonth() + 1;
+
+    const yearData = dstData.uk_dst_dates.find((d) => d.year === checkYear);
+    if (!yearData) return false;
+
+    const startDate = new Date(yearData.start_date);
+    const endDate = new Date(yearData.end_date);
+
+    if (checkMonth === 10) {
+      const endDateYear = endDate.getFullYear();
+      const endDateMonth = endDate.getMonth() + 1;
+      const endDateDay = endDate.getDate();
+
+      const checkYearNum = checkDate.getFullYear();
+      const checkMonthNum = checkDate.getMonth() + 1;
+      const checkDayNum = checkDate.getDate();
+
+      const isAfterDSTEnd =
+        checkYearNum > endDateYear ||
+        (checkYearNum === endDateYear && checkMonthNum > endDateMonth) ||
+        (checkYearNum === endDateYear && checkMonthNum === endDateMonth && checkDayNum >= endDateDay);
+
+      return isAfterDSTEnd && checkMonthNum === 10;
+    }
+
+    if (checkMonth === 3) {
+      const startDateYear = startDate.getFullYear();
+      const startDateMonth = startDate.getMonth() + 1;
+      const startDateDay = startDate.getDate();
+
+      const checkYearNum = checkDate.getFullYear();
+      const checkMonthNum = checkDate.getMonth() + 1;
+      const checkDayNum = checkDate.getDate();
+
+      const isAfterDSTStart =
+        checkYearNum > startDateYear ||
+        (checkYearNum === startDateYear && checkMonthNum > startDateMonth) ||
+        (checkYearNum === startDateYear && checkMonthNum === startDateMonth && checkDayNum >= startDateDay);
+
+      return isAfterDSTStart && checkMonthNum === 3;
+    }
+
+    return false;
+  }, [dstData]);
 
   const isToday = useMemo(() => {
     const sel = getDateInSheffield(selectedDate);
@@ -133,12 +197,14 @@ export default function PrayerTimesWidget({
     const inDSTAdjustment = await isInDSTAdjustmentPeriod(checkDate);
     const isFriday = checkDate.getDay() === 5;
 
-    // Apply time adjustment only to Dhuhr and Maghrib during DST adjustment periods
-    const adjustedPrayerTimes = (inDSTAdjustment) ? {
-      ...prayerTimes,
-      dhuhr: subtractOneHour(prayerTimes.dhuhr), // Fallback simplification for now
-      maghrib: subtractOneHour(prayerTimes.maghrib),
-    } : prayerTimes;
+    // October: 1 hour back on transition window; March: 1 hour forward (MWHS adjustPrayerTimeForDSTSync)
+    const adjustedPrayerTimes = inDSTAdjustment
+      ? {
+          ...prayerTimes,
+          dhuhr: adjustPrayerTimeForDST(prayerTimes.dhuhr, checkDate),
+          maghrib: adjustPrayerTimeForDST(prayerTimes.maghrib, checkDate),
+        }
+      : prayerTimes;
 
     const useCustomIqamahTimes = isDSTModeEnabled && inDSTAdjustment;
 
@@ -285,9 +351,17 @@ export default function PrayerTimesWidget({
         setIqamahTimes(iqamahTimesForDate);
 
         if (isToday) {
+          const inDSTAdjustment = isInDSTAdjustmentPeriodClient(selectedDate);
+          const adjustedPrayerTimesForCurrent = inDSTAdjustment
+            ? {
+                ...prayerTimesForDate,
+                dhuhr: adjustPrayerTimeForDST(prayerTimesForDate.dhuhr, selectedDate),
+                maghrib: adjustPrayerTimeForDST(prayerTimesForDate.maghrib, selectedDate),
+              }
+            : prayerTimesForDate;
           const result = await getNextPrayerAndCountdown(prayerTimesForDate, finalIqamahTimes, selectedDate);
           if (!isCurrentRequest()) return;
-          setCurrentPrayer(getCurrentPrayer(prayerTimesForDate));
+          setCurrentPrayer(getCurrentPrayer(adjustedPrayerTimesForCurrent));
           setNextPrayer(result.nextPrayer);
           setCountdown(result.countdown);
           setIsIqamahCountdown(result.isIqamah);
@@ -319,7 +393,7 @@ export default function PrayerTimesWidget({
     return () => {
       isActive = false;
     };
-  }, [selectedDate, isToday, mosque]);
+  }, [selectedDate, isToday, mosque, dstData, isInDSTAdjustmentPeriodClient]);
 
   useEffect(() => {
     if (!prayerTimes || !iqamahTimes || !isToday) return;
@@ -330,7 +404,15 @@ export default function PrayerTimesWidget({
       setCountdown(result.countdown);
       setIsIqamahCountdown(result.isIqamah);
       setIsJummahCountdown(result.isJummah || false);
-      setCurrentPrayer(getCurrentPrayer(prayerTimes));
+      const inDSTAdjustment = await isInDSTAdjustmentPeriod(selectedDate);
+      const adjustedPrayerTimesForCurrent = inDSTAdjustment
+        ? {
+            ...prayerTimes,
+            dhuhr: adjustPrayerTimeForDST(prayerTimes.dhuhr, selectedDate),
+            maghrib: adjustPrayerTimeForDST(prayerTimes.maghrib, selectedDate),
+          }
+        : prayerTimes;
+      setCurrentPrayer(getCurrentPrayer(adjustedPrayerTimesForCurrent));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -358,12 +440,23 @@ export default function PrayerTimesWidget({
   const prayers = useMemo(() => {
     if (!prayerTimes || !adjustedIqamahTimes) return [];
 
-    // Simplification for adjustment period fallback
-    const adjustedPT = prayerTimes;
+    const inDSTAdjustment = isInDSTAdjustmentPeriodClient(selectedDate);
+
+    const adjustedPT = inDSTAdjustment
+      ? {
+          ...prayerTimes,
+          fajr: adjustPrayerTimeForDST(prayerTimes.fajr, selectedDate),
+          dhuhr: adjustPrayerTimeForDST(prayerTimes.dhuhr, selectedDate),
+          asr: adjustPrayerTimeForDST(prayerTimes.asr, selectedDate),
+          maghrib: adjustPrayerTimeForDST(prayerTimes.maghrib, selectedDate),
+          isha: adjustPrayerTimeForDST(prayerTimes.isha, selectedDate),
+        }
+      : prayerTimes;
+
     const iqamahToUse = adjustedIqamahTimes;
 
     const getIshaIqamah = () => {
-      if (isSummerPeriod) return 'After Maghrib';
+      if (isSummerPeriod && !inDSTAdjustment) return 'After Maghrib';
       return getIqamahTime('isha', adjustedPT.isha, iqamahToUse, adjustedPT.maghrib);
     };
 
@@ -375,7 +468,7 @@ export default function PrayerTimesWidget({
       { name: 'MAGHRIB', adhan: adjustedPT.maghrib, iqamah: getIqamahTime('maghrib', adjustedPT.maghrib, iqamahToUse) },
       { name: 'ISHA', adhan: adjustedPT.isha, iqamah: getIshaIqamah() }
     ];
-  }, [prayerTimes, adjustedIqamahTimes, isSummerPeriod]);
+  }, [prayerTimes, adjustedIqamahTimes, isSummerPeriod, selectedDate, isInDSTAdjustmentPeriodClient]);
 
   const upcomingPrayer = useMemo(() => {
     if (!prayerTimes || !isToday || prayers.length === 0) return null;
