@@ -13,7 +13,17 @@ interface HomeContentProps {
 }
 
 export default function HomeContent({ mosques }: HomeContentProps) {
-  const { selectedMosque, setSelectedMosque } = usePersistedMosque(mosques);
+  const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
+
+  if (!isHydrated) {
+    return (
+      <Card className="border border-white/20 bg-[#0A1128]/80 backdrop-blur-md">
+        <CardContent className="p-6 text-sm text-white/60">
+          Loading your saved mosque...
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!selectedMosque) {
     return (

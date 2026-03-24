@@ -113,3 +113,36 @@ export const seedRamadan = mutation({
     }
   },
 });
+
+const ukDstYearValidator = v.object({
+  year: v.number(),
+  start_date: v.string(),
+  end_date: v.string(),
+});
+
+/**
+ * Upsert UK DST calendar (from public/docs/dst-start-end.json). Idempotent.
+ */
+export const seedUkDstCalendar = mutation({
+  args: {
+    ukDstDates: v.array(ukDstYearValidator),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("ukDstCalendar")
+      .withIndex("by_key", (q) => q.eq("key", "singleton"))
+      .unique();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, { ukDstDates: args.ukDstDates });
+      return { updated: existing._id };
+    }
+
+    return {
+      inserted: await ctx.db.insert("ukDstCalendar", {
+        key: "singleton",
+        ukDstDates: args.ukDstDates,
+      }),
+    };
+  },
+});

@@ -256,6 +256,24 @@ async function main() {
 
   console.log("Seeding Convex with prayer times...\n");
 
+  const dstPath = path.join(process.cwd(), "public", "docs", "dst-start-end.json");
+  if (fs.existsSync(dstPath)) {
+    try {
+      const dstRaw = JSON.parse(fs.readFileSync(dstPath, "utf-8")) as {
+        uk_dst_dates: { year: number; start_date: string; end_date: string }[];
+      };
+      await client.mutation(api.seed.seedUkDstCalendar, {
+        ukDstDates: dstRaw.uk_dst_dates,
+      });
+      console.log("UK DST calendar (BST start/end dates)\n  ✓ seeded\n");
+    } catch (err) {
+      console.error("  ✗ UK DST calendar:", err instanceof Error ? err.message : err);
+    }
+    await delay(200);
+  } else {
+    console.warn("public/docs/dst-start-end.json not found — skip UK DST seed\n");
+  }
+
   for (const slug of mosqueSlugs) {
     console.log(`Mosque: ${slug}`);
     await seedMonthly(client, slug);

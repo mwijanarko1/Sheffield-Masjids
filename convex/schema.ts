@@ -68,4 +68,16 @@ export default defineSchema({
   })
     .index("by_mosque", ["mosqueSlug"])
     .index("by_mosque_and_start", ["mosqueSlug", "gregorianStart"]),
+
+  /** Single-row UK BST start/end dates (same shape as public/docs/dst-start-end.json). */
+  ukDstCalendar: defineTable({
+    key: v.literal("singleton"),
+    ukDstDates: v.array(
+      v.object({
+        year: v.number(),
+        start_date: v.string(),
+        end_date: v.string(),
+      }),
+    ),
+  }).index("by_key", ["key"]),
 });

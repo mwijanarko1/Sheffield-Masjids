@@ -10,13 +10,13 @@ function getDefaultMosque(mosques: Mosque[]): Mosque | null {
 }
 
 export function usePersistedMosque(mosques: Mosque[]) {
-  const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(
-    () => getDefaultMosque(mosques)
-  );
+  const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     if (mosques.length === 0) {
       setSelectedMosque(null);
+      setIsHydrated(true);
       return;
     }
 
@@ -28,6 +28,7 @@ export function usePersistedMosque(mosques: Mosque[]) {
       const storedMosque = mosques.find((mosque) => mosque.id === storedMosqueId);
       if (storedMosque) {
         setSelectedMosque(storedMosque);
+        setIsHydrated(true);
         return;
       }
     }
@@ -39,15 +40,16 @@ export function usePersistedMosque(mosques: Mosque[]) {
       }
       return getDefaultMosque(mosques);
     });
+    setIsHydrated(true);
   }, [mosques]);
 
   useEffect(() => {
-    if (!selectedMosque) return;
+    if (!isHydrated || !selectedMosque) return;
     window.localStorage.setItem(
       SELECTED_MOSQUE_STORAGE_KEY,
       selectedMosque.id
     );
-  }, [selectedMosque]);
+  }, [isHydrated, selectedMosque]);
 
-  return { selectedMosque, setSelectedMosque };
+  return { selectedMosque, setSelectedMosque, isHydrated };
 }

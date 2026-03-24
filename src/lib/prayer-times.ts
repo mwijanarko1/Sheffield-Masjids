@@ -177,53 +177,94 @@ async function getConvexClient(): Promise<InstanceType<typeof import('convex/bro
   return convexClient;
 }
 
-interface DSTDateRange {
+export interface DSTDateRange {
   year: number;
   start_date: string;
   end_date: string;
 }
 
-interface DSTDatesData {
+export interface DSTDatesData {
   uk_dst_dates: DSTDateRange[];
 }
 
-// Cache for DST dates
-let dstDatesCache: TimedCacheEntry<DSTDateRange[]> | null = null;
+/** DST file: longer TTL than generic monthly JSON (matches MWHS). */
+const CLIENT_DST_CACHE_TTL_MS = 60 * 60 * 1000; // 60 minutes
+const SERVER_DST_REVALIDATE_MS = 15 * 60 * 1000; // 15 minutes
+
+let dstDatesArrayCache: DSTDateRange[] | null = null;
+let dstDatesCacheCheckedAt = 0;
+
 const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyPrayerTimes>>();
 const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyPrayerTimes>>();
 
+async function tryLoadDSTDatesFromConvex(): Promise<DSTDateRange[] | null> {
+  try {
+    const client = await getConvexClient();
+    if (!client) return null;
+    const { api } = await import('../../convex/_generated/api');
+    const data = await client.query(api.prayerTimes.getUkDstDates, {});
+    if (data?.uk_dst_dates && data.uk_dst_dates.length > 0) {
+      return data.uk_dst_dates;
+    }
+  } catch (error) {
+    console.warn('Convex UK DST query failed, falling back to static JSON.', error);
+  }
+  return null;
+}
+
 /**
- * Load DST dates from JSON file
+ * Load DST dates: Convex when configured and seeded, else public/docs JSON.
  */
 async function loadDSTDates(): Promise<DSTDateRange[]> {
-  if (dstDatesCache && dstDatesCache.expiresAt > Date.now()) {
-    return dstDatesCache.value;
+  const now = Date.now();
+  const cacheWindow = typeof window !== 'undefined' ? CLIENT_DST_CACHE_TTL_MS : SERVER_DST_REVALIDATE_MS;
+  if (dstDatesArrayCache && now - dstDatesCacheCheckedAt < cacheWindow) {
+    return dstDatesArrayCache;
   }
 
   try {
-    // For client-side usage
+    const fromConvex = await tryLoadDSTDatesFromConvex();
+    if (fromConvex && fromConvex.length > 0) {
+      dstDatesArrayCache = fromConvex;
+      dstDatesCacheCheckedAt = now;
+      return dstDatesArrayCache;
+    }
+
     if (typeof window !== 'undefined') {
       const response = await fetchWithRetry('/docs/dst-start-end.json');
       if (!response.ok) {
         throw new Error(`Failed to load DST dates: ${response.status}`);
       }
       const data: DSTDatesData = await response.json();
-      dstDatesCache = createTimedEntry(data.uk_dst_dates);
-      return dstDatesCache.value;
+      dstDatesArrayCache = data.uk_dst_dates;
+      dstDatesCacheCheckedAt = now;
+      return dstDatesArrayCache;
     }
 
-    // For server-side usage (Node.js)
     const fs = await import('fs/promises');
     const path = await import('path');
     const filePath = path.join(process.cwd(), 'public', 'docs', 'dst-start-end.json');
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data: DSTDatesData = JSON.parse(fileContent);
-    dstDatesCache = createTimedEntry(data.uk_dst_dates);
-    return dstDatesCache.value;
+    dstDatesArrayCache = data.uk_dst_dates;
+    dstDatesCacheCheckedAt = now;
+    return dstDatesArrayCache;
   } catch (error) {
     console.error('Error loading DST dates:', error);
-    // Fallback to empty array if file can't be loaded
     return [];
+  }
+}
+
+/**
+ * Full DST payload (Convex when available, else static JSON). Uses same cache as loadDSTDates.
+ */
+export async function getDSTDatesData(): Promise<DSTDatesData | null> {
+  try {
+    const dates = await loadDSTDates();
+    if (dates.length === 0) return null;
+    return { uk_dst_dates: dates };
+  } catch {
+    return null;
   }
 }
 
@@ -1040,13 +1081,17 @@ export async function isInDSTPeriod(date?: Date): Promise<boolean> {
  * Legacy function for backward compatibility - now uses async version
  */
 export function isInDSTPeriodSync(date?: Date): boolean {
-  if (!dstDatesCache || dstDatesCache.expiresAt <= Date.now()) {
-    return false;
+  if (!dstDatesArrayCache) {
+    console.warn('DST dates not loaded yet, using fallback logic');
+    const checkDate = date || new Date();
+    const currentMonth = checkDate.getMonth() + 1;
+    const currentDay = checkDate.getDate();
+    return (currentMonth === 10 && currentDay >= 22) || (currentMonth === 3 && currentDay >= 21);
   }
 
   const checkDate = date || new Date();
   const checkYear = checkDate.getFullYear();
-  const yearData = dstDatesCache.value.find(d => d.year === checkYear);
+  const yearData = dstDatesArrayCache.find(d => d.year === checkYear);
 
   if (!yearData) {
     return false;
@@ -1105,14 +1150,40 @@ export async function isInDSTAdjustmentPeriod(date?: Date): Promise<boolean> {
     const startDate = new Date(yearData.start_date);
     const endDate = new Date(yearData.end_date);
 
+    // October: From DST end date until end of October
     if (checkMonth === 10) {
+      const endDateYear = endDate.getFullYear();
+      const endDateMonth = endDate.getMonth() + 1;
       const endDateDay = endDate.getDate();
-      return checkDate.getDate() >= endDateDay && checkMonth === 10;
+
+      const checkYearNum = checkDate.getFullYear();
+      const checkMonthNum = checkDate.getMonth() + 1;
+      const checkDayNum = checkDate.getDate();
+
+      const isAfterDSTEnd =
+        checkYearNum > endDateYear ||
+        (checkYearNum === endDateYear && checkMonthNum > endDateMonth) ||
+        (checkYearNum === endDateYear && checkMonthNum === endDateMonth && checkDayNum >= endDateDay);
+
+      return isAfterDSTEnd && checkMonthNum === 10;
     }
 
+    // March: From DST start date until end of March
     if (checkMonth === 3) {
+      const startDateYear = startDate.getFullYear();
+      const startDateMonth = startDate.getMonth() + 1;
       const startDateDay = startDate.getDate();
-      return checkDate.getDate() >= startDateDay && checkMonth === 3;
+
+      const checkYearNum = checkDate.getFullYear();
+      const checkMonthNum = checkDate.getMonth() + 1;
+      const checkDayNum = checkDate.getDate();
+
+      const isAfterDSTStart =
+        checkYearNum > startDateYear ||
+        (checkYearNum === startDateYear && checkMonthNum > startDateMonth) ||
+        (checkYearNum === startDateYear && checkMonthNum === startDateMonth && checkDayNum >= startDateDay);
+
+      return isAfterDSTStart && checkMonthNum === 3;
     }
 
     return false;
@@ -1126,24 +1197,55 @@ export async function isInDSTAdjustmentPeriod(date?: Date): Promise<boolean> {
  * Check if we're in a DST adjustment period (from DST change date until end of month) - synchronous version
  */
 export function isInDSTAdjustmentPeriodSync(date?: Date): boolean {
-  if (!dstDatesCache || dstDatesCache.expiresAt <= Date.now()) return false;
-  
   const checkDate = date || new Date();
   const checkYear = checkDate.getFullYear();
   const checkMonth = checkDate.getMonth() + 1; // 1-12
 
-  const yearData = dstDatesCache.value.find(d => d.year === checkYear);
-  if (!yearData) return false;
+  if (!dstDatesArrayCache) {
+    if (typeof window !== 'undefined') console.warn('DST dates not loaded yet, using fallback');
+    return false;
+  }
+
+  const yearData = dstDatesArrayCache.find(d => d.year === checkYear);
+  if (!yearData) {
+    return false;
+  }
 
   const startDate = new Date(yearData.start_date);
   const endDate = new Date(yearData.end_date);
 
   if (checkMonth === 10) {
-    return checkDate.getDate() >= endDate.getDate() && checkMonth === 10;
+    const endDateYear = endDate.getFullYear();
+    const endDateMonth = endDate.getMonth() + 1;
+    const endDateDay = endDate.getDate();
+
+    const checkYearNum = checkDate.getFullYear();
+    const checkMonthNum = checkDate.getMonth() + 1;
+    const checkDayNum = checkDate.getDate();
+
+    const isAfterDSTEnd =
+      checkYearNum > endDateYear ||
+      (checkYearNum === endDateYear && checkMonthNum > endDateMonth) ||
+      (checkYearNum === endDateYear && checkMonthNum === endDateMonth && checkDayNum >= endDateDay);
+
+    return isAfterDSTEnd && checkMonthNum === 10;
   }
 
   if (checkMonth === 3) {
-    return checkDate.getDate() >= startDate.getDate() && checkMonth === 3;
+    const startDateYear = startDate.getFullYear();
+    const startDateMonth = startDate.getMonth() + 1;
+    const startDateDay = startDate.getDate();
+
+    const checkYearNum = checkDate.getFullYear();
+    const checkMonthNum = checkDate.getMonth() + 1;
+    const checkDayNum = checkDate.getDate();
+
+    const isAfterDSTStart =
+      checkYearNum > startDateYear ||
+      (checkYearNum === startDateYear && checkMonthNum > startDateMonth) ||
+      (checkYearNum === startDateYear && checkMonthNum === startDateMonth && checkDayNum >= startDateDay);
+
+    return isAfterDSTStart && checkMonthNum === 3;
   }
 
   return false;
@@ -1170,8 +1272,26 @@ export async function getDSTTransitionType(date?: Date): Promise<'start' | 'end'
 
     return null;
   } catch (error) {
+    console.error('Error getting DST transition type:', error);
     return null;
   }
+}
+
+/**
+ * Legacy synchronous helpers used by adjustPrayerTimeForDSTSync (MWHS parity).
+ */
+export function isInOctoberTransition(date?: Date): boolean {
+  const checkDate = date || new Date();
+  const currentMonth = checkDate.getMonth() + 1;
+  const currentDay = checkDate.getDate();
+  return currentMonth === 10 && currentDay >= 22;
+}
+
+export function isInMarchTransition(date?: Date): boolean {
+  const checkDate = date || new Date();
+  const currentMonth = checkDate.getMonth() + 1;
+  const currentDay = checkDate.getDate();
+  return currentMonth === 3 && currentDay >= 21;
 }
 
 /**
@@ -1190,10 +1310,15 @@ export async function adjustPrayerTimeForDST(timeString: string, date?: Date): P
 }
 
 /**
- * Legacy synchronous version for backward compatibility
+ * Legacy synchronous version for backward compatibility (MWHS: coarse Mar/Oct windows).
  */
 export function adjustPrayerTimeForDSTSync(timeString: string, date?: Date): string {
-  // We don't have enough info here for a true sync version if cache is empty
+  if (isInOctoberTransition(date)) {
+    return subtractOneHour(timeString);
+  }
+  if (isInMarchTransition(date)) {
+    return addOneHour(timeString);
+  }
   return timeString;
 }
 

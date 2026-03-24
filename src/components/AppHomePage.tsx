@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import moment from "moment-hijri";
 import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
@@ -22,8 +22,9 @@ interface AppHomePageProps {
 }
 
 export default function AppHomePage({ mosques }: AppHomePageProps) {
-    const { selectedMosque, setSelectedMosque } = usePersistedMosque(mosques);
-    const mosque = selectedMosque || mosques[0];
+    const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
+    const mosque = selectedMosque;
+    const latestFetchRequestRef = useRef(0);
 
     const [prayerTimes, setPrayerTimes] = useState<DailyPrayerTimes | null>(null);
     const [iqamahTimes, setIqamahTimes] = useState<DailyIqamahTimes | null>(null);
@@ -73,23 +74,34 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     }, [selectedDate]);
 
     useEffect(() => {
+        if (!isHydrated || !mosque) return;
+
+        const activeMosque = mosque;
+        const requestId = ++latestFetchRequestRef.current;
+        let isActive = true;
+
         async function fetchTimes() {
-            if (!mosque) return;
             try {
                 const [times, iqamah] = await Promise.all([
-                    getPrayerTimesForDate(mosque.slug, selectedDate),
-                    getIqamahTimesForSpecificDate(mosque.slug, selectedDate),
+                    getPrayerTimesForDate(activeMosque.slug, selectedDate),
+                    getIqamahTimesForSpecificDate(activeMosque.slug, selectedDate),
                 ]);
+                if (!isActive || latestFetchRequestRef.current !== requestId) return;
                 setPrayerTimes(times);
                 setIqamahTimes(iqamah);
                 setCurrentPrayer(getCurrentPrayer(times));
                 setHijriDate(getHijriDate(selectedDate));
             } catch (e) {
+                if (!isActive || latestFetchRequestRef.current !== requestId) return;
                 console.error("Failed to fetch times:", e);
             }
         }
         fetchTimes();
-    }, [mosque, selectedDate]);
+
+        return () => {
+            isActive = false;
+        };
+    }, [isHydrated, mosque, selectedDate]);
 
     useEffect(() => {
         if (!isToday) {
@@ -131,6 +143,16 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     );
 
     const isFriday = useMemo(() => sheffieldNow.getDay() === 5, [sheffieldNow]);
+
+    if (!isHydrated || !mosque) {
+        return (
+            <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
+                <div className="flex flex-1 items-center justify-center px-4 text-center text-white/70">
+                    Loading mosque prayer times...
+                </div>
+            </div>
+        );
+    }
 
     const prayers = useMemo(() => {
         if (!prayerTimes) return [];

@@ -7,6 +7,7 @@
       "lat": 53.37942065683938,
       "lng": -1.4964534779182512,
       "slug": "muslim-welfare-house",
+      "isHidden": false,
       "website": "https://www.mwhs.org.uk"
     },
     {
@@ -15,7 +16,8 @@
       "address": "51 Montgomery Terrace Rd, Sheffield S6 3BW, United Kingdom",
       "lat": 53.3893364595497,
       "lng": -1.4815868756857322,
-      "slug": "masjid-risalah"
+      "slug": "masjid-risalah",
+      "isHidden": false
     },
     {
       "id": "sheffield-grand-mosque",
@@ -24,6 +26,7 @@
       "lat": 53.40482539006257,
       "lng": -1.4410684296565177,
       "slug": "sheffield-grand-mosque",
+      "isHidden": false,
       "website": "https://sheffieldgrandmosque.co.uk"
     },
     {
@@ -33,6 +36,7 @@
       "lat": 53.39261164313249,
       "lng": -1.455033658492879,
       "slug": "masjid-sunnah-sheffield",
+      "isHidden": false,
       "website": "https://masjidsunnahsheffield.co.uk"
     },
     {
@@ -42,6 +46,7 @@
       "lat": 53.37556048193791,
       "lng": -1.4832991315079853,
       "slug": "masjid-al-huda-sheffield",
+      "isHidden": false,
       "website": "https://masjidhudasheff.com"
     },
     {
@@ -51,6 +56,7 @@
       "lat": 53.38334305719299,
       "lng": -1.4741565180146554,
       "slug": "andalus-community-centre",
+      "isHidden": true,
       "website": "https://www.andalus.org.uk"
     },
     {
@@ -60,6 +66,7 @@
       "lat": 53.364138901927774,
       "lng": -1.473326602699712,
       "slug": "madina-masjid-sheffield",
+      "isHidden": true,
       "website": "https://www.madinamasjid.org.uk"
     },
     {
@@ -68,7 +75,8 @@
       "address": "9 Grower Street, Sheffield S4 7HA",
       "lat": 53.398,
       "lng": -1.442,
-      "slug": "al-rahman-mosque"
+      "slug": "al-rahman-mosque",
+      "isHidden": true
     },
     {
       "id": "castle-asian-community-centre",
@@ -76,7 +84,8 @@
       "address": "84 Norfolk Road, Sheffield S2 2SZ",
       "lat": 53.375,
       "lng": -1.465,
-      "slug": "castle-asian-community-centre"
+      "slug": "castle-asian-community-centre",
+      "isHidden": true
     },
     {
       "id": "darululoom-siddiqia-masjid",
@@ -84,7 +93,8 @@
       "address": "24 Burngreave Rd, Sheffield S3 9DD",
       "lat": 53.392,
       "lng": -1.468,
-      "slug": "darululoom-siddiqia-masjid"
+      "slug": "darululoom-siddiqia-masjid",
+      "isHidden": true
     },
     {
       "id": "jamia-masjid-ghausia",
@@ -92,7 +102,8 @@
       "address": "Firth Park Road, Sheffield S5 6WN",
       "lat": 53.408,
       "lng": -1.455,
-      "slug": "jamia-masjid-ghausia"
+      "slug": "jamia-masjid-ghausia",
+      "isHidden": true
     },
     {
       "id": "noor-al-hadi-mosque",
@@ -100,7 +111,8 @@
       "address": "275 Staniforth Rd, Darnall, Sheffield S9 3FE",
       "lat": 53.382,
       "lng": -1.438,
-      "slug": "noor-al-hadi-mosque"
+      "slug": "noor-al-hadi-mosque",
+      "isHidden": true
     },
     {
       "id": "al-shafeey-centre",
@@ -108,7 +120,8 @@
       "address": "Balfour Rd, Sheffield S9 4RX",
       "lat": 53.385,
       "lng": -1.435,
-      "slug": "al-shafeey-centre"
+      "slug": "al-shafeey-centre",
+      "isHidden": true
     },
     {
       "id": "quba-mosque",
@@ -116,7 +129,8 @@
       "address": "120 Worksop Road, Attercliffe, Sheffield S9 3TN",
       "lat": 53.392,
       "lng": -1.428,
-      "slug": "quba-mosque"
+      "slug": "quba-mosque",
+      "isHidden": true
     },
     {
       "id": "masjid-umar-sheffield",
@@ -124,7 +138,8 @@
       "address": "306 Barnsley Road, Sheffield S4 7AH",
       "lat": 53.398,
       "lng": -1.448,
-      "slug": "masjid-umar-sheffield"
+      "slug": "masjid-umar-sheffield",
+      "isHidden": true
     },
     {
       "id": "high-hazels-community-centre",
@@ -132,7 +147,8 @@
       "address": "285A Main Road, Darnall, Sheffield S9 4QD",
       "lat": 53.382,
       "lng": -1.438,
-      "slug": "high-hazels-community-centre"
+      "slug": "high-hazels-community-centre",
+      "isHidden": true
     },
     {
       "id": "al-huda-academy",
@@ -140,7 +156,8 @@
       "address": "Ouseburn Croft, Darnall, Sheffield S9 3FY",
       "lat": 53.382,
       "lng": -1.438,
-      "slug": "al-huda-academy"
+      "slug": "al-huda-academy",
+      "isHidden": true
     },
     {
       "id": "firth-park-cultural-centre",
@@ -148,7 +165,8 @@
       "address": "121 Bevercotes Road, Sheffield S5 6HB",
       "lat": 53.412,
       "lng": -1.458,
-      "slug": "firth-park-cultural-centre"
+      "slug": "firth-park-cultural-centre",
+      "isHidden": true
     }
   ]
 }
