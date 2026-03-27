@@ -187,6 +187,28 @@ export interface DSTDatesData {
   uk_dst_dates: DSTDateRange[];
 }
 
+function formatIsoDate(year: number, month: number, day: number): string {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+function getLastSundayOfMonth(year: number, month: number): number {
+  const lastDayAtNoonUtc = new Date(Date.UTC(year, month, 0, 12, 0, 0, 0));
+  return lastDayAtNoonUtc.getUTCDate() - lastDayAtNoonUtc.getUTCDay();
+}
+
+function getSyncDSTDateRange(year: number): DSTDateRange {
+  const cachedRange = dstDatesArrayCache?.find((entry) => entry.year === year);
+  if (cachedRange) {
+    return cachedRange;
+  }
+
+  return {
+    year,
+    start_date: formatIsoDate(year, 3, getLastSundayOfMonth(year, 3)),
+    end_date: formatIsoDate(year, 10, getLastSundayOfMonth(year, 10)),
+  };
+}
+
 /** DST file: longer TTL than generic monthly JSON (matches MWHS). */
 const CLIENT_DST_CACHE_TTL_MS = 60 * 60 * 1000; // 60 minutes
 const SERVER_DST_REVALIDATE_MS = 15 * 60 * 1000; // 15 minutes
@@ -1081,21 +1103,8 @@ export async function isInDSTPeriod(date?: Date): Promise<boolean> {
  * Legacy function for backward compatibility - now uses async version
  */
 export function isInDSTPeriodSync(date?: Date): boolean {
-  if (!dstDatesArrayCache) {
-    console.warn('DST dates not loaded yet, using fallback logic');
-    const checkDate = date || new Date();
-    const currentMonth = checkDate.getMonth() + 1;
-    const currentDay = checkDate.getDate();
-    return (currentMonth === 10 && currentDay >= 22) || (currentMonth === 3 && currentDay >= 21);
-  }
-
   const checkDate = date || new Date();
-  const checkYear = checkDate.getFullYear();
-  const yearData = dstDatesArrayCache.find(d => d.year === checkYear);
-
-  if (!yearData) {
-    return false;
-  }
+  const yearData = getSyncDSTDateRange(checkDate.getFullYear());
 
   const startDate = new Date(yearData.start_date);
   const endDate = new Date(yearData.end_date);
@@ -1198,18 +1207,8 @@ export async function isInDSTAdjustmentPeriod(date?: Date): Promise<boolean> {
  */
 export function isInDSTAdjustmentPeriodSync(date?: Date): boolean {
   const checkDate = date || new Date();
-  const checkYear = checkDate.getFullYear();
   const checkMonth = checkDate.getMonth() + 1; // 1-12
-
-  if (!dstDatesArrayCache) {
-    if (typeof window !== 'undefined') console.warn('DST dates not loaded yet, using fallback');
-    return false;
-  }
-
-  const yearData = dstDatesArrayCache.find(d => d.year === checkYear);
-  if (!yearData) {
-    return false;
-  }
+  const yearData = getSyncDSTDateRange(checkDate.getFullYear());
 
   const startDate = new Date(yearData.start_date);
   const endDate = new Date(yearData.end_date);
@@ -1320,6 +1319,26 @@ export function adjustPrayerTimeForDSTSync(timeString: string, date?: Date): str
     return addOneHour(timeString);
   }
   return timeString;
+}
+
+export function getDisplayedPrayerTimes(
+  prayerTimes: DailyPrayerTimes,
+  date?: Date,
+): DailyPrayerTimes {
+  const checkDate = date || new Date();
+
+  if (!isInDSTAdjustmentPeriodSync(checkDate)) {
+    return prayerTimes;
+  }
+
+  return {
+    ...prayerTimes,
+    fajr: adjustPrayerTimeForDSTSync(prayerTimes.fajr, checkDate),
+    dhuhr: adjustPrayerTimeForDSTSync(prayerTimes.dhuhr, checkDate),
+    asr: adjustPrayerTimeForDSTSync(prayerTimes.asr, checkDate),
+    maghrib: adjustPrayerTimeForDSTSync(prayerTimes.maghrib, checkDate),
+    isha: adjustPrayerTimeForDSTSync(prayerTimes.isha, checkDate),
+  };
 }
 
 /**
