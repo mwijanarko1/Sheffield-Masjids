@@ -10,6 +10,7 @@ import {
     getIqamahTime,
     getCurrentPrayer,
     getDateInSheffield,
+    getDisplayedPrayerTimes,
     getNextPrayerAndCountdown,
     formatDateForDisplay,
 } from "@/lib/prayer-times";
@@ -39,6 +40,10 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     });
     const [currentTime, setCurrentTime] = useState(() => new Date());
     const [hijriDate, setHijriDate] = useState("");
+    const displayedPrayerTimes = useMemo(
+        () => (prayerTimes ? getDisplayedPrayerTimes(prayerTimes, selectedDate) : null),
+        [prayerTimes, selectedDate],
+    );
 
     const SHEFFIELD_TZ = "Europe/London";
     const getSheffieldWallClockTime = (date: Date): Date =>
@@ -89,7 +94,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;
                 setPrayerTimes(times);
                 setIqamahTimes(iqamah);
-                setCurrentPrayer(getCurrentPrayer(times));
+                setCurrentPrayer(getCurrentPrayer(getDisplayedPrayerTimes(times, selectedDate)));
                 setHijriDate(getHijriDate(selectedDate));
             } catch (e) {
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;
@@ -110,12 +115,12 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             setCountdown(null);
             return;
         }
-        if (!prayerTimes || !iqamahTimes) return;
+        if (!displayedPrayerTimes || !iqamahTimes) return;
 
         const updateCountdown = () => {
             setCurrentTime(new Date());
-            setCurrentPrayer(getCurrentPrayer(prayerTimes));
-            const result = getNextPrayerAndCountdown(prayerTimes, iqamahTimes, {
+            setCurrentPrayer(getCurrentPrayer(displayedPrayerTimes));
+            const result = getNextPrayerAndCountdown(displayedPrayerTimes, iqamahTimes, {
                 selectedDate,
                 isSummer,
             });
@@ -128,7 +133,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
-    }, [prayerTimes, iqamahTimes, isToday, selectedDate, isSummer]);
+    }, [displayedPrayerTimes, iqamahTimes, isToday, selectedDate, isSummer]);
 
     // Clock tick when not viewing today (countdown effect handles when isToday)
     useEffect(() => {
@@ -145,38 +150,38 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     const isFriday = useMemo(() => sheffieldNow.getDay() === 5, [sheffieldNow]);
 
     const prayers = useMemo(() => {
-        if (!prayerTimes) return [];
+        if (!displayedPrayerTimes) return [];
         const iq = iqamahTimes;
         const getIqamah = (prayerKey: string): string => {
             if (!iq) return "—";
             switch (prayerKey) {
-                case "Fajr": return getIqamahTime("fajr", prayerTimes.fajr, iq);
+                case "Fajr": return getIqamahTime("fajr", displayedPrayerTimes.fajr, iq);
                 case "Sunrise": return "—";
-                case "Dhuhr": return getIqamahTime("dhuhr", prayerTimes.dhuhr, iq);
-                case "Asr": return getIqamahTime("asr", prayerTimes.asr, iq);
-                case "Maghrib": return getIqamahTime("maghrib", prayerTimes.maghrib, iq);
-                case "Isha": return isSummer ? "After Maghrib" : getIqamahTime("isha", prayerTimes.isha, iq, prayerTimes.maghrib);
+                case "Dhuhr": return getIqamahTime("dhuhr", displayedPrayerTimes.dhuhr, iq);
+                case "Asr": return getIqamahTime("asr", displayedPrayerTimes.asr, iq);
+                case "Maghrib": return getIqamahTime("maghrib", displayedPrayerTimes.maghrib, iq);
+                case "Isha": return isSummer ? "After Maghrib" : getIqamahTime("isha", displayedPrayerTimes.isha, iq, displayedPrayerTimes.maghrib);
                 case "Jummah": return iq.jummah || "—";
                 default: return "—";
             }
         };
         const items = [
-            { id: "fajr", label: "Fajr", adhan: prayerTimes.fajr, iqamah: getIqamah("Fajr") },
+            { id: "fajr", label: "Fajr", adhan: displayedPrayerTimes.fajr, iqamah: getIqamah("Fajr") },
             {
                 id: isFriday && iq?.jummah ? "jummah" : "dhuhr",
                 label: isFriday && iq?.jummah ? "Jummah" : "Dhuhr",
-                adhan: prayerTimes.dhuhr,
+                adhan: displayedPrayerTimes.dhuhr,
                 iqamah: isFriday && iq?.jummah ? (iq.jummah || "—") : getIqamah("Dhuhr"),
             },
-            { id: "asr", label: "Asr", adhan: prayerTimes.asr, iqamah: getIqamah("Asr") },
-            { id: "maghrib", label: "Maghrib", adhan: prayerTimes.maghrib, iqamah: getIqamah("Maghrib") },
-            { id: "isha", label: "Isha'a", adhan: prayerTimes.isha, iqamah: getIqamah("Isha") },
+            { id: "asr", label: "Asr", adhan: displayedPrayerTimes.asr, iqamah: getIqamah("Asr") },
+            { id: "maghrib", label: "Maghrib", adhan: displayedPrayerTimes.maghrib, iqamah: getIqamah("Maghrib") },
+            { id: "isha", label: "Isha'a", adhan: displayedPrayerTimes.isha, iqamah: getIqamah("Isha") },
         ];
         return items;
-    }, [prayerTimes, iqamahTimes, isSummer, isFriday]);
+    }, [displayedPrayerTimes, iqamahTimes, isSummer, isFriday]);
 
     const upcomingPrayer = useMemo(() => {
-        if (!prayerTimes || !iqamahTimes || !isToday) return null;
+        if (!displayedPrayerTimes || !iqamahTimes || !isToday) return null;
         const now = sheffieldNow;
         const majorIndices = [0, 1, 2, 3, 4];
         const iqamahDates = prayers.map((p) => {
@@ -215,7 +220,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             if (now >= nextDayStart) return "fajr";
         }
         return null;
-    }, [prayerTimes, iqamahTimes, prayers, isToday, isFriday, sheffieldNow]);
+    }, [displayedPrayerTimes, iqamahTimes, prayers, isToday, isFriday, sheffieldNow]);
 
     if (!isHydrated || !mosque) {
         return (

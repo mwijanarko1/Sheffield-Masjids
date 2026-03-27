@@ -7,6 +7,7 @@ import {
   getIqamahTime,
   getDSTAdjustmentIqamahDate,
   getDateInSheffield,
+  getDisplayedPrayerTimes,
   formatDateForDisplay,
   formatTo12Hour,
   isValidTimeForMarkup,
@@ -131,7 +132,7 @@ export default function ComparePrayerTimes({
   ): string => {
     if (!mosqueData.prayerTimes || !mosqueData.iqamahTimes) return "—";
 
-    const pt = mosqueData.prayerTimes;
+    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate);
     const iq = mosqueData.iqamahTimes;
 
     switch (prayerKey) {
@@ -160,7 +161,7 @@ export default function ComparePrayerTimes({
     mosqueData: MosquePrayerData
   ): string => {
     if (!mosqueData.prayerTimes) return "—";
-    const pt = mosqueData.prayerTimes;
+    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate);
     switch (prayerKey) {
       case "Fajr":
         return pt.fajr;
