@@ -299,7 +299,7 @@
       "isha": "20:00"
     },
     {
-      "date_range": "21-26",
+      "date_range": "21-28",
       "fajr": "20 minutes after adhan",
       "dhuhr": "12:45",
       "asr": "16:00",
@@ -307,12 +307,12 @@
       "isha": "20:30"
     },
     {
-      "date_range": "27-31",
+      "date_range": "29-31",
       "fajr": "20 minutes after adhan",
       "dhuhr": "13:30",
-      "asr": "16:00",
+      "asr": "17:00",
       "maghrib": "5 mins after adhan",
-      "isha": "20:30"
+      "isha": "21:30"
     }
   ],
   "jummah_iqamah": "12:45"

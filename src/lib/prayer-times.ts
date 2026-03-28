@@ -209,6 +209,92 @@ function getSyncDSTDateRange(year: number): DSTDateRange {
   };
 }
 
+/** Day-of-month (March) when UK clocks spring forward (BST starts). */
+function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): number {
+  const yearData = dstDates.find((d) => d.year === year);
+  if (yearData?.start_date) {
+    const seg = yearData.start_date.split('-');
+    if (seg.length === 3) {
+      const month = Number(seg[1]);
+      const day = Number(seg[2]);
+      if (month === 3 && Number.isFinite(day) && day >= 1 && day <= 31) {
+        return day;
+      }
+    }
+  }
+  return getLastSundayOfMonth(year, 3);
+}
+
+const RISALAH_SLUG = 'masjid-risalah';
+
+/**
+ * Masjid Risalah March iqamah: bands 1–10, 11–20, 21–(day before spring forward), spring forward–31.
+ * Spring-forward day comes from UK DST data (see public/docs/dst-start-end.json).
+ */
+function buildMasjidRisalahMarchIqamahTimes(springForwardMarchDay: number): IqamahTimeRange[] {
+  const maghrib = '5 mins after adhan';
+  const fajrLate = '20 minutes after adhan';
+  const d = Math.min(31, Math.max(1, Math.floor(springForwardMarchDay)));
+
+  const rows: IqamahTimeRange[] = [
+    {
+      date_range: '1-10',
+      fajr: '05:30',
+      dhuhr: '12:45',
+      asr: '15:30',
+      maghrib,
+      isha: '19:45',
+    },
+    {
+      date_range: '11-20',
+      fajr: '05:15',
+      dhuhr: '12:45',
+      asr: '15:45',
+      maghrib,
+      isha: '20:00',
+    },
+  ];
+
+  if (d > 21) {
+    rows.push({
+      date_range: `21-${d - 1}`,
+      fajr: fajrLate,
+      dhuhr: '12:45',
+      asr: '16:00',
+      maghrib,
+      isha: '20:30',
+    });
+  }
+
+  rows.push({
+    date_range: `${d}-31`,
+    fajr: fajrLate,
+    dhuhr: '13:30',
+    asr: '17:00',
+    maghrib,
+    isha: '21:30',
+  });
+
+  return rows;
+}
+
+async function applyMasjidRisalahMarchIqamahIfNeeded(
+  slug: string,
+  monthNum: number,
+  year: number,
+  data: MonthlyPrayerTimes,
+): Promise<MonthlyPrayerTimes> {
+  if (slug !== RISALAH_SLUG || monthNum !== 3) {
+    return data;
+  }
+  const dstDates = await loadDSTDates();
+  const springDay = getUkMarchSpringForwardDay(year, dstDates);
+  return {
+    ...data,
+    iqamah_times: buildMasjidRisalahMarchIqamahTimes(springDay),
+  };
+}
+
 /** DST file: longer TTL than generic monthly JSON (matches MWHS). */
 const CLIENT_DST_CACHE_TTL_MS = 60 * 60 * 1000; // 60 minutes
 const SERVER_DST_REVALIDATE_MS = 15 * 60 * 1000; // 15 minutes
@@ -553,13 +639,14 @@ export async function loadMonthlyPrayerTimes(
             year,
           });
           if (data) {
+            const resolved = await applyMasjidRisalahMarchIqamahIfNeeded(safeSlug, month, year, data);
             setBoundedCacheEntry(
               monthlyPrayerTimesCache,
               cacheKey,
-              createTimedEntry(data),
+              createTimedEntry(resolved),
               MAX_MONTHLY_CACHE_ENTRIES,
             );
-            return data;
+            return resolved;
           }
         } catch (error) {
           console.warn('Convex monthly query failed, falling back to static JSON.', error);
@@ -574,13 +661,14 @@ export async function loadMonthlyPrayerTimes(
       }
 
       const data: MonthlyPrayerTimes = await response.json();
+      const resolved = await applyMasjidRisalahMarchIqamahIfNeeded(safeSlug, month, year, data);
       setBoundedCacheEntry(
         monthlyPrayerTimesCache,
         cacheKey,
-        createTimedEntry(data),
+        createTimedEntry(resolved),
         MAX_MONTHLY_CACHE_ENTRIES,
       );
-      return data;
+      return resolved;
     } catch (error) {
       console.error(`Error loading prayer times for ${monthFile}:`, error);
       throw error;
