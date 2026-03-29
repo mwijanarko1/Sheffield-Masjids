@@ -241,6 +241,132 @@ export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
   }
 }
 
+function dhuhrToMinutes(t: PrayerTime): number {
+  const [h, m] = t.dhuhr.split(':').map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return NaN;
+  return h * 60 + m;
+}
+
+/** First day in the monthly table where civil times jump to BST (spring forward), or null if unclear. */
+export function detectMarchSummerStartDayInTable(prayerTimes: PrayerTime[]): number | null {
+  const sorted = [...prayerTimes].sort((a, b) => a.date - b.date);
+  let bestDay: number | null = null;
+  let bestJump = 0;
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const curr = sorted[i];
+    const a = dhuhrToMinutes(prev);
+    const b = dhuhrToMinutes(curr);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    const jump = b - a;
+    if (jump > bestJump) {
+      bestJump = jump;
+      bestDay = curr.date;
+    }
+  }
+  return bestJump >= 45 ? bestDay : null;
+}
+
+/** First day in the monthly table where civil times jump to GMT (fall back), or null if unclear. */
+export function detectOctoberWinterStartDayInTable(prayerTimes: PrayerTime[]): number | null {
+  const sorted = [...prayerTimes].sort((a, b) => a.date - b.date);
+  let bestDay: number | null = null;
+  let bestFall = 0;
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const curr = sorted[i];
+    const a = dhuhrToMinutes(prev);
+    const b = dhuhrToMinutes(curr);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    const fall = a - b;
+    if (fall > bestFall) {
+      bestFall = fall;
+      bestDay = curr.date;
+    }
+  }
+  return bestFall >= 45 ? bestDay : null;
+}
+
+function maxPrayerTableDay(prayerTimes: PrayerTime[], year: number, month: number): number {
+  let max = 0;
+  for (const row of prayerTimes) {
+    if (row.date > max) max = row.date;
+  }
+  if (max > 0) return max;
+  return new Date(year, month, 0).getDate();
+}
+
+/**
+ * Some mosques publish March/October rows where BST/GMT is already baked in, but the change is on
+ * the wrong calendar day vs UK law. Remap only the mismatch window [min(T,U), max(T,U)-1]:
+ * use the row for day `calendarDay + (T - U)` (clamped) instead of `calendarDay`.
+ */
+export function resolveTimetableDayForUkEmbeddedDst(params: {
+  calendarDay: number;
+  transitionDayInTable: number;
+  ukTransitionDay: number;
+  maxTableDay: number;
+}): number {
+  const { calendarDay, transitionDayInTable: t, ukTransitionDay: u, maxTableDay } = params;
+  if (t === u) return calendarDay;
+  const low = Math.min(t, u);
+  const high = Math.max(t, u) - 1;
+  if (calendarDay < low || calendarDay > high) return calendarDay;
+  return Math.min(maxTableDay, Math.max(1, calendarDay + (t - u)));
+}
+
+async function resolveEmbeddedDstTimetableDayOfMonth(
+  slug: string,
+  month: number,
+  year: number,
+  calendarDay: number,
+  prayerTimes: PrayerTime[],
+): Promise<number> {
+  if (!mosqueTimetableAlreadyIncludesDst(slug)) {
+    return calendarDay;
+  }
+  if (month !== 3 && month !== 10) {
+    return calendarDay;
+  }
+
+  const dstRanges = await loadDSTDates();
+  const maxDay = maxPrayerTableDay(prayerTimes, year, month);
+
+  if (month === 3) {
+    const t = detectMarchSummerStartDayInTable(prayerTimes);
+    if (t === null) return calendarDay;
+    const u = getUkMarchSpringForwardDay(year, dstRanges);
+    return resolveTimetableDayForUkEmbeddedDst({
+      calendarDay,
+      transitionDayInTable: t,
+      ukTransitionDay: u,
+      maxTableDay: maxDay,
+    });
+  }
+
+  const t = detectOctoberWinterStartDayInTable(prayerTimes);
+  if (t === null) return calendarDay;
+  const yearRow = dstRanges.find((d) => d.year === year);
+  let u = getLastSundayOfMonth(year, 10);
+  if (yearRow?.end_date) {
+    const seg = yearRow.end_date.split('-');
+    if (seg.length === 3) {
+      const m = Number(seg[1]);
+      const day = Number(seg[2]);
+      if (m === 10 && Number.isFinite(day) && day >= 1 && day <= 31) {
+        u = day;
+      }
+    }
+  }
+
+  return resolveTimetableDayForUkEmbeddedDst({
+    calendarDay,
+    transitionDayInTable: t,
+    ukTransitionDay: u,
+    maxTableDay: maxDay,
+  });
+}
+
 /**
  * Masjid Risalah March iqamah: bands 1–10, 11–20, 21–(day before spring forward), spring forward–31.
  * Spring-forward day comes from UK DST data (see public/docs/dst-start-end.json).
@@ -753,10 +879,11 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const dayData = findDayData(monthlyData.prayer_times, day);
+      const timetableDay = await resolveEmbeddedDstTimetableDayOfMonth(slug, month, year, day, monthlyData.prayer_times);
+      const dayData = findDayData(monthlyData.prayer_times, timetableDay);
 
       if (!dayData) {
-        throw new Error(`Prayer times not found for date: ${day}`);
+        throw new Error(`Prayer times not found for date: ${timetableDay}`);
       }
 
       return {
@@ -817,10 +944,11 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const dayData = findDayData(monthlyData.prayer_times, day);
+      const timetableDay = await resolveEmbeddedDstTimetableDayOfMonth(slug, month, year, day, monthlyData.prayer_times);
+      const dayData = findDayData(monthlyData.prayer_times, timetableDay);
 
       if (!dayData) {
-        throw new Error(`Prayer times not found for date: ${day}`);
+        throw new Error(`Prayer times not found for date: ${timetableDay}`);
       }
 
       return {
@@ -864,7 +992,8 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times);
+      const timetableDay = await resolveEmbeddedDstTimetableDayOfMonth(slug, month, year, day, monthlyData.prayer_times);
+      const iqamahTimes = getIqamahTimesForDate(timetableDay, monthlyData.iqamah_times);
 
       return {
         ...iqamahTimes,
