@@ -1,7 +1,8 @@
 export const SITE_NAME = "Sheffield Masjids";
-export const SITE_TITLE = `${SITE_NAME} | Prayer Timetables`;
+/** Default document title — lead with the main search phrase people use. */
+export const SITE_TITLE = `Sheffield Prayer Times | Mosques & Iqamah | ${SITE_NAME}`;
 export const SITE_DESCRIPTION =
-  "Prayer times, iqamah times, and mosque locations across Sheffield.";
+  "Sheffield prayer times and iqamah (congregation) times for mosques and masjids across the city. Daily adhan times, monthly timetables, Ramadan schedules, and locations — all in UK (Europe/London) time.";
 
 /** Mosque names for SEO keywords – people search "[mosque name] prayer times Sheffield" */
 export const MOSQUE_NAMES = [

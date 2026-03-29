@@ -252,7 +252,9 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
 
     return (
         <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
-            <h1 className="sr-only">Sheffield Mosque Prayer Times</h1>
+            <h1 className="sr-only">
+                Sheffield prayer times — adhan and iqamah for mosques across the city
+            </h1>
             <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">

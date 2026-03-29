@@ -4,12 +4,30 @@ import TimetableTabContent from "@/components/TimetableTabContent";
 import { getMosques } from "@/lib/mosques";
 import { SITE_NAME } from "@/lib/site";
 
-const title = `Timetable | ${SITE_NAME}`;
-const description = "View full month and Ramadan prayer timetables for your mosque.";
+const title = `Sheffield Prayer Timetables | Monthly & Ramadan | ${SITE_NAME}`;
+const description =
+  "Full-month and Ramadan prayer timetables for Sheffield mosques and masjids. Download or view iqamah and salah schedules in UK time.";
 
 export const metadata: Metadata = {
-  title: "Timetable",
+  title: "Sheffield Prayer Timetables",
   description,
+  keywords: [
+    "Sheffield prayer timetable",
+    "Sheffield mosque timetable",
+    "Ramadan timetable Sheffield",
+    "Sheffield masjid calendar",
+  ],
+  openGraph: {
+    title,
+    description,
+    url: "/timetable",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
   alternates: {
     canonical: "/timetable",
   },

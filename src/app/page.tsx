@@ -4,12 +4,12 @@ import WebsiteJsonLd from "@/components/WebsiteJsonLd";
 import { getMosques } from "@/lib/mosques";
 import { MOSQUE_NAMES, SITE_NAME } from "@/lib/site";
 
-const homeTitle = `Sheffield Mosque Prayer Times | ${SITE_NAME}`;
+const homeTitle = `Sheffield Prayer Times Today | Adhan & Iqamah | ${SITE_NAME}`;
 const homeDescription =
-  "Prayer times and iqamah times for all Sheffield mosques including Madina Masjid, Sheffield Grand Mosque, Al-Huda Academy, Masjid Sunnah, and more. Daily timetables, monthly schedules, and Ramadan times.";
+  "Find Sheffield prayer times today: adhan and iqamah for every major mosque and masjid. Madina Masjid, Sheffield Grand Mosque, Al-Huda Academy, Masjid Sunnah, and more — daily, monthly, and Ramadan timetables in UK time.";
 
 export const metadata: Metadata = {
-  title: "Sheffield Mosque Prayer Times",
+  title: "Sheffield Prayer Times Today",
   description: homeDescription,
   alternates: {
     canonical: "/",
@@ -26,9 +26,12 @@ export const metadata: Metadata = {
     description: homeDescription,
   },
   keywords: [
+    "Sheffield prayer times",
+    "prayer times in Sheffield",
     "Sheffield mosque prayer times",
     "Sheffield masjid prayer times",
     "prayer times Sheffield",
+    "Sheffield salah times",
     ...MOSQUE_NAMES.map((n) => `${n} prayer times`),
   ],
 };
