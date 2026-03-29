@@ -6,7 +6,7 @@ import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
 import {
     getPrayerTimesForDate,
-    getIqamahTimesForSpecificDate,
+    getIqamahTimesForSpecificDateWithDstMapping,
     getIqamahTime,
     getCurrentPrayer,
     getDateInSheffield,
@@ -89,7 +89,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             try {
                 const [times, iqamah] = await Promise.all([
                     getPrayerTimesForDate(activeMosque.slug, selectedDate),
-                    getIqamahTimesForSpecificDate(activeMosque.slug, selectedDate),
+                    getIqamahTimesForSpecificDateWithDstMapping(activeMosque.slug, selectedDate),
                 ]);
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;
                 setPrayerTimes(times);
@@ -278,7 +278,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
 
                     {/* Sun Path Visualization */}
                     {prayerTimes && (
-                        <SunPath prayerData={prayerTimes} compact />
+                        <SunPath prayerData={displayedPrayerTimes ?? prayerTimes!} compact />
                     )}
 
                     {/* Countdown Section - centered and aligned with content gutters */}
@@ -411,7 +411,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                     })}
 
                     {/* Sunrise + Jummah summary row (Masjid Risalah style) */}
-                    {prayerTimes && (
+                    {displayedPrayerTimes && (
                         <div
                             className="shrink-0 flex flex-row items-center justify-center gap-4 sm:gap-6 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-3 min-h-[30px] sm:min-h-[36px] md:min-h-[40px] rounded-xl overflow-hidden"
                             style={{
@@ -424,7 +424,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                             <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-left">
                                 <span className="text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest text-white/70">Sunrise</span>
                                 <span className="text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
-                                    {prayerTimes.sunrise || "—"}
+                                    {displayedPrayerTimes.sunrise || "—"}
                                 </span>
                             </div>
                             <div className="w-px h-5 sm:h-6 bg-white/30 rounded-full" aria-hidden="true" />
