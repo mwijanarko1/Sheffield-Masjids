@@ -34,9 +34,9 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${mosque.name} Prayer Times`;
-  const fullTitle = `${mosque.name} Prayer Times | ${SITE_NAME}`;
-  const description = `Prayer times and iqamah times for ${mosque.name} in Sheffield. Daily timetables, monthly schedules, Ramadan times, and location.`;
+  const title = `${mosque.name} Prayer Times Sheffield`;
+  const fullTitle = `${mosque.name} Prayer Times Sheffield | ${SITE_NAME}`;
+  const description = `Sheffield prayer times and iqamah for ${mosque.name}: today's adhan, monthly timetable, Ramadan times, and address.`;
 
   return {
     title,
