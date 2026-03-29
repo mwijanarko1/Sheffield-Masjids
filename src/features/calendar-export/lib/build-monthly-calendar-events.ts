@@ -1,20 +1,19 @@
-import { getIqamahTime, getIqamahTimesForDate } from "@/lib/prayer-times";
+import { getIqamahTime, getIqamahTimesForDate, resolveMonthlyDayDisplay } from "@/lib/prayer-times";
 import type { MonthlyPrayerTimes } from "@/types/prayer-times";
 import type {
   CalendarEventInput,
   CalendarEventKind,
-  CalendarExportMode,
   MonthlyCalendarExportRequest,
   MonthlyTimetableRow,
 } from "@/features/calendar-export/types";
 
 interface BuildMonthlyTimetableRowsOptions {
+  slug: string;
+  year: number;
   monthlyData: MonthlyPrayerTimes;
   selectedMonth: number;
   today: { day: number; month: number };
 }
-
-const PRAYER_LABELS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
 
 const MONTH_OPTIONS = [
   { value: 1, label: "January" },
@@ -49,24 +48,31 @@ function addMinutes(date: Date, minutes: number): Date {
   return new Date(date.getTime() + minutes * 60_000);
 }
 
+function prayerUidSegment(prayer: string): string {
+  return prayer.toLowerCase().replace(/\s+/g, "");
+}
+
 function buildEvent(
   request: MonthlyCalendarExportRequest,
   day: number,
-  prayer: (typeof PRAYER_LABELS)[number],
+  prayer: string,
   kind: CalendarEventKind,
   time: string,
 ): CalendarEventInput {
   const start = createWallClockDate(request.year, request.month, day, time);
   const durationMinutes = kind === "adhan" ? 1 : 15;
-  const title = `${prayer} ${kind === "adhan" ? "Adhan" : "Iqamah"} - ${request.mosque.name}`;
+  const label = prayer === "Sunrise" ? "Sunrise (Shuruq)" : prayer;
+  const title = `${label} ${kind === "adhan" ? "Adhan" : "Iqamah"} - ${request.mosque.name}`;
   const description = [
-    `${prayer} ${kind} for ${request.mosque.name}`,
+    `${label} ${kind} for ${request.mosque.name}`,
     "Sheffield Masjids monthly timetable export",
     `Month: ${request.monthLabel} ${request.year}`,
   ].join("\n");
 
+  const seg = prayerUidSegment(prayer);
+
   return {
-    uid: `${request.mosque.slug}-${request.year}-${String(request.month).padStart(2, "0")}-${String(day).padStart(2, "0")}-${prayer.toLowerCase()}-${kind}@sheffieldmasjids`,
+    uid: `${request.mosque.slug}-${request.year}-${String(request.month).padStart(2, "0")}-${String(day).padStart(2, "0")}-${seg}-${kind}@sheffieldmasjids`,
     title,
     description,
     location: request.mosque.address?.trim() || request.mosque.name,
@@ -77,15 +83,29 @@ function buildEvent(
   };
 }
 
-export function buildMonthlyTimetableRows({
+/**
+ * One row per calendar day in the monthly JSON, with March/October embedded-DST row realignment
+ * (adhān, shuruq, and iqāmah range day) for mosques that need it.
+ */
+export async function buildMonthlyTimetableRowsAsync({
+  slug,
+  year,
   monthlyData,
   selectedMonth,
   today,
-}: BuildMonthlyTimetableRowsOptions): MonthlyTimetableRow[] {
-  return monthlyData.prayer_times.map((day) => {
+}: BuildMonthlyTimetableRowsOptions): Promise<MonthlyTimetableRow[]> {
+  const uniqueDays = [...new Set(monthlyData.prayer_times.map((p) => p.date))].sort((a, b) => a - b);
+  const rows: MonthlyTimetableRow[] = [];
+
+  for (const d of uniqueDays) {
+    const resolved = await resolveMonthlyDayDisplay(slug, year, selectedMonth, d, monthlyData);
+    if (!resolved) continue;
+
+    const { adhan: day, iqamahLookupDay } = resolved;
+
     let iqamahTimes;
     try {
-      iqamahTimes = getIqamahTimesForDate(day.date, monthlyData.iqamah_times);
+      iqamahTimes = getIqamahTimesForDate(iqamahLookupDay, monthlyData.iqamah_times);
     } catch {
       iqamahTimes = {
         fajr: "-",
@@ -97,10 +117,10 @@ export function buildMonthlyTimetableRows({
       };
     }
 
-    return {
-      day: day.date,
-      dayLabel: formatDayLabel(day.date, selectedMonth),
-      isToday: selectedMonth === today.month && day.date === today.day,
+    rows.push({
+      day: d,
+      dayLabel: formatDayLabel(d, selectedMonth),
+      isToday: selectedMonth === today.month && d === today.day,
       fajrAdhan: day.fajr,
       fajrIqamah: getIqamahTime("fajr", day.fajr, iqamahTimes),
       sunrise: day.shurooq,
@@ -113,14 +133,18 @@ export function buildMonthlyTimetableRows({
       ishaAdhan: day.isha,
       ishaIqamah: getIqamahTime("isha", day.isha, iqamahTimes, day.maghrib),
       jummahIqamah: monthlyData.jummah_iqamah || "—",
-    };
-  });
+    });
+  }
+
+  return rows;
 }
 
-export function buildMonthlyCalendarEvents(
+export async function buildMonthlyCalendarEvents(
   request: MonthlyCalendarExportRequest,
-): CalendarEventInput[] {
-  const rows = buildMonthlyTimetableRows({
+): Promise<CalendarEventInput[]> {
+  const rows = await buildMonthlyTimetableRowsAsync({
+    slug: request.mosque.slug,
+    year: request.year,
     monthlyData: request.monthlyData,
     selectedMonth: request.month,
     today: { day: -1, month: -1 },
@@ -129,15 +153,30 @@ export function buildMonthlyCalendarEvents(
   const events: CalendarEventInput[] = [];
 
   for (const row of rows) {
-    const prayerEntries = [
-      { prayer: "Fajr" as const, adhan: row.fajrAdhan, iqamah: row.fajrIqamah },
+    const fajrEntry = {
+      prayer: "Fajr" as const,
+      adhan: row.fajrAdhan,
+      iqamah: row.fajrIqamah,
+    };
+    if ((request.mode === "adhan" || request.mode === "both") && isConcreteCalendarTime(fajrEntry.adhan)) {
+      events.push(buildEvent(request, row.day, fajrEntry.prayer, "adhan", fajrEntry.adhan));
+    }
+    if ((request.mode === "iqamah" || request.mode === "both") && isConcreteCalendarTime(fajrEntry.iqamah)) {
+      events.push(buildEvent(request, row.day, fajrEntry.prayer, "iqamah", fajrEntry.iqamah));
+    }
+
+    if ((request.mode === "adhan" || request.mode === "both") && isConcreteCalendarTime(row.sunrise)) {
+      events.push(buildEvent(request, row.day, "Sunrise", "adhan", row.sunrise));
+    }
+
+    const rest = [
       { prayer: "Dhuhr" as const, adhan: row.dhuhrAdhan, iqamah: row.dhuhrIqamah },
       { prayer: "Asr" as const, adhan: row.asrAdhan, iqamah: row.asrIqamah },
       { prayer: "Maghrib" as const, adhan: row.maghribAdhan, iqamah: row.maghribIqamah },
       { prayer: "Isha" as const, adhan: row.ishaAdhan, iqamah: row.ishaIqamah },
     ];
 
-    for (const entry of prayerEntries) {
+    for (const entry of rest) {
       if ((request.mode === "adhan" || request.mode === "both") && isConcreteCalendarTime(entry.adhan)) {
         events.push(buildEvent(request, row.day, entry.prayer, "adhan", entry.adhan));
       }

@@ -368,6 +368,29 @@ async function resolveEmbeddedDstTimetableDayOfMonth(
 }
 
 /**
+ * Adhān row (fajr, shuruq/sunrise, dhuhr, …) for a real calendar day, with embedded-DST table
+ * realignment in March/October. `iqamahLookupDay` indexes `iqamah_times` date_range bands the same way.
+ */
+export async function resolveMonthlyDayDisplay(
+  slug: string,
+  year: number,
+  month: number,
+  calendarDay: number,
+  monthlyData: MonthlyPrayerTimes,
+): Promise<{ adhan: PrayerTime; iqamahLookupDay: number } | null> {
+  const iqamahLookupDay = await resolveEmbeddedDstTimetableDayOfMonth(
+    slug,
+    month,
+    year,
+    calendarDay,
+    monthlyData.prayer_times,
+  );
+  const adhan = findDayData(monthlyData.prayer_times, iqamahLookupDay);
+  if (!adhan) return null;
+  return { adhan, iqamahLookupDay };
+}
+
+/**
  * Masjid Risalah March iqamah: bands 1–10, 11–20, 21–(day before spring forward), spring forward–31.
  * Spring-forward day comes from UK DST data (see public/docs/dst-start-end.json).
  */
@@ -879,21 +902,20 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const timetableDay = await resolveEmbeddedDstTimetableDayOfMonth(slug, month, year, day, monthlyData.prayer_times);
-      const dayData = findDayData(monthlyData.prayer_times, timetableDay);
-
-      if (!dayData) {
-        throw new Error(`Prayer times not found for date: ${timetableDay}`);
+      const resolved = await resolveMonthlyDayDisplay(slug, year, month, day, monthlyData);
+      if (!resolved) {
+        throw new Error(`Prayer times not found for date: ${day}`);
       }
+      const { adhan } = resolved;
 
       return {
         date: dateStr,
-        fajr: dayData.fajr,
-        sunrise: dayData.shurooq,
-        dhuhr: dayData.dhuhr,
-        asr: dayData.asr,
-        maghrib: dayData.maghrib,
-        isha: dayData.isha
+        fajr: adhan.fajr,
+        sunrise: adhan.shurooq,
+        dhuhr: adhan.dhuhr,
+        asr: adhan.asr,
+        maghrib: adhan.maghrib,
+        isha: adhan.isha
       };
     } catch (monthlyError) {
       if (ramadanResult && !ramadanResult.inRange) {
@@ -944,21 +966,20 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const timetableDay = await resolveEmbeddedDstTimetableDayOfMonth(slug, month, year, day, monthlyData.prayer_times);
-      const dayData = findDayData(monthlyData.prayer_times, timetableDay);
-
-      if (!dayData) {
-        throw new Error(`Prayer times not found for date: ${timetableDay}`);
+      const resolved = await resolveMonthlyDayDisplay(slug, year, month, day, monthlyData);
+      if (!resolved) {
+        throw new Error(`Prayer times not found for date: ${day}`);
       }
+      const { adhan } = resolved;
 
       return {
         date: dateStr,
-        fajr: dayData.fajr,
-        sunrise: dayData.shurooq,
-        dhuhr: dayData.dhuhr,
-        asr: dayData.asr,
-        maghrib: dayData.maghrib,
-        isha: dayData.isha
+        fajr: adhan.fajr,
+        sunrise: adhan.shurooq,
+        dhuhr: adhan.dhuhr,
+        asr: adhan.asr,
+        maghrib: adhan.maghrib,
+        isha: adhan.isha
       };
     } catch (monthlyError) {
       if (ramadanResult && !ramadanResult.inRange) {
@@ -992,8 +1013,11 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const timetableDay = await resolveEmbeddedDstTimetableDayOfMonth(slug, month, year, day, monthlyData.prayer_times);
-      const iqamahTimes = getIqamahTimesForDate(timetableDay, monthlyData.iqamah_times);
+      const resolved = await resolveMonthlyDayDisplay(slug, year, month, day, monthlyData);
+      if (!resolved) {
+        throw new Error(`No Iqamah times found for date: ${day}`);
+      }
+      const iqamahTimes = getIqamahTimesForDate(resolved.iqamahLookupDay, monthlyData.iqamah_times);
 
       return {
         ...iqamahTimes,

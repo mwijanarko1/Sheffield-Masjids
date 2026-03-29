@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
-import { buildMonthlyTimetableRows } from "@/features/calendar-export/lib/build-monthly-calendar-events";
+import { buildMonthlyTimetableRowsAsync } from "@/features/calendar-export/lib/build-monthly-calendar-events";
 import type { MonthlyTimetableRow } from "@/features/calendar-export/types";
 import {
   Table,
@@ -49,10 +49,11 @@ export default function MonthlyTimetable({
 }: MonthlyTimetableProps) {
   const [internalSelectedMonth, setInternalSelectedMonth] = useState(getDateInSheffield(new Date()).month);
   const [monthlyData, setMonthlyData] = useState<MonthlyPrayerTimes | null>(null);
+  const [rows, setRows] = useState<MonthlyTimetableRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const today = useMemo(() => getTodayInSheffield(), []);
-  const currentYear = useMemo(() => getDateInSheffield(new Date()).year, []);
+  const [today] = useState(() => getTodayInSheffield());
+  const [currentYear] = useState(() => getDateInSheffield(new Date()).year);
   const activeMonth = selectedMonth ?? internalSelectedMonth;
   const setActiveMonth = onSelectedMonthChange ?? setInternalSelectedMonth;
 
@@ -64,7 +65,7 @@ export default function MonthlyTimetable({
       setError(null);
 
       try {
-        const data = await loadMonthlyPrayerTimes(mosque.slug, activeMonth);
+        const data = await loadMonthlyPrayerTimes(mosque.slug, activeMonth, currentYear);
         if (!isMounted) return;
         setMonthlyData(data);
       } catch {
@@ -81,17 +82,31 @@ export default function MonthlyTimetable({
     return () => {
       isMounted = false;
     };
-  }, [mosque.slug, activeMonth]);
+  }, [mosque.slug, activeMonth, currentYear]);
 
-  const rows = useMemo<MonthlyTimetableRow[]>(() => {
-    if (!monthlyData) return [];
+  useEffect(() => {
+    if (!monthlyData) {
+      setRows([]);
+      return;
+    }
 
-    return buildMonthlyTimetableRows({
-      monthlyData,
-      selectedMonth: activeMonth,
-      today,
-    });
-  }, [monthlyData, activeMonth, today.day, today.month]);
+    let cancelled = false;
+
+    (async () => {
+      const built = await buildMonthlyTimetableRowsAsync({
+        slug: mosque.slug,
+        year: currentYear,
+        monthlyData,
+        selectedMonth: activeMonth,
+        today,
+      });
+      if (!cancelled) setRows(built);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [monthlyData, mosque.slug, currentYear, activeMonth, today.day, today.month]);
 
   const todayRowClass =
     "border-[#FFB380]/45 bg-[#FFB380]/12 hover:bg-[#FFB380]/18";
