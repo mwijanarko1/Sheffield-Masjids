@@ -41,8 +41,11 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
     const [currentTime, setCurrentTime] = useState(() => new Date());
     const [hijriDate, setHijriDate] = useState("");
     const displayedPrayerTimes = useMemo(
-        () => (prayerTimes ? getDisplayedPrayerTimes(prayerTimes, selectedDate) : null),
-        [prayerTimes, selectedDate],
+        () =>
+            prayerTimes && mosque
+                ? getDisplayedPrayerTimes(prayerTimes, selectedDate, mosque.slug)
+                : null,
+        [prayerTimes, selectedDate, mosque],
     );
 
     const SHEFFIELD_TZ = "Europe/London";
@@ -94,7 +97,9 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;
                 setPrayerTimes(times);
                 setIqamahTimes(iqamah);
-                setCurrentPrayer(getCurrentPrayer(getDisplayedPrayerTimes(times, selectedDate)));
+                setCurrentPrayer(
+                    getCurrentPrayer(getDisplayedPrayerTimes(times, selectedDate, activeMosque.slug)),
+                );
                 setHijriDate(getHijriDate(selectedDate));
             } catch (e) {
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;

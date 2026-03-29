@@ -113,7 +113,7 @@ export default function ComparePrayerTimes({
   ): string => {
     if (!mosqueData.prayerTimes || !mosqueData.iqamahTimes) return "—";
 
-    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate);
+    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate, mosqueData.mosque.slug);
     const iq = mosqueData.iqamahTimes;
 
     switch (prayerKey) {
@@ -142,7 +142,7 @@ export default function ComparePrayerTimes({
     mosqueData: MosquePrayerData
   ): string => {
     if (!mosqueData.prayerTimes) return "—";
-    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate);
+    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate, mosqueData.mosque.slug);
     switch (prayerKey) {
       case "Fajr":
         return pt.fajr;
