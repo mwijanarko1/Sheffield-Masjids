@@ -61,3 +61,13 @@ test("getDisplayedPrayerTimes skips DST when mosque timetable already uses UK ci
 
   assert.deepEqual(displayed, basePrayerTimes);
 });
+
+test("getDisplayedPrayerTimes skips DST when mosque timetable already uses UK civil time (Sheffield Grand Mosque)", () => {
+  const displayed = getDisplayedPrayerTimes(
+    basePrayerTimes,
+    sheffieldDate(2026, 3, 30),
+    "sheffield-grand-mosque",
+  );
+
+  assert.deepEqual(displayed, basePrayerTimes);
+});
