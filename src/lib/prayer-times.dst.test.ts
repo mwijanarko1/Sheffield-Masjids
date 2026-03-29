@@ -30,6 +30,7 @@ test("getDisplayedPrayerTimes applies the March 29 2026 DST adjustment to displa
   assert.deepEqual(displayed, {
     ...basePrayerTimes,
     fajr: "05:22",
+    sunrise: "06:44",
     dhuhr: "13:11",
     asr: "16:39",
     maghrib: "19:38",
@@ -43,6 +44,7 @@ test("getDisplayedPrayerTimes keeps the March DST display adjustment active thro
   assert.deepEqual(displayed, {
     ...basePrayerTimes,
     fajr: "05:22",
+    sunrise: "06:44",
     dhuhr: "13:11",
     asr: "16:39",
     maghrib: "19:38",

@@ -767,41 +767,12 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
 }
 
 /**
- * Get today's Iqamah times (based on Sheffield UK time)
+ * Get today's Iqamah times (Sheffield calendar), including Mar/Oct DST iqamah mapping (MWHS parity).
  */
 export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTimes> {
   const { year, month, day } = getDateInSheffield(new Date());
   const today = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
-
-  try {
-    const ramadanResult = await loadRamadanData(slug, today);
-    if (ramadanResult?.inRange) {
-      const ramadanDay = getRamadanDay(today, ramadanResult.data);
-      const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanResult.data.iqamah_times);
-      return {
-        ...iqamahTimes,
-        jummah: ramadanResult.data.jummah_iqamah
-      };
-    }
-
-    try {
-      const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times);
-
-      return {
-        ...iqamahTimes,
-        jummah: monthlyData.jummah_iqamah
-      };
-    } catch (monthlyError) {
-      if (ramadanResult && !ramadanResult.inRange) {
-        throw new Error(`RAMADAN_ONLY:${formatRamadanDateRange(ramadanResult.data.gregorian_start, ramadanResult.data.gregorian_end)}`);
-      }
-      throw monthlyError;
-    }
-  } catch (error) {
-    console.error('Error getting today\'s Iqamah times:', error);
-    throw error;
-  }
+  return getIqamahTimesForSpecificDateWithDstMapping(slug, today);
 }
 
 /**
@@ -895,6 +866,23 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
     console.error(`Error getting Iqamah times for date ${date.toDateString()}:`, error);
     throw error;
   }
+}
+
+/**
+ * Iqāmah for a Gregorian date, using April/November timetable when in Mar/Oct DST adjustment
+ * (same rule as PrayerTimesWidget: `getDSTAdjustmentIqamahDate` + base loader). MWHS: `getIqamahTimesForSpecificDateWithDstMapping`.
+ */
+export async function getIqamahTimesForSpecificDateWithDstMapping(
+  slug: string,
+  date: Date,
+): Promise<DailyIqamahTimes> {
+  const mapped = await getDSTAdjustmentIqamahDate(date);
+  if (mapped) {
+    const { year } = getDateInSheffield(date);
+    const adjustmentDate = new Date(Date.UTC(year, mapped.month - 1, mapped.date, 12, 0, 0, 0));
+    return getIqamahTimesForSpecificDate(slug, adjustmentDate);
+  }
+  return getIqamahTimesForSpecificDate(slug, date);
 }
 
 /**
@@ -1422,6 +1410,7 @@ export function getDisplayedPrayerTimes(
   return {
     ...prayerTimes,
     fajr: adjustPrayerTimeForDSTSync(prayerTimes.fajr, checkDate),
+    sunrise: adjustPrayerTimeForDSTSync(prayerTimes.sunrise, checkDate),
     dhuhr: adjustPrayerTimeForDSTSync(prayerTimes.dhuhr, checkDate),
     asr: adjustPrayerTimeForDSTSync(prayerTimes.asr, checkDate),
     maghrib: adjustPrayerTimeForDSTSync(prayerTimes.maghrib, checkDate),
@@ -1430,34 +1419,37 @@ export function getDisplayedPrayerTimes(
 }
 
 /**
- * Get the Iqamah date mapping for DST adjustment periods
+ * Get the Iqamah date mapping for DST adjustment periods (MWHS parity).
+ * October: DST end → Nov 1–30 winter iqāmah rows; March: DST start → Apr 1–30 BST iqāmah rows.
  */
 export async function getDSTAdjustmentIqamahDate(date?: Date): Promise<{ month: number; date: number } | null> {
-  const checkDate = date || new Date();
-  const checkMonth = checkDate.getMonth() + 1; 
-  const checkDay = checkDate.getDate();
+  const raw = date ?? new Date();
+  const { year, month: checkMonth, day: checkDay } = getDateInSheffield(raw);
 
-  const inAdjustmentPeriod = await isInDSTAdjustmentPeriod(checkDate);
+  const noonUtc = new Date(Date.UTC(year, checkMonth - 1, checkDay, 12, 0, 0, 0));
+  const inAdjustmentPeriod = await isInDSTAdjustmentPeriod(noonUtc);
   if (!inAdjustmentPeriod) return null;
 
   const dstDates = await loadDSTDates();
-  const yearData = dstDates.find(d => d.year === checkDate.getFullYear());
+  const yearData = dstDates.find((d) => d.year === year);
   if (!yearData) return null;
 
-  const dstStartDate = new Date(yearData.start_date);
-  const dstEndDate = new Date(yearData.end_date);
+  const dstStartDay = Number(yearData.start_date.slice(8, 10));
+  const dstEndDay = Number(yearData.end_date.slice(8, 10));
 
   if (checkMonth === 10) {
-    const dayOffset = checkDay - dstEndDate.getDate();
-    if (dayOffset >= 0 && dayOffset <= 5) {
-      return { month: 11, date: dayOffset + 1 };
+    const dayOffset = checkDay - dstEndDay;
+    if (dayOffset >= 0) {
+      const novemberDate = Math.min(dayOffset + 1, 30);
+      return { month: 11, date: novemberDate };
     }
   }
 
   if (checkMonth === 3) {
-    const dayOffset = checkDay - dstStartDate.getDate();
-    if (dayOffset >= 0 && dayOffset <= 1) {
-      return { month: 4, date: dayOffset + 1 };
+    const dayOffset = checkDay - dstStartDay;
+    if (dayOffset >= 0) {
+      const aprilDate = Math.min(dayOffset + 1, 30);
+      return { month: 4, date: aprilDate };
     }
   }
 

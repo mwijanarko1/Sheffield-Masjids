@@ -3,9 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   getPrayerTimesForDate,
-  getIqamahTimesForSpecificDate,
+  getIqamahTimesForSpecificDateWithDstMapping,
   getIqamahTime,
-  getDSTAdjustmentIqamahDate,
   getDateInSheffield,
   getDisplayedPrayerTimes,
   formatDateForDisplay,
@@ -66,31 +65,13 @@ export default function ComparePrayerTimes({
       setIsLoading(true);
       setData([]);
 
-      const dstIqamahDate = await getDSTAdjustmentIqamahDate(selectedDate);
-
       const results = await Promise.all(
         mosques.map(async (mosque) => {
           try {
-            let [prayerTimes, iqamahTimes] = await Promise.all([
+            const [prayerTimes, iqamahTimes] = await Promise.all([
               getPrayerTimesForDate(mosque.slug, selectedDate),
-              getIqamahTimesForSpecificDate(mosque.slug, selectedDate),
+              getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
             ]);
-
-            if (dstIqamahDate) {
-              try {
-                const adjustmentDate = new Date(
-                  selectedDate.getFullYear(),
-                  dstIqamahDate.month - 1,
-                  dstIqamahDate.date
-                );
-                iqamahTimes = await getIqamahTimesForSpecificDate(
-                  mosque.slug,
-                  adjustmentDate
-                );
-              } catch {
-                // keep original iqamahTimes
-              }
-            }
 
             return { mosque, prayerTimes, iqamahTimes };
           } catch (err) {

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, getDSTAdjustmentIqamahDate, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -328,27 +328,16 @@ export default function PrayerTimesWidget({
         else setIsTransitioning(true);
         setError(null);
 
-        const dstIqamahDate = await getDSTAdjustmentIqamahDate(selectedDate);
-        const [prayerTimesForDate, iqamahTimesForDate] = await Promise.all([
+        const [prayerTimesForDate, finalIqamahTimes] = await Promise.all([
           isToday ? getTodaysPrayerTimes(mosque.slug) : getPrayerTimesForDate(mosque.slug, selectedDate),
-          isToday ? getTodaysIqamahTimes(mosque.slug) : getIqamahTimesForSpecificDate(mosque.slug, selectedDate)
+          isToday ? getTodaysIqamahTimes(mosque.slug) : getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
         ]);
-
-        if (!isCurrentRequest()) return;
-
-        let finalIqamahTimes = iqamahTimesForDate;
-        if (dstIqamahDate) {
-          try {
-            const adjustmentDate = new Date(selectedDate.getFullYear(), dstIqamahDate.month - 1, dstIqamahDate.date);
-            finalIqamahTimes = await getIqamahTimesForSpecificDate(mosque.slug, adjustmentDate);
-          } catch (e) { }
-        }
 
         if (!isCurrentRequest()) return;
 
         setAdjustedIqamahTimes(finalIqamahTimes);
         setPrayerTimes(prayerTimesForDate);
-        setIqamahTimes(iqamahTimesForDate);
+        setIqamahTimes(finalIqamahTimes);
 
         if (isToday) {
           const inDSTAdjustment = isInDSTAdjustmentPeriodClient(selectedDate);
@@ -446,6 +435,7 @@ export default function PrayerTimesWidget({
       ? {
           ...prayerTimes,
           fajr: adjustPrayerTimeForDST(prayerTimes.fajr, selectedDate),
+          sunrise: adjustPrayerTimeForDST(prayerTimes.sunrise, selectedDate),
           dhuhr: adjustPrayerTimeForDST(prayerTimes.dhuhr, selectedDate),
           asr: adjustPrayerTimeForDST(prayerTimes.asr, selectedDate),
           maghrib: adjustPrayerTimeForDST(prayerTimes.maghrib, selectedDate),
