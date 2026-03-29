@@ -124,7 +124,7 @@ export default function MonthlyCalendarExportModal({
             timeZone: "UTC",
           });
 
-          return buildMonthlyCalendarEvents({
+          return await buildMonthlyCalendarEvents({
             mosque: selectedMosque,
             month: monthValue,
             year,
