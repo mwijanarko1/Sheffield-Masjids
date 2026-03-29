@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getCurrentPrayer, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData, mosqueTimetableAlreadyIncludesDst } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -194,7 +194,8 @@ export default function PrayerTimesWidget({
     const now = getSheffieldTime();
     const isDSTModeEnabled = dstSettings?.enabled;
     const checkDate = selectedDate || new Date();
-    const inDSTAdjustment = await isInDSTAdjustmentPeriod(checkDate);
+    const inDSTAdjustment =
+      mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : await isInDSTAdjustmentPeriod(checkDate);
     const isFriday = checkDate.getDay() === 5;
 
     // October: 1 hour back on transition window; March: 1 hour forward (MWHS adjustPrayerTimeForDSTSync)
@@ -298,7 +299,7 @@ export default function PrayerTimesWidget({
       },
       isIqamah: false
     };
-  }, [dstSettings, isSummerPeriod]);
+  }, [dstSettings, isSummerPeriod, mosque.slug]);
 
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
@@ -340,7 +341,8 @@ export default function PrayerTimesWidget({
         setIqamahTimes(finalIqamahTimes);
 
         if (isToday) {
-          const inDSTAdjustment = isInDSTAdjustmentPeriodClient(selectedDate);
+          const inDSTAdjustment =
+            mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : isInDSTAdjustmentPeriodClient(selectedDate);
           const adjustedPrayerTimesForCurrent = inDSTAdjustment
             ? {
                 ...prayerTimesForDate,
@@ -393,7 +395,8 @@ export default function PrayerTimesWidget({
       setCountdown(result.countdown);
       setIsIqamahCountdown(result.isIqamah);
       setIsJummahCountdown(result.isJummah || false);
-      const inDSTAdjustment = await isInDSTAdjustmentPeriod(selectedDate);
+      const inDSTAdjustment =
+        mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : await isInDSTAdjustmentPeriod(selectedDate);
       const adjustedPrayerTimesForCurrent = inDSTAdjustment
         ? {
             ...prayerTimes,
@@ -429,7 +432,8 @@ export default function PrayerTimesWidget({
   const prayers = useMemo(() => {
     if (!prayerTimes || !adjustedIqamahTimes) return [];
 
-    const inDSTAdjustment = isInDSTAdjustmentPeriodClient(selectedDate);
+    const inDSTAdjustment =
+      mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : isInDSTAdjustmentPeriodClient(selectedDate);
 
     const adjustedPT = inDSTAdjustment
       ? {
@@ -458,7 +462,7 @@ export default function PrayerTimesWidget({
       { name: 'MAGHRIB', adhan: adjustedPT.maghrib, iqamah: getIqamahTime('maghrib', adjustedPT.maghrib, iqamahToUse) },
       { name: 'ISHA', adhan: adjustedPT.isha, iqamah: getIshaIqamah() }
     ];
-  }, [prayerTimes, adjustedIqamahTimes, isSummerPeriod, selectedDate, isInDSTAdjustmentPeriodClient]);
+  }, [prayerTimes, adjustedIqamahTimes, isSummerPeriod, selectedDate, isInDSTAdjustmentPeriodClient, mosque.slug]);
 
   const upcomingPrayer = useMemo(() => {
     if (!prayerTimes || !isToday || prayers.length === 0) return null;

@@ -227,6 +227,17 @@ function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): num
 
 const RISALAH_SLUG = 'masjid-risalah';
 
+/** Published timetables already use UK civil time (BST/GMT); skip client ±1h and iqamah month mapping. */
+const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>(['masjid-al-huda-sheffield']);
+
+export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
+  try {
+    return MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST.has(normalizeMosqueSlug(slug));
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Masjid Risalah March iqamah: bands 1–10, 11–20, 21–(day before spring forward), spring forward–31.
  * Spring-forward day comes from UK DST data (see public/docs/dst-start-end.json).
@@ -876,6 +887,10 @@ export async function getIqamahTimesForSpecificDateWithDstMapping(
   slug: string,
   date: Date,
 ): Promise<DailyIqamahTimes> {
+  if (mosqueTimetableAlreadyIncludesDst(slug)) {
+    return getIqamahTimesForSpecificDate(slug, date);
+  }
+
   const mapped = await getDSTAdjustmentIqamahDate(date);
   if (mapped) {
     const { year } = getDateInSheffield(date);
@@ -1400,7 +1415,12 @@ export function adjustPrayerTimeForDSTSync(timeString: string, date?: Date): str
 export function getDisplayedPrayerTimes(
   prayerTimes: DailyPrayerTimes,
   date?: Date,
+  mosqueSlug?: string,
 ): DailyPrayerTimes {
+  if (mosqueSlug && mosqueTimetableAlreadyIncludesDst(mosqueSlug)) {
+    return prayerTimes;
+  }
+
   const checkDate = date || new Date();
 
   if (!isInDSTAdjustmentPeriodSync(checkDate)) {

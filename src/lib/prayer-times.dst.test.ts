@@ -51,3 +51,13 @@ test("getDisplayedPrayerTimes keeps the March DST display adjustment active thro
     isha: "21:02",
   });
 });
+
+test("getDisplayedPrayerTimes skips DST when mosque timetable already uses UK civil time (Masjid Al Huda)", () => {
+  const displayed = getDisplayedPrayerTimes(
+    basePrayerTimes,
+    sheffieldDate(2026, 3, 30),
+    "masjid-al-huda-sheffield",
+  );
+
+  assert.deepEqual(displayed, basePrayerTimes);
+});
