@@ -62,12 +62,20 @@ test("getDisplayedPrayerTimes skips DST when mosque timetable already uses UK ci
   assert.deepEqual(displayed, basePrayerTimes);
 });
 
-test("getDisplayedPrayerTimes skips DST when mosque timetable already uses UK civil time (Sheffield Grand Mosque)", () => {
+test("getDisplayedPrayerTimes applies March DST adjustment for Sheffield Grand Mosque (MWHS-format monthly data)", () => {
   const displayed = getDisplayedPrayerTimes(
     basePrayerTimes,
     sheffieldDate(2026, 3, 30),
     "sheffield-grand-mosque",
   );
 
-  assert.deepEqual(displayed, basePrayerTimes);
+  assert.deepEqual(displayed, {
+    ...basePrayerTimes,
+    fajr: "05:22",
+    sunrise: "06:44",
+    dhuhr: "13:11",
+    asr: "16:39",
+    maghrib: "19:38",
+    isha: "21:02",
+  });
 });

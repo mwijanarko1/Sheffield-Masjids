@@ -228,10 +228,7 @@ function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): num
 const RISALAH_SLUG = 'masjid-risalah';
 
 /** Published timetables already use UK civil time (BST/GMT); skip client ±1h and iqamah month mapping. */
-const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>([
-  'masjid-al-huda-sheffield',
-  'sheffield-grand-mosque',
-]);
+const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>(['masjid-al-huda-sheffield']);
 
 export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
   try {

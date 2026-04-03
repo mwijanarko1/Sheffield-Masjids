@@ -22,6 +22,18 @@ interface AppHomePageProps {
     mosques: Mosque[];
 }
 
+/** Parse HH:MM against the same calendar day as `now` (Sheffield wall clock). */
+function parseSameDayWallClock(now: Date, hhmm: string): Date | null {
+    const match = hhmm.trim().match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return null;
+    const h = Number(match[1]);
+    const m = Number(match[2]);
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+    const d = new Date(now);
+    d.setHours(h, m, 0, 0);
+    return d;
+}
+
 export default function AppHomePage({ mosques }: AppHomePageProps) {
     const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
     const mosque = selectedMosque;
@@ -80,6 +92,20 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         const aug15 = new Date(year, 7, 15);
         return selectedDate >= may15 && selectedDate <= aug15;
     }, [selectedDate]);
+
+    const isFridaySelected = useMemo(() => {
+        const weekday = new Intl.DateTimeFormat("en-GB", {
+            timeZone: SHEFFIELD_TZ,
+            weekday: "long",
+        }).format(selectedDate);
+        return weekday === "Friday";
+    }, [selectedDate]);
+
+    const jummahSummaryTime = useMemo(() => {
+        const j = iqamahTimes?.jummah?.trim();
+        if (!j || j === "-" || j === "—") return null;
+        return j;
+    }, [iqamahTimes]);
 
     useEffect(() => {
         if (!isHydrated || !mosque) return;
@@ -152,8 +178,6 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         [currentTime],
     );
 
-    const isFriday = useMemo(() => sheffieldNow.getDay() === 5, [sheffieldNow]);
-
     const prayers = useMemo(() => {
         if (!displayedPrayerTimes) return [];
         const iq = iqamahTimes;
@@ -166,24 +190,23 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                 case "Asr": return getIqamahTime("asr", displayedPrayerTimes.asr, iq);
                 case "Maghrib": return getIqamahTime("maghrib", displayedPrayerTimes.maghrib, iq);
                 case "Isha": return isSummer ? "After Maghrib" : getIqamahTime("isha", displayedPrayerTimes.isha, iq, displayedPrayerTimes.maghrib);
-                case "Jummah": return iq.jummah || "—";
                 default: return "—";
             }
         };
         const items = [
             { id: "fajr", label: "Fajr", adhan: displayedPrayerTimes.fajr, iqamah: getIqamah("Fajr") },
             {
-                id: isFriday && iq?.jummah ? "jummah" : "dhuhr",
-                label: isFriday && iq?.jummah ? "Jummah" : "Dhuhr",
+                id: "dhuhr",
+                label: "Dhuhr",
                 adhan: displayedPrayerTimes.dhuhr,
-                iqamah: isFriday && iq?.jummah ? (iq.jummah || "—") : getIqamah("Dhuhr"),
+                iqamah: getIqamah("Dhuhr"),
             },
             { id: "asr", label: "Asr", adhan: displayedPrayerTimes.asr, iqamah: getIqamah("Asr") },
             { id: "maghrib", label: "Maghrib", adhan: displayedPrayerTimes.maghrib, iqamah: getIqamah("Maghrib") },
             { id: "isha", label: "Isha'a", adhan: displayedPrayerTimes.isha, iqamah: getIqamah("Isha") },
         ];
         return items;
-    }, [displayedPrayerTimes, iqamahTimes, isSummer, isFriday]);
+    }, [displayedPrayerTimes, iqamahTimes, isSummer]);
 
     const upcomingPrayer = useMemo(() => {
         if (!displayedPrayerTimes || !iqamahTimes || !isToday) return null;
@@ -196,17 +219,27 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             d.setHours(h, m, 0, 0);
             return d;
         });
-        let jummahDate: Date | null = null;
-        if (isFriday && iqamahTimes.jummah && iqamahTimes.jummah !== "-") {
-            const [h, m] = iqamahTimes.jummah.split(":").map(Number);
-            jummahDate = new Date(now);
-            jummahDate.setHours(h, m, 0, 0);
+
+        let jummahIqamahDate: Date | null = null;
+        if (isFridaySelected && jummahSummaryTime) {
+            const [jh, jm] = jummahSummaryTime.split(":").map(Number);
+            if (Number.isFinite(jh) && Number.isFinite(jm)) {
+                jummahIqamahDate = new Date(now);
+                jummahIqamahDate.setHours(jh, jm, 0, 0);
+            }
         }
+
         for (let i = 0; i < majorIndices.length; i++) {
             const currIdx = majorIndices[i];
             const prevIdx = majorIndices[i === 0 ? majorIndices.length - 1 : i - 1];
-            const currentIqamahStart = isFriday && currIdx === 1 && jummahDate ? jummahDate : iqamahDates[currIdx];
-            const prevIqamahEnd = isFriday && prevIdx === 1 && jummahDate ? jummahDate : iqamahDates[prevIdx];
+            const currentIqamahStart =
+                isFridaySelected && currIdx === 1 && jummahIqamahDate
+                    ? jummahIqamahDate
+                    : iqamahDates[currIdx];
+            const prevIqamahEnd =
+                isFridaySelected && prevIdx === 1 && jummahIqamahDate
+                    ? jummahIqamahDate
+                    : iqamahDates[prevIdx];
             if (!currentIqamahStart || !prevIqamahEnd) continue;
             let startTime = new Date(prevIqamahEnd);
             if (i === 0) startTime.setDate(startTime.getDate() - 1);
@@ -214,7 +247,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             const endTime = currentIqamahStart;
             if (i === 0 && now < endTime && now >= startTime) return "fajr";
             if (now >= startTime && now < endTime) {
-                if (isFriday && currIdx === 1) return "jummah";
+                if (isFridaySelected && currIdx === 1 && jummahIqamahDate) return "jummah-slot";
                 return prayers[currIdx].id;
             }
         }
@@ -225,7 +258,48 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             if (now >= nextDayStart) return "fajr";
         }
         return null;
-    }, [displayedPrayerTimes, iqamahTimes, prayers, isToday, isFriday, sheffieldNow]);
+    }, [
+        displayedPrayerTimes,
+        iqamahTimes,
+        prayers,
+        isToday,
+        sheffieldNow,
+        isFridaySelected,
+        jummahSummaryTime,
+    ]);
+
+    /** On Friday, Jummah replaces Dhuhr for highlighting — peach on summary row, not the Dhuhr card. */
+    const highlightJummahSummary = useMemo(() => {
+        if (!jummahSummaryTime || !isFridaySelected) return false;
+        if (!isToday) return true;
+        const raw = upcomingPrayer ?? currentPrayer;
+        return raw === "dhuhr" || raw === "jummah-slot";
+    }, [jummahSummaryTime, isFridaySelected, isToday, upcomingPrayer, currentPrayer]);
+
+    /** After Fajr iqāmah (+10m, same rule as next-prayer bands) until shurooq — highlight Sunrise in the summary row. */
+    const highlightSunriseSummary = useMemo(() => {
+        if (!isToday || !displayedPrayerTimes) return false;
+        const sunStr = (displayedPrayerTimes.sunrise ?? "").trim();
+        if (!sunStr || sunStr === "—") return false;
+        const sunriseAt = parseSameDayWallClock(sheffieldNow, sunStr);
+        if (!sunriseAt) return false;
+
+        const fajrIq = prayers[0]?.iqamah?.trim();
+        let afterFajr: Date | null = null;
+        if (fajrIq && fajrIq !== "—" && fajrIq !== "-") {
+            const iq = parseSameDayWallClock(sheffieldNow, fajrIq);
+            if (iq) {
+                afterFajr = new Date(iq);
+                afterFajr.setMinutes(afterFajr.getMinutes() + 10);
+            }
+        }
+        if (!afterFajr) {
+            afterFajr = parseSameDayWallClock(sheffieldNow, displayedPrayerTimes.fajr);
+        }
+        if (!afterFajr) return false;
+
+        return sheffieldNow >= afterFajr && sheffieldNow < sunriseAt;
+    }, [isToday, displayedPrayerTimes, sheffieldNow, prayers]);
 
     if (!isHydrated || !mosque) {
         return (
@@ -377,7 +451,11 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                     </div>
                     <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 min-h-0 overflow-hidden pb-24">
                     {prayers.map((prayer) => {
-                        const isActive = prayer.id === (upcomingPrayer ?? currentPrayer);
+                        const rawActive = upcomingPrayer ?? currentPrayer;
+                        const isActive =
+                            prayer.id === rawActive &&
+                            !(isFridaySelected && prayer.id === "dhuhr") &&
+                            !(prayer.id === "dhuhr" && highlightSunriseSummary);
                         return (
                             <div
                                 key={prayer.id}
@@ -428,17 +506,81 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06)",
                             }}
                         >
-                            <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-left">
-                                <span className="text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest text-white/70">Sunrise</span>
-                                <span className="text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                            <div
+                                className={`relative flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-left rounded-lg py-1.5 sm:py-2 px-2 sm:px-3 min-w-0 transition-all duration-500 overflow-hidden ${
+                                    highlightSunriseSummary ? "ring-1 ring-[rgba(255,179,128,0.5)]" : ""
+                                }`}
+                                style={
+                                    highlightSunriseSummary
+                                        ? {
+                                              background:
+                                                  "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)",
+                                              backdropFilter: "blur(20px) saturate(140%)",
+                                              WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                                              boxShadow:
+                                                  "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)",
+                                          }
+                                        : undefined
+                                }
+                            >
+                                {highlightSunriseSummary ? (
+                                    <div
+                                        aria-hidden="true"
+                                        className="pointer-events-none absolute top-0 left-3 right-3 h-px"
+                                        style={{
+                                            background:
+                                                "linear-gradient(90deg, transparent, rgba(255,225,196,0.6) 40%, rgba(255,255,255,0.78) 50%, rgba(255,225,196,0.6) 60%, transparent)",
+                                        }}
+                                    />
+                                ) : null}
+                                <span
+                                    className={`relative z-10 text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest ${
+                                        highlightSunriseSummary ? "text-[#FFE2CB] font-semibold" : "text-white/70"
+                                    }`}
+                                >
+                                    Sunrise
+                                </span>
+                                <span className="relative z-10 text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
                                     {displayedPrayerTimes.sunrise || "—"}
                                 </span>
                             </div>
-                            <div className="w-px h-5 sm:h-6 bg-white/30 rounded-full" aria-hidden="true" />
-                            <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-right">
-                                <span className="text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest text-white/70">Jummah</span>
-                                <span className="text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
-                                    {iqamahTimes?.jummah && iqamahTimes.jummah !== "-" && iqamahTimes.jummah !== "—" ? iqamahTimes.jummah : "—"}
+                            <div className="w-px h-5 sm:h-6 bg-white/30 rounded-full shrink-0" aria-hidden="true" />
+                            <div
+                                className={`relative flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-right rounded-lg py-1.5 sm:py-2 px-2 sm:px-3 min-w-0 transition-all duration-500 overflow-hidden ${
+                                    highlightJummahSummary ? "ring-1 ring-[rgba(255,179,128,0.5)]" : ""
+                                }`}
+                                style={
+                                    highlightJummahSummary
+                                        ? {
+                                              background:
+                                                  "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)",
+                                              backdropFilter: "blur(20px) saturate(140%)",
+                                              WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                                              boxShadow:
+                                                  "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)",
+                                          }
+                                        : undefined
+                                }
+                            >
+                                {highlightJummahSummary ? (
+                                    <div
+                                        aria-hidden="true"
+                                        className="pointer-events-none absolute top-0 left-3 right-3 h-px"
+                                        style={{
+                                            background:
+                                                "linear-gradient(90deg, transparent, rgba(255,225,196,0.6) 40%, rgba(255,255,255,0.78) 50%, rgba(255,225,196,0.6) 60%, transparent)",
+                                        }}
+                                    />
+                                ) : null}
+                                <span
+                                    className={`relative z-10 text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest ${
+                                        highlightJummahSummary ? "text-[#FFE2CB] font-semibold" : "text-white/70"
+                                    }`}
+                                >
+                                    Jummah
+                                </span>
+                                <span className="relative z-10 text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                                    {jummahSummaryTime ?? "—"}
                                 </span>
                             </div>
                         </div>

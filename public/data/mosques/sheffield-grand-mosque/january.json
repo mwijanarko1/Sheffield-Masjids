@@ -289,5 +289,5 @@
     { "date_range": "26-27", "fajr": "06:45", "dhuhr": "12:30", "asr": "14:30", "isha": "19:00" },
     { "date_range": "28-31", "fajr": "06:45", "dhuhr": "12:30", "asr": "14:45", "isha": "19:00" }
   ],
-  "jummah_iqamah": "12:30"
+  "jummah_iqamah": "13:30"
 }
