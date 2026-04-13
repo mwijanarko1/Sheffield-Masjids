@@ -1,14 +1,21 @@
 import React from 'react';
 import type { Metadata } from "next";
 import { notFound } from 'next/navigation';
-import PrayerTimesWidget from '@/components/PrayerTimesWidget';
+import PrayerTimesEnhancer from '@/components/PrayerTimesEnhancer';
+import StaticPrayerTimesWidget from '@/components/StaticPrayerTimesWidget';
 import MosqueMap from '@/components/MosqueMap';
 import MosqueJsonLd from '@/components/MosqueJsonLd';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getMosqueBySlug } from '@/lib/mosques';
+import {
+  getDateInSheffield,
+  getIqamahTimesForSpecificDateWithDstMapping,
+  getPrayerTimesForDate,
+} from '@/lib/prayer-times';
 import { SITE_NAME } from '@/lib/site';
+import type { DailyIqamahTimes, DailyPrayerTimes, Mosque } from '@/types/prayer-times';
 
 interface MosquePageProps {
   params: Promise<{
@@ -17,6 +24,30 @@ interface MosquePageProps {
 }
 
 export const dynamic = "force-dynamic";
+
+async function getInitialPrayerWidgetData(mosque: Mosque): Promise<{
+  prayerTimes: DailyPrayerTimes;
+  iqamahTimes: DailyIqamahTimes;
+  selectedDate: string;
+} | null> {
+  try {
+    const { year, month, day } = getDateInSheffield(new Date());
+    const selectedDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+    const [prayerTimes, iqamahTimes] = await Promise.all([
+      getPrayerTimesForDate(mosque.slug, selectedDate),
+      getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
+    ]);
+
+    return {
+      prayerTimes,
+      iqamahTimes,
+      selectedDate: selectedDate.toISOString(),
+    };
+  } catch (error) {
+    console.error(`Could not prepare initial prayer widget data for ${mosque.slug}:`, error);
+    return null;
+  }
+}
 
 export async function generateMetadata({
   params,
@@ -71,6 +102,8 @@ export default async function MosquePage({ params }: MosquePageProps) {
   if (!mosque) {
     notFound();
   }
+
+  const initialPrayerWidgetData = await getInitialPrayerWidgetData(mosque);
 
   return (
     <main className="relative min-h-[100dvh] sm:min-h-screen pb-8 sm:pb-16 text-white">
@@ -127,7 +160,26 @@ export default async function MosquePage({ params }: MosquePageProps) {
 
           <section>
             <h2 className="mb-4 text-lg font-bold text-foreground">Prayer times</h2>
-            <PrayerTimesWidget initialMosque={mosque} showDropdown={false} />
+            {initialPrayerWidgetData ? (
+              <div id={`mosque-prayer-times-static-${mosque.id}`}>
+                <StaticPrayerTimesWidget
+                  mosque={mosque}
+                  prayerTimes={initialPrayerWidgetData.prayerTimes}
+                  iqamahTimes={initialPrayerWidgetData.iqamahTimes}
+                  selectedDate={new Date(initialPrayerWidgetData.selectedDate)}
+                />
+              </div>
+            ) : null}
+            <PrayerTimesEnhancer
+              staticFallbackId={`mosque-prayer-times-static-${mosque.id}`}
+              hasStaticFallback={Boolean(initialPrayerWidgetData)}
+              initialMosque={mosque}
+              showDropdown={false}
+              initialPrayerTimes={initialPrayerWidgetData?.prayerTimes}
+              initialIqamahTimes={initialPrayerWidgetData?.iqamahTimes}
+              initialAdjustedIqamahTimes={initialPrayerWidgetData?.iqamahTimes}
+              initialSelectedDate={initialPrayerWidgetData?.selectedDate}
+            />
           </section>
         </div>
       </div>
