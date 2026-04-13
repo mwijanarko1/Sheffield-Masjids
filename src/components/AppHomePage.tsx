@@ -324,6 +324,24 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         setSelectedDate(d);
     };
 
+    const safeHeaderTextStyle = {
+        color: "rgba(255, 255, 255, 0.9)",
+        textShadow: "0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(0,0,0,0.35)",
+    };
+    const safeMutedTextStyle = {
+        color: "rgba(255, 255, 255, 0.72)",
+        textShadow: "0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(0,0,0,0.35)",
+    };
+    const safeRowStyle = (isActive: boolean) => ({
+        background: isActive
+            ? "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)"
+            : "linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.035) 100%)",
+        boxShadow: isActive
+            ? "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)"
+            : "inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06)",
+        color: "#ffffff",
+    });
+
     return (
         <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
             <h1 className="sr-only">
@@ -444,7 +462,10 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                 {/* Prayer List - flex-1 fills space; responsive spacing by screen size */}
                 <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 min-h-0 overflow-hidden">
                     {/* Header row - same grid/padding as cards for alignment */}
-                    <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 text-[10px] sm:text-xs md:text-sm uppercase font-semibold tracking-widest text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] shrink-0">
+                    <div
+                        className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 text-[10px] sm:text-xs md:text-sm uppercase font-semibold tracking-widest text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] shrink-0"
+                        style={safeMutedTextStyle}
+                    >
                         <div className="min-w-0">Adhan</div>
                         <div className="text-center min-w-0">Prayer</div>
                         <div className="text-right min-w-0">Iqamah</div>
@@ -460,16 +481,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                             <div
                                 key={prayer.id}
                                 className="relative grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-2.5 min-h-[30px] sm:min-h-[36px] md:min-h-[40px] flex-1 rounded-xl overflow-hidden transition-all duration-500"
-                                style={{
-                                    background: isActive
-                                        ? "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)"
-                                        : "linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-                                    backdropFilter: "blur(20px) saturate(140%)",
-                                    WebkitBackdropFilter: "blur(20px) saturate(140%)",
-                                    boxShadow: isActive
-                                        ? "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)"
-                                        : "inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06)",
-                                }}
+                                style={safeRowStyle(isActive)}
                             >
                                 {/* Specular top edge shimmer */}
                                 <div
@@ -482,13 +494,22 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                     }}
                                 />
 
-                                <span className={`relative z-10 min-w-0 text-[12px] sm:text-xs md:text-sm font-medium tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/90"}`}>
+                                <span
+                                    className={`relative z-10 min-w-0 text-[12px] sm:text-xs md:text-sm font-medium tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/90"}`}
+                                    style={isActive ? safeHeaderTextStyle : safeMutedTextStyle}
+                                >
                                     {prayer.adhan}
                                 </span>
-                                <span className={`relative z-10 min-w-0 text-center text-[12px] sm:text-xs md:text-sm tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-[#FFE2CB] font-extrabold" : "text-white/95"}`}>
+                                <span
+                                    className={`relative z-10 min-w-0 text-center text-[12px] sm:text-xs md:text-sm tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-[#FFE2CB] font-extrabold" : "text-white/95"}`}
+                                    style={isActive ? { ...safeHeaderTextStyle, color: "#FFE2CB" } : safeHeaderTextStyle}
+                                >
                                     {prayer.label}
                                 </span>
-                                <span className={`relative z-10 min-w-0 text-right text-[12px] sm:text-xs md:text-sm font-bold tracking-tight tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white" : "text-white/90"}`}>
+                                <span
+                                    className={`relative z-10 min-w-0 text-right text-[12px] sm:text-xs md:text-sm font-bold tracking-tight tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white" : "text-white/90"}`}
+                                    style={isActive ? safeHeaderTextStyle : safeMutedTextStyle}
+                                >
                                     {prayer.iqamah}
                                 </span>
                             </div>
