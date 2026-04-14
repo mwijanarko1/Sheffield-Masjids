@@ -148,6 +148,9 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
         };
       }
 
+      const jummahForRow =
+        iqamahTimes.jummah?.trim() ? iqamahTimes.jummah : ramadanData.jummah_iqamah;
+
       return {
         isToday: getRamadanDateKey(ramadanData.gregorian_start, day) === todayKey,
         day,
@@ -163,7 +166,7 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
         maghribIqamah: getIqamahTime("maghrib", prayerTimes.maghrib, iqamahTimes),
         ishaAdhan: prayerTimes.isha,
         ishaIqamah: getIqamahTime("isha", prayerTimes.isha, iqamahTimes, prayerTimes.maghrib),
-        jummahIqamah: ramadanData.jummah_iqamah || "—",
+        jummahIqamah: jummahForRow || "—",
       };
     }).filter((row): row is RamadanRow => row !== null);
   }, [ramadanData, todayKey]);

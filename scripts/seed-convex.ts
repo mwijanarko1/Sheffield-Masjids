@@ -61,6 +61,7 @@ const IqamahTimeRangeSchema = z
     asr: z.string().min(1),
     isha: z.string().min(1),
     maghrib: z.string().optional(),
+    jummah: z.string().optional(),
   })
   .passthrough();
 

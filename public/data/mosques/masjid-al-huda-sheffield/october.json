@@ -287,35 +287,40 @@
       "fajr": "06:00",
       "dhuhr": "13:30",
       "asr": "16:15",
-      "isha": "Entry Time"
+      "isha": "Entry Time",
+      "jummah": "13:15"
     },
     {
       "date_range": "10",
       "fajr": "06:00",
       "dhuhr": "13:30",
       "asr": "16:15",
-      "isha": "20:00"
+      "isha": "20:00",
+      "jummah": "13:15"
     },
     {
       "date_range": "11-20",
       "fajr": "06:15",
       "dhuhr": "13:30",
       "asr": "16:00",
-      "isha": "20:00"
+      "isha": "20:00",
+      "jummah": "13:15"
     },
     {
       "date_range": "21-29",
       "fajr": "06:30",
       "dhuhr": "13:30",
       "asr": "15:45",
-      "isha": "19:45"
+      "isha": "19:45",
+      "jummah": "13:15"
     },
     {
       "date_range": "30-31",
       "fajr": "05:30",
       "dhuhr": "12:30",
       "asr": "14:45",
-      "isha": "18:45"
+      "isha": "18:45",
+      "jummah": "12:30"
     }
   ],
   "jummah_iqamah": "13:15"

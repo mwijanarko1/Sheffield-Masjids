@@ -117,6 +117,9 @@ export async function buildMonthlyTimetableRowsAsync({
       };
     }
 
+    const jummahForRow =
+      iqamahTimes.jummah?.trim() ? iqamahTimes.jummah : monthlyData.jummah_iqamah;
+
     rows.push({
       day: d,
       dayLabel: formatDayLabel(d, selectedMonth),
@@ -132,7 +135,7 @@ export async function buildMonthlyTimetableRowsAsync({
       maghribIqamah: getIqamahTime("maghrib", day.maghrib, iqamahTimes),
       ishaAdhan: day.isha,
       ishaIqamah: getIqamahTime("isha", day.isha, iqamahTimes, day.maghrib),
-      jummahIqamah: monthlyData.jummah_iqamah || "—",
+      jummahIqamah: jummahForRow || "—",
     });
   }
 
