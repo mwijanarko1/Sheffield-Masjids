@@ -19,6 +19,7 @@ const iqamahTimeRangeValidator = v.object({
   asr: v.string(),
   maghrib: v.optional(v.string()),
   isha: v.string(),
+  jummah: v.optional(v.string()),
 });
 
 const ramadanPrayerTimeValidator = v.object({

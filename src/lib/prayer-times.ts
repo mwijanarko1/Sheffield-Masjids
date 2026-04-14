@@ -867,7 +867,7 @@ export function getIqamahTimesForDate(date: number, iqamahRanges: IqamahTimeRang
     asr: range.asr,
     maghrib: range.maghrib || "sunset", // Use maghrib iqamah from data, fallback to adhan time
     isha: range.isha, // This will be "Entry Time" for summer months
-    jummah: "" // Will be set separately
+    jummah: range.jummah?.trim() ?? "",
   };
 }
 
@@ -1004,7 +1004,9 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
       const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanResult.data.iqamah_times);
       return {
         ...iqamahTimes,
-        jummah: ramadanResult.data.jummah_iqamah
+        jummah: iqamahTimes.jummah?.trim()
+          ? iqamahTimes.jummah
+          : ramadanResult.data.jummah_iqamah,
       };
     }
 
@@ -1018,7 +1020,9 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
 
       return {
         ...iqamahTimes,
-        jummah: monthlyData.jummah_iqamah
+        jummah: iqamahTimes.jummah?.trim()
+          ? iqamahTimes.jummah
+          : monthlyData.jummah_iqamah,
       };
     } catch (monthlyError) {
       if (ramadanResult && !ramadanResult.inRange) {

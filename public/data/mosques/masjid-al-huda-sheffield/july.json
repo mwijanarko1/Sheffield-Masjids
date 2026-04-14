@@ -287,21 +287,24 @@
       "fajr": "03:15",
       "dhuhr": "13:30",
       "asr": "18:00",
-      "isha": "Entry Time"
+      "isha": "Entry Time",
+      "jummah": "13:15"
     },
     {
       "date_range": "11-20",
       "fajr": "03:30",
       "dhuhr": "13:30",
       "asr": "18:00",
-      "isha": "Entry Time"
+      "isha": "Entry Time",
+      "jummah": "13:15"
     },
     {
       "date_range": "21-31",
       "fajr": "03:45",
       "dhuhr": "13:30",
       "asr": "18:00",
-      "isha": "Entry Time"
+      "isha": "Entry Time",
+      "jummah": "13:15"
     }
   ],
   "jummah_iqamah": "13:15"

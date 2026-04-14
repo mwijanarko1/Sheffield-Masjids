@@ -45,7 +45,9 @@ function buildIqamahRanges(rows) {
   let current = null;
   for (const row of rows) {
     const ishaVal = row.ishaIqamah === row.isha ? 'Entry Time' : row.ishaIqamah;
-    const key = `${row.fajrIqamah}-${row.dhuhrIqamah}-${row.asrIqamah}-${ishaVal}`;
+    const maghribIq =
+      row.maghribIqamah === row.maghrib ? '' : row.maghribIqamah;
+    const key = `${row.fajrIqamah}-${row.dhuhrIqamah}-${row.asrIqamah}-${maghribIq}-${ishaVal}-${row.jummah}`;
     if (!current || current.key !== key) {
       current = {
         key,
@@ -53,20 +55,26 @@ function buildIqamahRanges(rows) {
         fajr: row.fajrIqamah,
         dhuhr: row.dhuhrIqamah,
         asr: row.asrIqamah,
+        maghrib: maghribIq || undefined,
         isha: ishaVal,
-        jummah: row.jummah
+        jummah: row.jummah,
       };
       ranges.push(current);
     }
     current.end = row.date;
   }
-  return ranges.map(r => ({
-    date_range: r.start === r.end ? `${r.start}` : `${r.start}-${r.end}`,
-    fajr: r.fajr,
-    dhuhr: r.dhuhr,
-    asr: r.asr,
-    isha: r.isha
-  }));
+  return ranges.map((r) => {
+    const out = {
+      date_range: r.start === r.end ? `${r.start}` : `${r.start}-${r.end}`,
+      fajr: r.fajr,
+      dhuhr: r.dhuhr,
+      asr: r.asr,
+      isha: r.isha,
+      jummah: r.jummah,
+    };
+    if (r.maghrib) out.maghrib = r.maghrib;
+    return out;
+  });
 }
 
 function getJummahForMonth(rows) {
