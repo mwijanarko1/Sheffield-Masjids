@@ -216,7 +216,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             setCountdown(null);
             return;
         }
-        if (!displayedPrayerTimes || !iqamahTimes) return;
+        if (!displayedPrayerTimes || !iqamahTimes || !mosque) return;
 
         const updateCountdown = () => {
             setCurrentTime(new Date());
@@ -234,7 +234,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
-    }, [displayedPrayerTimes, iqamahTimes, isToday, selectedDate, mosque.slug]);
+    }, [displayedPrayerTimes, iqamahTimes, isToday, selectedDate, mosque]);
 
     // Clock tick when not viewing today (countdown effect handles when isToday)
     useEffect(() => {
@@ -249,7 +249,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
     );
 
     const prayers = useMemo(() => {
-        if (!displayedPrayerTimes) return [];
+        if (!displayedPrayerTimes || !mosque) return [];
         const iq = iqamahTimes;
         const getIqamah = (prayerKey: string): string => {
             if (!iq) return "—";
@@ -283,7 +283,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             { id: "isha", label: "Isha'a", adhan: displayedPrayerTimes.isha, iqamah: getIqamah("Isha") },
         ];
         return items;
-    }, [displayedPrayerTimes, iqamahTimes, mosque.slug, selectedDate]);
+    }, [displayedPrayerTimes, iqamahTimes, mosque, selectedDate]);
 
     const upcomingPrayer = useMemo(() => {
         if (!displayedPrayerTimes || !iqamahTimes || !isToday) return null;
