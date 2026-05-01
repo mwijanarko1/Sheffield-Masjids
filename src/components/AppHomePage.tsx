@@ -140,6 +140,22 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         return { primary: full, secondary: "" };
     }, [hijriDateCompact, hijriDate]);
 
+    /** Mobile: weekday + day + month on first line, Gregorian year on second (matches Hijri layout). */
+    const gregorianMobileLines = useMemo(() => {
+        const full = formatDateForDisplay(currentTime).trim();
+        const parts = full.split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) {
+            const last = parts[parts.length - 1] ?? "";
+            if (/^\d{4}$/.test(last)) {
+                return {
+                    primary: parts.slice(0, -1).join(" "),
+                    secondary: last,
+                };
+            }
+        }
+        return { primary: full, secondary: "" };
+    }, [currentTime]);
+
     const isToday = useMemo(() => {
         const sel = getDateInSheffield(selectedDate);
         const n = getDateInSheffield(new Date());
@@ -410,14 +426,17 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
-                    <div className="grid grid-cols-3 gap-1.5 items-start sm:flex sm:justify-between sm:items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal sm:gap-2">
+                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.55fr)_minmax(0,1fr)] gap-1.5 items-start sm:flex sm:justify-between sm:items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal sm:gap-2">
                         <div className="min-w-0 text-left font-normal text-white/90 sm:flex-1">
                             <div className="hidden sm:block truncate">{formatDateForDisplay(currentTime)}</div>
-                            <div className="sm:hidden text-xs leading-snug text-white/90 break-words">
-                                {formatDateForDisplay(currentTime).split(" ").slice(0, 3).join(" ")}
+                            <div className="sm:hidden text-xs leading-snug text-white/90">
+                                <div className="break-words">{gregorianMobileLines.primary}</div>
+                                {gregorianMobileLines.secondary ? (
+                                    <div className="break-words tabular-nums">{gregorianMobileLines.secondary}</div>
+                                ) : null}
                             </div>
                         </div>
-                        <div className="flex min-w-0 justify-center px-0.5 sm:flex-[1.6] sm:px-2">
+                        <div className="flex min-w-0 w-full max-w-none justify-center px-0 sm:flex-[1.6] sm:px-2">
                             <CustomSelect
                                 options={mosques}
                                 value={mosque.id}
