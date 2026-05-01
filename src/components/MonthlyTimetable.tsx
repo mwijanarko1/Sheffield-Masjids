@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
-import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
+import { TimeDisplay } from "@/components/TimeDisplay";
 import { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
 import { buildMonthlyTimetableRowsAsync } from "@/features/calendar-export/lib/build-monthly-calendar-events";
 import type { MonthlyTimetableRow } from "@/features/calendar-export/types";
@@ -205,6 +205,7 @@ export default function MonthlyTimetable({
                       "border-white/5 transition-colors hover:bg-white/5 h-12",
                       row.isToday && todayRowClass,
                     )}
+                    aria-current={row.isToday ? "date" : undefined}
                   >
                     <TableCell className="relative z-10 font-bold text-white/90">{row.dayLabel}</TableCell>
                     <TableCell className="relative z-10 font-mono tabular-nums">

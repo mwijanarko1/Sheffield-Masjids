@@ -188,8 +188,8 @@ export default function ComparePrayerTimes({
           />
 
           <div className="relative z-10 px-4 pb-6 pt-6 md:px-6 md:pb-8 md:pt-8">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4 md:mb-8">
-              <div className="text-center sm:text-left">
+            <div className="mb-6 flex flex-col items-center gap-4 text-center md:mb-8 md:flex-row md:flex-wrap md:items-center md:justify-between md:text-left">
+              <div className="w-full text-center md:w-auto md:text-left">
                 <span className="mb-2 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--theme-text-muted)] shadow-sm">
                   Prayer Comparison
                 </span>
@@ -203,7 +203,7 @@ export default function ComparePrayerTimes({
                   </h2>
                 )}
               </div>
-              <div className="mx-auto flex items-center gap-2 sm:mx-0 sm:gap-3 bg-white/5 rounded-full p-1.5 border border-white/10">
+              <div className="flex shrink-0 items-center gap-2 sm:gap-3 bg-white/5 rounded-full p-1.5 border border-white/10">
                 <Button
                   variant="ghost"
                   size="icon"
