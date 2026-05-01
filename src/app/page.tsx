@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AppHomePage from "@/components/AppHomePage";
 import WebsiteJsonLd from "@/components/WebsiteJsonLd";
+import { getInitialHomePrayerWidgetData } from "@/lib/home-prayer-widget-data";
 import { getMosques } from "@/lib/mosques";
 import { MOSQUE_NAMES, SITE_NAME } from "@/lib/site";
 
@@ -40,11 +41,15 @@ export const revalidate = 60;
 
 export default async function Home() {
   const mosques = await getMosques();
+  const initialPrayerWidgetData = await getInitialHomePrayerWidgetData(mosques);
 
   return (
     <main className="relative h-[100dvh] min-h-[100svh] w-full overflow-hidden">
       <WebsiteJsonLd />
-      <AppHomePage mosques={mosques} />
+      <AppHomePage
+        mosques={mosques}
+        initialPrayerWidgetData={initialPrayerWidgetData}
+      />
     </main>
   );
 }

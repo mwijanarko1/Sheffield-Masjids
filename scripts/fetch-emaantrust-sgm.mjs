@@ -10,18 +10,21 @@
  * 3. POST /prayers-ajax-list and /mosques-ajax-list with mosque-id: 11
  *
  * Run from repo root: node scripts/fetch-emaantrust-sgm.mjs
- * Optional: YEAR=2026 OUT_DIR=docs/emaantrust-api node scripts/fetch-emaantrust-sgm.mjs
+ * Writes: public/data/mosques/sheffield-grand-mosque/{january..december}.json
+ * Override: OUT_DIR=/abs/or/rel/path YEAR=2026
  */
 
 import { writeFileSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { buildMonthlyMosqueJson, monthFileName } from "./lib/mosqueprayertimes-to-monthly-json.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 
 const BASE = "https://emaantrust.mosqueprayertimes.org";
 const MOSQUE_ID = "11";
+const SLUG = "sheffield-grand-mosque";
 
 const MONTH_NAMES = [
   "january",
@@ -148,7 +151,7 @@ function main() {
   const year = process.env.YEAR ? Number(process.env.YEAR) : new Date().getFullYear();
   const outDir = process.env.OUT_DIR
     ? join(ROOT, process.env.OUT_DIR)
-    : join(ROOT, "docs", "emaantrust-api");
+    : join(ROOT, "public", "data", "mosques", SLUG);
 
   mkdirSync(outDir, { recursive: true });
 
@@ -156,35 +159,20 @@ function main() {
     const { cookieJar, csrf } = await openSession();
     let jar = cookieJar;
 
-    const index = {
-      source: BASE,
-      mosque_id: Number(MOSQUE_ID),
-      year,
-      fetched_at: new Date().toISOString(),
-      months: [],
-    };
-
     for (let m = 1; m <= 12; m++) {
       process.stderr.write(`Fetching ${MONTH_NAMES[m - 1]} (${m})… `);
       const data = await fetchMonth(jar, csrf, m);
       jar = data.cookieJar;
 
-      const label = `${year}-${String(m).padStart(2, "0")}`;
-      const out = {
-        month: MONTH_NAMES[m - 1].toUpperCase(),
-        month_num: m,
-        year,
-        adhan_rows: data.prayers.data ?? data.prayers,
-        iqamah_rows: data.iqamah.data ?? data.iqamah,
-      };
-      const file = join(outDir, `sgm-${label}.json`);
-      writeFileSync(file, JSON.stringify(out, null, 2) + "\n", "utf-8");
-      index.months.push({ month: m, file: `sgm-${label}.json`, rows: (out.adhan_rows?.length ?? 0) });
-      process.stderr.write(`ok (${out.adhan_rows?.length ?? 0} days)\n`);
+      const adhan_rows = data.prayers.data ?? data.prayers;
+      const iqamah_rows = data.iqamah.data ?? data.iqamah;
+      const monthly = buildMonthlyMosqueJson(adhan_rows, iqamah_rows, m, year);
+      const file = join(outDir, monthFileName(m));
+      writeFileSync(file, JSON.stringify(monthly, null, 2) + "\n", "utf-8");
+      process.stderr.write(`ok → ${SLUG}/${monthFileName(m)} (${adhan_rows?.length ?? 0} days)\n`);
     }
 
-    writeFileSync(join(outDir, "index.json"), JSON.stringify(index, null, 2) + "\n", "utf-8");
-    process.stderr.write(`Wrote ${outDir}/ (index + 12 monthly files)\n`);
+    process.stderr.write(`Wrote ${outDir}/ (12 monthly files)\n`);
   })();
 }
 

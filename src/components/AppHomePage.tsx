@@ -17,9 +17,11 @@ import {
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import { SunPath } from "@/components/SunPath";
 import { CustomSelect } from "@/components/ui/custom-select";
+import type { InitialHomePrayerWidgetData } from "@/lib/home-prayer-widget-data";
 
 interface AppHomePageProps {
     mosques: Mosque[];
+    initialPrayerWidgetData?: InitialHomePrayerWidgetData | null;
 }
 
 /** Parse HH:MM against the same calendar day as `now` (Sheffield wall clock). */
@@ -34,19 +36,32 @@ function parseSameDayWallClock(now: Date, hhmm: string): Date | null {
     return d;
 }
 
-export default function AppHomePage({ mosques }: AppHomePageProps) {
-    const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
+export default function AppHomePage({ mosques, initialPrayerWidgetData = null }: AppHomePageProps) {
+    const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(
+        mosques,
+        initialPrayerWidgetData?.mosque,
+    );
     const mosque = selectedMosque;
     const latestFetchRequestRef = useRef(0);
 
-    const [prayerTimes, setPrayerTimes] = useState<DailyPrayerTimes | null>(null);
-    const [iqamahTimes, setIqamahTimes] = useState<DailyIqamahTimes | null>(null);
+    const [prayerTimes, setPrayerTimes] = useState<DailyPrayerTimes | null>(
+        initialPrayerWidgetData?.prayerTimes ?? null,
+    );
+    const [iqamahTimes, setIqamahTimes] = useState<DailyIqamahTimes | null>(
+        initialPrayerWidgetData?.iqamahTimes ?? null,
+    );
     const [currentPrayer, setCurrentPrayer] = useState<string | null>(null);
     const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string } | null>(null);
     const [countdown, setCountdown] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
     const [isIqamahCountdown, setIsIqamahCountdown] = useState(false);
     const [isJummahCountdown, setIsJummahCountdown] = useState(false);
     const [selectedDate, setSelectedDate] = useState(() => {
+        if (initialPrayerWidgetData?.selectedDate) {
+            const initialDate = new Date(initialPrayerWidgetData.selectedDate);
+            if (!Number.isNaN(initialDate.getTime())) {
+                return initialDate;
+            }
+        }
         const { year, month, day } = getDateInSheffield(new Date());
         return new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
     });
@@ -79,6 +94,51 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             return "";
         }
     };
+
+    /** Single-line friendly labels for narrow headers (avoids splitting multi-word months). */
+    const getHijriDateCompact = (date: Date) => {
+        try {
+            const { year, month, day } = getDateInSheffield(date);
+            const noonUtc = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+            const hijriMoment = moment(noonUtc);
+            const hijriMonthsShort = [
+                "Muh.", "Saf.", "Rab.I", "Rab.II", "Jum.I", "Jum.II", "Raj.", "Sha.",
+                "Ram.", "Shaw.", "Dh.Q.", "Dh.H.",
+            ];
+            return `${hijriMoment.iDate()} ${hijriMonthsShort[hijriMoment.iMonth()]} ${hijriMoment.iYear()}`;
+        } catch {
+            return "";
+        }
+    };
+
+    const hijriDateCompact = useMemo(() => getHijriDateCompact(selectedDate), [selectedDate]);
+
+    /** Stack day+month above year in the narrow mobile header column (avoids single-line truncation). */
+    const hijriMobileLines = useMemo(() => {
+        const compact = hijriDateCompact.trim();
+        if (compact) {
+            const parts = compact.split(/\s+/).filter(Boolean);
+            if (parts.length >= 2) {
+                const last = parts[parts.length - 1] ?? "";
+                if (/^\d{3,4}$/.test(last)) {
+                    return {
+                        primary: parts.slice(0, -1).join(" "),
+                        secondary: last,
+                    };
+                }
+            }
+            return { primary: compact, secondary: "" };
+        }
+        const full = hijriDate.trim();
+        const ah = full.match(/\s+(\d{3,4})\s*AH\s*$/i);
+        if (ah && ah.index !== undefined) {
+            return {
+                primary: full.slice(0, ah.index).trim(),
+                secondary: `${ah[1]} AH`,
+            };
+        }
+        return { primary: full, secondary: "" };
+    }, [hijriDateCompact, hijriDate]);
 
     const isToday = useMemo(() => {
         const sel = getDateInSheffield(selectedDate);
@@ -301,7 +361,7 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
         return sheffieldNow >= afterFajr && sheffieldNow < sunriseAt;
     }, [isToday, displayedPrayerTimes, sheffieldNow, prayers]);
 
-    if (!isHydrated || !mosque) {
+    if (!mosque) {
         return (
             <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
                 <div className="flex flex-1 items-center justify-center px-4 text-center text-white/70">
@@ -350,12 +410,14 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
             <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
                 {/* Header */}
                 <div className="text-white mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
-                    <div className="flex justify-between items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal gap-1.5 sm:gap-2">
-                        <div className="flex-1 min-w-0 text-left font-normal text-white/90">
+                    <div className="grid grid-cols-3 gap-1.5 items-start sm:flex sm:justify-between sm:items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal sm:gap-2">
+                        <div className="min-w-0 text-left font-normal text-white/90 sm:flex-1">
                             <div className="hidden sm:block truncate">{formatDateForDisplay(currentTime)}</div>
-                            <div className="sm:hidden text-xs truncate">{formatDateForDisplay(currentTime).split(" ").slice(0, 3).join(" ")}</div>
+                            <div className="sm:hidden text-xs leading-snug text-white/90 break-words">
+                                {formatDateForDisplay(currentTime).split(" ").slice(0, 3).join(" ")}
+                            </div>
                         </div>
-                        <div className="flex-[1.6] flex justify-center min-w-0 px-1 sm:px-2">
+                        <div className="flex min-w-0 justify-center px-0.5 sm:flex-[1.6] sm:px-2">
                             <CustomSelect
                                 options={mosques}
                                 value={mosque.id}
@@ -369,9 +431,14 @@ export default function AppHomePage({ mosques }: AppHomePageProps) {
                                 className="max-w-full [&_button]:text-xs [&_button]:sm:text-sm [&_button]:font-semibold [&_button]:h-auto [&_button]:min-h-8 [&_button]:py-1 [&_button_span]:whitespace-normal [&_button_span]:leading-tight"
                             />
                         </div>
-                        <div className="flex-1 min-w-0 text-right font-normal text-white/90">
+                        <div className="min-w-0 text-right font-normal text-white/90 sm:flex-1">
                             <div className="hidden sm:block truncate">{hijriDate}</div>
-                            <div className="sm:hidden text-xs truncate">{hijriDate.split(" ").slice(0, 2).join(" ")}</div>
+                            <div className="sm:hidden text-xs leading-snug text-white/90">
+                                <div className="break-words">{hijriMobileLines.primary}</div>
+                                {hijriMobileLines.secondary ? (
+                                    <div className="break-words tabular-nums">{hijriMobileLines.secondary}</div>
+                                ) : null}
+                            </div>
                         </div>
                     </div>
 
