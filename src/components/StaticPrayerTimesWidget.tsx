@@ -6,6 +6,7 @@ import {
   getDisplayedPrayerTimes,
   getIqamahTime,
   isValidTimeForMarkup,
+  resolveIshaIqamahForDisplay,
 } from "@/lib/prayer-times";
 import { DailyIqamahTimes, DailyPrayerTimes, Mosque } from "@/types/prayer-times";
 
@@ -29,13 +30,20 @@ export default function StaticPrayerTimesWidget({
   selectedDate,
 }: StaticPrayerTimesWidgetProps) {
   const displayedPrayerTimes = getDisplayedPrayerTimes(prayerTimes, selectedDate, mosque.slug);
+  const ishaIqamah = resolveIshaIqamahForDisplay(
+    mosque.slug,
+    selectedDate,
+    displayedPrayerTimes.isha,
+    iqamahTimes,
+    displayedPrayerTimes.maghrib,
+  );
   const rows = [
     { id: "fajr", label: "Fajr", adhan: displayedPrayerTimes.fajr, iqamah: getIqamahTime("fajr", displayedPrayerTimes.fajr, iqamahTimes) },
     { id: "sunrise", label: "Sunrise", adhan: displayedPrayerTimes.sunrise, iqamah: "--:--" },
     { id: "dhuhr", label: "Dhuhr", adhan: displayedPrayerTimes.dhuhr, iqamah: getIqamahTime("dhuhr", displayedPrayerTimes.dhuhr, iqamahTimes) },
     { id: "asr", label: "Asr", adhan: displayedPrayerTimes.asr, iqamah: getIqamahTime("asr", displayedPrayerTimes.asr, iqamahTimes) },
     { id: "maghrib", label: "Maghrib", adhan: displayedPrayerTimes.maghrib, iqamah: getIqamahTime("maghrib", displayedPrayerTimes.maghrib, iqamahTimes) },
-    { id: "isha", label: "Isha", adhan: displayedPrayerTimes.isha, iqamah: getIqamahTime("isha", displayedPrayerTimes.isha, iqamahTimes, displayedPrayerTimes.maghrib) },
+    { id: "isha", label: "Isha", adhan: displayedPrayerTimes.isha, iqamah: ishaIqamah },
   ];
 
   const frameStyle = {

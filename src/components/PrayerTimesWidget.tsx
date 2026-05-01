@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData, mosqueTimetableAlreadyIncludesDst } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData, mosqueTimetableAlreadyIncludesDst, resolveIshaIqamahForDisplay, isMasjidRisalah } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -269,10 +269,13 @@ export default function PrayerTimesWidget({
           if (useCustomIqamahTimes && dstSettings?.customTimes.isha) {
             return dstSettings.customTimes.isha;
           }
-          if (isSummerPeriod) {
-            return 'After Maghrib';
-          }
-          return getIqamahTime('isha', adjustedPrayerTimes.isha, iqamahTimes);
+          return resolveIshaIqamahForDisplay(
+            mosque.slug,
+            checkDate,
+            adjustedPrayerTimes.isha,
+            iqamahTimes,
+            adjustedPrayerTimes.maghrib,
+          );
         })()
       },
     ];
@@ -335,7 +338,7 @@ export default function PrayerTimesWidget({
       },
       isIqamah: false
     };
-  }, [dstSettings, isSummerPeriod, mosque.slug]);
+  }, [dstSettings, mosque.slug]);
 
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
@@ -504,10 +507,8 @@ export default function PrayerTimesWidget({
 
     const iqamahToUse = adjustedIqamahTimes;
 
-    const getIshaIqamah = () => {
-      if (isSummerPeriod && !inDSTAdjustment) return 'After Maghrib';
-      return getIqamahTime('isha', adjustedPT.isha, iqamahToUse, adjustedPT.maghrib);
-    };
+    const getIshaIqamah = () =>
+      resolveIshaIqamahForDisplay(mosque.slug, selectedDate, adjustedPT.isha, iqamahToUse, adjustedPT.maghrib);
 
     return [
       { name: 'FAJR', adhan: adjustedPT.fajr, iqamah: getIqamahTime('fajr', adjustedPT.fajr, iqamahToUse) },
@@ -517,7 +518,7 @@ export default function PrayerTimesWidget({
       { name: 'MAGHRIB', adhan: adjustedPT.maghrib, iqamah: getIqamahTime('maghrib', adjustedPT.maghrib, iqamahToUse) },
       { name: 'ISHA', adhan: adjustedPT.isha, iqamah: getIshaIqamah() }
     ];
-  }, [prayerTimes, adjustedIqamahTimes, isSummerPeriod, selectedDate, isInDSTAdjustmentPeriodClient, mosque.slug]);
+  }, [prayerTimes, adjustedIqamahTimes, selectedDate, isInDSTAdjustmentPeriodClient, mosque.slug]);
 
   const upcomingPrayer = useMemo(() => {
     if (!prayerTimes || !isToday || prayers.length === 0) return null;
@@ -685,7 +686,7 @@ export default function PrayerTimesWidget({
                 />
               </div>
             )}
-            {isSummerPeriod && (
+            {isSummerPeriod && !isMasjidRisalah(mosque.slug) && (
               <div className="flex-1 min-w-[200px] bg-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-center items-center text-center backdrop-blur-sm border border-white/10 shadow-lg">
                 <p className="text-[10px] sm:text-xs font-medium font-serif italic text-white/40 uppercase tracking-widest mb-0.5 sm:mb-1">
                   Summer Schedule
