@@ -108,9 +108,6 @@ export default function MonthlyTimetable({
     };
   }, [monthlyData, mosque.slug, currentYear, activeMonth, today.day, today.month]);
 
-  const todayRowClass =
-    "relative after:absolute after:inset-0 after:z-0 after:bg-gradient-to-r after:from-[var(--theme-accent-countdown)]/30 after:to-[var(--theme-accent-countdown-deep)]/20 after:pointer-events-none";
-
   const goToPreviousMonth = () => {
     setActiveMonth(activeMonth === 1 ? 12 : activeMonth - 1);
   };
@@ -202,46 +199,48 @@ export default function MonthlyTimetable({
                   <TableRow
                     key={`${activeMonth}-${row.day}`}
                     className={cn(
-                      "border-white/5 transition-colors hover:bg-white/5 h-12",
-                      row.isToday && todayRowClass,
+                      "border-white/5 transition-colors h-12",
+                      row.isToday
+                        ? "bg-gradient-to-r from-[var(--theme-accent-countdown)]/30 to-[var(--theme-accent-countdown-deep)]/20 hover:brightness-105"
+                        : "hover:bg-white/5",
                     )}
                     aria-current={row.isToday ? "date" : undefined}
                   >
-                    <TableCell className="relative z-10 font-bold text-white/90">{row.dayLabel}</TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-bold text-white/90">{row.dayLabel}</TableCell>
+                    <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
                         <TimeDisplay time={row.fajrAdhan} className="text-white/90" />
                         <TimeDisplay time={row.fajrIqamah} className="text-[10px] text-white/50" />
                       </div>
                     </TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-mono tabular-nums">
                       <TimeDisplay time={row.sunrise} className="text-white/60" />
                     </TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
                         <TimeDisplay time={row.dhuhrAdhan} className="text-white/90" />
                         <TimeDisplay time={row.dhuhrIqamah} className="text-[10px] text-white/50" />
                       </div>
                     </TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
                         <TimeDisplay time={row.asrAdhan} className="text-white/90" />
                         <TimeDisplay time={row.asrIqamah} className="text-[10px] text-white/50" />
                       </div>
                     </TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
                         <TimeDisplay time={row.maghribAdhan} className="text-white/90" />
                         <TimeDisplay time={row.maghribIqamah} className="text-[10px] text-white/50" />
                       </div>
                     </TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
                         <TimeDisplay time={row.ishaAdhan} className="text-white/90" />
                         <TimeDisplay time={row.ishaIqamah} className="text-[10px] text-white/50" />
                       </div>
                     </TableCell>
-                    <TableCell className="relative z-10 font-mono tabular-nums">
+                    <TableCell className="font-mono tabular-nums">
                       <TimeDisplay time={row.jummahIqamah} className="font-bold text-[var(--theme-accent-countdown)]" />
                     </TableCell>
                   </TableRow>
