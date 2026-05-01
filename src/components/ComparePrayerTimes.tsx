@@ -164,52 +164,55 @@ export default function ComparePrayerTimes({
   };
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-6">
       {!standalone && (
         <Button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto h-12 rounded-xl bg-[var(--theme-accent-countdown)] text-[var(--theme-bg)] font-bold hover:bg-[var(--theme-accent-countdown-deep)] transition-colors shadow-lg"
           aria-expanded={isOpen}
           aria-controls="compare-mosques-table"
         >
-          {isOpen ? "Hide comparison" : "Compare mosques"}
+          {isOpen ? "Hide Comparison" : "Compare Mosques"}
         </Button>
       )}
 
       {(isOpen || standalone) && (
         <div
           id="compare-mosques-table"
-          className="relative overflow-hidden rounded-[2rem] border border-white/20 bg-gradient-to-b from-white/10 via-white/5 via-[15%] to-transparent text-white shadow-2xl backdrop-blur-md"
+          className="relative overflow-hidden rounded-xl border border-white/10 bg-[rgba(10,17,40,0.25)] text-white shadow-2xl backdrop-blur-[20px] saturate-[180%]"
         >
-          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-[#FFB380]/10 blur-3xl" />
+          {/* Specular top edge shimmer */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"
+          />
 
-          <div className="relative z-10 px-4 pb-6 pt-6 md:px-8 md:pb-8 md:pt-8">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 md:mb-7">
+          <div className="relative z-10 px-4 pb-6 pt-6 md:px-6 md:pb-8 md:pt-8">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4 md:mb-8">
               <div className="text-center sm:text-left">
-                <span className="mb-2 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 shadow-sm md:text-xs">
+                <span className="mb-2 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--theme-text-muted)] shadow-sm">
                   Prayer Comparison
                 </span>
                 {standalone ? (
-                  <h1 className="text-lg font-bold text-white md:text-2xl">
-                    Compare Sheffield Mosque Prayer Times
+                  <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+                    Mosque Comparison
                   </h1>
                 ) : (
-                  <h2 className="text-lg font-bold text-white md:text-2xl">
-                    Compare Mosques By Date
+                  <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+                    Mosque Comparison
                   </h2>
                 )}
               </div>
-              <div className="mx-auto flex items-center gap-1.5 sm:mx-0 sm:gap-2">
+              <div className="mx-auto flex items-center gap-2 sm:mx-0 sm:gap-3 bg-white/5 rounded-full p-1.5 border border-white/10">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={goToPrevDay}
                   aria-label="Previous day"
-                  className="min-h-11 min-w-11 border border-white/20 bg-white/10 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-md focus-visible:ring-[#FFB380]/40 touch-manipulation"
+                  className="min-h-10 min-w-10 rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
                 >
                   <svg
-                    className="size-5"
+                    className="size-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -217,12 +220,12 @@ export default function ComparePrayerTimes({
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
                 </Button>
-                <span className="min-w-[120px] text-center text-sm font-semibold text-white sm:min-w-[150px] sm:text-base">
+                <span className="min-w-[140px] text-center text-sm font-bold tracking-tight text-white/90 sm:min-w-[160px]">
                   {formatDateForDisplay(selectedDate)}
                 </span>
                 <Button
@@ -230,10 +233,10 @@ export default function ComparePrayerTimes({
                   size="icon"
                   onClick={goToNextDay}
                   aria-label="Next day"
-                  className="min-h-11 min-w-11 border border-white/20 bg-white/10 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/20 hover:shadow-md focus-visible:ring-[#FFB380]/40 touch-manipulation"
+                  className="min-h-10 min-w-10 rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
                 >
                   <svg
-                    className="size-5"
+                    className="size-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -241,7 +244,7 @@ export default function ComparePrayerTimes({
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M9 5l7 7-7 7"
                     />
                   </svg>
@@ -250,31 +253,31 @@ export default function ComparePrayerTimes({
             </div>
 
             {mosques.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center text-white/70 backdrop-blur-md">
+              <div className="rounded-xl border border-white/5 bg-white/5 p-12 text-center text-[var(--theme-text-muted)]">
                 No mosques available to compare.
               </div>
             ) : isLoading ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center text-white/70 backdrop-blur-md">
+              <div className="rounded-xl border border-white/5 bg-white/5 p-12 text-center text-[var(--theme-text-muted)] animate-pulse">
                 Loading prayer times…
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+              <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/20">
                 <Table className="min-w-[920px] text-sm text-white sm:text-base">
                   <TableHeader className="bg-white/5">
-                    <TableRow className="border-white/10 hover:bg-white/5">
-                      <TableHead className="bg-[#0A1128]/80 font-bold uppercase tracking-wider text-white/80 backdrop-blur-md">
+                    <TableRow className="border-white/5 hover:bg-white/5">
+                      <TableHead className="h-12 w-[120px] bg-[var(--theme-bg)]/80 font-bold uppercase tracking-wider text-[var(--theme-text-muted)] backdrop-blur-md">
                         Prayer
                       </TableHead>
                       {data.map(({ mosque, error }) => (
                         <TableHead
                           key={mosque.id}
-                          className="min-w-[130px] text-center text-xs font-bold uppercase tracking-wide text-white sm:text-sm"
+                          className="h-12 min-w-[140px] text-center text-xs font-black uppercase tracking-wide text-white sm:text-sm"
                         >
-                          <div className="truncate" title={mosque.name}>
+                          <div className="truncate px-2" title={mosque.name}>
                             {mosque.name.replace(/ Sheffield$/, "")}
                           </div>
                           {error && (
-                            <span className="mt-0.5 block text-[11px] font-medium text-amber-200">
+                            <span className="mt-0.5 block text-[10px] font-bold text-[var(--theme-accent-countdown)] animate-pulse">
                               {error}
                             </span>
                           )}
@@ -284,8 +287,8 @@ export default function ComparePrayerTimes({
                   </TableHeader>
                   <TableBody>
                     {PRAYER_NAMES.map((prayer) => (
-                      <TableRow key={prayer} className="border-white/10 hover:bg-white/5">
-                          <TableCell className="bg-[#0A1128]/80 font-semibold text-white/80 backdrop-blur-md">
+                      <TableRow key={prayer} className="border-white/5 hover:bg-white/5 h-16">
+                          <TableCell className="bg-[var(--theme-bg)]/80 font-black text-white/80 backdrop-blur-md">
                             {prayer}
                           </TableCell>
                         {data.map((mosqueData) => (
@@ -294,9 +297,9 @@ export default function ComparePrayerTimes({
                             className="text-center"
                           >
                             {mosqueData.error ? (
-                              <span className="text-white/45">—</span>
+                              <span className="text-white/20">—</span>
                             ) : prayer === "Jummah" ? (
-                              <span className="font-mono text-white">
+                              <span className="font-mono text-base font-bold text-[var(--theme-accent-countdown)]">
                                 {(() => {
                                   const raw = getIqamahDisplay(prayer, mosqueData);
                                   return isValidTimeForMarkup(raw) ? (
@@ -308,7 +311,7 @@ export default function ComparePrayerTimes({
                               </span>
                             ) : (
                               <div className="flex flex-col gap-0.5">
-                                <span className="font-mono text-white">
+                                <span className="font-mono text-base font-bold text-white">
                                   {(() => {
                                     const raw = getAdhanDisplay(prayer, mosqueData);
                                     return isValidTimeForMarkup(raw) ? (
@@ -319,7 +322,7 @@ export default function ComparePrayerTimes({
                                   })()}
                                 </span>
                                 {prayer !== "Sunrise" && (
-                                  <span className="font-mono text-xs text-white/65">
+                                  <span className="font-mono text-[11px] font-medium text-white/40">
                                     {(() => {
                                       const raw = getIqamahDisplay(prayer, mosqueData);
                                       return isValidTimeForMarkup(raw) ? (
@@ -341,8 +344,8 @@ export default function ComparePrayerTimes({
               </div>
             )}
 
-            <div className="mt-3 text-center text-[10px] text-white/70 sm:text-xs">
-              Top row: Adhan · Bottom row: Iqamah · Jummah: single time
+            <div className="mt-4 text-center text-[10px] text-[var(--theme-text-muted)] font-bold uppercase tracking-widest opacity-60">
+              Top: Adhan · Bottom: Iqamah · Jummah: single time
             </div>
           </div>
         </div>

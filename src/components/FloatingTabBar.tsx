@@ -45,7 +45,8 @@ export function FloatingTabBar() {
   const [slideStyle, setSlideStyle] = useState({ width: 0, x: 0 });
 
   function getActiveTab() {
-    if (pathname === "/") return "prayer";
+    if (!pathname) return "prayer";
+    if (pathname === "/" || pathname.startsWith("/mosques")) return "prayer";
     if (pathname.startsWith("/timetable")) return "timetable";
     if (pathname.startsWith("/compare")) return "compare";
     if (pathname.startsWith("/settings")) return "settings";
@@ -56,6 +57,9 @@ export function FloatingTabBar() {
   const activeIndex = activeTab
     ? TABS.findIndex((t) => t.id === activeTab)
     : -1;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useLayoutEffect(() => {
     const container = innerRef.current;
@@ -107,10 +111,9 @@ export function FloatingTabBar() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", scheduleSync);
     };
-  }, [activeIndex, pathname]);
+  }, [activeIndex, pathname, mounted]);
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
 
   const navContent = (
     <nav className="floating-tab-bar" aria-label="Main navigation">

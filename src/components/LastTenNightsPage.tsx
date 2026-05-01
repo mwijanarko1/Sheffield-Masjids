@@ -74,62 +74,69 @@ export default function LastTenNightsPage() {
 
       {/* Difficulty tabs */}
       <div
-        className="flex shrink-0 items-center justify-center gap-2 px-4 py-2"
-        style={{
-          background: "linear-gradient(rgba(10, 17, 40, 0.8) 0%, rgba(10, 17, 40, 0.4) 100%)",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-        }}
+        className="flex shrink-0 items-center justify-center gap-2 px-4 py-3 sm:py-4 backdrop-blur-[20px] saturate-[180%] bg-[rgba(10,17,40,0.4)] border-b border-white/5"
       >
-        {DIFFICULTY_TABS.map((difficulty) => {
-          const count = getItemsByDifficulty(difficulty).length;
-          const isActive = selectedDifficulty === difficulty;
-          return (
-            <button
-              key={difficulty}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-label={`${difficulty} difficulty, ${count} items`}
-              onClick={() => setSelectedDifficulty(difficulty)}
-              className={cn(
-                "rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128]",
-                isActive
-                  ? "bg-[#FFB380] text-[#0A1128]"
-                  : "border border-white/20 bg-transparent text-white/40 hover:border-white/30 hover:text-white/60",
-              )}
-            >
-              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-              <span className="ml-1.5 text-xs opacity-80">({count})</span>
-            </button>
-          );
-        })}
+        <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
+          {DIFFICULTY_TABS.map((difficulty) => {
+            const count = getItemsByDifficulty(difficulty).length;
+            const isActive = selectedDifficulty === difficulty;
+            return (
+              <button
+                key={difficulty}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-label={`${difficulty} difficulty, ${count} items`}
+                onClick={() => setSelectedDifficulty(difficulty)}
+                className={cn(
+                  "relative rounded-lg px-4 py-2 text-xs font-black uppercase tracking-widest transition-all duration-300",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)]",
+                  isActive
+                    ? "text-[var(--theme-bg)] bg-[var(--theme-accent-countdown)] shadow-lg"
+                    : "text-white/40 hover:text-white/70 hover:bg-white/5",
+                )}
+              >
+                {difficulty}
+                <span className={cn("ml-1.5 text-[10px] opacity-60", isActive ? "text-[var(--theme-bg)]" : "")}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Progress summary pill */}
-      <div className="px-4 pt-3 pb-1 sm:px-6">
-        <div className="flex items-center gap-2">
-          <p className="text-sm text-white/60">
-            Night {selectedNight}
-          </p>
-          <span className="text-sm font-semibold text-[#FFD4B3]">
-            {currentNightCompleted}/{totalItems}
-          </span>
+      <div className="px-4 pt-6 pb-2 sm:px-6">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--theme-text-muted)] mb-0.5">
+              Current Progress
+            </span>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-black text-white">Night {selectedNight}</h2>
+              <span className="inline-flex items-center rounded-full bg-[var(--theme-accent-countdown)]/10 px-2.5 py-0.5 text-xs font-bold text-[var(--theme-accent-countdown)] border border-[var(--theme-accent-countdown)]/20">
+                {currentNightCompleted}/{totalItems}
+              </span>
+            </div>
+          </div>
           {!isHydrated && (
-            <span className="text-xs text-white/40">Loading…</span>
+            <span className="text-xs text-white/40 animate-pulse">Synchronising…</span>
           )}
         </div>
       </div>
 
       {/* Action point list */}
-      <div className="flex-1 overflow-auto px-4 pb-[100px] sm:px-6">
-        <LastTenChecklist
-          night={selectedNight}
-          difficulty={selectedDifficulty}
-          items={filteredItems}
-          checkedItems={selectedNightItems}
-          onToggleItem={(itemId) => toggleItem(selectedNight, itemId)}
-        />
+      <div className="flex-1 overflow-auto px-4 pb-[100px] pt-4 sm:px-6">
+        <div className="mx-auto max-w-2xl">
+          <LastTenChecklist
+            night={selectedNight}
+            difficulty={selectedDifficulty}
+            items={filteredItems}
+            checkedItems={selectedNightItems}
+            onToggleItem={(itemId) => toggleItem(selectedNight, itemId)}
+          />
+        </div>
       </div>
     </div>
   );

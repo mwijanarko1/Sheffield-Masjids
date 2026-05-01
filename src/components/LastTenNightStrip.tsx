@@ -39,16 +39,17 @@ export default function LastTenNightStrip({
 
     return (
         <div
-            className="relative w-full shrink-0"
-            style={{
-                background:
-                    "linear-gradient(180deg, rgba(10,17,40,0.95) 0%, rgba(10,17,40,0.8) 100%)",
-                borderBottom: "1px solid rgba(255,255,255,0.08)",
-            }}
+            className="relative w-full shrink-0 backdrop-blur-[20px] saturate-[180%] bg-[rgba(10,17,40,0.8)] border-b border-white/5"
         >
+            {/* Specular top edge shimmer */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            />
+            
             <div
                 ref={scrollRef}
-                className="flex gap-1 overflow-x-auto px-3 py-2.5 scrollbar-none sm:gap-1.5 sm:px-4 sm:py-3 sm:justify-center"
+                className="flex gap-1 overflow-x-auto px-3 py-2.5 scrollbar-none sm:gap-2 sm:px-4 sm:py-3 sm:justify-center"
                 role="tablist"
                 aria-label="Ramadan nights"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
@@ -75,47 +76,47 @@ export default function LastTenNightStrip({
                             onClick={() => onSelectNight(night)}
                             className={cn(
                                 "relative flex shrink-0 flex-col items-center justify-center rounded-xl px-3 py-2 min-w-[52px] min-h-[52px] sm:min-w-[58px] sm:min-h-[56px]",
-                                "transition-all duration-200 ease-out",
-                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-1 focus-visible:ring-offset-[#0A1128]",
+                                "transition-all duration-300 ease-out",
+                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)]",
                                 isActive
-                                    ? "bg-[#FFB380]/18 text-white shadow-[0_0_12px_rgba(255,179,128,0.15)]"
+                                    ? "bg-[var(--theme-accent-countdown)]/20 text-white shadow-[0_0_20px_-5px_rgba(255,179,128,0.3)] ring-1 ring-[var(--theme-accent-countdown)]/40"
                                     : isToday
-                                        ? "bg-[#FFB380]/8 text-white/80 ring-1 ring-[#FFB380]/40"
-                                        : "text-white/60 hover:bg-white/8 active:bg-white/12",
+                                        ? "bg-white/5 text-white/90 ring-1 ring-white/20"
+                                        : "text-white/40 hover:bg-white/8 active:bg-white/12",
                             )}
                         >
-                            {/* Active indicator dot at top */}
+                            {/* Active indicator bar at top */}
                             {isActive && (
                                 <span
                                     aria-hidden
-                                    className="absolute top-1 left-1/2 -translate-x-1/2 h-[3px] w-4 rounded-full bg-[#FFB380]"
+                                    className="absolute top-1.5 left-1/2 -translate-x-1/2 h-[2px] w-5 rounded-full bg-[var(--theme-accent-countdown)]"
                                 />
                             )}
 
-                            {/* "Today" dot — visible when not the active tab */}
+                            {/* "Today" hint — visible when not the active tab */}
                             {isToday && !isActive && (
                                 <span
                                     aria-hidden
-                                    className="absolute top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-[#FFB380]"
+                                    className="absolute top-1.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-white/40"
                                 />
                             )}
 
                             <span className={cn(
-                                "text-[11px] font-medium tracking-wide sm:text-xs",
-                                isActive ? "text-[#FFD4B3]" : isToday ? "text-[#FFD4B3]/90" : "text-white/45",
+                                "text-[11px] font-black tracking-tight sm:text-xs",
+                                isActive ? "text-[var(--theme-accent-countdown)]" : isToday ? "text-white/90" : "text-white/30",
                             )}>
                                 {night}
                             </span>
 
                             {/* Progress indicator */}
                             {isComplete ? (
-                                <span className="mt-0.5 text-[10px] text-emerald-400">✓</span>
+                                <span className="mt-0.5 text-[10px] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)] font-bold">✓</span>
                             ) : hasProgress ? (
-                                <span className="mt-0.5 text-[10px] text-[#FFB380]/80">
+                                <span className="mt-0.5 text-[10px] font-black text-[var(--theme-accent-countdown)]">
                                     {completed}
                                 </span>
                             ) : (
-                                <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-white/15" />
+                                <div className="mt-1 h-0.5 w-3 rounded-full bg-white/10" />
                             )}
                         </button>
                     );

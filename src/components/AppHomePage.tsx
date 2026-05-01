@@ -410,12 +410,21 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
     };
     const safeRowStyle = (isActive: boolean) => ({
         background: isActive
-            ? "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)"
-            : "linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.035) 100%)",
+            ? "linear-gradient(135deg, rgba(255, 179, 128, 0.45) 0%, rgba(255, 120, 60, 0.35) 100%)"
+            : "rgba(10, 17, 40, 0.25)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
         boxShadow: isActive
-            ? "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)"
-            : "inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06)",
+            ? "0 0 25px -2px rgba(255, 133, 56, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.4)"
+            : "inset 0 1px 1px rgba(255, 255, 255, 0.06), 0 4px 12px rgba(0, 0, 0, 0.2)",
+        border: isActive
+            ? "1px solid rgba(255, 179, 128, 0.6)"
+            : "1px solid rgba(255, 255, 255, 0.1)",
         color: "#ffffff",
+        transform: isActive ? "scale(1.015) translateZ(0)" : "scale(1) translateZ(0)",
+        zIndex: isActive ? 20 : 1,
+        backfaceVisibility: "hidden" as const,
+        WebkitBackfaceVisibility: "hidden" as const,
     });
 
     return (
@@ -423,7 +432,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             <h1 className="sr-only">
                 Sheffield prayer times — adhan and iqamah for mosques across the city
             </h1>
-            <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-x-visible overflow-y-hidden min-h-0">
+            <div className="flex-1 flex flex-col z-10 px-3 sm:px-5 md:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+0.5rem)] sm:pt-[calc(env(safe-area-inset-top,0px)+1rem)] md:pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-0 overflow-visible min-h-0">
                 {/* Header */}
                 <div className="text-white mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 shrink-0 [text-shadow:0_1px_3px_rgba(0,0,0,0.5),0_0_8px_rgba(0,0,0,0.3)]">
                     <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.55fr)_minmax(0,1fr)] gap-1.5 items-start sm:flex sm:justify-between sm:items-center text-xs sm:text-sm md:text-base mb-1.5 sm:mb-2 md:mb-3 font-normal sm:gap-2">
@@ -472,11 +481,11 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                             <>
                                 <h2 className="w-full mx-auto text-center text-sm sm:text-base lg:text-xl mb-1.5 sm:mb-2 md:mb-3 font-bold tracking-[0.15px]">
                                     {isJummahCountdown ? (
-                                        <>The Khutbah of <span className="font-bold">JUMMAH</span> is in</>
+                                        <>The Khutbah of <span className="font-bold uppercase">Jummah</span> is in</>
                                     ) : isIqamahCountdown ? (
-                                        <>The Iqamah of <span className="font-bold">{nextPrayer.name.toUpperCase()}</span> is in</>
+                                        <>The Iqamah of <span className="font-bold uppercase">{nextPrayer.name}</span> is in</>
                                     ) : (
-                                        <>The Adhan of <span className="font-bold">{nextPrayer.name.toUpperCase()}</span> is in</>
+                                        <>The Adhan of <span className="font-bold uppercase">{nextPrayer.name}</span> is in</>
                                     )}
                                 </h2>
 
@@ -492,22 +501,22 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                     <div className="mx-auto flex w-full justify-center px-4 sm:px-8 md:px-14">
                                         <div className="grid w-full max-w-[24rem] sm:max-w-[28rem] grid-cols-5 items-end">
                                             <div className="flex flex-col items-center">
-                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-bold tabular-nums tracking-tighter">{countdown.hours.toString().padStart(2, "0")}</div>
-                                                <div className="text-[9px] sm:text-xs uppercase tracking-widest text-[#FFB380]/70">Hours</div>
+                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-black tabular-nums tracking-tighter drop-shadow-lg">{countdown.hours.toString().padStart(2, "0")}</div>
+                                                <div className="text-[9px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#FFB380]/70">Hours</div>
                                             </div>
                                             <div className="flex justify-center">
-                                                <div className="text-xl sm:text-3xl lg:text-5xl font-bold mb-3 sm:mb-5 md:mb-6">:</div>
+                                                <div className="text-xl sm:text-3xl lg:text-5xl font-black mb-3 sm:mb-5 md:mb-6 opacity-30">:</div>
                                             </div>
                                             <div className="flex flex-col items-center">
-                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-bold tabular-nums tracking-tighter">{countdown.minutes.toString().padStart(2, "0")}</div>
-                                                <div className="text-[9px] sm:text-xs uppercase tracking-widest text-[#FFB380]/70">Minutes</div>
+                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-black tabular-nums tracking-tighter drop-shadow-lg">{countdown.minutes.toString().padStart(2, "0")}</div>
+                                                <div className="text-[9px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#FFB380]/70">Minutes</div>
                                             </div>
                                             <div className="flex justify-center">
-                                                <div className="text-xl sm:text-3xl lg:text-5xl font-bold mb-3 sm:mb-5 md:mb-6">:</div>
+                                                <div className="text-xl sm:text-3xl lg:text-5xl font-black mb-3 sm:mb-5 md:mb-6 opacity-30">:</div>
                                             </div>
                                             <div className="flex flex-col items-center">
-                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-bold tabular-nums tracking-tighter">{countdown.seconds.toString().padStart(2, "0")}</div>
-                                                <div className="text-[9px] sm:text-xs uppercase tracking-widest text-[#FFB380]/70">Seconds</div>
+                                                <div className="text-2xl sm:text-4xl lg:text-6xl font-black tabular-nums tracking-tighter drop-shadow-lg">{countdown.seconds.toString().padStart(2, "0")}</div>
+                                                <div className="text-[9px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#FFB380]/70">Seconds</div>
                                             </div>
                                         </div>
                                     </div>
@@ -530,8 +539,8 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                 >
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" /></svg>
                                 </button>
-                                <h2 className="text-sm sm:text-base lg:text-xl font-bold text-center flex-1 min-w-0">
-                                    Prayer Times for <span className="font-bold">{formatDateForDisplay(selectedDate)}</span>
+                                <h2 className="text-sm sm:text-base lg:text-xl font-bold text-center flex-1 min-w-0 tracking-tight">
+                                    Prayer Times for <span className="font-black">{formatDateForDisplay(selectedDate)}</span>
                                 </h2>
                                 <button
                                     onClick={handleNextDay}
@@ -546,17 +555,16 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                 </div>
 
                 {/* Prayer List - flex-1 fills space; responsive spacing by screen size */}
-                <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 min-h-0 overflow-hidden">
+                <div className="isolate flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 min-h-0 overflow-visible">
                     {/* Header row - same grid/padding as cards for alignment */}
                     <div
-                        className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 text-[10px] sm:text-xs md:text-sm uppercase font-semibold tracking-widest text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] shrink-0"
-                        style={safeMutedTextStyle}
+                        className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-1 sm:py-1.5 md:py-2 text-[9px] sm:text-[10px] md:text-xs uppercase font-bold tracking-[0.15em] text-white/30 shrink-0"
                     >
                         <div className="min-w-0">Adhan</div>
                         <div className="text-center min-w-0">Prayer</div>
                         <div className="text-right min-w-0">Iqamah</div>
                     </div>
-                    <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 min-h-0 overflow-hidden pb-24">
+                    <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 min-h-0 overflow-visible pb-24">
                     {prayers.map((prayer) => {
                         const rawActive = upcomingPrayer ?? currentPrayer;
                         const isActive =
@@ -566,7 +574,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                         return (
                             <div
                                 key={prayer.id}
-                                className="relative grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-2.5 min-h-[30px] sm:min-h-[36px] md:min-h-[40px] flex-1 rounded-xl overflow-hidden transition-all duration-500"
+                                className="relative grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 items-center px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-2.5 min-h-[30px] sm:min-h-[36px] md:min-h-[40px] flex-1 rounded-xl overflow-visible transition-[transform,background,box-shadow,border-color] duration-500 will-change-[transform,background,box-shadow]"
                                 style={safeRowStyle(isActive)}
                             >
                                 {/* Specular top edge shimmer */}
@@ -575,26 +583,23 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                     className="pointer-events-none absolute top-0 left-4 right-4 h-px"
                                     style={{
                                         background: isActive
-                                            ? "linear-gradient(90deg, transparent, rgba(255,225,196,0.6) 40%, rgba(255,255,255,0.78) 50%, rgba(255,225,196,0.6) 60%, transparent)"
-                                            : "linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 60%, transparent)",
+                                            ? "linear-gradient(110deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%)"
+                                            : "linear-gradient(110deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%)",
                                     }}
                                 />
 
                                 <span
-                                    className={`relative z-10 min-w-0 text-[12px] sm:text-xs md:text-sm font-medium tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white font-bold" : "text-white/90"}`}
-                                    style={isActive ? safeHeaderTextStyle : safeMutedTextStyle}
+                                    className={`relative z-10 min-w-0 text-[13px] sm:text-sm md:text-base font-bold tabular-nums truncate transition-all duration-300 ${isActive ? "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]" : "text-white/80"}`}
                                 >
                                     {prayer.adhan}
                                 </span>
                                 <span
-                                    className={`relative z-10 min-w-0 text-center text-[12px] sm:text-xs md:text-sm tracking-wide font-medium truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-[#FFE2CB] font-extrabold" : "text-white/95"}`}
-                                    style={isActive ? { ...safeHeaderTextStyle, color: "#FFE2CB" } : safeHeaderTextStyle}
+                                    className="relative z-10 min-w-0 text-center text-[14px] sm:text-base md:text-lg tracking-wide font-black truncate transition-all duration-300 text-white/90"
                                 >
                                     {prayer.label}
                                 </span>
                                 <span
-                                    className={`relative z-10 min-w-0 text-right text-[12px] sm:text-xs md:text-sm font-bold tracking-tight tabular-nums truncate transition-colors duration-300 [text-shadow:0_1px_2px_rgba(0,0,0,0.6),0_0_6px_rgba(0,0,0,0.35)] ${isActive ? "text-white" : "text-white/90"}`}
-                                    style={isActive ? safeHeaderTextStyle : safeMutedTextStyle}
+                                    className={`relative z-10 min-w-0 text-right text-[13px] sm:text-sm md:text-base font-bold tracking-tight tabular-nums truncate transition-all duration-300 ${isActive ? "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]" : "text-white/80"}`}
                                 >
                                     {prayer.iqamah}
                                 </span>
@@ -607,10 +612,11 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                         <div
                             className="shrink-0 flex flex-row items-center justify-center gap-4 sm:gap-6 px-3 sm:px-4 md:px-5 lg:px-6 py-2 sm:py-2.5 md:py-3 min-h-[30px] sm:min-h-[36px] md:min-h-[40px] rounded-xl overflow-hidden"
                             style={{
-                                background: "linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
-                                backdropFilter: "blur(20px) saturate(140%)",
-                                WebkitBackdropFilter: "blur(20px) saturate(140%)",
-                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06)",
+                                background: "rgba(10, 17, 40, 0.25)",
+                                backdropFilter: "blur(20px) saturate(180%)",
+                                WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
                             }}
                         >
                             <div
@@ -621,11 +627,12 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                     highlightSunriseSummary
                                         ? {
                                               background:
-                                                  "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)",
-                                              backdropFilter: "blur(20px) saturate(140%)",
-                                              WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                                                  "linear-gradient(135deg, rgba(255, 179, 128, 0.45) 0%, rgba(255, 120, 60, 0.35) 100%)",
+                                              backdropFilter: "blur(8px) saturate(200%)",
+                                              WebkitBackdropFilter: "blur(8px) saturate(200%)",
                                               boxShadow:
-                                                  "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)",
+                                                  "inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 4px 12px rgba(255, 133, 56, 0.15)",
+                                              border: "1px solid rgba(255, 255, 255, 0.2)",
                                           }
                                         : undefined
                                 }
@@ -635,23 +642,22 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                         aria-hidden="true"
                                         className="pointer-events-none absolute top-0 left-3 right-3 h-px"
                                         style={{
-                                            background:
-                                                "linear-gradient(90deg, transparent, rgba(255,225,196,0.6) 40%, rgba(255,255,255,0.78) 50%, rgba(255,225,196,0.6) 60%, transparent)",
+                                            background: "linear-gradient(110deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)",
                                         }}
                                     />
                                 ) : null}
                                 <span
-                                    className={`relative z-10 text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest ${
-                                        highlightSunriseSummary ? "text-[#FFE2CB] font-semibold" : "text-white/70"
+                                    className={`relative z-10 text-[9px] sm:text-[10px] md:text-xs uppercase tracking-[0.2em] font-black ${
+                                        highlightSunriseSummary ? "text-[#FFE2CB] font-semibold" : "text-white/40"
                                     }`}
                                 >
                                     Sunrise
                                 </span>
-                                <span className="relative z-10 text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                                <span className="relative z-10 text-[12px] sm:text-xs md:text-sm font-black tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
                                     {displayedPrayerTimes.sunrise || "—"}
                                 </span>
                             </div>
-                            <div className="w-px h-5 sm:h-6 bg-white/30 rounded-full shrink-0" aria-hidden="true" />
+                            <div className="w-px h-5 sm:h-6 bg-white/10 rounded-full shrink-0" aria-hidden="true" />
                             <div
                                 className={`relative flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center sm:text-right rounded-lg py-1.5 sm:py-2 px-2 sm:px-3 min-w-0 transition-all duration-500 overflow-hidden ${
                                     highlightJummahSummary ? "ring-1 ring-[rgba(255,179,128,0.5)]" : ""
@@ -660,11 +666,12 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                     highlightJummahSummary
                                         ? {
                                               background:
-                                                  "linear-gradient(145deg, rgba(255,179,128,0.36) 0%, rgba(255,154,103,0.22) 50%, rgba(255,120,60,0.12) 100%)",
-                                              backdropFilter: "blur(20px) saturate(140%)",
-                                              WebkitBackdropFilter: "blur(20px) saturate(140%)",
+                                                  "linear-gradient(135deg, rgba(255, 179, 128, 0.45) 0%, rgba(255, 120, 60, 0.35) 100%)",
+                                              backdropFilter: "blur(8px) saturate(200%)",
+                                              WebkitBackdropFilter: "blur(8px) saturate(200%)",
                                               boxShadow:
-                                                  "inset 0 1px 0 rgba(255,235,214,0.6), inset 0 -1px 0 rgba(255,148,86,0.24), 0 0 0 1px rgba(255,179,128,0.5), 0 10px 24px rgba(255,133,56,0.18)",
+                                                  "inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 4px 12px rgba(255, 133, 56, 0.15)",
+                                              border: "1px solid rgba(255, 255, 255, 0.2)",
                                           }
                                         : undefined
                                 }
@@ -674,19 +681,18 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                         aria-hidden="true"
                                         className="pointer-events-none absolute top-0 left-3 right-3 h-px"
                                         style={{
-                                            background:
-                                                "linear-gradient(90deg, transparent, rgba(255,225,196,0.6) 40%, rgba(255,255,255,0.78) 50%, rgba(255,225,196,0.6) 60%, transparent)",
+                                            background: "linear-gradient(110deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)",
                                         }}
                                     />
                                 ) : null}
                                 <span
-                                    className={`relative z-10 text-[9px] sm:text-[10px] md:text-xs uppercase tracking-widest ${
-                                        highlightJummahSummary ? "text-[#FFE2CB] font-semibold" : "text-white/70"
+                                    className={`relative z-10 text-[9px] sm:text-[10px] md:text-xs uppercase tracking-[0.2em] font-black ${
+                                        highlightJummahSummary ? "text-[#FFE2CB] font-semibold" : "text-white/40"
                                     }`}
                                 >
                                     Jummah
                                 </span>
-                                <span className="relative z-10 text-[12px] sm:text-xs md:text-sm font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
+                                <span className="relative z-10 text-[12px] sm:text-xs md:text-sm font-black tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]">
                                     {jummahSummaryTime ?? "—"}
                                 </span>
                             </div>
@@ -695,7 +701,6 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }
