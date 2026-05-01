@@ -1,16 +1,34 @@
 import { useEffect, useState } from "react";
 import { Mosque } from "@/types/prayer-times";
+import { DEFAULT_HOME_MOSQUE_SLUG } from "@/lib/home-prayer-defaults";
 
 const SELECTED_MOSQUE_STORAGE_KEY = "selected-mosque-id";
-const DEFAULT_MOSQUE_SLUG = "muslim-welfare-house";
 
 function getDefaultMosque(mosques: Mosque[]): Mosque | null {
   if (mosques.length === 0) return null;
-  return mosques.find((m) => m.slug === DEFAULT_MOSQUE_SLUG) ?? mosques[0];
+  return mosques.find((m) => m.slug === DEFAULT_HOME_MOSQUE_SLUG) ?? mosques[0];
 }
 
-export function usePersistedMosque(mosques: Mosque[]) {
-  const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(null);
+function readStoredMosqueId(): string | null {
+  try {
+    return window.localStorage.getItem(SELECTED_MOSQUE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredMosqueId(mosqueId: string): void {
+  try {
+    window.localStorage.setItem(SELECTED_MOSQUE_STORAGE_KEY, mosqueId);
+  } catch {
+    // Old or locked-down WebKit can deny localStorage. Prayer times should still render.
+  }
+}
+
+export function usePersistedMosque(mosques: Mosque[], initialMosque?: Mosque | null) {
+  const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(
+    initialMosque ?? getDefaultMosque(mosques),
+  );
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -20,9 +38,7 @@ export function usePersistedMosque(mosques: Mosque[]) {
       return;
     }
 
-    const storedMosqueId = window.localStorage.getItem(
-      SELECTED_MOSQUE_STORAGE_KEY
-    );
+    const storedMosqueId = readStoredMosqueId();
 
     if (storedMosqueId) {
       const storedMosque = mosques.find((mosque) => mosque.id === storedMosqueId);
@@ -45,10 +61,7 @@ export function usePersistedMosque(mosques: Mosque[]) {
 
   useEffect(() => {
     if (!isHydrated || !selectedMosque) return;
-    window.localStorage.setItem(
-      SELECTED_MOSQUE_STORAGE_KEY,
-      selectedMosque.id
-    );
+    writeStoredMosqueId(selectedMosque.id);
   }, [isHydrated, selectedMosque]);
 
   return { selectedMosque, setSelectedMosque, isHydrated };

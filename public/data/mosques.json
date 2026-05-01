@@ -76,7 +76,7 @@
       "lat": 53.398,
       "lng": -1.442,
       "slug": "al-rahman-mosque",
-      "isHidden": true
+      "isHidden": false
     },
     {
       "id": "castle-asian-community-centre",
@@ -130,7 +130,7 @@
       "lat": 53.392,
       "lng": -1.428,
       "slug": "quba-mosque",
-      "isHidden": true
+      "isHidden": false
     },
     {
       "id": "masjid-umar-sheffield",
@@ -157,7 +157,7 @@
       "lat": 53.382,
       "lng": -1.438,
       "slug": "al-huda-academy",
-      "isHidden": true
+      "isHidden": false
     },
     {
       "id": "firth-park-cultural-centre",
@@ -166,7 +166,17 @@
       "lat": 53.412,
       "lng": -1.458,
       "slug": "firth-park-cultural-centre",
-      "isHidden": true
+      "isHidden": false
+    },
+    {
+      "id": "sheffield-ummah-center",
+      "name": "Sheffield Ummah Center",
+      "address": "2 Carwood Grove, Sheffield S4 7FE, United Kingdom",
+      "lat": 53.4035,
+      "lng": -1.4515,
+      "slug": "sheffield-ummah-center",
+      "isHidden": false,
+      "website": "https://ummahcenter.mosqueprayertimes.org"
     }
   ]
 }

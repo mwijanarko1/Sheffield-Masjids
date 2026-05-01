@@ -24,6 +24,7 @@ export const MOSQUE_NAMES = [
   "High Hazels Community Centre",
   "Al-Huda Academy",
   "Firth Park Cultural Centre",
+  "Sheffield Ummah Center",
 ] as const;
 
 const DEFAULT_SITE_URL = "http://localhost:3000";

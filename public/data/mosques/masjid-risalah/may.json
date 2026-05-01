@@ -288,7 +288,7 @@
       "dhuhr": "13:30",
       "asr": "17:30",
       "maghrib": "5 mins after adhan",
-      "isha": "Entry Time"
+      "isha": "21:51"
     },
     {
       "date_range": "11-20",
@@ -296,7 +296,7 @@
       "dhuhr": "13:30",
       "asr": "17:45",
       "maghrib": "5 mins after adhan",
-      "isha": "Entry Time"
+      "isha": "22:02"
     },
     {
       "date_range": "21-31",
@@ -304,7 +304,7 @@
       "dhuhr": "13:30",
       "asr": "18:00",
       "maghrib": "5 mins after adhan",
-      "isha": "Entry Time"
+      "isha": "22:16"
     }
   ],
   "jummah_iqamah": "13:15"
