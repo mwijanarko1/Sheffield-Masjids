@@ -64,18 +64,23 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-          Timetable
-        </h1>
+    <div className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-10">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-white sm:text-4xl drop-shadow-sm">
+            Timetable
+          </h1>
+          <p className="mt-1 text-sm text-[var(--theme-text-muted)]">
+            Explore the monthly prayer schedule for your mosque.
+          </p>
+        </div>
         <MonthlyCalendarExportModal
           mosque={mosque}
           mosques={mosques}
           month={selectedMonth}
           year={currentYear}
           monthLabel={monthLabel}
-          triggerClassName="h-11 rounded-full border-white/20 bg-white/10 px-4 text-white hover:bg-white/20"
+          triggerClassName="min-h-11 rounded-xl border border-white/10 bg-white/5 px-6 text-sm font-black uppercase tracking-widest text-white transition-all hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] shadow-lg"
         />
       </div>
       <MonthlyTimetable
