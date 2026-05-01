@@ -1,4 +1,4 @@
-import { getIqamahTime, getIqamahTimesForDate, resolveMonthlyDayDisplay } from "@/lib/prayer-times";
+import { getIqamahTime, getIqamahTimesForDate, resolveMonthlyDayDisplay, isMasjidRisalah, isRisalahIshaIqamahMatchesAdhanPeriod } from "@/lib/prayer-times";
 import type { MonthlyPrayerTimes } from "@/types/prayer-times";
 import type {
   CalendarEventInput,
@@ -120,6 +120,12 @@ export async function buildMonthlyTimetableRowsAsync({
     const jummahForRow =
       iqamahTimes.jummah?.trim() ? iqamahTimes.jummah : monthlyData.jummah_iqamah;
 
+    const rowCalendarDate = new Date(year, selectedMonth - 1, d);
+    const ishaIqamah =
+      isMasjidRisalah(slug) && isRisalahIshaIqamahMatchesAdhanPeriod(rowCalendarDate)
+        ? day.isha
+        : getIqamahTime("isha", day.isha, iqamahTimes, day.maghrib);
+
     rows.push({
       day: d,
       dayLabel: formatDayLabel(d, selectedMonth),
@@ -134,7 +140,7 @@ export async function buildMonthlyTimetableRowsAsync({
       maghribAdhan: day.maghrib,
       maghribIqamah: getIqamahTime("maghrib", day.maghrib, iqamahTimes),
       ishaAdhan: day.isha,
-      ishaIqamah: getIqamahTime("isha", day.isha, iqamahTimes, day.maghrib),
+      ishaIqamah,
       jummahIqamah: jummahForRow || "—",
     });
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import {
   getPrayerTimesForDate,
   getIqamahTimesForSpecificDateWithDstMapping,
@@ -10,6 +10,7 @@ import {
   formatDateForDisplay,
   formatTo12Hour,
   isValidTimeForMarkup,
+  resolveIshaIqamahForDisplay,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from "@/types/prayer-times";
 import { Button } from "@/components/ui/button";
@@ -31,13 +32,6 @@ interface MosquePrayerData {
 
 const PRAYER_NAMES = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha", "Jummah"] as const;
 
-function isSummerPeriod(date: Date): boolean {
-  const year = date.getFullYear();
-  const may15 = new Date(year, 4, 15);
-  const aug15 = new Date(year, 7, 15);
-  return date >= may15 && date <= aug15;
-}
-
 interface ComparePrayerTimesProps {
   /** When true, always show the table (for dedicated compare page) */
   standalone?: boolean;
@@ -55,8 +49,6 @@ export default function ComparePrayerTimes({
   });
   const [data, setData] = useState<MosquePrayerData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const isSummer = useMemo(() => isSummerPeriod(selectedDate), [selectedDate]);
 
   useEffect(() => {
     if (!isOpen && !standalone) return;
@@ -128,8 +120,13 @@ export default function ComparePrayerTimes({
       case "Maghrib":
         return getIqamahTime("maghrib", pt.maghrib, iq);
       case "Isha":
-        if (isSummer) return "After Maghrib";
-        return getIqamahTime("isha", pt.isha, iq, pt.maghrib);
+        return resolveIshaIqamahForDisplay(
+          mosqueData.mosque.slug,
+          selectedDate,
+          pt.isha,
+          iq,
+          pt.maghrib,
+        );
       case "Jummah":
         return iq.jummah || "—";
       default:

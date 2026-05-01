@@ -227,6 +227,50 @@ function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): num
 
 const RISALAH_SLUG = 'masjid-risalah';
 
+/** May 15–Aug 15 inclusive: Isha iqāmah uses summer rules in the app UI. */
+export function isSummerIshaPeriod(date: Date): boolean {
+  const year = date.getFullYear();
+  const may15 = new Date(year, 4, 15);
+  const aug15 = new Date(year, 7, 15);
+  return date >= may15 && date <= aug15;
+}
+
+/**
+ * Masjid Risalah: Isha iqāmah follows the printed Isha adhān from 1 May through 31 July inclusive.
+ * (Runs from the start of May so early May is not stuck on JSON band times like 21:51.)
+ */
+export function isRisalahIshaIqamahMatchesAdhanPeriod(date: Date): boolean {
+  const year = date.getFullYear();
+  const may1 = new Date(year, 4, 1);
+  const july31 = new Date(year, 6, 31);
+  return date >= may1 && date <= july31;
+}
+
+/** Resolve Isha iqāmah clock label: Risalah May–July uses adhān; general summer uses "After Maghrib"; else JSON iqāmah. */
+export function resolveIshaIqamahForDisplay(
+  slug: string,
+  date: Date,
+  ishaAdhan: string,
+  iqamahTimes: DailyIqamahTimes,
+  maghribAdhan: string,
+): string {
+  if (isMasjidRisalah(slug) && isRisalahIshaIqamahMatchesAdhanPeriod(date)) {
+    return ishaAdhan;
+  }
+  if (isSummerIshaPeriod(date)) {
+    return "After Maghrib";
+  }
+  return getIqamahTime("isha", ishaAdhan, iqamahTimes, maghribAdhan);
+}
+
+export function isMasjidRisalah(slug: string): boolean {
+  try {
+    return normalizeMosqueSlug(slug) === RISALAH_SLUG;
+  } catch {
+    return false;
+  }
+}
+
 /** Published timetables already use UK civil time (BST/GMT); skip client ±1h and iqamah month mapping. */
 const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>(['masjid-al-huda-sheffield']);
 
@@ -1113,12 +1157,12 @@ export interface NextPrayerCountdownResult {
 export function getNextPrayerAndCountdown(
   prayerTimes: DailyPrayerTimes,
   iqamahTimes: DailyIqamahTimes,
-  options?: { selectedDate?: Date; isSummer?: boolean }
+  options?: { selectedDate?: Date; mosqueSlug?: string }
 ): NextPrayerCountdownResult {
   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
   const checkDate = options?.selectedDate ?? now;
   const isFriday = checkDate.getDay() === 5;
-  const isSummer = options?.isSummer ?? false;
+  const slug = options?.mosqueSlug ?? "";
 
   const prayers: { name: string; adhanTime: string; iqamahTime: string }[] = [
     {
@@ -1146,9 +1190,13 @@ export function getNextPrayerAndCountdown(
     {
       name: "Isha",
       adhanTime: prayerTimes.isha,
-      iqamahTime: isSummer
-        ? "After Maghrib"
-        : getIqamahTime("isha", prayerTimes.isha, iqamahTimes, prayerTimes.maghrib),
+      iqamahTime: resolveIshaIqamahForDisplay(
+        slug,
+        checkDate,
+        prayerTimes.isha,
+        iqamahTimes,
+        prayerTimes.maghrib,
+      ),
     },
   ];
 

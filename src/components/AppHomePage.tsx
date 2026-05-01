@@ -13,6 +13,7 @@ import {
     getDisplayedPrayerTimes,
     getNextPrayerAndCountdown,
     formatDateForDisplay,
+    resolveIshaIqamahForDisplay,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import { SunPath } from "@/components/SunPath";
@@ -162,13 +163,6 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         return sel.year === n.year && sel.month === n.month && sel.day === n.day;
     }, [selectedDate]);
 
-    const isSummer = useMemo(() => {
-        const year = selectedDate.getFullYear();
-        const may15 = new Date(year, 4, 15);
-        const aug15 = new Date(year, 7, 15);
-        return selectedDate >= may15 && selectedDate <= aug15;
-    }, [selectedDate]);
-
     const isFridaySelected = useMemo(() => {
         const weekday = new Intl.DateTimeFormat("en-GB", {
             timeZone: SHEFFIELD_TZ,
@@ -229,7 +223,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             setCurrentPrayer(getCurrentPrayer(displayedPrayerTimes));
             const result = getNextPrayerAndCountdown(displayedPrayerTimes, iqamahTimes, {
                 selectedDate,
-                isSummer,
+                mosqueSlug: mosque.slug,
             });
             setNextPrayer(result.nextPrayer);
             setCountdown(result.countdown);
@@ -240,7 +234,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
-    }, [displayedPrayerTimes, iqamahTimes, isToday, selectedDate, isSummer]);
+    }, [displayedPrayerTimes, iqamahTimes, isToday, selectedDate, mosque.slug]);
 
     // Clock tick when not viewing today (countdown effect handles when isToday)
     useEffect(() => {
@@ -265,7 +259,14 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                 case "Dhuhr": return getIqamahTime("dhuhr", displayedPrayerTimes.dhuhr, iq);
                 case "Asr": return getIqamahTime("asr", displayedPrayerTimes.asr, iq);
                 case "Maghrib": return getIqamahTime("maghrib", displayedPrayerTimes.maghrib, iq);
-                case "Isha": return isSummer ? "After Maghrib" : getIqamahTime("isha", displayedPrayerTimes.isha, iq, displayedPrayerTimes.maghrib);
+                case "Isha":
+                    return resolveIshaIqamahForDisplay(
+                        mosque.slug,
+                        selectedDate,
+                        displayedPrayerTimes.isha,
+                        iq,
+                        displayedPrayerTimes.maghrib,
+                    );
                 default: return "—";
             }
         };
@@ -282,7 +283,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             { id: "isha", label: "Isha'a", adhan: displayedPrayerTimes.isha, iqamah: getIqamah("Isha") },
         ];
         return items;
-    }, [displayedPrayerTimes, iqamahTimes, isSummer]);
+    }, [displayedPrayerTimes, iqamahTimes, mosque.slug, selectedDate]);
 
     const upcomingPrayer = useMemo(() => {
         if (!displayedPrayerTimes || !iqamahTimes || !isToday) return null;
