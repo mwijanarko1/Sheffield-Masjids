@@ -96,7 +96,15 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
       
       <div className="mt-12 text-center">
         <p className="text-[10px] uppercase tracking-widest text-white/30 font-bold">
-          Sheffield Masjids v1.0
+          Built by{" "}
+          <a
+            href="https://mikhailwijanarko.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/50 hover:text-white transition-colors underline underline-offset-2"
+          >
+            @mikhailbuilds
+          </a>
         </p>
       </div>
     </div>

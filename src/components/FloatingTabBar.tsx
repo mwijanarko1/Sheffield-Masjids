@@ -61,6 +61,9 @@ export function FloatingTabBar() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  /* Hide tab bar on Masjidly product pages so they feel standalone */
+  if (pathname?.startsWith("/masjidly")) return null;
+
   useLayoutEffect(() => {
     const container = innerRef.current;
     const activeElement = activeTabRef.current;

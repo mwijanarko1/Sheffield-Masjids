@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const NIGHT_GRADIENT =
@@ -8,8 +9,12 @@ const NIGHT_GRADIENT =
 /**
  * Full-bleed night gradient + stars. Renders behind all page content
  * so the same background appears on every route.
+ * Hidden on /masjidly/* so the landing page can render its own gradient.
  */
 export default function DynamicBackground() {
+    const pathname = usePathname();
+    if (pathname?.startsWith("/masjidly")) return null;
+
     return (
         <>
             {/* Full-bleed background - extends to screen edges (iPhone bezels, notch) */}
