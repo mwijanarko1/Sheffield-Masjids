@@ -1,6 +1,7 @@
 import React from "react";
 import { Comfortaa } from "next/font/google";
 import MasjidlyGradient from "./MasjidlyGradient";
+import type { DailyPrayerTimes } from "@/types/prayer-times";
 
 const comfortaa = Comfortaa({
   subsets: ["latin"],
@@ -11,18 +12,19 @@ const comfortaa = Comfortaa({
 
 interface MasjidlyLayoutProps {
   children: React.ReactNode;
+  prayerTimes?: DailyPrayerTimes | null;
 }
 
 /**
  * Shared wrapper for all /masjidly/* pages.
  * Provides the atmospheric gradient, Comfortaa typography, and safe-area padding.
  */
-export default function MasjidlyLayout({ children }: MasjidlyLayoutProps) {
+export default function MasjidlyLayout({ children, prayerTimes }: MasjidlyLayoutProps) {
   return (
     <div
       className={`${comfortaa.variable} font-[var(--font-comfortaa)] relative min-h-[100dvh] w-full overflow-x-hidden text-white`}
     >
-      <MasjidlyGradient />
+      <MasjidlyGradient prayerTimes={prayerTimes} />
       <div className="relative z-10 flex min-h-[100dvh] flex-col">
         <main className="flex-1">
           {children}
