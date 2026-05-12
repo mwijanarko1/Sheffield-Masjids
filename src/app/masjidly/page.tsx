@@ -3,6 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import MasjidlyLayout from "@/components/masjidly/MasjidlyLayout";
 import FeatureCard from "@/components/masjidly/FeatureCard";
+import { getMosques } from "@/lib/mosques";
+import { getDefaultHomeMosque } from "@/lib/home-prayer-defaults";
+import { getPrayerTimesForDate } from "@/lib/prayer-times";
+import type { DailyPrayerTimes } from "@/types/prayer-times";
 import {
   Bell,
   CalendarDays,
@@ -92,9 +96,22 @@ const FEATURES = [
   },
 ];
 
-export default function MasjidlyLandingPage() {
+export default async function MasjidlyLandingPage() {
+  let prayerTimes: DailyPrayerTimes | null = null;
+
+  try {
+    const mosques = await getMosques();
+    const mosque = getDefaultHomeMosque(mosques);
+    if (mosque) {
+      const today = new Date();
+      prayerTimes = await getPrayerTimesForDate(mosque.slug, today);
+    }
+  } catch {
+    // Fallback to null — gradient will use estimated times
+  }
+
   return (
-    <MasjidlyLayout>
+    <MasjidlyLayout prayerTimes={prayerTimes}>
       {/* ─── Hero ─── */}
       <section className="relative flex min-h-[100dvh] flex-col items-center justify-center px-6 py-24 text-center">
         <div className="max-w-2xl">
@@ -152,7 +169,7 @@ export default function MasjidlyLandingPage() {
             {/* Android APK */}
             <a
               href="#"
-              className="inline-flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-8 py-4 text-white shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-white/15 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+              className="inline-flex items-center gap-3 rounded-full bg-[#3DDC84] px-8 py-4 text-[#111111] shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3DDC84]/50"
             >
               <svg
                 width="24"
