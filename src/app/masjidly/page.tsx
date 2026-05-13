@@ -144,7 +144,9 @@ export default async function MasjidlyLandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             {/* App Store */}
             <a
-              href="#"
+              href="https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-[#111111] shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             >
               <svg
