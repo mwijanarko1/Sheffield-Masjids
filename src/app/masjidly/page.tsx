@@ -168,7 +168,8 @@ export default async function MasjidlyLandingPage() {
 
             {/* Android APK */}
             <a
-              href="#"
+              href="/masjidly/app-release.apk"
+              download="Masjidly.apk"
               className="inline-flex items-center gap-3 rounded-full bg-[#3DDC84] px-8 py-4 text-[#111111] shadow-[0_8px_30px_rgba(0,0,0,0.25)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)] hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3DDC84]/50"
             >
               <svg
