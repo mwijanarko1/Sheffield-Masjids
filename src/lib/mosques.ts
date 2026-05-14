@@ -7,6 +7,14 @@ import { HIDDEN_MOSQUE_SLUGS } from "@/lib/site";
 import { Mosque } from "@/types/prayer-times";
 
 const MOSQUES_CACHE_TTL_MS = 60_000;
+const SHEFFIELD_CITY_SLUG = "sheffield";
+const DEFAULT_SHEFFIELD_LOCATION = {
+  citySlug: SHEFFIELD_CITY_SLUG,
+  cityName: "Sheffield",
+  countryCode: "GB",
+  countryName: "United Kingdom",
+  timezone: "Europe/London",
+} as const;
 
 type TimedCacheEntry<T> = {
   value: T;
@@ -15,7 +23,7 @@ type TimedCacheEntry<T> = {
 
 let mosquesCache: TimedCacheEntry<Mosque[]> | null = null;
 let mosquesInFlight: Promise<Mosque[]> | null = null;
-const listMosquesQuery = makeFunctionReference<"query">("mosques:list");
+const listMosquesByCityQuery = makeFunctionReference<"query">("mosques:listByCity");
 
 function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
   return {
@@ -48,7 +56,40 @@ function normalizeMosque(value: unknown): Mosque | null {
     return null;
   }
 
-  const mosque: Mosque = { id, name, address, lat, lng, slug };
+  const citySlug =
+    typeof record.citySlug === "string" && record.citySlug.trim()
+      ? record.citySlug.trim().toLowerCase()
+      : DEFAULT_SHEFFIELD_LOCATION.citySlug;
+  const cityName =
+    typeof record.cityName === "string" && record.cityName.trim()
+      ? record.cityName.trim()
+      : DEFAULT_SHEFFIELD_LOCATION.cityName;
+  const countryCode =
+    typeof record.countryCode === "string" && record.countryCode.trim()
+      ? record.countryCode.trim().toUpperCase()
+      : DEFAULT_SHEFFIELD_LOCATION.countryCode;
+  const countryName =
+    typeof record.countryName === "string" && record.countryName.trim()
+      ? record.countryName.trim()
+      : DEFAULT_SHEFFIELD_LOCATION.countryName;
+  const timezone =
+    typeof record.timezone === "string" && record.timezone.trim()
+      ? record.timezone.trim()
+      : DEFAULT_SHEFFIELD_LOCATION.timezone;
+
+  const mosque: Mosque = {
+    id,
+    name,
+    address,
+    lat,
+    lng,
+    slug,
+    citySlug,
+    cityName,
+    countryCode,
+    countryName,
+    timezone,
+  };
   if (typeof record.website === "string" && record.website.trim()) {
     mosque.website = record.website.trim();
   }
@@ -80,7 +121,7 @@ async function loadMosquesFromConvex(): Promise<Mosque[]> {
 
   try {
     const client = new ConvexHttpClient(convexUrl);
-    const data = await client.query(listMosquesQuery, {});
+    const data = await client.query(listMosquesByCityQuery, { citySlug: SHEFFIELD_CITY_SLUG });
     if (!Array.isArray(data)) return [];
 
     return dedupeMosques(
@@ -128,7 +169,10 @@ export async function getMosques({
   if (includeHidden) return mosques;
 
   return mosques.filter(
-    (mosque) => !mosque.isHidden && !HIDDEN_MOSQUE_SLUGS.has(mosque.slug),
+    (mosque) =>
+      mosque.citySlug === SHEFFIELD_CITY_SLUG &&
+      !mosque.isHidden &&
+      !HIDDEN_MOSQUE_SLUGS.has(mosque.slug),
   );
 }
 

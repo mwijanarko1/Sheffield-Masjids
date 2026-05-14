@@ -4,6 +4,14 @@ import test from "node:test";
 import { getDefaultHomeMosque } from "@/lib/home-prayer-widget-data";
 import type { Mosque } from "@/types/prayer-times";
 
+const sheffieldLocation = {
+  citySlug: "sheffield",
+  cityName: "Sheffield",
+  countryCode: "GB",
+  countryName: "United Kingdom",
+  timezone: "Europe/London",
+};
+
 const mosques: Mosque[] = [
   {
     id: "al-huda",
@@ -12,6 +20,7 @@ const mosques: Mosque[] = [
     lat: 53.38,
     lng: -1.47,
     slug: "al-huda-academy",
+    ...sheffieldLocation,
   },
   {
     id: "muslim-welfare-house",
@@ -20,6 +29,7 @@ const mosques: Mosque[] = [
     lat: 53.39,
     lng: -1.48,
     slug: "muslim-welfare-house",
+    ...sheffieldLocation,
   },
 ];
 

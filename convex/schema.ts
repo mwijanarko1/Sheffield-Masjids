@@ -34,6 +34,19 @@ const ramadanPrayerTimeValidator = v.object({
 });
 
 export default defineSchema({
+  cities: defineTable({
+    slug: v.string(),
+    name: v.string(),
+    region: v.optional(v.string()),
+    countryCode: v.string(),
+    countryName: v.string(),
+    timezone: v.string(),
+    lat: v.optional(v.number()),
+    lng: v.optional(v.number()),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_country", ["countryCode"]),
+
   mosques: defineTable({
     id: v.string(),
     name: v.string(),
@@ -41,10 +54,16 @@ export default defineSchema({
     lat: v.number(),
     lng: v.number(),
     slug: v.string(),
+    citySlug: v.optional(v.string()),
+    cityName: v.optional(v.string()),
+    countryCode: v.optional(v.string()),
+    countryName: v.optional(v.string()),
+    timezone: v.optional(v.string()),
     website: v.optional(v.string()),
     isHidden: v.optional(v.boolean()),
   })
     .index("by_slug", ["slug"])
+    .index("by_city_slug", ["citySlug"])
     .index("by_mosque_id", ["id"]),
 
   monthlyPrayerTimes: defineTable({

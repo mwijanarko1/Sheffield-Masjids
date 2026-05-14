@@ -3,8 +3,9 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const NIGHT_GRADIENT =
-    "bg-gradient-to-b from-[#0A1128] via-[#121c38] to-[#1A2642]";
+/** Same gradient as `DynamicBackground` — full-bleed night sky behind the app. */
+export const NIGHT_GRADIENT =
+  "bg-gradient-to-b from-[#0A1128] via-[#121c38] to-[#1A2642]";
 
 /**
  * Full-bleed night gradient + stars. Renders behind all page content
