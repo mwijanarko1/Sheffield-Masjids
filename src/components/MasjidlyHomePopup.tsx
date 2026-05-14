@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NIGHT_GRADIENT } from "@/components/DynamicBackground";
+import { useMasjidlyPromoOverlay } from "@/contexts/MasjidlyPromoOverlayContext";
 import { cn } from "@/lib/utils";
 
 const MASJIDLY_CLICKED_KEY = "masjidly_download_clicked";
@@ -20,6 +21,7 @@ function markClicked() {
 
 export default function MasjidlyHomePopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const masjidlyPromo = useMasjidlyPromoOverlay();
 
   useEffect(() => {
     try {
@@ -31,6 +33,16 @@ export default function MasjidlyHomePopup() {
       // localStorage unavailable — skip modal
     }
   }, []);
+
+  const setPromoOpen = masjidlyPromo?.setPromoOpen;
+
+  useEffect(() => {
+    if (!setPromoOpen) return;
+    setPromoOpen(isOpen);
+    return () => {
+      setPromoOpen(false);
+    };
+  }, [isOpen, setPromoOpen]);
 
   function handleDownloadClick() {
     markClicked();
@@ -46,9 +58,9 @@ export default function MasjidlyHomePopup() {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex min-h-0 justify-center",
-        "items-end p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-[max(0.5rem,env(safe-area-inset-top))]",
-        "sm:items-center sm:p-4 sm:pb-4 sm:pt-4",
+        "fixed inset-0 z-50 flex min-h-0 items-center justify-center",
+        "p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]",
+        "pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]",
       )}
       role="dialog"
       aria-modal="true"
@@ -63,8 +75,7 @@ export default function MasjidlyHomePopup() {
       <div
         className={cn(
           "relative z-10 w-full min-h-0 max-w-lg px-0",
-          "max-h-[calc(100dvh-1rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))]",
-          "sm:max-h-[min(92dvh,calc(100dvh-2rem-env(safe-area-inset-top)-env(safe-area-inset-bottom)))]",
+          "max-h-[min(92dvh,calc(100dvh-2rem-env(safe-area-inset-top)-env(safe-area-inset-bottom)))]",
         )}
       >
         {/* Gradient hairline border */}
@@ -72,7 +83,7 @@ export default function MasjidlyHomePopup() {
           className={cn(
             "rounded-[1.35rem] bg-gradient-to-br from-amber-400/35 via-white/12 to-indigo-400/35 p-px",
             "shadow-[0_24px_80px_-16px_rgba(0,0,0,0.65)]",
-            "animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-300 ease-out",
+            "animate-in fade-in zoom-in-95 duration-300 ease-out",
           )}
         >
           <div
