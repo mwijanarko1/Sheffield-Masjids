@@ -52,6 +52,11 @@ export interface Mosque {
   lat: number;
   lng: number;
   slug: string;
+  citySlug: string;
+  cityName: string;
+  countryCode: string;
+  countryName: string;
+  timezone: string;
   website?: string;
   isHidden?: boolean;
 }

@@ -201,6 +201,11 @@ const MosqueSeedSchema = z
     lat: z.number().finite(),
     lng: z.number().finite(),
     slug: z.string().regex(MOSQUE_SLUG_RE),
+    citySlug: z.string().regex(MOSQUE_SLUG_RE).optional(),
+    cityName: z.string().min(1).optional(),
+    countryCode: z.string().min(2).optional(),
+    countryName: z.string().min(1).optional(),
+    timezone: z.string().min(1).optional(),
     website: z.string().optional(),
     isHidden: z.boolean().optional(),
   })

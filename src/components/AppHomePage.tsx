@@ -18,6 +18,7 @@ import {
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import { SunPath } from "@/components/SunPath";
 import { CustomSelect } from "@/components/ui/custom-select";
+import MasjidlyHomePopup from "@/components/MasjidlyHomePopup";
 import type { InitialHomePrayerWidgetData } from "@/lib/home-prayer-widget-data";
 
 interface AppHomePageProps {
@@ -430,6 +431,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
 
     return (
         <div className="relative isolate flex h-full w-full flex-col font-sans text-white min-h-[100dvh]">
+            <MasjidlyHomePopup />
             <h1 className="sr-only">
                 Sheffield prayer times — adhan and iqamah for mosques across the city
             </h1>
