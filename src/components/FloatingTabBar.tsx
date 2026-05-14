@@ -10,6 +10,7 @@ import {
   Scale,
   SlidersHorizontal,
 } from "lucide-react";
+import { useMasjidlyPromoOverlay } from "@/contexts/MasjidlyPromoOverlayContext";
 
 const TABS = [
   {
@@ -40,6 +41,7 @@ const TABS = [
 
 export function FloatingTabBar() {
   const pathname = usePathname();
+  const masjidlyPromo = useMasjidlyPromoOverlay();
   const innerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLAnchorElement | null>(null);
   const [slideStyle, setSlideStyle] = useState({ width: 0, x: 0 });
@@ -60,9 +62,6 @@ export function FloatingTabBar() {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-
-  /* Hide tab bar on Masjidly product pages so they feel standalone */
-  if (pathname?.startsWith("/masjidly")) return null;
 
   useLayoutEffect(() => {
     const container = innerRef.current;
@@ -158,5 +157,7 @@ export function FloatingTabBar() {
   );
 
   if (!mounted || typeof document === "undefined") return null;
+  /* Hide tab bar on Masjidly product pages and while the home Masjidly promo is open */
+  if (pathname?.startsWith("/masjidly") || masjidlyPromo?.promoOpen) return null;
   return createPortal(navContent, document.body);
 }
