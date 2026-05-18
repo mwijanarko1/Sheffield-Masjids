@@ -61,9 +61,9 @@ export default function LastTenChecklist({
                 onChange={() => onToggleItem(item.id)}
                 className={cn(
                   "h-5 w-5 shrink-0 rounded-md border-2 appearance-none cursor-pointer transition-all duration-200",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--theme-bg)]",
                   checked
-                    ? "border-[#FFB380] bg-[#FFB380]"
+                    ? "border-[var(--theme-accent-countdown)] bg-[var(--theme-accent-countdown)]"
                     : "border-white/25 bg-transparent hover:border-white/40",
                 )}
                 style={{
@@ -95,9 +95,9 @@ export default function LastTenChecklist({
                 onClick={() => setOpenId(isOpen ? null : item.id)}
                 className={cn(
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-200",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380]",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)]",
                   isOpen
-                    ? "bg-[#FFB380]/15 text-[#FFB380]"
+                    ? "bg-[var(--theme-accent-countdown)]/15 text-[var(--theme-accent-countdown)]"
                     : "text-white/40 hover:bg-white/8 hover:text-white/60",
                 )}
               >
@@ -121,7 +121,7 @@ export default function LastTenChecklist({
                 <div className="mt-3 ml-8 space-y-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
                   {/* Benefit */}
                   <section className="space-y-1.5">
-                    <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FFB380]/70">
+                    <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--theme-accent-countdown)]/70">
                       Benefit
                     </h3>
                     <p className="text-sm leading-relaxed text-white/70 break-words">
@@ -140,7 +140,7 @@ export default function LastTenChecklist({
 
                   {/* Source */}
                   <section className="space-y-1.5">
-                    <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#FFB380]/70">
+                    <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--theme-accent-countdown)]/70">
                       Source
                     </h3>
                     <p className="text-sm leading-relaxed text-white/70 break-words">
@@ -165,7 +165,7 @@ export default function LastTenChecklist({
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-[#FFB380]/10 px-3 py-1.5 text-xs font-semibold text-[#FFB380] transition-colors hover:bg-[#FFB380]/20"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--theme-accent-countdown)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--theme-accent-countdown)] transition-colors hover:bg-[var(--theme-accent-countdown)]/20"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                           Explore Source
@@ -176,7 +176,7 @@ export default function LastTenChecklist({
                           href={item.charityLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/20"
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--theme-accent-teal)]/15 px-3 py-1.5 text-xs font-semibold text-[var(--theme-accent-teal-light)] transition-colors hover:bg-[var(--theme-accent-teal)]/25"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                           Give Charity

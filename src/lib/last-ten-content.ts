@@ -22,10 +22,20 @@ export interface LastTenChecklistItem {
 
 export type LastTenChecklistState = Record<string, Record<string, boolean>>;
 
+/** When the checklist is embedded on the Dhul Hijjah tracker, slots are Islamic days 1–10 (not Ramadan nights). */
+export interface DhulHijjahDayChecklistContext {
+  currentDay: number;
+  isBefore: boolean;
+  isAfter: boolean;
+}
+
 export const LAST_TEN_STORAGE_KEY = "sheffield-masjids:last-ten-checklist:v1";
 export const LAST_TEN_WELCOME_KEY = "sheffield-masjids:last-ten-welcome-seen:v1";
 
 export const LAST_TEN_NIGHTS = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30] as const;
+
+/** Dhul Hijjah embedded checklist: one slot per Islamic day (maghrib to maghrib). */
+export const DHUL_HIJJAH_CHECKLIST_DAYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
 export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
   {
@@ -38,7 +48,7 @@ export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
     source: "Allah (تبارك وتعالى) states in the Quran: 'Indeed, those men and women who give in charity and lend to Allah a good loan will have it multiplied for them, and they will have an honorable reward' (Surah Al-Hadid 57:18).",
     sourceAr: "قال الله تبارك وتعالى في القرآن الكريم: (إِنَّ ٱلْمُصَّدِّقِينَ وَٱلْمُصَّدِّقَـٰتِ وَأَقْرَضُوا۟ ٱللَّهَ قَرْضًا حَسَنًۭا يُضَـٰعَفُ لَهُمْ وَلَهُمْ أَجْرٌۭ كَرِيمٌۭ) سورة الحديد ١٨",
     link: "https://quran.com/57:18",
-    charityLink: "https://www.as-salaamfoundation.co.uk/appeals/1for1-appeal-2026/",
+    charityLink: "https://www.as-salaamfoundation.co.uk/",
   },
   {
     id: "surah-ikhlas-three-times",
@@ -85,17 +95,6 @@ export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
     link: "https://sunnah.com/muslim:408",
   },
   {
-    id: "last-verses-baqarah",
-    difficulty: ["medium", "hard"],
-    actionPoint: "Recite the final two verses of Surat Al-Baqarah.",
-    actionPointAr: "اقرأ الآيتين من آخر سورة البقرة",
-    benefit: "It is reported that these verses are sufficient for the one who recites them at night.",
-    benefitAr: "ورد أنهما تكفيان من قرأهما في ليلة",
-    source: "Imam al-Bukhari reports in his Sahih on the authority of Abu Mas'ud that the Messenger of Allah ﷺ is reported to have said: 'Whoever recites the last two verses of Surat al-Baqarah at night, they will be sufficient for him.'",
-    sourceAr: "رواه الإمام البخاري في صحيحه (5009) عن أبي مسعود رضي الله عنه أن رسول الله صلى الله عليه وسلم قال: (مَنْ قَرَأَ بِالآيَتَيْنِ مِنْ آخِرِ سُورَةِ الْبَقَرَةِ فِي لَيْلَةٍ كَفَتَاهُ)",
-    link: "https://sunnah.com/bukhari:5009",
-  },
-  {
     id: "tasbih-hundred-times",
     difficulty: ["medium", "hard"],
     actionPoint: "Say 'Subhanallah' 100 times.",
@@ -120,7 +119,8 @@ export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
   {
     id: "qiyam-imanan-wa-ihtisaban",
     difficulty: ["easy", "medium", "hard"],
-    actionPoint: "Pray Taraweeh with sincere faith and hope for reward.",
+    actionPoint:
+      "Stand for night prayer in Ramadan with sincere faith and hope for reward.",
     actionPointAr: "قيام ليالي العشر الأواخر من رمضان إيمانًا واحتسابًا",
     benefit: "It is reported that previous sins may be forgiven.",
     benefitAr: "ورد أنه يغفر للمرء ما تقدم من ذنبه",
@@ -129,10 +129,38 @@ export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
     link: "https://sunnah.com/bukhari:37",
   },
   {
-    id: "tahlil-hundred-times",
+    id: "tahlil-10-times",
+    difficulty: ["easy"],
+    actionPoint:
+      "Recite 'La ilaha illa Allah wahdahu la sharika lah, lahul-mulk wa lahul-hamd, wa huwa 'ala kulli shay'in qadir' 10 times.",
+    actionPointAr:
+      "قل: (لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير) ١٠ مرة",
+    benefit: "It is reported that the reciter receives the reward of freeing ten slaves, has one hundred good deeds recorded, one hundred sins removed, and is protected from Shaytan.",
+    benefitAr: "ورد أن قائلها له عدل عشر رقاب، وتكتب له مائة حسنة، وتمحى عنه مائة سيئة، وتكون له حرزًا من الشيطان",
+    source: "Imam al-Bukhari reports in his Sahih on the authority of Abu Hurayrah that the Messenger of Allah ﷺ is reported to have said: 'Whoever says [this] one hundred times in a day will have a reward equivalent to that of freeing ten slaves, one hundred good deeds will be recorded to his credit, one hundred sins will be blotted out from his scroll, and it will be a protection for him from Satan on that day until evening.'",
+    sourceAr: "رواه الإمام البخاري في صحيحه (٣٢٩٣) عن أبي هريرة رضي الله عنه أن رسول الله صلى الله عليه وسلم قال: (مَنْ قَالَ لا إِلَهَ إِلا اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ فِي يَوْمٍ مِائَةَ مَرَّةٍ كَانَتْ لَهُ عَدْلَ عَشْرِ رِقَابٍ وَكُتِبَتْ لَه مِائَةُ حَسَنَةٍ وَمُحِيَتْ عَنْهُ مِائَةُ سَيِّئَةٍ، وَكَانَتْ لَهُ حِرْزًا مِنَ الشَّيْطَانِ يَوْمَهُ ذَلِكَ حَتَّى يُمْسِيَ)",
+    link: "https://sunnah.com/bukhari:3293",
+  },
+  {
+    id: "tahlil-50-times",
+    difficulty: ["medium"],
+    actionPoint:
+      "Recite 'La ilaha illa Allah wahdahu la sharika lah, lahul-mulk wa lahul-hamd, wa huwa 'ala kulli shay'in qadir' 50 times.",
+    actionPointAr:
+      "قل: (لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير) ٥٠ مرة",
+    benefit: "It is reported that the reciter receives the reward of freeing ten slaves, has one hundred good deeds recorded, one hundred sins removed, and is protected from Shaytan.",
+    benefitAr: "ورد أن قائلها له عدل عشر رقاب، وتكتب له مائة حسنة، وتمحى عنه مائة سيئة، وتكون له حرزًا من الشيطان",
+    source: "Imam al-Bukhari reports in his Sahih on the authority of Abu Hurayrah that the Messenger of Allah ﷺ is reported to have said: 'Whoever says [this] one hundred times in a day will have a reward equivalent to that of freeing ten slaves, one hundred good deeds will be recorded to his credit, one hundred sins will be blotted out from his scroll, and it will be a protection for him from Satan on that day until evening.'",
+    sourceAr: "رواه الإمام البخاري في صحيحه (٣٢٩٣) عن أبي هريرة رضي الله عنه أن رسول الله صلى الله عليه وسلم قال: (مَنْ قَالَ لا إِلَهَ إِلا اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ فِي يَوْمٍ مِائَةَ مَرَّةٍ كَانَتْ لَهُ عَدْلَ عَشْرِ رِقَابٍ وَكُتِبَتْ لَه مِائَةُ حَسَنَةٍ وَمُحِيَتْ عَنْهُ مِائَةُ سَيِّئَةٍ، وَكَانَتْ لَهُ حِرْزًا مِنَ الشَّيْطَانِ يَوْمَهُ ذَلِكَ حَتَّى يُمْسِيَ)",
+    link: "https://sunnah.com/bukhari:3293",
+  },
+  {
+    id: "tahlil-100-times",
     difficulty: ["hard"],
-    actionPoint: "Recite 'La ilaha illa Allah wahdahu la sharika lah, lahul-mulk wa lahul-hamd, wa huwa 'ala kulli shay'in qadir' 100 times.",
-    actionPointAr: "قل: (لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير) ١٠٠ مرة",
+    actionPoint:
+      "Recite 'La ilaha illa Allah wahdahu la sharika lah, lahul-mulk wa lahul-hamd, wa huwa 'ala kulli shay'in qadir' 100 times.",
+    actionPointAr:
+      "قل: (لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير) ١٠٠ مرة",
     benefit: "It is reported that the reciter receives the reward of freeing ten slaves, has one hundred good deeds recorded, one hundred sins removed, and is protected from Shaytan.",
     benefitAr: "ورد أن قائلها له عدل عشر رقاب، وتكتب له مائة حسنة، وتمحى عنه مائة سيئة، وتكون له حرزًا من الشيطان",
     source: "Imam al-Bukhari reports in his Sahih on the authority of Abu Hurayrah that the Messenger of Allah ﷺ is reported to have said: 'Whoever says [this] one hundred times in a day will have a reward equivalent to that of freeing ten slaves, one hundred good deeds will be recorded to his credit, one hundred sins will be blotted out from his scroll, and it will be a protection for him from Satan on that day until evening.'",
@@ -140,6 +168,11 @@ export const LAST_TEN_ITEMS: LastTenChecklistItem[] = [
     link: "https://sunnah.com/bukhari:3293",
   },
 ];
+
+/** Ramadan-only rows — hidden on the Dhul Hijjah day checklist. */
+export const LAST_TEN_ITEM_IDS_HIDDEN_ON_DHUL_HIJJAH: ReadonlySet<string> = new Set([
+  "qiyam-imanan-wa-ihtisaban",
+]);
 
 export function getItemsByDifficulty(difficulty: Difficulty): LastTenChecklistItem[] {
   return LAST_TEN_ITEMS.filter((item) => item.difficulty.includes(difficulty));
@@ -163,12 +196,34 @@ export function isItemEffectivelyChecked(
         checkedItems["blessings-on-prophet-100"],
     );
   }
+  if (itemId === "tahlil-10-times") {
+    return Boolean(
+      checkedItems["tahlil-10-times"] ||
+        checkedItems["tahlil-50-times"] ||
+        checkedItems["tahlil-100-times"],
+    );
+  }
+  if (itemId === "tahlil-50-times") {
+    return Boolean(checkedItems["tahlil-50-times"] || checkedItems["tahlil-100-times"]);
+  }
   return Boolean(checkedItems[itemId]);
 }
 
+export function getInitialDhulHijjahChecklistDay(
+  ctx: DhulHijjahDayChecklistContext,
+): number {
+  if (ctx.isBefore) return 1;
+  if (ctx.isAfter) return 10;
+  return ctx.currentDay;
+}
+
 export function createEmptyLastTenChecklistState(): LastTenChecklistState {
-  return LAST_TEN_NIGHTS.reduce<LastTenChecklistState>((state, night) => {
+  const state: LastTenChecklistState = {};
+  for (const night of LAST_TEN_NIGHTS) {
     state[String(night)] = {};
-    return state;
-  }, {});
+  }
+  for (const day of DHUL_HIJJAH_CHECKLIST_DAYS) {
+    state[String(day)] = {};
+  }
+  return state;
 }

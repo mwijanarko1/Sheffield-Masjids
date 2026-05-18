@@ -35,6 +35,12 @@ function sanitizeChecklistState(raw: unknown): LastTenChecklistState {
           return items;
         }
 
+        // Migrate old tahlil id to hard-tier key
+        if (itemId === "tahlil-hundred-times" && checked) {
+          items["tahlil-100-times"] = true;
+          return items;
+        }
+
         items[itemId] = checked;
         return items;
       },
@@ -92,6 +98,11 @@ export function useLastTenChecklist() {
           updates["blessings-on-prophet-5"] = true;
         } else if (itemId === "blessings-on-prophet-20") {
           updates["blessings-on-prophet-5"] = true;
+        } else if (itemId === "tahlil-100-times") {
+          updates["tahlil-50-times"] = true;
+          updates["tahlil-10-times"] = true;
+        } else if (itemId === "tahlil-50-times") {
+          updates["tahlil-10-times"] = true;
         }
       }
 
