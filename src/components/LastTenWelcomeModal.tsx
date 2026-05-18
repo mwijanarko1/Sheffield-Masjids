@@ -57,13 +57,13 @@ export default function LastTenWelcomeModal() {
                     type="button"
                     onClick={dismiss}
                     aria-label="Close"
-                    className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/8 hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380]"
+                    className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/8 hover:text-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)]"
                 >
                     <X className="h-4 w-4" />
                 </button>
 
                 {/* Icon */}
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFB380]/15">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--theme-accent-countdown)]/15">
                     <span className="text-2xl" role="img" aria-label="Star and moon">
                         🌙
                     </span>
@@ -89,7 +89,7 @@ export default function LastTenWelcomeModal() {
                 <button
                     type="button"
                     onClick={dismiss}
-                    className="w-full min-h-[48px] rounded-2xl bg-[#FFB380] px-6 py-3 text-sm font-semibold text-[#0A1128] shadow-lg transition-all hover:bg-[#FFC89E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB380] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A1128] active:scale-[0.98]"
+                    className="w-full min-h-[48px] rounded-2xl bg-[var(--theme-accent-countdown)] px-6 py-3 text-sm font-semibold text-[var(--theme-bg)] shadow-lg transition-all hover:bg-[var(--theme-highlight-cream)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--theme-bg)] active:scale-[0.98]"
                 >
                     Get Started
                 </button>

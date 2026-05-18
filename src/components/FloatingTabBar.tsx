@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import {
   CalendarClock,
   CalendarRange,
+  Moon,
   Scale,
   SlidersHorizontal,
 } from "lucide-react";
@@ -24,6 +25,12 @@ const TABS = [
     label: "Timetable",
     href: "/timetable",
     icon: CalendarRange,
+  },
+  {
+    id: "dhul-hijjah",
+    label: "Dhul Hijjah",
+    href: "/dhul-hijjah",
+    icon: Moon,
   },
   {
     id: "compare",
@@ -50,6 +57,7 @@ export function FloatingTabBar() {
     if (!pathname) return "prayer";
     if (pathname === "/" || pathname.startsWith("/mosques")) return "prayer";
     if (pathname.startsWith("/timetable")) return "timetable";
+    if (pathname.startsWith("/dhul-hijjah")) return "dhul-hijjah";
     if (pathname.startsWith("/compare")) return "compare";
     if (pathname.startsWith("/settings")) return "settings";
     return null;
