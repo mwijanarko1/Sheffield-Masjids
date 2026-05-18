@@ -22,6 +22,8 @@ export interface GlassSelectProps {
   className?: string;
   triggerClassName?: string;
   contentClassName?: string;
+  /** Popper alignment vs trigger (Radix `align`). Use `center` to center the panel on the button. */
+  contentAlign?: "start" | "center" | "end";
 }
 
 export function GlassSelect({
@@ -34,6 +36,7 @@ export function GlassSelect({
   className,
   triggerClassName,
   contentClassName,
+  contentAlign = "start",
 }: GlassSelectProps) {
   const resolved =
     value !== undefined && value !== "" && options.some((o) => o.id === value)
@@ -46,7 +49,11 @@ export function GlassSelect({
         <SelectTrigger className={cn("w-full", triggerClassName)} aria-label={ariaLabel}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent position="popper" className={contentClassName}>
+        <SelectContent
+          position="popper"
+          align={contentAlign}
+          className={contentClassName}
+        >
           {options.map((opt) => (
             <SelectItem key={opt.id} value={opt.id} className="whitespace-normal break-words">
               {opt.name}

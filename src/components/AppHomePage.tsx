@@ -460,6 +460,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                                 }}
                                 ariaLabel="Select mosque"
                                 className="max-w-full"
+                                contentAlign="center"
                                 triggerClassName="text-xs sm:text-sm font-semibold min-h-8 h-auto py-1 [&>span:first-of-type]:min-w-0 [&>span:first-of-type]:flex-1 [&>span:first-of-type]:text-center [&>span]:whitespace-normal [&>span]:leading-tight"
                             />
                         </div>
