@@ -276,7 +276,7 @@ export default function LastTenChecklistSection({
         className,
       )}
     >
-      <LastTenWelcomeModal />
+      {!isDhulDayMode && <LastTenWelcomeModal />}
 
       {framedDhul ? (
         <div
