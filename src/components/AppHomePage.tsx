@@ -17,7 +17,7 @@ import {
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import { SunPath } from "@/components/SunPath";
-import { CustomSelect } from "@/components/ui/custom-select";
+import { GlassSelect } from "@/components/ui/glass-select";
 import MasjidlyHomePopup from "@/components/MasjidlyHomePopup";
 import type { InitialHomePrayerWidgetData } from "@/lib/home-prayer-widget-data";
 
@@ -39,10 +39,12 @@ function parseSameDayWallClock(now: Date, hhmm: string): Date | null {
 }
 
 export default function AppHomePage({ mosques, initialPrayerWidgetData = null }: AppHomePageProps) {
-    const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(
-        mosques,
-        initialPrayerWidgetData?.mosque,
-    );
+    const {
+        selectedMosque,
+        setSelectedMosque,
+        isHydrated,
+        mosquesInSelectedCity,
+    } = usePersistedMosque(mosques, initialPrayerWidgetData?.mosque);
     const mosque = selectedMosque;
     const latestFetchRequestRef = useRef(0);
 
@@ -449,17 +451,16 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
                             </div>
                         </div>
                         <div className="flex min-w-0 w-full max-w-none justify-center px-0 sm:flex-[1.6] sm:px-2">
-                            <CustomSelect
-                                options={mosques}
-                                value={mosque.id}
+                            <GlassSelect
+                                options={mosquesInSelectedCity}
+                                value={mosque?.id}
                                 onChange={(id) => {
-                                    const m = mosques.find((x) => x.id === id);
+                                    const m = mosquesInSelectedCity.find((x) => x.id === id);
                                     if (m) setSelectedMosque(m);
                                 }}
                                 ariaLabel="Select mosque"
-                                truncateLabel={false}
-                                listFitsContent={true}
-                                className="max-w-full [&_button]:text-xs [&_button]:sm:text-sm [&_button]:font-semibold [&_button]:h-auto [&_button]:min-h-8 [&_button]:py-1 [&_button_span]:whitespace-normal [&_button_span]:leading-tight"
+                                className="max-w-full"
+                                triggerClassName="text-xs sm:text-sm font-semibold min-h-8 h-auto py-1 [&>span:first-of-type]:min-w-0 [&>span:first-of-type]:flex-1 [&>span:first-of-type]:text-center [&>span]:whitespace-normal [&>span]:leading-tight"
                             />
                         </div>
                         <div className="min-w-0 text-right font-normal text-white/90 sm:flex-1">

@@ -32,8 +32,8 @@ function AppStoreBadge() {
 function AndroidBadge() {
   return (
     <a
-      href="/masjidly/app-release.apk"
-      download="Masjidly.apk"
+      href="/masjidly/Masjidly-1.0.1.apk"
+      download="Masjidly-1.0.1.apk"
       className="inline-flex h-12 min-w-[10.5rem] items-center gap-2.5 rounded-xl bg-[#1a1a1a] px-4 py-2 text-white shadow-lg transition hover:bg-black hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] focus-visible:ring-offset-2"
     >
       <span className="inline-flex shrink-0 text-[#3DDC84]" aria-hidden>

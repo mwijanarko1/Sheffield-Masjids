@@ -9,7 +9,7 @@ const MASJIDLY_CLICKED_KEY = "masjidly_download_clicked";
 
 const APP_STORE_URL =
   "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833";
-const ANDROID_APK_PATH = "/masjidly/app-release.apk";
+const ANDROID_APK_PATH = "/masjidly/Masjidly-1.0.1.apk";
 
 function markClicked() {
   try {
@@ -164,7 +164,7 @@ export default function MasjidlyHomePopup() {
 
                     <a
                       href={ANDROID_APK_PATH}
-                      download="Masjidly.apk"
+                      download="Masjidly-1.0.1.apk"
                       onClick={handleDownloadClick}
                       className="group flex w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-white/14 bg-white/[0.05] px-4 py-3 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] backdrop-blur-sm transition hover:border-white/22 hover:bg-white/[0.08] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080f24] sm:py-3.5"
                     >
