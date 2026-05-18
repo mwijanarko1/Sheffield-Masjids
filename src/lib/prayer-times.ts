@@ -226,8 +226,9 @@ function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): num
 }
 
 const RISALAH_SLUG = 'masjid-risalah';
+const MUSLIM_WELFARE_HOUSE_SLUG = 'muslim-welfare-house';
 
-/** May 15–Aug 15 inclusive: Isha iqāmah uses summer rules in the app UI. */
+/** May 15–Aug 15 inclusive: Muslim Welfare House shows Isha iqāmah as “After Maghrib” in the app UI. */
 export function isSummerIshaPeriod(date: Date): boolean {
   const year = date.getFullYear();
   const may15 = new Date(year, 4, 15);
@@ -246,7 +247,7 @@ export function isRisalahIshaIqamahMatchesAdhanPeriod(date: Date): boolean {
   return date >= may1 && date <= july31;
 }
 
-/** Resolve Isha iqāmah clock label: Risalah May–July uses adhān; general summer uses "After Maghrib"; else JSON iqāmah. */
+/** Resolve Isha iqāmah clock label: Risalah May–July uses adhān; Muslim Welfare House summer uses "After Maghrib"; else JSON iqāmah. */
 export function resolveIshaIqamahForDisplay(
   slug: string,
   date: Date,
@@ -257,7 +258,7 @@ export function resolveIshaIqamahForDisplay(
   if (isMasjidRisalah(slug) && isRisalahIshaIqamahMatchesAdhanPeriod(date)) {
     return ishaAdhan;
   }
-  if (isSummerIshaPeriod(date)) {
+  if (isMuslimWelfareHouse(slug) && isSummerIshaPeriod(date)) {
     return "After Maghrib";
   }
   return getIqamahTime("isha", ishaAdhan, iqamahTimes, maghribAdhan);
@@ -266,6 +267,14 @@ export function resolveIshaIqamahForDisplay(
 export function isMasjidRisalah(slug: string): boolean {
   try {
     return normalizeMosqueSlug(slug) === RISALAH_SLUG;
+  } catch {
+    return false;
+  }
+}
+
+export function isMuslimWelfareHouse(slug: string): boolean {
+  try {
+    return normalizeMosqueSlug(slug) === MUSLIM_WELFARE_HOUSE_SLUG;
   } catch {
     return false;
   }
