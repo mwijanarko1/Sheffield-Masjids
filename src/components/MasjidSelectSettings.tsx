@@ -4,14 +4,22 @@ import Link from "next/link";
 import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
 import { ExternalLink } from "lucide-react";
-import { CustomSelect } from "@/components/ui/custom-select";
+import { GlassSelect } from "@/components/ui/glass-select";
 
 interface MasjidSelectSettingsProps {
   mosques: Mosque[];
 }
 
 export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsProps) {
-  const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
+  const {
+    selectedMosque,
+    setSelectedMosque,
+    isHydrated,
+    cityOptions,
+    selectedCitySlug,
+    setSelectedCitySlug,
+    mosquesInSelectedCity,
+  } = usePersistedMosque(mosques);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-5 sm:px-6 sm:py-10 text-white">
@@ -35,21 +43,30 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
           Primary Mosque
         </h2>
         <p className="text-sm text-[var(--theme-text-muted)] mb-6">
-          Select your preferred mosque for prayer times on the home screen.
+          Choose your area, then your preferred mosque for prayer times on the home screen.
         </p>
 
-        <div className="mb-2">
-          <CustomSelect
-            options={mosques}
-            value={isHydrated ? selectedMosque?.id || "" : ""}
+        <div className="mb-2 flex flex-col gap-3">
+          {cityOptions.length > 0 ? (
+            <GlassSelect
+              options={cityOptions}
+              value={isHydrated ? selectedCitySlug : undefined}
+              onChange={setSelectedCitySlug}
+              ariaLabel="Select city"
+              disabled={!isHydrated}
+              placeholder={isHydrated ? "Select city" : "Loading…"}
+            />
+          ) : null}
+          <GlassSelect
+            options={mosquesInSelectedCity}
+            value={isHydrated ? selectedMosque?.id : undefined}
             onChange={(id) => {
-              const selected = mosques.find((m) => m.id === id);
+              const selected = mosquesInSelectedCity.find((m) => m.id === id);
               if (selected) setSelectedMosque(selected);
             }}
             ariaLabel="Select mosque"
-            truncateLabel={false}
-            listFitsContent
-            className="w-full"
+            disabled={!isHydrated}
+            placeholder={isHydrated ? "Select mosque" : "Loading…"}
           />
         </div>
       </section>

@@ -23,7 +23,7 @@ type TimedCacheEntry<T> = {
 
 let mosquesCache: TimedCacheEntry<Mosque[]> | null = null;
 let mosquesInFlight: Promise<Mosque[]> | null = null;
-const listMosquesByCityQuery = makeFunctionReference<"query">("mosques:listByCity");
+const listMosquesQuery = makeFunctionReference<"query">("mosques:list");
 
 function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
   return {
@@ -121,7 +121,7 @@ async function loadMosquesFromConvex(): Promise<Mosque[]> {
 
   try {
     const client = new ConvexHttpClient(convexUrl);
-    const data = await client.query(listMosquesByCityQuery, { citySlug: SHEFFIELD_CITY_SLUG });
+    const data = await client.query(listMosquesQuery, {});
     if (!Array.isArray(data)) return [];
 
     return dedupeMosques(
@@ -169,10 +169,7 @@ export async function getMosques({
   if (includeHidden) return mosques;
 
   return mosques.filter(
-    (mosque) =>
-      mosque.citySlug === SHEFFIELD_CITY_SLUG &&
-      !mosque.isHidden &&
-      !HIDDEN_MOSQUE_SLUGS.has(mosque.slug),
+    (mosque) => !mosque.isHidden && !HIDDEN_MOSQUE_SLUGS.has(mosque.slug),
   );
 }
 

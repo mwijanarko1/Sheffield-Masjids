@@ -13,7 +13,12 @@ interface HomeContentProps {
 }
 
 export default function HomeContent({ mosques }: HomeContentProps) {
-  const { selectedMosque, setSelectedMosque, isHydrated } = usePersistedMosque(mosques);
+  const {
+    selectedMosque,
+    setSelectedMosque,
+    isHydrated,
+    mosquesInSelectedCity,
+  } = usePersistedMosque(mosques);
 
   if (!isHydrated) {
     return (
@@ -44,15 +49,19 @@ export default function HomeContent({ mosques }: HomeContentProps) {
         {/* Mosque selector + Prayer times */}
         <section className="space-y-4">
           <CustomSelect
-            options={mosques}
-            value={selectedMosque.id}
+            options={mosquesInSelectedCity}
+            value={isHydrated ? selectedMosque.id : ""}
             onChange={(value) => {
-              const m = mosques.find((x) => x.id === value);
+              const m = mosquesInSelectedCity.find((x) => x.id === value);
               if (m) setSelectedMosque(m);
             }}
             ariaLabel="Select mosque"
           />
-          <PrayerTimesWidget initialMosque={selectedMosque} showDropdown={false} />
+          <PrayerTimesWidget
+            initialMosque={selectedMosque}
+            showDropdown={false}
+            mosques={mosquesInSelectedCity}
+          />
         </section>
       </div>
 
