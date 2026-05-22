@@ -191,6 +191,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.leedsgrandmosque.com"
+    },
+    {
+      "id": "masjid-omar-huddersfield",
+      "name": "Masjid Omar",
+      "address": "32 Blacker Road, Birkby, Huddersfield HD1 5HT, United Kingdom",
+      "lat": 53.6558,
+      "lng": -1.7896,
+      "slug": "masjid-omar-huddersfield",
+      "citySlug": "huddersfield",
+      "cityName": "Huddersfield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidomar.org.uk"
     }
   ]
 }
