@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
+import MasjidlyMarketingHeader from "@/components/masjidly/MasjidlyMarketingHeader";
 
 /**
  * Top padding for hero column so the first line clears the fixed floating header bar
@@ -48,42 +48,6 @@ function AndroidBadge() {
         <span className="block text-[15px] font-semibold tracking-tight">Android</span>
       </span>
     </a>
-  );
-}
-
-function MasjidlyMarketingHeader() {
-  const linkClass =
-    "rounded-lg px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-[#1a1a1a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] focus-visible:ring-offset-2";
-
-  return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 bg-transparent px-3 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-2 sm:px-5 sm:pt-[calc(1rem+env(safe-area-inset-top,0px))] sm:pb-2">
-      <div className="mx-auto w-full max-w-7xl">
-        <div
-          className="pointer-events-auto flex min-h-[3.25rem] items-center justify-between gap-3 rounded-full border border-neutral-200/90 bg-white/95 px-4 py-2 shadow-[0_8px_28px_-6px_rgb(0_0_0/0.12)] ring-1 ring-black/[0.06] backdrop-blur-md supports-[backdrop-filter]:bg-white/90 sm:min-h-[3.5rem] sm:gap-4 sm:px-6 sm:py-2.5"
-        >
-          <Link
-            href="/masjidly"
-            className="min-w-0 shrink text-lg font-semibold tracking-tight text-[#1a1a1a] transition hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] focus-visible:ring-offset-2 rounded-lg px-1"
-          >
-            Masjidly
-          </Link>
-          <nav
-            className="flex min-w-0 flex-wrap items-center justify-end gap-1 sm:gap-2"
-            aria-label="Main navigation"
-          >
-            <Link href="/" className={linkClass}>
-              Sheffield Masjids
-            </Link>
-            <Link href="/masjidly/terms" className={linkClass}>
-              Terms
-            </Link>
-            <Link href="/masjidly/privacy" className={linkClass}>
-              Privacy
-            </Link>
-          </nav>
-        </div>
-      </div>
-    </header>
   );
 }
 

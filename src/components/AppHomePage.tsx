@@ -14,6 +14,7 @@ import {
     getNextPrayerAndCountdown,
     formatDateForDisplay,
     resolveIshaIqamahForDisplay,
+    isAfterMaghribIqamahDisplayLabel,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import { SunPath } from "@/components/SunPath";
@@ -293,7 +294,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         const now = sheffieldNow;
         const majorIndices = [0, 1, 2, 3, 4];
         const iqamahDates = prayers.map((p) => {
-            if (p.iqamah === "-" || p.iqamah === "—" || p.iqamah === "After Maghrib") return null;
+            if (p.iqamah === "-" || p.iqamah === "—" || isAfterMaghribIqamahDisplayLabel(p.iqamah)) return null;
             const [h, m] = p.iqamah.split(":").map(Number);
             const d = new Date(now);
             d.setHours(h, m, 0, 0);

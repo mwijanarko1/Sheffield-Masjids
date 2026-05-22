@@ -24,6 +24,7 @@ import { z } from "zod";
 import { api } from "../convex/_generated/api";
 import * as fs from "fs";
 import * as path from "path";
+import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
 
 loadEnvConfig(process.cwd());
 
@@ -115,9 +116,10 @@ function parseChangedPaths(paths: string[]): ChangedPlan {
     if (p === "public/data/mosques.json") registryChanged = true;
     if (p === "public/docs/dst-start-end.json") dstChanged = true;
 
-    const monthly = /^public\/data\/mosques\/([^/]+)\/(january|february|march|april|may|june|july|august|september|october|november|december)\.json$/i.exec(
-      p
-    );
+    const monthly =
+      /^public\/data\/mosques\/[^/]+\/[^/]+\/([^/]+)\/(january|february|march|april|may|june|july|august|september|october|november|december)\.json$/i.exec(
+        p
+      );
     if (monthly) {
       const slug = monthly[1];
       const monthNum = MONTH_NAME_TO_NUM[monthly[2].toLowerCase()];
@@ -127,7 +129,7 @@ function parseChangedPaths(paths: string[]): ChangedPlan {
       }
     }
 
-    const ram = /^public\/data\/mosques\/([^/]+)\/ramadan\.json$/i.exec(p);
+    const ram = /^public\/data\/mosques\/[^/]+\/[^/]+\/([^/]+)\/ramadan\.json$/i.exec(p);
     if (ram) ramadanSlugs.add(ram[1]);
   }
 
@@ -307,11 +309,7 @@ async function seedMonthly(
 
     const monthFile = MONTH_FILES[monthNum];
     const filePath = path.join(
-      process.cwd(),
-      "public",
-      "data",
-      "mosques",
-      mosqueSlug,
+      getMosqueDataFsDir(process.cwd(), mosqueSlug),
       `${monthFile}.json`
     );
     if (!fs.existsSync(filePath)) continue;
@@ -337,14 +335,7 @@ async function seedMonthly(
 }
 
 async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string) {
-  const filePath = path.join(
-    process.cwd(),
-    "public",
-    "data",
-    "mosques",
-    mosqueSlug,
-    "ramadan.json"
-  );
+  const filePath = path.join(getMosqueDataFsDir(process.cwd(), mosqueSlug), "ramadan.json");
   if (!fs.existsSync(filePath)) return;
 
   const data: RamadanFile = parseJsonFile(filePath, RamadanFileSchema);
@@ -432,11 +423,27 @@ async function main() {
     console.log("Skipping mosque registry (mosques.json unchanged)\n");
   }
 
-  const mosquesDir = path.join(process.cwd(), "public", "data", "mosques");
-  const filesystemSlugs = fs.readdirSync(mosquesDir).filter((f) => {
-    const stat = fs.statSync(path.join(mosquesDir, f));
-    return stat.isDirectory();
-  });
+  function discoverFilesystemSlugs(): string[] {
+    const base = path.join(process.cwd(), "public", "data", "mosques");
+    const slugs: string[] = [];
+    if (!fs.existsSync(base)) return slugs;
+
+    for (const country of fs.readdirSync(base)) {
+      const countryPath = path.join(base, country);
+      if (!fs.statSync(countryPath).isDirectory()) continue;
+      for (const city of fs.readdirSync(countryPath)) {
+        const cityPath = path.join(countryPath, city);
+        if (!fs.statSync(cityPath).isDirectory()) continue;
+        for (const slug of fs.readdirSync(cityPath)) {
+          const slugPath = path.join(cityPath, slug);
+          if (fs.statSync(slugPath).isDirectory()) slugs.push(slug);
+        }
+      }
+    }
+    return slugs;
+  }
+
+  const filesystemSlugs = discoverFilesystemSlugs();
   const seededSlugs = seededMosques.map((m) => m.slug);
   const mosqueSlugs = Array.from(new Set([...filesystemSlugs, ...seededSlugs]));
 

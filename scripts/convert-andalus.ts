@@ -1,13 +1,14 @@
 /**
  * Convert Andalus prayer timetable from complete JSON to monthly format.
  * Place source file at project root: andalus_prayer_timetable_2025_complete.json
- * (or update srcPath below). Output: public/data/mosques/andalus-community-centre/{month}.json
+ * (or update srcPath below). Output: public/data/mosques/gb/sheffield/andalus-community-centre/{month}.json
  *
  * Run: bun scripts/convert-andalus.ts
  */
 
 import * as fs from "fs";
 import * as path from "path";
+import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
 
 const MONTH_NAMES = [
   "january", "february", "march", "april", "may", "june",
@@ -80,7 +81,7 @@ function buildIqamahRanges(days: AndalusDay[]): { date_range: string; fajr: stri
 
 function main() {
   const srcPath = path.join(process.cwd(), "andalus_prayer_timetable_2025_complete.json");
-  const outDir = path.join(process.cwd(), "public", "data", "mosques", "andalus-community-centre");
+  const outDir = getMosqueDataFsDir(process.cwd(), "andalus-community-centre");
 
   if (!fs.existsSync(srcPath)) {
     console.error("Source file not found:", srcPath);

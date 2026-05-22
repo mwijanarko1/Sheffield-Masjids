@@ -177,6 +177,20 @@
       "slug": "sheffield-ummah-center",
       "isHidden": false,
       "website": "https://ummahcenter.mosqueprayertimes.org"
+    },
+    {
+      "id": "leeds-grand-mosque",
+      "name": "Leeds Grand Mosque",
+      "address": "9 Woodsley Road, Leeds LS6 1SN, United Kingdom",
+      "lat": 53.806417,
+      "lng": -1.568139,
+      "slug": "leeds-grand-mosque",
+      "citySlug": "leeds",
+      "cityName": "Leeds",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.leedsgrandmosque.com"
     }
   ]
 }

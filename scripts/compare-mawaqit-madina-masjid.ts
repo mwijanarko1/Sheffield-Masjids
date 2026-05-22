@@ -9,7 +9,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 const MAWAQIT_URL = "https://mawaqit.net/en/madina-masjid-sheffield-sheffield-s8-0zu-united-kingdom";
-const MOSQUE_DIR = "public/data/mosques/madina-masjid-sheffield";
+const MOSQUE_DIR = "public/data/mosques/gb/sheffield/madina-masjid-sheffield";
 
 const MONTH_NAMES = [
   "january", "february", "march", "april", "may", "june",

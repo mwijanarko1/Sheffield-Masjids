@@ -1,4 +1,10 @@
 import { MonthlyPrayerTimes, DailyPrayerTimes, DailyIqamahTimes, IqamahTimeRange, PrayerTime } from '@/types/prayer-times';
+import {
+  getMosqueMonthlyJsonUrl,
+  getMosqueRamadanJsonUrl,
+  resolveMosqueLocationForSlug,
+  type MosqueLocation,
+} from '@/lib/mosque-data-path';
 
 // Convex client for prayer times (when NEXT_PUBLIC_CONVEX_URL is set)
 let convexClient: InstanceType<typeof import('convex/browser').ConvexHttpClient> | null = null;
@@ -227,6 +233,20 @@ function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): num
 
 const RISALAH_SLUG = 'masjid-risalah';
 const MUSLIM_WELFARE_HOUSE_SLUG = 'muslim-welfare-house';
+const LEEDS_GRAND_MOSQUE_SLUG = 'leeds-grand-mosque';
+
+/** Isha iqāmah JSON labels that mean congregation follows Maghrib (not a fixed clock time). */
+export function isCombinedWithMaghribIqamahLabel(value: string | undefined): boolean {
+  const normalized = value?.trim().toLowerCase() ?? '';
+  return normalized === 'combined with maghrib' || normalized === 'straight after maghrib';
+}
+
+/** Labels shown as “After Maghrib” in the UI (no numeric countdown). */
+export function isAfterMaghribIqamahDisplayLabel(value: string | undefined): boolean {
+  if (!value?.trim()) return false;
+  if (value.trim() === 'After Maghrib') return true;
+  return isCombinedWithMaghribIqamahLabel(value);
+}
 
 /** May 15–Aug 15 inclusive: Muslim Welfare House shows Isha iqāmah as “After Maghrib” in the app UI. */
 export function isSummerIshaPeriod(date: Date): boolean {
@@ -247,7 +267,7 @@ export function isRisalahIshaIqamahMatchesAdhanPeriod(date: Date): boolean {
   return date >= may1 && date <= july31;
 }
 
-/** Resolve Isha iqāmah clock label: Risalah May–July uses adhān; Muslim Welfare House summer uses "After Maghrib"; else JSON iqāmah. */
+/** Resolve Isha iqāmah clock label: Risalah May–July uses adhān; MWHS summer / JSON “combined” → "After Maghrib"; else JSON iqāmah. */
 export function resolveIshaIqamahForDisplay(
   slug: string,
   date: Date,
@@ -259,6 +279,9 @@ export function resolveIshaIqamahForDisplay(
     return ishaAdhan;
   }
   if (isMuslimWelfareHouse(slug) && isSummerIshaPeriod(date)) {
+    return "After Maghrib";
+  }
+  if (isAfterMaghribIqamahDisplayLabel(iqamahTimes.isha)) {
     return "After Maghrib";
   }
   return getIqamahTime("isha", ishaAdhan, iqamahTimes, maghribAdhan);
@@ -275,6 +298,14 @@ export function isMasjidRisalah(slug: string): boolean {
 export function isMuslimWelfareHouse(slug: string): boolean {
   try {
     return normalizeMosqueSlug(slug) === MUSLIM_WELFARE_HOUSE_SLUG;
+  } catch {
+    return false;
+  }
+}
+
+export function isLeedsGrandMosque(slug: string): boolean {
+  try {
+    return normalizeMosqueSlug(slug) === LEEDS_GRAND_MOSQUE_SLUG;
   } catch {
     return false;
   }
@@ -655,7 +686,8 @@ export async function loadRamadanCalendar(slug: string): Promise<RamadanData | n
         }
       }
 
-      const response = await fetchWithRetry(`/data/mosques/${safeSlug}/ramadan.json`);
+      const location = resolveMosqueLocationForSlug(safeSlug);
+      const response = await fetchWithRetry(getMosqueRamadanJsonUrl(location, safeSlug));
       if (!response.ok) {
         setBoundedCacheEntry(
           ramadanDataCache,
@@ -821,8 +853,10 @@ export async function loadMonthlyPrayerTimes(
   slug: string,
   month: number,
   year: number = getCurrentYearInSheffield(),
+  location?: MosqueLocation,
 ): Promise<MonthlyPrayerTimes> {
   const safeSlug = normalizeMosqueSlug(slug);
+  const mosqueLocation = location ?? resolveMosqueLocationForSlug(safeSlug);
   const monthFile = MONTH_FILES[month];
 
   if (!monthFile) {
@@ -866,7 +900,7 @@ export async function loadMonthlyPrayerTimes(
         }
       }
 
-      const publicUrl = `/data/mosques/${safeSlug}/${monthFile}.json`;
+      const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
       const response = await fetchWithRetry(publicUrl);
 
       if (!response.ok) {
@@ -1318,10 +1352,11 @@ export function getIqamahTime(prayer: string, adhanTime: string, iqamahTimes: Da
       // Use the specified iqamah time, fallback to adhan time if not specified
       return resolveRelativeIqamah(iqamahTimes.maghrib === "sunset" ? adhanTime : iqamahTimes.maghrib, adhanTime);
     case 'isha':
-      // "Straight after Maghrib" = Iqamah at Maghrib time; "Entry Time" = Iqamah at Isha adhan
-      if (iqamahTimes.isha === "Straight after Maghrib" && maghribAdhan) return maghribAdhan;
+      if (iqamahTimes.isha?.trim() === "After Maghrib") return "After Maghrib";
+      // Legacy / MWHS-style combined labels → iqāmah at Maghrib adhān; "Entry Time" → Isha adhān
+      if (isCombinedWithMaghribIqamahLabel(iqamahTimes.isha) && maghribAdhan) return maghribAdhan;
       if (iqamahTimes.isha === "Entry Time") return adhanTime;
-      if (iqamahTimes.isha === "Straight after Maghrib") return adhanTime; // Fallback if no maghrib
+      if (isCombinedWithMaghribIqamahLabel(iqamahTimes.isha)) return adhanTime;
       return resolveRelativeIqamah(iqamahTimes.isha, adhanTime);
     case 'jummah':
       return iqamahTimes.jummah;
@@ -1694,7 +1729,14 @@ export async function getDSTAdjustmentIqamahDate(date?: Date): Promise<{ month: 
  * Returns true if the string is a valid HH:MM or H:MM time for semantic <time> markup.
  */
 export function isValidTimeForMarkup(timeString: string): boolean {
-  if (!timeString || timeString === '-' || timeString === '--:--' || timeString === 'Various' || timeString === 'Straight after Maghrib' || timeString === 'Entry Time' || timeString === 'After Maghrib') {
+  if (
+    !timeString ||
+    timeString === '-' ||
+    timeString === '--:--' ||
+    timeString === 'Various' ||
+    timeString === 'Entry Time' ||
+    isAfterMaghribIqamahDisplayLabel(timeString)
+  ) {
     return false;
   }
   const [hours, minutes] = timeString.split(':').map(Number);
@@ -1705,7 +1747,14 @@ export function isValidTimeForMarkup(timeString: string): boolean {
  * Format a 24-hour time string (HH:MM) to 12-hour format (h:mm AM/PM)
  */
 export function formatTo12Hour(timeString: string): string {
-  if (!timeString || timeString === '-' || timeString === '--:--' || timeString === 'Various' || timeString === 'Straight after Maghrib' || timeString === 'Entry Time' || timeString === 'After Maghrib') {
+  if (
+    !timeString ||
+    timeString === '-' ||
+    timeString === '--:--' ||
+    timeString === 'Various' ||
+    timeString === 'Entry Time' ||
+    isAfterMaghribIqamahDisplayLabel(timeString)
+  ) {
     return timeString;
   }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData, mosqueTimetableAlreadyIncludesDst, resolveIshaIqamahForDisplay, isMasjidRisalah } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData, mosqueTimetableAlreadyIncludesDst, resolveIshaIqamahForDisplay, isMasjidRisalah, isAfterMaghribIqamahDisplayLabel } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -159,7 +159,7 @@ export default function PrayerTimesWidget({
     // Major prayer indices in the prayers array: FAJR(0), DHUHR(2), ASR(3), MAGHRIB(4), ISHA(5)
     const majorIndices = [0, 2, 3, 4, 5];
     const iqamahDates = prayers.map(p => {
-      if (p.iqamah === '-' || p.iqamah === '--:--' || p.iqamah === 'After Maghrib') return null;
+      if (p.iqamah === '-' || p.iqamah === '--:--' || isAfterMaghribIqamahDisplayLabel(p.iqamah)) return null;
       const [hours, minutes] = p.iqamah.split(':').map(Number);
       const d = new Date(now);
       d.setHours(hours, minutes, 0, 0);
@@ -302,7 +302,12 @@ export default function PrayerTimesWidget({
         }
       }
 
-      if (prayer.iqamahTime !== '-' && prayer.iqamahTime !== '--:--' && prayer.iqamahTime !== prayer.adhanTime && prayer.iqamahTime !== 'After Maghrib') {
+      if (
+        prayer.iqamahTime !== '-' &&
+        prayer.iqamahTime !== '--:--' &&
+        prayer.iqamahTime !== prayer.adhanTime &&
+        !isAfterMaghribIqamahDisplayLabel(prayer.iqamahTime)
+      ) {
         const [iqamahHours, iqamahMinutes] = prayer.iqamahTime.split(':').map(Number);
         const iqamahTime = new Date(now);
         iqamahTime.setHours(iqamahHours, iqamahMinutes, 0, 0);

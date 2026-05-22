@@ -87,9 +87,14 @@ public/
   data/
     mosques.json                  # Static mosque registry (id, name, address, lat, lng, slug, website)
     mosques/
-      [slug]/
-        january.json … december.json   # Monthly prayer + iqamah times
-        ramadan.json                   # Optional Ramadan timetable
+      gb/                              # countryCode (lowercase)
+        sheffield/                     # citySlug
+          [slug]/
+            january.json … december.json
+            ramadan.json
+        leeds/
+          [slug]/
+            …
   docs/
     dst-start-end.json            # UK DST transition dates
 ```
@@ -194,7 +199,7 @@ Located in `src/features/calendar-export/`:
 ## Adding a New Mosque
 
 1. Add entry to `public/data/mosques.json` (idempotent with Convex upsert)
-2. Create `public/data/mosques/[slug]/` with `january.json` through `december.json` (and optional `ramadan.json`)
+2. Create `public/data/mosques/gb/[citySlug]/[slug]/` with `january.json` through `december.json` (and optional `ramadan.json`). Set `citySlug` and `countryCode` on the mosque entry in `mosques.json`.
 3. Run `bun run seed:dev` to push to Convex dev deployment
 
 ## Known Risks

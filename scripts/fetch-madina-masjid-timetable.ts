@@ -5,11 +5,12 @@
  * Prerequisites: npm install adhan
  * Run: bun scripts/fetch-madina-masjid-timetable.ts
  *
- * Output: public/data/mosques/madina-masjid-sheffield/{month}.json
+ * Output: public/data/mosques/gb/sheffield/madina-masjid-sheffield/{month}.json
  */
 
 import * as fs from "fs";
 import * as path from "path";
+import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
 
 // adhan types - import at runtime to avoid build issues
 type AdhanModule = typeof import("adhan");
@@ -71,7 +72,7 @@ async function main() {
   const coords = new Coordinates(LATITUDE, LONGITUDE);
   const params = CalculationMethod.MuslimWorldLeague();
 
-  const outDir = path.join(process.cwd(), "public", "data", "mosques", "madina-masjid-sheffield");
+  const outDir = getMosqueDataFsDir(process.cwd(), "madina-masjid-sheffield");
   fs.mkdirSync(outDir, { recursive: true });
 
   const year = new Date().getFullYear();

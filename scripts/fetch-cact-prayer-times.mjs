@@ -13,13 +13,14 @@
  * script exits with code 1 if **no month** returns any rows so you do not commit empty exports.
  *
  * Run: node scripts/fetch-cact-prayer-times.mjs
- * On success writes: public/data/mosques/castle-asian-community-centre/{january..december}.json
+ * On success writes: public/data/mosques/gb/sheffield/castle-asian-community-centre/{january..december}.json
  */
 
 import { writeFileSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { buildMonthlyMosqueJson, monthFileName } from "./lib/mosqueprayertimes-to-monthly-json.mjs";
+import { mosqueDataFsDir } from "./lib/mosque-data-path.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -160,7 +161,7 @@ function main() {
   const year = process.env.YEAR ? Number(process.env.YEAR) : new Date().getFullYear();
   const outDir = process.env.OUT_DIR
     ? join(ROOT, process.env.OUT_DIR)
-    : join(ROOT, "public", "data", "mosques", SLUG);
+    : mosqueDataFsDir(ROOT, SLUG);
 
   return (async () => {
     const { cookieJar, csrf } = await openSession();

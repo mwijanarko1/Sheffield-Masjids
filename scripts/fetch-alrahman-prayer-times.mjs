@@ -6,7 +6,7 @@
  * Asset URLs use `mosques/50/...`; API rows use `mosque_id: 50`. Page JS may show `mosque-id: '11'`.
  *
  * Run: node scripts/fetch-alrahman-prayer-times.mjs
- * Writes: public/data/mosques/al-rahman-mosque/{january..december}.json
+ * Writes: public/data/mosques/gb/sheffield/al-rahman-mosque/{january..december}.json
  *
  * Source: https://alrahman.mosqueprayertimes.org/prayer-times
  */
@@ -15,6 +15,7 @@ import { writeFileSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { buildMonthlyMosqueJson, monthFileName } from "./lib/mosqueprayertimes-to-monthly-json.mjs";
+import { mosqueDataFsDir } from "./lib/mosque-data-path.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -155,7 +156,7 @@ function main() {
   const year = process.env.YEAR ? Number(process.env.YEAR) : new Date().getFullYear();
   const outDir = process.env.OUT_DIR
     ? join(ROOT, process.env.OUT_DIR)
-    : join(ROOT, "public", "data", "mosques", SLUG);
+    : mosqueDataFsDir(ROOT, SLUG);
 
   mkdirSync(outDir, { recursive: true });
 

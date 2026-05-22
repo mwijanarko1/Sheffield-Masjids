@@ -5,9 +5,10 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
 
 const SGM_ADHAN = path.join(process.cwd(), "docs", "sgm-adhan.md");
-const SGM_DIR = path.join(process.cwd(), "public", "data", "mosques", "sheffield-grand-mosque");
+const SGM_DIR = getMosqueDataFsDir(process.cwd(), "sheffield-grand-mosque");
 
 interface AdhanRow {
   date: number;

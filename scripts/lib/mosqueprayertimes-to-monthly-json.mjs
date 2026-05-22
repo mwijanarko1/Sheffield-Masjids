@@ -1,6 +1,6 @@
 /**
  * Convert mosqueprayertimes.org AJAX payloads to app monthly JSON
- * (`public/data/mosques/<slug>/april.json` shape).
+ * (`public/data/mosques/gb/sheffield/<slug>/april.json` shape).
  */
 
 const MONTH_NAMES_EN = [

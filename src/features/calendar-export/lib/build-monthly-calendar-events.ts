@@ -1,4 +1,10 @@
-import { getIqamahTime, getIqamahTimesForDate, resolveMonthlyDayDisplay, isMasjidRisalah, isRisalahIshaIqamahMatchesAdhanPeriod } from "@/lib/prayer-times";
+import {
+  getIqamahTime,
+  getIqamahTimesForDate,
+  resolveMonthlyDayDisplay,
+  resolveIshaIqamahForDisplay,
+  isAfterMaghribIqamahDisplayLabel,
+} from "@/lib/prayer-times";
 import type { MonthlyPrayerTimes } from "@/types/prayer-times";
 import type {
   CalendarEventInput,
@@ -36,7 +42,7 @@ function formatDayLabel(dayOfMonth: number, month: number): string {
 }
 
 function isConcreteCalendarTime(value: string): boolean {
-  return !["", "-", "—", "--:--", "After Maghrib"].includes(value);
+  return !["", "-", "—", "--:--"].includes(value) && !isAfterMaghribIqamahDisplayLabel(value);
 }
 
 function createWallClockDate(year: number, month: number, day: number, time: string): Date {
@@ -121,10 +127,13 @@ export async function buildMonthlyTimetableRowsAsync({
       iqamahTimes.jummah?.trim() ? iqamahTimes.jummah : monthlyData.jummah_iqamah;
 
     const rowCalendarDate = new Date(year, selectedMonth - 1, d);
-    const ishaIqamah =
-      isMasjidRisalah(slug) && isRisalahIshaIqamahMatchesAdhanPeriod(rowCalendarDate)
-        ? day.isha
-        : getIqamahTime("isha", day.isha, iqamahTimes, day.maghrib);
+    const ishaIqamah = resolveIshaIqamahForDisplay(
+      slug,
+      rowCalendarDate,
+      day.isha,
+      iqamahTimes,
+      day.maghrib,
+    );
 
     rows.push({
       day: d,

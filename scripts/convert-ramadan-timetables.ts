@@ -1,15 +1,15 @@
 /**
  * Convert various Ramadan timetable formats to canonical schema.
- * Reads from public/ (loose files), writes to public/data/mosques/[slug]/ramadan.json
+ * Reads from public/ (loose files), writes to public/data/mosques/gb/sheffield/[slug]/ramadan.json
  *
  * Run: bun scripts/convert-ramadan-timetables.ts
  */
 
 import * as fs from "fs";
 import * as path from "path";
+import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
 
 const PUBLIC = path.join(process.cwd(), "public");
-const MOSQUES_DIR = path.join(PUBLIC, "data", "mosques");
 
 type PrayerTime = {
   ramadan_day: number;
@@ -78,7 +78,10 @@ function gregorianFromDay(day: number, startFeb18: boolean): string {
 }
 
 const MADINA_REF = JSON.parse(
-  fs.readFileSync(path.join(MOSQUES_DIR, "madina-masjid-sheffield", "ramadan.json"), "utf-8")
+  fs.readFileSync(
+    path.join(getMosqueDataFsDir(process.cwd(), "madina-masjid-sheffield"), "ramadan.json"),
+    "utf-8"
+  )
 ) as CanonicalRamadan;
 
 function getMadinaPrayer(ramadanDay: number): PrayerTime | undefined {
@@ -602,7 +605,7 @@ function main() {
     }
     const raw = JSON.parse(fs.readFileSync(srcPath, "utf-8"));
     const out = convert(raw);
-    const outDir = path.join(MOSQUES_DIR, slug);
+    const outDir = getMosqueDataFsDir(process.cwd(), slug);
     fs.mkdirSync(outDir, { recursive: true });
     const outPath = path.join(outDir, "ramadan.json");
     fs.writeFileSync(outPath, JSON.stringify(out, null, 2));
@@ -617,7 +620,7 @@ function main() {
     }
     const raw = JSON.parse(fs.readFileSync(srcPath, "utf-8"));
     const out = convert(raw);
-    const outDir = path.join(MOSQUES_DIR, slug);
+    const outDir = getMosqueDataFsDir(process.cwd(), slug);
     fs.mkdirSync(outDir, { recursive: true });
     const outPath = path.join(outDir, `${monthFile}.json`);
     fs.writeFileSync(outPath, JSON.stringify(out, null, 2));

@@ -8,10 +8,11 @@
  */
 
 import { writeFileSync, mkdirSync } from 'fs';
+import { mosqueDataFsDir } from './lib/mosque-data-path.mjs';
 
 const AJAX_URL =
   'https://masjidsunnahsheffield.co.uk/wp-admin/admin-ajax.php?action=get_monthly_timetable';
-const OUTPUT_DIR = 'public/data/mosques/masjid-sunnah-sheffield';
+const OUTPUT_DIR = mosqueDataFsDir(process.cwd(), 'masjid-sunnah-sheffield');
 
 const MONTH_NAMES = [
   'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',

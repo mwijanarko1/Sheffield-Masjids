@@ -13,7 +13,7 @@
  * 3. POST /prayers-ajax-list and /mosques-ajax-list
  *
  * Run from repo root: node scripts/fetch-fpcc-prayer-times.mjs
- * Writes: public/data/mosques/firth-park-cultural-centre/{january..december}.json
+ * Writes: public/data/mosques/gb/sheffield/firth-park-cultural-centre/{january..december}.json
  *
  * Source UI: https://fpcc.mosqueprayertimes.org/prayer-times
  */
@@ -22,6 +22,7 @@ import { writeFileSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { buildMonthlyMosqueJson, monthFileName } from "./lib/mosqueprayertimes-to-monthly-json.mjs";
+import { mosqueDataFsDir } from "./lib/mosque-data-path.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -163,7 +164,7 @@ function main() {
   const year = process.env.YEAR ? Number(process.env.YEAR) : new Date().getFullYear();
   const outDir = process.env.OUT_DIR
     ? join(ROOT, process.env.OUT_DIR)
-    : join(ROOT, "public", "data", "mosques", SLUG);
+    : mosqueDataFsDir(ROOT, SLUG);
 
   mkdirSync(outDir, { recursive: true });
 

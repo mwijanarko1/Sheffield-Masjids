@@ -7,10 +7,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { mosqueDataFsDir } from './lib/mosque-data-path.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DOC_PATH = path.join(__dirname, '../docs/masjid-huda.md');
-const OUTPUT_DIR = path.join(__dirname, '../public/data/mosques/masjid-al-huda-sheffield');
+const OUTPUT_DIR = mosqueDataFsDir(path.join(__dirname, '..'), 'masjid-al-huda-sheffield');
 
 const MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 

@@ -4,7 +4,7 @@
  * CDN / API use `mosques/948`; send `mosque-id: 948`.
  *
  * Run: node scripts/fetch-ummah-center-prayer-times.mjs
- * Writes: public/data/mosques/sheffield-ummah-center/{january..december}.json
+ * Writes: public/data/mosques/gb/sheffield/sheffield-ummah-center/{january..december}.json
  *
  * https://ummahcenter.mosqueprayertimes.org/prayer-times
  */
@@ -13,6 +13,7 @@ import { writeFileSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { buildMonthlyMosqueJson, monthFileName } from "./lib/mosqueprayertimes-to-monthly-json.mjs";
+import { mosqueDataFsDir } from "./lib/mosque-data-path.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -153,7 +154,7 @@ function main() {
   const year = process.env.YEAR ? Number(process.env.YEAR) : new Date().getFullYear();
   const outDir = process.env.OUT_DIR
     ? join(ROOT, process.env.OUT_DIR)
-    : join(ROOT, "public", "data", "mosques", SLUG);
+    : mosqueDataFsDir(ROOT, SLUG);
 
   mkdirSync(outDir, { recursive: true });
 
