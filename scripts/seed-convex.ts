@@ -275,13 +275,15 @@ function parseJsonFile<T>(filePath: string, schema: z.ZodType<T>): T {
 }
 const upsertMosqueMutation = makeFunctionReference<"mutation">("mosques:upsert");
 
-async function seedMosques(client: ConvexHttpClient): Promise<MosqueSeed[]> {
+async function seedMosques(client: ConvexHttpClient, forceUnhide = false): Promise<MosqueSeed[]> {
   const mosquesFile = path.join(process.cwd(), "public", "data", "mosques.json");
   const parsed = parseJsonFile(mosquesFile, MosquesFileSchema);
   const mosques = parsed.mosques;
 
   console.log("Seeding mosque registry...");
-  for (const mosque of mosques) {
+  for (const raw of mosques) {
+    // Dev: unhide all mosques for testing
+    const mosque = forceUnhide ? { ...raw, isHidden: false } : raw;
     try {
       await client.mutation(upsertMosqueMutation, mosque);
       console.log(`  ✓ ${mosque.slug}`);
@@ -415,8 +417,9 @@ async function main() {
   const client = new ConvexHttpClient(convexUrl);
 
   let seededMosques: MosqueSeed[];
+  const isDev = !isProd;
   if (!useChanged || changedPlan!.registryChanged) {
-    seededMosques = await seedMosques(client);
+    seededMosques = await seedMosques(client, isDev);
   } else {
     const mosquesFile = path.join(process.cwd(), "public", "data", "mosques.json");
     seededMosques = parseJsonFile(mosquesFile, MosquesFileSchema).mosques;

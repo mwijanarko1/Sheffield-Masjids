@@ -1,26 +1,24 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CustomSelect } from "@/components/ui/custom-select";
+import { CalendarDays, Link } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { loadMonthlyPrayerTimes } from "@/lib/prayer-times";
+import { Button } from "@/components/ui/button";
 import type { Mosque } from "@/types/prayer-times";
-import { buildMonthlyCalendarEvents } from "@/features/calendar-export/lib/build-monthly-calendar-events";
-import { downloadCalendarFile } from "@/features/calendar-export/lib/download-calendar-file";
-import { buildIcsCalendar, createCalendarFilename } from "@/features/calendar-export/lib/ics";
-import type {
-  CalendarExportMode,
-  CalendarProvider,
-} from "@/features/calendar-export/types";
+import type { CalendarExportMode, CalendarProvider } from "@/features/calendar-export/types";
 
 interface MonthlyCalendarExportModalProps {
   mosque: Mosque;
@@ -31,58 +29,25 @@ interface MonthlyCalendarExportModalProps {
   triggerClassName?: string;
 }
 
-const MODE_OPTIONS: { value: CalendarExportMode; label: string; description: string }[] = [
-  {
-    value: "adhan",
-    label: "Adhan Only",
-    description: "Add each prayer's adhan time for the selected month.",
-  },
-  {
-    value: "iqamah",
-    label: "Iqamah Only",
-    description: "Add each prayer's iqamah time for the selected month.",
-  },
-  {
-    value: "both",
-    label: "Adhan + Iqamah",
-    description: "Add both adhan and iqamah events for the selected month.",
-  },
-];
+type CalendarExportRange = "month" | "year";
 
-const RANGE_OPTIONS = [
-  { value: "month", label: "One month" },
-  { value: "year", label: "All year" },
-] as const;
+type CityOption = { id: string; name: string };
 
-type CalendarExportRange = (typeof RANGE_OPTIONS)[number]["value"];
+function buildCityOptions(mosques: Mosque[]): CityOption[] {
+  const bySlug = new Map<string, string>();
+  for (const m of mosques) {
+    if (!bySlug.has(m.citySlug)) {
+      bySlug.set(m.citySlug, m.cityName);
+    }
+  }
+  return Array.from(bySlug.entries())
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
 
-const GoogleIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-    <path
-      fill="#EA4335"
-      d="M12 10.2v3.9h5.4c-.2 1.2-.9 2.2-1.9 2.9l3 2.3c1.8-1.7 2.8-4.2 2.8-7.1 0-.7-.1-1.4-.2-2H12z"
-    />
-    <path
-      fill="#34A853"
-      d="M12 22c2.7 0 5-0.9 6.6-2.5l-3-2.3c-.8.6-2 .9-3.6.9-2.8 0-5.2-1.9-6.1-4.4l-3.1 2.4C4.3 19.6 7.9 22 12 22z"
-    />
-    <path
-      fill="#4A90E2"
-      d="M5.9 13.7c-.2-.6-.3-1.1-.3-1.7s.1-1.2.3-1.7L2.8 7.9C2.3 9 2 10 2 12s.3 3 .8 4.1l3.1-2.4z"
-    />
-    <path
-      fill="#FBBC05"
-      d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.9 14.7 2 12 2 7.9 2 4.3 4.4 2.8 7.9l3.1 2.4c.9-2.5 3.3-4.4 6.1-4.4z"
-    />
-  </svg>
-);
-
-const AppleIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
-    <path d="M16.7 12.5c0-2 1.6-3 1.6-3-.9-1.3-2.2-1.5-2.7-1.5-1.1-.1-2.1.7-2.7.7s-1.4-.7-2.3-.7c-1.2 0-2.4.7-3.1 1.8-1.3 2.1-.3 5.2.9 6.9.6.8 1.2 1.7 2.1 1.7.9 0 1.2-.6 2.3-.6 1.1 0 1.4.6 2.3.6 1 0 1.6-.9 2.2-1.8.6-.9.9-1.9.9-2-.1 0-1.5-.6-1.5-3.1z" />
-    <path d="M14.9 6.7c.5-.6.8-1.4.7-2.2-.8 0-1.7.5-2.3 1.1-.5.5-.9 1.3-.8 2.1.9.1 1.8-.4 2.4-1z" />
-  </svg>
-);
+function mosquesInCity(mosques: Mosque[], citySlug: string): Mosque[] {
+  return mosques.filter((m) => m.citySlug === citySlug);
+}
 
 export default function MonthlyCalendarExportModal({
   mosque,
@@ -95,193 +60,174 @@ export default function MonthlyCalendarExportModal({
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<CalendarExportMode>("iqamah");
   const [range, setRange] = useState<CalendarExportRange>("month");
-  const [selectedMosqueId, setSelectedMosqueId] = useState(mosque.id);
-  const [isLoading, setIsLoading] = useState(false);
+  const [copiedFeedUrl, setCopiedFeedUrl] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedMode = MODE_OPTIONS.find((option) => option.value === mode);
-  const selectedRange = RANGE_OPTIONS.find((option) => option.value === range);
-  const mosqueOptions = mosques && mosques.length > 0 ? mosques : [mosque];
+  const allMosques = mosques && mosques.length > 0 ? mosques : [mosque];
+  const cityOptions = useMemo(() => buildCityOptions(allMosques), [allMosques]);
+  const [selectedCitySlug, setSelectedCitySlug] = useState(
+    () => mosque.citySlug ?? cityOptions[0]?.id ?? "sheffield",
+  );
+
+  const mosquesInSelectedCity = useMemo(
+    () => mosquesInCity(allMosques, selectedCitySlug),
+    [allMosques, selectedCitySlug],
+  );
+
+  const [selectedMosqueId, setSelectedMosqueId] = useState(mosque.id);
   const selectedMosque =
-    mosqueOptions.find((option) => option.id === selectedMosqueId) ?? mosque;
-  const rangeSelectOptions = RANGE_OPTIONS.map((option) => ({ id: option.value, name: option.label }));
-  const modeSelectOptions = MODE_OPTIONS.map((option) => ({ id: option.value, name: option.label }));
+    mosquesInSelectedCity.find((m) => m.id === selectedMosqueId) ?? mosquesInSelectedCity[0] ?? mosque;
 
-  const handleDownload = async (provider: CalendarProvider) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const monthsToExport = range === "year"
-        ? Array.from({ length: 12 }, (_, index) => index + 1)
-        : [month];
-
-      const monthlyPayloads = await Promise.all(
-        monthsToExport.map(async (monthValue) => {
-          const monthlyData = await loadMonthlyPrayerTimes(selectedMosque.slug, monthValue, year);
-          const monthName = new Date(Date.UTC(year, monthValue - 1, 1)).toLocaleString("en-GB", {
-            month: "long",
-            timeZone: "UTC",
-          });
-
-          return await buildMonthlyCalendarEvents({
-            mosque: selectedMosque,
-            month: monthValue,
-            year,
-            monthLabel: monthName,
-            monthlyData,
-            mode,
-          });
-        }),
-      );
-
-      const events = monthlyPayloads.flat();
-
-      if (events.length === 0) {
-        throw new Error("No exportable prayer times were available for the selected month.");
-      }
-
-      const contents = buildIcsCalendar(events);
-      const filename = createCalendarFilename(
-        selectedMosque.slug,
-        range === "year" ? "full-year" : monthLabel,
-        year,
-        mode,
-      );
-      downloadCalendarFile(contents, filename);
-
-      if (provider === "google") {
-        // Google imports the same ICS file for whole-month exports in v1.
-      }
-
-      setOpen(false);
-    } catch (caughtError) {
-      const message =
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Unable to generate the calendar export right now.";
-      setError(message);
-    } finally {
-      setIsLoading(false);
+  const handleCityChange = (citySlug: string) => {
+    setSelectedCitySlug(citySlug);
+    const inCity = mosquesInCity(allMosques, citySlug);
+    if (inCity.length > 0) {
+      setSelectedMosqueId(inCity[0].id);
     }
   };
 
-  const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
-    if (nextOpen) {
-      setSelectedMosqueId(mosque.id);
-      setRange("month");
-      setError(null);
+  const buildFeedUrl = (): string => {
+    const url = new URL("/api/calendar-feed", window.location.origin);
+    url.searchParams.set("mosque", selectedMosque.slug);
+    url.searchParams.set("mode", mode);
+    url.searchParams.set("range", range);
+    url.searchParams.set("year", String(year));
+    if (range === "month") url.searchParams.set("month", String(month));
+    return url.toString();
+  };
+
+  const handleSubscribe = async (provider: CalendarProvider) => {
+    setError(null);
+    const feedUrl = buildFeedUrl();
+
+    try {
+      navigator.clipboard?.writeText(feedUrl).catch(() => undefined);
+    } catch {
+      // clipboard not available
+    }
+
+    if (provider === "google") {
+      window.open(
+        `https://calendar.google.com/calendar/r/settings/addbyurl?url=${encodeURIComponent(feedUrl)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      setOpen(false);
+    } else if (provider === "apple") {
+      window.location.href = feedUrl.replace(/^https?:\/\//, "webcal://");
+      setOpen(false);
+    } else {
+      setCopiedFeedUrl(true);
+      setTimeout(() => setCopiedFeedUrl(false), 2000);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className={triggerClassName}
-          aria-label={`Add ${monthLabel} ${year} prayer times to calendar`}
-        >
+        <Button variant="outline" className={triggerClassName} aria-label="Subscribe to prayer times">
           <CalendarDays />
           Add to Calendar
         </Button>
       </DialogTrigger>
 
-      <DialogContent
-        className="top-[calc(50%-3.75rem)] max-h-[calc(100dvh-6.75rem)] w-[calc(100vw-2rem)] max-w-md overflow-y-auto px-4 pb-[calc(0.85rem+env(safe-area-inset-bottom))] pt-4 text-white sm:top-1/2 sm:max-h-[85dvh] sm:px-5 sm:pt-6"
-      >
-        <DialogHeader className="space-y-2 text-left">
-          <DialogTitle className="text-lg sm:text-xl">Calendar Export</DialogTitle>
-          <div className="space-y-2">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5 sm:p-3">
-              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-white/90">
-                Mosque
-              </label>
-              <CustomSelect
-                options={mosqueOptions}
-                value={selectedMosqueId}
-                onChange={setSelectedMosqueId}
-                aria-label="Select mosque for calendar export"
-                truncateLabel
-                listFitsContent
-                className="[&_button]:h-9 [&_button]:rounded-xl [&_button]:bg-[#0A1128]/70 [&_button]:text-xs sm:[&_button]:text-sm"
-              />
-            </div>
-          </div>
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-sm rounded-2xl border-0 bg-gradient-to-b from-[#0A1128] to-[#141b3d] p-5 text-white shadow-2xl sm:w-full">
+        <DialogHeader className="space-y-0 text-left">
+          <DialogTitle className="text-base font-bold">
+            Subscribe to prayer times
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/90 sm:text-sm sm:normal-case sm:tracking-normal">
-              Export range
-            </p>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5 sm:p-3.5">
-              <CustomSelect
-                options={rangeSelectOptions}
-                value={range}
-                onChange={(value) => setRange(value as CalendarExportRange)}
-                aria-label="Choose export range"
-                truncateLabel={false}
-                className="[&_button]:h-9 [&_button]:rounded-xl [&_button]:bg-[#0A1128]/70 [&_button]:text-xs sm:[&_button]:text-sm"
-              />
-              {selectedRange ? (
-                <p className="mt-2 text-xs text-white/60 sm:mt-2.5 sm:text-sm">
-                  {selectedRange.value === "year"
-                    ? `Export all months for ${year} in one calendar file.`
-                    : `Export ${monthLabel} ${year} only.`}
-                </p>
-              ) : null}
-            </div>
+        <div className="mt-4 flex flex-col gap-2">
+          <Select value={selectedCitySlug} onValueChange={handleCityChange}>
+            <SelectTrigger className="h-9 rounded-xl border-white/10 bg-white/10 px-3 text-xs font-normal text-white/90 shadow-none backdrop-blur-none sm:text-sm">
+              <SelectValue placeholder="Select city" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-white/10 bg-[#0A1128] text-white shadow-xl">
+              {cityOptions.map((c) => (
+                <SelectItem key={c.id} value={c.id} className="py-1.5 text-xs sm:text-sm">
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedMosqueId} onValueChange={setSelectedMosqueId}>
+            <SelectTrigger className="h-9 rounded-xl border-white/10 bg-white/10 px-3 text-xs font-normal text-white/90 shadow-none backdrop-blur-none sm:text-sm">
+              <SelectValue placeholder="Select mosque" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-white/10 bg-[#0A1128] text-white shadow-xl">
+              {mosquesInSelectedCity.map((m) => (
+                <SelectItem key={m.id} value={m.id} className="py-1.5 text-xs sm:text-sm">
+                  {m.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className="flex gap-2">
+            <Select value={range} onValueChange={(v) => setRange(v as CalendarExportRange)}>
+              <SelectTrigger className="h-9 flex-1 rounded-xl border-white/10 bg-white/10 px-3 text-xs font-normal text-white/90 shadow-none backdrop-blur-none sm:text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-white/10 bg-[#0A1128] text-white shadow-xl">
+                <SelectItem value="month" className="py-1.5 text-xs sm:text-sm">{monthLabel} only</SelectItem>
+                <SelectItem value="year" className="py-1.5 text-xs sm:text-sm">Full year</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={mode} onValueChange={(v) => setMode(v as CalendarExportMode)}>
+              <SelectTrigger className="h-9 flex-1 rounded-xl border-white/10 bg-white/10 px-3 text-xs font-normal text-white/90 shadow-none backdrop-blur-none sm:text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border-white/10 bg-[#0A1128] text-white shadow-xl">
+                <SelectItem value="iqamah" className="py-1.5 text-xs sm:text-sm">Iqamah</SelectItem>
+                <SelectItem value="adhan" className="py-1.5 text-xs sm:text-sm">Adhan</SelectItem>
+                <SelectItem value="both" className="py-1.5 text-xs sm:text-sm">Adhan + Iqamah</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/90 sm:text-sm sm:normal-case sm:tracking-normal">
-              Export type
-            </p>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5 sm:p-3.5">
-              <CustomSelect
-                options={modeSelectOptions}
-                value={mode}
-                onChange={(value) => setMode(value as CalendarExportMode)}
-                aria-label="Choose export mode"
-                truncateLabel={false}
-                className="[&_button]:h-9 [&_button]:rounded-xl [&_button]:bg-[#0A1128]/70 [&_button]:text-xs sm:[&_button]:text-sm"
-              />
-              {selectedMode ? (
-                <p className="mt-2 text-xs text-white/60 sm:mt-2.5 sm:text-sm">{selectedMode.description}</p>
-              ) : null}
-            </div>
-          </div>
-
-          {error ? (
-            <p className="rounded-2xl border border-[#FFB380]/30 bg-[#FFB380]/10 px-3 py-2 text-xs text-[#FFD2B0] sm:px-4 sm:py-3 sm:text-sm">
-              {error}
-            </p>
-          ) : null}
+          {error && <p className="text-xs text-[#FFB380]">{error}</p>}
         </div>
 
-        <DialogFooter className="mt-4 !grid !grid-cols-2 gap-2 sm:mt-6 sm:flex sm:gap-2.5">
-          <Button
+        <div className="mt-5 flex gap-2">
+          <button
             type="button"
-            variant="outline"
-            onClick={() => handleDownload("google")}
-            disabled={isLoading}
-            className="h-9 w-full text-xs sm:h-10 sm:w-auto sm:text-sm"
+            onClick={() => handleSubscribe("google")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white/10 px-3 py-2.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/20"
           >
-            <GoogleIcon className="h-4 w-4" />
-            {isLoading ? "Preparing…" : "Google Calendar"}
-          </Button>
-          <Button
+            <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.2-.9 2.2-1.9 2.9l3 2.3c1.8-1.7 2.8-4.2 2.8-7.1 0-.7-.1-1.4-.2-2H12z" />
+              <path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.5l-3-2.3c-.8.6-2 .9-3.6.9-2.8 0-5.2-1.9-6.1-4.4l-3.1 2.4C4.3 19.6 7.9 22 12 22z" />
+              <path fill="#4A90E2" d="M5.9 13.7c-.2-.6-.3-1.1-.3-1.7s.1-1.2.3-1.7L2.8 7.9C2.3 9 2 10 2 12s.3 3 .8 4.1l3.1-2.4z" />
+              <path fill="#FBBC05" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.9 14.7 2 12 2 7.9 2 4.3 4.4 2.8 7.9l3.1 2.4c.9-2.5 3.3-4.4 6.1-4.4z" />
+            </svg>
+            Google
+          </button>
+          <button
             type="button"
-            onClick={() => handleDownload("apple")}
-            disabled={isLoading}
-            className="h-9 w-full text-xs sm:h-10 sm:w-auto sm:text-sm"
+            onClick={() => handleSubscribe("apple")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white/10 px-3 py-2.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/20"
           >
-            <AppleIcon className="h-4 w-4" />
-            {isLoading ? "Preparing…" : "Apple / ICS Download"}
-          </Button>
-        </DialogFooter>
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+              <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.897-1.455 2.338-1.273 3.714 1.338.104 2.715-.69 3.56-1.702" />
+            </svg>
+            Apple
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSubscribe("ics")}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white/10 px-3 py-2.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/20"
+          >
+            <Link className="h-4 w-4" />
+            {copiedFeedUrl ? "Copied!" : "Copy URL"}
+          </button>
+        </div>
+
+        <p className="mt-3 text-center text-[10px] text-white/30">
+          Feed refreshes automatically. No app required.
+        </p>
       </DialogContent>
     </Dialog>
   );

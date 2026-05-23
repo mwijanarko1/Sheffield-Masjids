@@ -88,13 +88,21 @@ export function createCalendarFilename(
   return `${mosqueSlug}-${safeMonth}-${year}-${mode}.ics`;
 }
 
-export function buildIcsCalendar(events: CalendarEventInput[], now: Date = new Date()): string {
+export function buildIcsCalendar(
+  events: CalendarEventInput[],
+  now: Date = new Date(),
+  options: { calendarName?: string } = {},
+): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     `PRODID:${ICS_PRODID}`,
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
+    ...(options.calendarName ? [formatProperty("X-WR-CALNAME", options.calendarName)] : []),
+    `X-WR-TIMEZONE:${ICS_TIMEZONE}`,
+    "X-PUBLISHED-TTL:PT12H",
+    "REFRESH-INTERVAL;VALUE=DURATION:PT12H",
     ...events.map((event) => buildEventBlock(event, now)),
     "END:VCALENDAR",
   ];

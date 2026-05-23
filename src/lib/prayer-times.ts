@@ -1,5 +1,6 @@
 import { MonthlyPrayerTimes, DailyPrayerTimes, DailyIqamahTimes, IqamahTimeRange, PrayerTime } from '@/types/prayer-times';
 import {
+  getMosqueDataFsDir,
   getMosqueMonthlyJsonUrl,
   getMosqueRamadanJsonUrl,
   resolveMosqueLocationForSlug,
@@ -900,14 +901,24 @@ export async function loadMonthlyPrayerTimes(
         }
       }
 
-      const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
-      const response = await fetchWithRetry(publicUrl);
+      let data: MonthlyPrayerTimes;
 
-      if (!response.ok) {
-        throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
+      if (typeof window === 'undefined') {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const filePath = path.join(getMosqueDataFsDir(process.cwd(), safeSlug, mosqueLocation), `${monthFile}.json`);
+        data = JSON.parse(await fs.readFile(filePath, 'utf-8')) as MonthlyPrayerTimes;
+      } else {
+        const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
+        const response = await fetchWithRetry(publicUrl);
+
+        if (!response.ok) {
+          throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
+        }
+
+        data = await response.json() as MonthlyPrayerTimes;
       }
 
-      const data: MonthlyPrayerTimes = await response.json();
       const resolved = await applyMasjidRisalahMarchIqamahIfNeeded(safeSlug, month, year, data);
       setBoundedCacheEntry(
         monthlyPrayerTimesCache,
