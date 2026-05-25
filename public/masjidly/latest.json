@@ -1,0 +1,21 @@
+{
+  "android": {
+    "version": "1.1.1",
+    "versionCode": 6,
+    "url": "https://sheffieldmasjids.com/masjidly/masjidly-latest.apk",
+    "sha256": "99a6d84b22d7ecf2adeb6131b456af2a82af41c33da3145ecaabc7a706ec3b3a",
+    "minVersionCode": 1
+  },
+  "ios": {
+    "version": "1.1.1",
+    "build": 3,
+    "appStoreUrl": "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
+  },
+  "pub_date": "2026-05-22T11:37:00Z",
+  "notes": {
+    "en": "Widget Isha Iqamah fix — widgets now show the correct Isha iqamah for mosques where Isha follows the adhan directly.",
+    "ar": "تصحيح إقامة العشاء في الودجت — تعرض الودجات الآن إقامة العشاء الصحيحة للمساجد التي تتبع فيها الإقامة الأذان مباشرة.",
+    "ur": "وجٹ عشاء اقامت کی درستگی — وجٹس اب ان مساجد کے لیے عشاء کی درست اقامت دکھاتے ہیں جہاں اقامت اذان کے ساتھ ہی ہوتی ہے۔",
+    "id": "Perbaikan Iqamah Isya Widget — Widget kini menampilkan iqamah Isya yang benar untuk masjid yang iqamah Isya-nya mengikuti adzan langsung."
+  }
+}

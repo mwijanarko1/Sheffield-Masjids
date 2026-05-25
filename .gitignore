@@ -42,6 +42,10 @@ bun-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# binary artifacts (tracked via LFS in public/masjidly/)
+*.apk
+!public/masjidly/*.apk
+
 # template-specific
 /docs
 /for-agent
