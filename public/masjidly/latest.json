@@ -13,9 +13,9 @@
   },
   "pub_date": "2026-05-25T16:57:06Z",
   "notes": {
-    "en": "In-app update checker added — the app now checks for newer versions and prompts you to download. Widget Isha Iqamah fix included.",
-    "ar": "تمت إضافة ميزة التحقق من التحديثات داخل التطبيق — يتحقق التطبيق الآن من وجود إصدارات أحدث ويطالبك بالتنزيل. يتضمن أيضًا تصحيح إقامة العشاء في الودجت.",
-    "ur": "ایپ میں اپ ڈیٹ چیکر شامل کیا گیا — ایپ اب نئے ورژنز کی جانچ کرتی ہے اور ڈاؤن لوڈ کرنے کا اشارہ دیتی ہے۔ وجٹ عشاء اقامت کی درستگی بھی شامل ہے۔",
-    "id": "Pemeriksa pembaruan dalam aplikasi ditambahkan — aplikasi kini memeriksa versi terbaru dan mengunduh. Perbaikan Iqamah Isya Widget juga disertakan."
+    "en": "Widget Isha Iqamah fix — widgets now show the correct Isha iqamah for mosques where Isha follows the adhan directly.",
+    "ar": "تصحيح إقامة العشاء في الودجت — تعرض الودجات الآن إقامة العشاء الصحيحة للمساجد التي تتبع فيها الإقامة الأذان مباشرة.",
+    "ur": "وجٹ عشاء اقامت کی درستگی — وجٹس اب ان مساجد کے لیے عشاء کی درست اقامت دکھاتے ہیں جہاں اقامت اذان کے ساتھ ہی ہوتی ہے۔",
+    "id": "Perbaikan Iqamah Isya Widget — Widget kini menampilkan iqamah Isya yang benar untuk masjid yang iqamah Isya-nya mengikuti adzan langsung."
   }
 }
