@@ -1,9 +1,9 @@
 {
   "android": {
-    "version": "1.1.1",
-    "versionCode": 7,
-    "url": "https://sheffieldmasjids.com/masjidly/Masjidly-1.1.1.apk",
-    "sha256": "753f16183852b5301b750abd0e88da809dfeb86968e94c315a50914aa3d87079",
+    "version": "1.1.2",
+    "versionCode": 8,
+    "url": "https://sheffieldmasjids.com/masjidly/Masjidly-1.1.2.apk",
+    "sha256": "e84b2db3e5d71ab24d96ab5e27e9901d04e2a5b3142afd16120bf741166c3956",
     "minVersionCode": 1
   },
   "ios": {
@@ -11,7 +11,7 @@
     "build": 3,
     "appStoreUrl": "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
   },
-  "pub_date": "2026-05-26T13:47:05Z",
+  "pub_date": "2026-05-28T23:55:17Z",
   "notes": {
     "en": "New update available",
     "ar": "تحديث جديد متاح",
