@@ -253,7 +253,7 @@
       "name": "Islamic Centre of England",
       "address": "140 Maida Vale, London W9 1QB, United Kingdom",
       "lat": 51.5289,
-      "lng": -0.1860,
+      "lng": -0.186,
       "slug": "iccuk",
       "citySlug": "london",
       "cityName": "London",
@@ -317,6 +317,48 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://didsburymosque.org"
+    },
+    {
+      "id": "cheadle-masjid",
+      "name": "Cheadle Masjid",
+      "address": "377 Wilmslow Road, Heald Green, Cheadle SK8 3NP, United Kingdom",
+      "lat": 53.3769,
+      "lng": -2.2231,
+      "slug": "cheadle-masjid",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://cheadlemasjid.org"
+    },
+    {
+      "id": "chesham-mosque",
+      "name": "Chesham Mosque",
+      "address": "Bury Lane, Chesham HP5 1JQ, United Kingdom",
+      "lat": 51.7038,
+      "lng": -0.6095,
+      "slug": "chesham-mosque",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.cheshammosque.org.uk"
+    },
+    {
+      "id": "glasgow-central-mosque",
+      "name": "Glasgow Central Mosque",
+      "address": "1 Mosque Ave, Glasgow G5 8XW, United Kingdom",
+      "lat": 55.8411,
+      "lng": -4.264,
+      "slug": "glasgow-central-mosque",
+      "citySlug": "glasgow",
+      "cityName": "Glasgow",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://centralmosque.co.uk"
     }
   ]
 }

@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import {
   CalendarClock,
   CalendarRange,
-  Moon,
   Scale,
   SlidersHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type AppTab = "prayer" | "timetable" | "dhul-hijjah" | "compare" | "settings";
+export type AppTab = "prayer" | "timetable" | "compare" | "settings";
 
 interface AppBottomNavProps {
   activeTab: AppTab;
@@ -25,7 +24,6 @@ const navItems: {
 }[] = [
     { tab: "prayer", href: "/", label: "Prayer", Icon: CalendarClock },
     { tab: "timetable", href: "/timetable", label: "Timetable", Icon: CalendarRange },
-    { tab: "dhul-hijjah", href: "/dhul-hijjah", label: "Dhul Hijjah", Icon: Moon },
     { tab: "compare", href: "/compare", label: "Compare", Icon: Scale },
     { tab: "settings", href: "/settings", label: "Settings", Icon: SlidersHorizontal },
   ];

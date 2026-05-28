@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { href: "/", label: "Home" },
   { href: "/timetable", label: "Timetable" },
-  { href: "/dhul-hijjah", label: "Dhul Hijjah" },
   { href: "/compare", label: "Compare" },
   { href: "/settings", label: "Settings" },
 ];
@@ -36,7 +35,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  const appRoutes = new Set(["/", "/timetable", "/dhul-hijjah", "/compare", "/settings"]);
+  const appRoutes = new Set(["/", "/timetable", "/compare", "/settings"]);
   if (appRoutes.has(pathname)) {
     return null;
   }
@@ -58,12 +57,7 @@ export default function Header() {
           >
             Timetable
           </Link>
-          <Link
-            href="/dhul-hijjah"
-            className="text-sm font-medium text-white/70 transition-colors hover:text-[#FFB380]"
-          >
-            Dhul Hijjah
-          </Link>
+
           <Link
             href="/compare"
             className="text-sm font-medium text-white/70 transition-colors hover:text-[#FFB380]"
