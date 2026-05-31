@@ -8,6 +8,7 @@ const prayerTimeValidator = v.object({
   shurooq: v.string(),
   dhuhr: v.string(),
   asr: v.string(),
+  asr_mithl2: v.optional(v.string()),
   maghrib: v.string(),
   isha: v.string(),
 });

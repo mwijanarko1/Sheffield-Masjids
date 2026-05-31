@@ -289,7 +289,7 @@ const CONVERSIONS: Array<{
     },
   },
   {
-    slug: "quba-mosque",
+    slug: "masjid-quba-education-centre",
     src: "Quba_Mosque_Ramadan_2026.json",
     startFeb18: true,
     convert: (raw: unknown) => {

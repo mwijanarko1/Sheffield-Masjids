@@ -19,7 +19,7 @@ export const MOSQUE_NAMES = [
   "Jamia Masjid Ghausia",
   "Noor Al Hadi Mosque",
   "Al-Shafeey Centre",
-  "Quba Mosque",
+  "Masjid Quba Education Centre",
   "Masjid Umar Sheffield",
   "High Hazels Community Centre",
   "Al-Huda Academy",

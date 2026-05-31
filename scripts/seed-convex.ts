@@ -178,6 +178,7 @@ const PrayerTimeSchema = z
     shurooq: z.string().min(1),
     dhuhr: z.string().min(1),
     asr: z.string().min(1),
+    asr_mithl2: z.string().min(1).optional(),
     maghrib: z.string().min(1),
     isha: z.string().min(1),
   })

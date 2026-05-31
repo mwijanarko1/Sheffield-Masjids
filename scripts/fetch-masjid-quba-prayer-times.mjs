@@ -14,7 +14,7 @@
  * 3. POST /prayers-ajax-list and /mosques-ajax-list
  *
  * Run from repo root: node scripts/fetch-masjid-quba-prayer-times.mjs
- * Writes: public/data/mosques/gb/sheffield/quba-mosque/{january..december}.json
+ * Writes: public/data/mosques/gb/sheffield/masjid-quba-education-centre/{january..december}.json
  *
  * Source UI: https://masjidquba.mosqueprayertimes.org/prayer-times
  */
@@ -31,7 +31,7 @@ const ROOT = join(__dirname, "..");
 const BASE = "https://masjidquba.mosqueprayertimes.org";
 /** Confirmed from API JSON rows (`mosque_id`); differs from embedded script on the page. */
 const MOSQUE_ID = "53";
-const SLUG = "quba-mosque";
+const SLUG = "masjid-quba-education-centre";
 
 const MONTH_NAMES = [
   "january",
