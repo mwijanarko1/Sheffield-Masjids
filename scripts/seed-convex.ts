@@ -9,11 +9,14 @@
  * For production: add CONVEX_PROD_URL to .env.local (from Convex dashboard → Deployments → Production → URL)
  *
  * Run:
- *   bun scripts/seed-convex.ts                 # full seed — all mosques, all months (dev)
- *   bun scripts/seed-convex.ts --prod          # full seed (production URL)
- *   bun scripts/seed-convex.ts --changed       # only JSON changed vs HEAD (+ untracked under mosques/)
- *   bun scripts/seed-convex.ts --months 4,5    # only those months, every mosque
+ *   bun scripts/seed-convex.ts                                   # full seed — all mosques, all months (dev)
+ *   bun scripts/seed-convex.ts --prod                            # full seed (production URL)
+ *   bun scripts/seed-convex.ts --changed                         # only JSON changed vs HEAD (+ untracked under mosques/)
+ *   bun scripts/seed-convex.ts --slug <slug>                     # seed only one mosque (registry + monthly)
+ *   bun scripts/seed-convex.ts --months 4,5                      # only those months, every mosque
  *   npm run seed:dev -- --changed --months april
+ *   npm run seed:dev -- --slug south-essex-islamic-trust         # single mosque, dev
+ *   npm run seed:dev -- --slug south-essex-islamic-trust --prod  # single mosque, prod
  */
 
 import { ConvexHttpClient } from "convex/browser";
@@ -53,6 +56,8 @@ const MONTH_NAME_TO_NUM: Record<string, number> = Object.fromEntries(
 
 type ChangedPlan = {
   registryChanged: boolean;
+  /** Only populated when registryChanged — slugs added/modified in mosques.json */
+  changedRegistrySlugs: Set<string>;
   dstChanged: boolean;
   /** slug → month numbers touched */
   monthlyBySlug: Map<string, Set<number>>;
@@ -105,15 +110,58 @@ function parseMonthsCsv(arg: string): Set<number> {
   return set;
 }
 
+/** Diff current mosques.json against HEAD to find slugs that were added or modified. */
+function diffRegistrySlugs(cwd: string): Set<string> {
+  try {
+    const out = execFileSync("git", ["show", "HEAD:public/data/mosques.json"], {
+      encoding: "utf-8",
+      cwd,
+      maxBuffer: 10 * 1024 * 1024,
+    });
+    const old: MosqueSeed[] = JSON.parse(out).mosques;
+    const oldSlugs = new Set(old.map((m) => m.slug));
+
+    const current = parseJsonFile<{ mosques: MosqueSeed[] }>(
+      path.join(cwd, "public", "data", "mosques.json"),
+      MosquesFileSchema
+    );
+    const changed = new Set<string>();
+    for (const m of current.mosques) {
+      if (!oldSlugs.has(m.slug)) {
+        changed.add(m.slug); // added
+      } else {
+        const oldEntry = old.find((o) => o.slug === m.slug)!;
+        if (
+          oldEntry.lat !== m.lat ||
+          oldEntry.lng !== m.lng ||
+          oldEntry.isHidden !== m.isHidden ||
+          oldEntry.name !== m.name ||
+          oldEntry.address !== m.address
+        ) {
+          changed.add(m.slug); // modified
+        }
+      }
+    }
+    return changed;
+  } catch {
+    // If git show fails (e.g. first commit), return empty
+    return new Set();
+  }
+}
+
 function parseChangedPaths(paths: string[]): ChangedPlan {
   const monthlyBySlug = new Map<string, Set<number>>();
   const ramadanSlugs = new Set<string>();
   let registryChanged = false;
+  let changedRegistrySlugs = new Set<string>();
   let dstChanged = false;
 
   for (const raw of paths) {
     const p = normalizeRepoPath(raw);
-    if (p === "public/data/mosques.json") registryChanged = true;
+    if (p === "public/data/mosques.json") {
+      registryChanged = true;
+      // Lazy-populated later if needed (we need cwd which we don't have here)
+    }
     if (p === "public/docs/dst-start-end.json") dstChanged = true;
 
     const monthly =
@@ -133,7 +181,7 @@ function parseChangedPaths(paths: string[]): ChangedPlan {
     if (ram) ramadanSlugs.add(ram[1]);
   }
 
-  return { registryChanged, dstChanged, monthlyBySlug, ramadanSlugs };
+  return { registryChanged, changedRegistrySlugs, dstChanged, monthlyBySlug, ramadanSlugs };
 }
 
 function intersectMonthSets(a: Set<number>, b: Set<number>): Set<number> {
@@ -150,6 +198,7 @@ function parseCli(argv: string[]) {
   --prod        Use CONVEX_PROD_URL instead of dev.
   --changed     Only seed files that differ from HEAD or are untracked under public/data/mosques
                 (requires git). Skips unchanged months.
+  --slug <id>   Seed only the specified mosque (registry + monthly). Skips everything else.
   --months A,B  Comma-separated month numbers or names (e.g. 4,5 or april,may).
                 With --changed: only applies to changed monthly files (intersection).
                 Without --changed: only those months for every mosque.
@@ -157,18 +206,26 @@ function parseCli(argv: string[]) {
 Examples:
   tsx scripts/seed-convex.ts --changed
   tsx scripts/seed-convex.ts --changed --months april
+  tsx scripts/seed-convex.ts --slug south-essex-islamic-trust
+  tsx scripts/seed-convex.ts --slug south-essex-islamic-trust --prod
   tsx scripts/seed-convex.ts --months 6,7,8`);
     process.exit(0);
   }
 
   let monthsCsv: string | undefined;
+  let slugOnly: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a.startsWith("--months=")) monthsCsv = a.slice("--months=".length);
     else if (a === "--months" || a === "-m") monthsCsv = argv[i + 1];
+    else if (a.startsWith("--slug=")) slugOnly = a.slice("--slug=".length);
+    else if (a === "--slug") slugOnly = argv[i + 1];
+  }
+  if (slugOnly !== undefined && !MOSQUE_SLUG_RE.test(slugOnly)) {
+    throw new Error(`Invalid slug: "${slugOnly}". Must match ${MOSQUE_SLUG_RE}`);
   }
   const monthsOnly = monthsCsv ? parseMonthsCsv(monthsCsv) : null;
-  return { isProd, useChanged, monthsOnly };
+  return { isProd, useChanged, slugOnly, monthsOnly };
 }
 
 const PrayerTimeSchema = z
@@ -276,10 +333,12 @@ function parseJsonFile<T>(filePath: string, schema: z.ZodType<T>): T {
 }
 const upsertMosqueMutation = makeFunctionReference<"mutation">("mosques:upsert");
 
-async function seedMosques(client: ConvexHttpClient, forceUnhide = false): Promise<MosqueSeed[]> {
+async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsOnly?: Set<string>): Promise<MosqueSeed[]> {
   const mosquesFile = path.join(process.cwd(), "public", "data", "mosques.json");
   const parsed = parseJsonFile(mosquesFile, MosquesFileSchema);
-  const mosques = parsed.mosques;
+  const mosques = slugsOnly
+    ? parsed.mosques.filter((m) => slugsOnly.has(m.slug))
+    : parsed.mosques;
 
   console.log("Seeding mosque registry...");
   for (const raw of mosques) {
@@ -361,7 +420,7 @@ async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string) {
 }
 
 async function main() {
-  const { isProd, useChanged, monthsOnly } = parseCli(process.argv.slice(2));
+  const { isProd, useChanged, slugOnly, monthsOnly } = parseCli(process.argv.slice(2));
 
   const convexUrl = isProd
     ? process.env.CONVEX_PROD_URL
@@ -380,6 +439,42 @@ async function main() {
     process.exit(1);
   }
 
+  // ── ─slug mode: seed exactly one mosque ──
+  if (slugOnly) {
+    console.log(`Single-mosque seed (--slug ${slugOnly}) on ${isProd ? "PRODUCTION" : "DEV"} (${convexUrl})\n`);
+    const client = new ConvexHttpClient(convexUrl);
+    const cwd = process.cwd();
+
+    // Seed registry for just this slug
+    await seedMosques(client, !isProd, new Set([slugOnly]));
+
+    // Seed DST calendar always (it's a one-time thing)
+    const dstPath = path.join(cwd, "public", "docs", "dst-start-end.json");
+    if (fs.existsSync(dstPath)) {
+      try {
+        const dstRaw = JSON.parse(fs.readFileSync(dstPath, "utf-8")) as {
+          uk_dst_dates: { year: number; start_date: string; end_date: string }[];
+        };
+        await client.mutation(api.seed.seedUkDstCalendar, {
+          ukDstDates: dstRaw.uk_dst_dates,
+        });
+        console.log("UK DST calendar (BST start/end dates)\n  ✓ seeded\n");
+      } catch (err) {
+        console.error("  ✗ UK DST calendar:", err instanceof Error ? err.message : err);
+      }
+      await delay(200);
+    }
+
+    // Seed monthly files for this slug
+    console.log(`Mosque: ${slugOnly}`);
+    await seedMonthly(client, slugOnly, monthsOnly);
+    await seedRamadan(client, slugOnly);
+    console.log("");
+    console.log("Done.");
+    return;
+  }
+
+  // ── normal / --changed mode ──
   let changedPlan: ChangedPlan | undefined;
   if (useChanged) {
     const paths = gitChangedAndUntrackedPaths(process.cwd());
@@ -388,6 +483,12 @@ async function main() {
       process.exit(1);
     }
     changedPlan = parseChangedPaths(paths);
+
+    // If mosques.json changed, figure out which slugs actually changed
+    if (changedPlan.registryChanged) {
+      changedPlan.changedRegistrySlugs = diffRegistrySlugs(process.cwd());
+    }
+
     const hasWork =
       changedPlan.registryChanged ||
       changedPlan.dstChanged ||
@@ -400,7 +501,12 @@ async function main() {
       process.exit(0);
     }
     console.log("Incremental seed (--changed):\n");
-    if (changedPlan.registryChanged) console.log("  • public/data/mosques.json");
+    if (changedPlan.registryChanged) {
+      const registrySlugs = [...changedPlan.changedRegistrySlugs].sort();
+      console.log(
+        `  • public/data/mosques.json (${registrySlugs.length} changed: ${registrySlugs.join(", ")})`
+      );
+    }
     if (changedPlan.dstChanged) console.log("  • public/docs/dst-start-end.json");
     for (const [slug, nums] of [...changedPlan.monthlyBySlug.entries()].sort((a, b) =>
       a[0].localeCompare(b[0])
@@ -420,7 +526,12 @@ async function main() {
   let seededMosques: MosqueSeed[];
   const isDev = !isProd;
   if (!useChanged || changedPlan!.registryChanged) {
-    seededMosques = await seedMosques(client, isDev);
+    // Only seed the slugs that actually changed in mosques.json
+    const slugsOnly = changedPlan?.changedRegistrySlugs;
+    if (slugsOnly && slugsOnly.size > 0) {
+      console.log(`Seeding registry for ${slugsOnly.size} changed mosque(s)...`);
+    }
+    seededMosques = await seedMosques(client, isDev, slugsOnly && slugsOnly.size > 0 ? slugsOnly : undefined);
   } else {
     const mosquesFile = path.join(process.cwd(), "public", "data", "mosques.json");
     seededMosques = parseJsonFile(mosquesFile, MosquesFileSchema).mosques;
