@@ -3,7 +3,7 @@
     "version": "1.2.0",
     "versionCode": 5,
     "url": "https://www.sheffieldmasjids.com/masjidly/Masjidly-1.2.0.apk",
-    "sha256": "6c3343acbd500eacafc060f60d90f690c5e3141c8ed8f6028722d3fd92d2e77b",
+    "sha256": "711617145ae2597763767045c6bc2c5f3268322bc04c191d401e6b58ffc8f52f",
     "minVersionCode": 1
   },
   "ios": {
@@ -11,7 +11,7 @@
     "build": 3,
     "appStoreUrl": "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
   },
-  "pub_date": "2026-06-01T20:04:59Z",
+  "pub_date": "2026-06-01T20:27:16Z",
   "notes": {
     "en": "New update available",
     "ar": "تحديث جديد متاح",
