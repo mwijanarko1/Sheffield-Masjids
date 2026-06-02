@@ -43,6 +43,48 @@
       "website": "http://bradfordgrandmosque.co.uk"
     },
     {
+      "id": "burnley-central-mosque",
+      "name": "Burnley Central Mosque (Masjid Farooqe Azam)",
+      "address": "North St, Burnley BB10 1LU, United Kingdom",
+      "lat": 53.80152966572346,
+      "lng": -2.2375153008257365,
+      "slug": "burnley-central-mosque",
+      "citySlug": "burnley",
+      "cityName": "Burnley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidfarooqeazam.org.uk"
+    },
+    {
+      "id": "central-mosque-bradford",
+      "name": "Central Mosque Bradford",
+      "address": "Central Mosque, 9 Darfield Street, Bradford BD1 3RU, United Kingdom",
+      "lat": 53.79829361429653,
+      "lng": -1.760038291083523,
+      "slug": "central-mosque-bradford",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.jamiyat.org"
+    },
+    {
+      "id": "masjid-salahuddin-stoke",
+      "name": "Masjid Salahuddin & Madrasah Taleemul Islam",
+      "address": "Waterloo Rd, Burslem, Stoke-on-Trent ST6 2EN, United Kingdom",
+      "lat": 53.04222413364441,
+      "lng": -2.193242357671374,
+      "slug": "masjid-salahuddin-stoke",
+      "citySlug": "stoke-on-trent",
+      "cityName": "Stoke-on-Trent",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "scunthorpe-central-mosque",
       "name": "Scunthorpe Central Mosque (Madani Masjid & EQIM)",
       "address": "40-44 Percival Street, Scunthorpe DN15 6JD, United Kingdom",
@@ -55,20 +97,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "http://www.scunthorpemosque.co.uk"
-    },
-    {
-      "id": "masjid-e-vali",
-      "name": "Bradford Grand Mosque",
-      "address": "Bradford, United Kingdom",
-      "lat": 53.784490024472724,
-      "lng": -1.7696162865070608,
-      "slug": "bradford-grand-mosque",
-      "citySlug": "bradford",
-      "cityName": "Bradford",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": "http://bradfordgrandmosque.co.uk"
     },
     {
       "id": "masjid-e-vali",
@@ -121,6 +149,20 @@
       "slug": "al-huda-academy",
       "isHidden": false,
       "website": "http://alhudaacademy.co.uk/"
+    },
+    {
+      "id": "al-huda-masjid",
+      "name": "Al-Huda Masjid",
+      "address": "119 Legrams Ln, Bradford BD7 2AA, United Kingdom",
+      "lat": 53.79256478377528,
+      "lng": -1.7780627350376517,
+      "slug": "al-huda-masjid",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.alhuda-masjid.co.uk/"
     },
     {
       "id": "al-rahma-mosque",
@@ -389,7 +431,7 @@
     },
     {
       "id": "iccuk",
-      "name": "London Central Mosque Trust & The Islamic Cultural Centre",
+      "name": "London Central Mosque",
       "address": "146 Park Road, London NW8 7RG, United Kingdom",
       "lat": 51.529,
       "lng": -0.1652,
@@ -753,6 +795,34 @@
       "slug": "sheffield-ummah-center",
       "isHidden": false,
       "website": "https://ummahcenter.mosqueprayertimes.org"
+    },
+    {
+      "id": "west-london-islamic-cultural-centre",
+      "name": "West London Islamic Cultural Centre (WLICC)",
+      "address": "7 Bridges Place, London SW6 4HW, United Kingdom",
+      "lat": 51.4764122,
+      "lng": -0.2016445,
+      "slug": "west-london-islamic-cultural-centre",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.wlicc.org"
+    },
+    {
+      "id": "darussalam-masjid",
+      "name": "Darussalam Masjid & Cultural Centre",
+      "address": "North Hyde House/North Hyde Wharf, Hayes Rd, Southall UB2 5NS, United Kingdom",
+      "lat": 51.5082,
+      "lng": -0.3789,
+      "slug": "darussalam-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.darussalamcentre.org"
     }
   ]
 }
