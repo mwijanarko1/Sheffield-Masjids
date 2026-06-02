@@ -143,6 +143,15 @@ function diffRegistrySlugs(cwd: string): Set<string> {
       }
     }
     return changed;
+    // Detect deletions: slugs in old but not in current
+    const currentSlugs = new Set(current.mosques.map((m) => m.slug));
+    for (const oldSlug of oldSlugs) {
+      if (!currentSlugs.has(oldSlug)) {
+        changed.add(oldSlug); // deleted
+      }
+    }
+
+    return changed;
   } catch {
     // If git show fails (e.g. first commit), return empty
     return new Set();

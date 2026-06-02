@@ -188,3 +188,20 @@ export const upsert = mutation({
     return { inserted: await ctx.db.insert("mosques", doc) };
   },
 });
+
+export const removeBySlug = mutation({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("mosques")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+
+    if (!existing) {
+      return { deleted: false, reason: "not_found" };
+    }
+
+    await ctx.db.delete(existing._id);
+    return { deleted: true };
+  },
+});

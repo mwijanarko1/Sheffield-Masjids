@@ -275,11 +275,11 @@
   "iqamah_times": [
     {
       "date_range": "1-30",
-      "fajr": "20 minutes after adhan",
+      "fajr": "10 minutes after adhan",
       "dhuhr": "13:30",
       "asr": "18:00",
       "maghrib": "5 mins after adhan",
-      "isha": "22:36"
+      "isha": "Entry Time"
     }
   ],
   "jummah_iqamah": "13:15"

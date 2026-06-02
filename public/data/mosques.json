@@ -1,6 +1,104 @@
 {
   "mosques": [
     {
+      "id": "aberdeen-muslim-islamic-centre",
+      "name": "Aberdeen Muslim & Islamic Centre",
+      "address": "45 Frederick St, Aberdeen AB24 5HY, United Kingdom",
+      "lat": 57.15135784507789,
+      "lng": -2.0912432418357008,
+      "slug": "aberdeen-muslim-islamic-centre",
+      "citySlug": "aberdeen",
+      "cityName": "Aberdeen",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://aberdeenmosque.org/prayer-times-central"
+    },
+    {
+      "id": "al-rawdha-mosque",
+      "name": "Milton Keynes Islamic & Cultural Association (Al-Rawdha Mosque)",
+      "address": "401 South Row, Central Milton Keynes MK9 2PG, United Kingdom",
+      "lat": 52.036846585120834,
+      "lng": -0.7587811044903313,
+      "slug": "al-rawdha-mosque",
+      "citySlug": "milton-keynes",
+      "cityName": "Milton Keynes",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.mkica.org"
+    },
+    {
+      "id": "bradford-grand-mosque",
+      "name": "Bradford Grand Mosque",
+      "address": "Bradford, United Kingdom",
+      "lat": 53.784490024472724,
+      "lng": -1.7696162865070608,
+      "slug": "bradford-grand-mosque",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "http://bradfordgrandmosque.co.uk"
+    },
+    {
+      "id": "scunthorpe-central-mosque",
+      "name": "Scunthorpe Central Mosque (Madani Masjid & EQIM)",
+      "address": "40-44 Percival Street, Scunthorpe DN15 6JD, United Kingdom",
+      "lat": 53.59341223777871,
+      "lng": -0.6540604423286261,
+      "slug": "scunthorpe-central-mosque",
+      "citySlug": "scunthorpe",
+      "cityName": "Scunthorpe",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "http://www.scunthorpemosque.co.uk"
+    },
+    {
+      "id": "masjid-e-vali",
+      "name": "Bradford Grand Mosque",
+      "address": "Bradford, United Kingdom",
+      "lat": 53.784490024472724,
+      "lng": -1.7696162865070608,
+      "slug": "bradford-grand-mosque",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "http://bradfordgrandmosque.co.uk"
+    },
+    {
+      "id": "masjid-e-vali",
+      "name": "Masjid E Vali",
+      "address": "Issa Hikmah Centre, Preston New Road, Blackburn BB2 6PS, United Kingdom",
+      "lat": 53.75162861014409,
+      "lng": -2.5102777865070607,
+      "slug": "masjid-e-vali",
+      "citySlug": "blackburn",
+      "cityName": "Blackburn",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidevali.com"
+    },
+    {
+      "id": "masjid-al-hikmah",
+      "name": "Masjid Alhikmah & Community Centre",
+      "address": "41 Nelson Street, Aberdeen AB24 5ER, United Kingdom",
+      "lat": 57.154199216464576,
+      "lng": -2.097523663234562,
+      "slug": "masjid-al-hikmah",
+      "citySlug": "aberdeen",
+      "cityName": "Aberdeen",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidalhikmah.org.uk"
+    },
+    {
       "id": "south-essex-islamic-trust",
       "name": "South Essex Islamic Trust",
       "address": "High Road, Vange, Basildon, Essex SS13 3BA, United Kingdom",
@@ -13,20 +111,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": ""
-    },
-    {
-      "id": "abdullah-quilliam-mosque",
-      "name": "Abdullah Quilliam Mosque",
-      "address": "8-10 Brougham Terrace, Liverpool L6 1AE, United Kingdom",
-      "lat": 53.4142882,
-      "lng": -2.9605068,
-      "slug": "abdullah-quilliam-mosque",
-      "citySlug": "liverpool",
-      "cityName": "Liverpool",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": "https://theaqs.org"
     },
     {
       "id": "al-huda-academy",
@@ -62,15 +146,6 @@
       "isHidden": false
     },
     {
-      "id": "al-shafeey-centre",
-      "name": "Al-Shafeey Centre",
-      "address": "Balfour Rd, Sheffield S9 4RX",
-      "lat": 53.385,
-      "lng": -1.435,
-      "slug": "al-shafeey-centre",
-      "isHidden": true
-    },
-    {
       "id": "alfurqan-islamic-centre",
       "name": "Al Furqan Islamic Centre",
       "address": "Manchester, United Kingdom",
@@ -83,30 +158,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://alfurqanmcr.org"
-    },
-    {
-      "id": "andalus-community-centre",
-      "name": "Andalus Community Centre",
-      "address": "43 Townhead Street, Sheffield S1 2EB, United Kingdom",
-      "lat": 53.38334305719299,
-      "lng": -1.4741565180146554,
-      "slug": "andalus-community-centre",
-      "isHidden": true,
-      "website": "https://www.andalus.org.uk"
-    },
-    {
-      "id": "anwar-e-madina-huddersfield",
-      "name": "Anwar E Madina",
-      "address": "8-10 Clara St, Hillhouse, Huddersfield, HD1 6EN",
-      "lat": 53.65823111,
-      "lng": -1.78252384,
-      "slug": "anwar-e-madina-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
     },
     {
       "id": "birmingham-central-mosque",
@@ -123,20 +174,6 @@
       "website": "https://centralmosque.org.uk"
     },
     {
-      "id": "brixton-masjid",
-      "name": "Brixton Mosque & Islamic Cultural Centre",
-      "address": "1 Gresham Road, Brixton, London SW9 7PH, United Kingdom",
-      "lat": 51.4657,
-      "lng": -0.1169,
-      "slug": "brixton-masjid",
-      "citySlug": "london",
-      "cityName": "London",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": "https://brixtonmasjid.co.uk"
-    },
-    {
       "id": "broomhouse-mosque",
       "name": "Broomhouse Mosque",
       "address": "Broomhouse, Edinburgh, United Kingdom",
@@ -151,13 +188,32 @@
       "website": "https://asmuk.org/broomhouse-mosque"
     },
     {
-      "id": "castle-asian-community-centre",
-      "name": "Castle Asian Community Centre",
-      "address": "84 Norfolk Road, Sheffield S2 2SZ",
-      "lat": 53.375,
-      "lng": -1.465,
-      "slug": "castle-asian-community-centre",
-      "isHidden": true
+      "id": "blackhall-mosque",
+      "name": "Blackhall Mosque",
+      "address": "Hill Road, Edinburgh EH4 2AJ, United Kingdom",
+      "lat": 55.96138796099059,
+      "lng": -3.257491958360784,
+      "slug": "blackhall-mosque",
+      "citySlug": "edinburgh",
+      "cityName": "Edinburgh",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://asmuk.org/blackhall-mosque"
+    },
+    {
+      "id": "iqra-academy",
+      "name": "Iqra Academy",
+      "address": "10 E Suffolk Rd, Edinburgh EH16 5PH, United Kingdom",
+      "lat": 55.93017444855976,
+      "lng": -3.1681530581184094,
+      "slug": "iqra-academy",
+      "citySlug": "edinburgh",
+      "cityName": "Edinburgh",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://iqraacademy.org"
     },
     {
       "id": "central-mosque-blackpool",
@@ -267,34 +323,6 @@
       "website": "https://www.eastlondonmosque.org.uk"
     },
     {
-      "id": "eden-centre-highfields-huddersfield",
-      "name": "Eden Centre Highfields",
-      "address": "St Briavels, 2 Highfields Road, Huddersfield, HD1 5NG",
-      "lat": 53.65135,
-      "lng": -1.79072,
-      "slug": "eden-centre-highfields-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
-    },
-    {
-      "id": "eden-centre-lindley-huddersfield",
-      "name": "Eden Centre Lindley",
-      "address": "31 Acre St, Lindley, Huddersfield, HD3 3DZ",
-      "lat": 53.65435846,
-      "lng": -1.81790904,
-      "slug": "eden-centre-lindley-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
-    },
-    {
       "id": "elland-masjid-huddersfield",
       "name": "Elland Masjid",
       "address": "26 and 34 Elizabeth St, Elland, HX5 0JH",
@@ -306,20 +334,6 @@
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
-      "website": ""
-    },
-    {
-      "id": "faizan-e-madinah-huddersfield",
-      "name": "Faizan-e-Madinah",
-      "address": "75 New North Road, Huddersfield, HD1 5ND",
-      "lat": 53.657063,
-      "lng": -1.786483,
-      "slug": "faizan-e-madinah-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
       "website": ""
     },
     {
@@ -360,15 +374,6 @@
       "website": ""
     },
     {
-      "id": "high-hazels-community-centre",
-      "name": "High Hazels Community Centre",
-      "address": "285A Main Road, Darnall, Sheffield S9 4QD",
-      "lat": 53.382,
-      "lng": -1.438,
-      "slug": "high-hazels-community-centre",
-      "isHidden": true
-    },
-    {
       "id": "hounslow-jamia-masjid",
       "name": "Hounslow Jamia Masjid and Islamic Centre",
       "address": "367 Wellington Road South, Hounslow TW4 5HU, United Kingdom",
@@ -386,7 +391,7 @@
       "id": "iccuk",
       "name": "London Central Mosque Trust & The Islamic Cultural Centre",
       "address": "146 Park Road, London NW8 7RG, United Kingdom",
-      "lat": 51.5290,
+      "lat": 51.529,
       "lng": -0.1652,
       "slug": "iccuk",
       "citySlug": "london",
@@ -409,6 +414,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://ianl.org.uk"
+    },
+    {
+      "id": "finsbury-park-mosque",
+      "name": "Finsbury Park Mosque",
+      "address": "7-11 St Thomas's Road, London N4 2QH, United Kingdom",
+      "lat": 51.5636280996457,
+      "lng": -0.10561931534274785,
+      "slug": "finsbury-park-mosque",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://finsburyparkmosque.org"
     },
     {
       "id": "jamia-masjid-ghausia",
@@ -538,20 +557,6 @@
       "website": "https://masjidhudasheff.com"
     },
     {
-      "id": "masjid-al-humera",
-      "name": "Masjid Al-Humera",
-      "address": "183 Green St, London E7 8LL, United Kingdom",
-      "lat": 51.5425,
-      "lng": 0.0328,
-      "slug": "masjid-al-humera",
-      "citySlug": "london",
-      "cityName": "London",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": "https://www.newhammosques.com/masjid-al-humera"
-    },
-    {
       "id": "masjid-bilal-huddersfield",
       "name": "Masjid Bilal",
       "address": "245 Yews Hill Rd, Crosland Moor, Huddersfield, HD4 5DE",
@@ -580,34 +585,6 @@
       "website": ""
     },
     {
-      "id": "masjid-ghausia-huddersfield",
-      "name": "Masjid Ghausia",
-      "address": "73 Victoria Rd, Lockwood, Huddersfield, HD1 3RT",
-      "lat": 53.63747604,
-      "lng": -1.79194232,
-      "slug": "masjid-ghausia-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
-    },
-    {
-      "id": "masjid-hanfia-huddersfield",
-      "name": "Masjid Hanfia",
-      "address": "61 Bentley St, Lockwood, Huddersfield, HD1 3UL",
-      "lat": 53.6325386,
-      "lng": -1.79773392,
-      "slug": "masjid-hanfia-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
-    },
-    {
       "id": "masjid-ibrahim-huddersfield",
       "name": "Masjid Ibrahim",
       "address": "62 Halifax Old Rd, Birkby, Huddersfield, HD1 6HG",
@@ -633,20 +610,6 @@
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
-      "website": ""
-    },
-    {
-      "id": "masjid-noor-huddersfield",
-      "name": "Masjid Noor",
-      "address": "Thornton Lodge, Crosland Rd, Huddersfield, HD1 3JS",
-      "lat": 53.63930723,
-      "lng": -1.79760976,
-      "slug": "masjid-noor-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
       "website": ""
     },
     {
@@ -680,20 +643,6 @@
       "lng": -1.4815868756857322,
       "slug": "masjid-risalah",
       "isHidden": false
-    },
-    {
-      "id": "masjid-riza-huddersfield",
-      "name": "Masjid Riza",
-      "address": "129 Halifax Old Rd, Birkby, Huddersfield, HD2 2RP",
-      "lat": 53.6593793,
-      "lng": -1.78622647,
-      "slug": "masjid-riza-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
     },
     {
       "id": "masjid-shah-jalal-huddersfield",
@@ -734,15 +683,6 @@
       "website": "https://masjidsunnahsheffield.co.uk"
     },
     {
-      "id": "masjid-umar-sheffield",
-      "name": "Masjid Umar Sheffield",
-      "address": "306 Barnsley Road, Sheffield S4 7AH",
-      "lat": 53.398,
-      "lng": -1.448,
-      "slug": "masjid-umar-sheffield",
-      "isHidden": true
-    },
-    {
       "id": "masjid-usman-huddersfield",
       "name": "Masjid Usman",
       "address": "32 Upper George St, Spring Wood, Huddersfield, HD1 4AW",
@@ -767,6 +707,20 @@
       "website": "https://www.mwhs.org.uk"
     },
     {
+      "id": "ilford-islamic-centre",
+      "name": "Ilford Islamic Centre",
+      "address": "50-58 Albert Road, Ilford IG1 1HW, United Kingdom",
+      "lat": 51.55732142501988,
+      "lng": 0.07493899363863307,
+      "slug": "ilford-islamic-centre",
+      "citySlug": "ilford",
+      "cityName": "Ilford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://ilfordmosque.com"
+    },
+    {
       "id": "nawracy-mosque",
       "name": "Nawracy Mosque (Ipswich Mosque)",
       "address": "5 Woodbridge Road, Ipswich IP4 2EA, United Kingdom",
@@ -779,43 +733,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://nawracymosque.org"
-    },
-    {
-      "id": "noor-al-hadi-mosque",
-      "name": "Noor Al Hadi Mosque",
-      "address": "275 Staniforth Rd, Darnall, Sheffield S9 3FE",
-      "lat": 53.382,
-      "lng": -1.438,
-      "slug": "noor-al-hadi-mosque",
-      "isHidden": true
-    },
-    {
-      "id": "northfield-huddersfield",
-      "name": "Northfield",
-      "address": "(Church Building) Northfield Hall, 40 Norfolk Ave,, Huddersfield, HD2 1GS",
-      "lat": 53.671821,
-      "lng": -1.77123,
-      "slug": "northfield-huddersfield",
-      "citySlug": "huddersfield",
-      "cityName": "Huddersfield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": ""
-    },
-    {
-      "id": "scunthorpe-central-mosque",
-      "name": "Scunthorpe Central Mosque",
-      "address": "40-44 Percival Street, Scunthorpe, North Lincolnshire DN15 6JD, United Kingdom",
-      "lat": 53.593251,
-      "lng": -0.653741,
-      "slug": "scunthorpe-central-mosque",
-      "citySlug": "scunthorpe",
-      "cityName": "Scunthorpe",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": true,
-      "website": "https://scunthorpemosque.co.uk"
     },
     {
       "id": "sheffield-grand-mosque",
