@@ -71,6 +71,20 @@
       "website": "https://www.jamiyat.org"
     },
     {
+      "id": "masjid-faizul-islam",
+      "name": "Masjid Faizul Islam",
+      "address": "1-8 The Broadway, Handsworth, Birmingham B20 3EA, United Kingdom",
+      "lat": 52.51009473315982,
+      "lng": -1.8901240613709909,
+      "slug": "masjid-faizul-islam",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-salahuddin-stoke",
       "name": "Masjid Salahuddin & Madrasah Taleemul Islam",
       "address": "Waterloo Rd, Burslem, Stoke-on-Trent ST6 2EN, United Kingdom",
@@ -851,6 +865,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://exetermosque.org.uk"
+    },
+    {
+      "id": "masjid-e-umar",
+      "name": "Masjid e Umar",
+      "address": "14 Conduit Street, Tredworth, Gloucester GL1 4XH, United Kingdom",
+      "lat": 51.857,
+      "lng": -2.2396,
+      "slug": "masjid-e-umar",
+      "citySlug": "gloucester",
+      "cityName": "Gloucester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjideumar.org"
+    },
+    {
+      "id": "bury-park-masjid",
+      "name": "Bury Park Jamie Masjid",
+      "address": "21-27 Bury Park Road, Luton LU1 1HB, United Kingdom",
+      "lat": 51.8787,
+      "lng": -0.42,
+      "slug": "bury-park-masjid",
+      "citySlug": "luton",
+      "cityName": "Luton",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://buryparkmasjid.co.uk"
     }
   ]
 }
