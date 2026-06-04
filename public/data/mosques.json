@@ -823,6 +823,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.darussalamcentre.org"
+    },
+    {
+      "id": "masjid-darussalam",
+      "name": "Masjid Darussalam (Darussalam Education Centre)",
+      "address": "184 Whalley New Road, Blackburn BB1 9TN, United Kingdom",
+      "lat": 53.7625,
+      "lng": -2.4725,
+      "slug": "masjid-darussalam",
+      "citySlug": "blackburn",
+      "cityName": "Blackburn",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://time.my-masjid.com/timingscreen/b37875db-4976-47c0-b0e2-4256b0bbe73b"
+    },
+    {
+      "id": "exeter-mosque",
+      "name": "Exeter Mosque (Islamic Centre of the South West)",
+      "address": "12-13 York Road, Exeter EX4 6PG, United Kingdom",
+      "lat": 50.7291041,
+      "lng": -3.5252611,
+      "slug": "exeter-mosque",
+      "citySlug": "exeter",
+      "cityName": "Exeter",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://exetermosque.org.uk"
     }
   ]
 }
