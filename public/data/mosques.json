@@ -867,6 +867,20 @@
       "website": "https://exetermosque.org.uk"
     },
     {
+      "id": "masjid-at-tawheed",
+      "name": "Masjid At-Tawheed",
+      "address": "Penarth Road, Grangetown, Cardiff CF11 6JU, United Kingdom",
+      "lat": 51.4707,
+      "lng": -3.1855,
+      "slug": "masjid-at-tawheed",
+      "citySlug": "cardiff",
+      "cityName": "Cardiff",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.masjidattawheed.com"
+    },
+    {
       "id": "masjid-e-umar",
       "name": "Masjid e Umar",
       "address": "14 Conduit Street, Tredworth, Gloucester GL1 4XH, United Kingdom",
@@ -881,6 +895,34 @@
       "website": "https://masjideumar.org"
     },
     {
+      "id": "masjid-e-noor",
+      "name": "Masjid e Noor",
+      "address": "44-46 Ryecroft Street, Gloucester GL1 4LY, United Kingdom",
+      "lat": 51.857506,
+      "lng": -2.236874,
+      "slug": "masjid-e-noor",
+      "citySlug": "gloucester",
+      "cityName": "Gloucester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidenoor.org.uk"
+    },
+    {
+      "id": "masjid-e-ghousia",
+      "name": "Masjid e Ghousia (Gloucester Ghousia Masjid)",
+      "address": "14 Charles Street, Gloucester GL1 4AG, United Kingdom",
+      "lat": 51.86155,
+      "lng": -2.23782,
+      "slug": "masjid-e-ghousia",
+      "citySlug": "gloucester",
+      "cityName": "Gloucester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.gloucestermasjid.org"
+    },
+    {
       "id": "bury-park-masjid",
       "name": "Bury Park Jamie Masjid",
       "address": "21-27 Bury Park Road, Luton LU1 1HB, United Kingdom",
@@ -893,6 +935,48 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://buryparkmasjid.co.uk"
+    },
+    {
+      "id": "faizan-e-siddeeq-e-akbar",
+      "name": "Aylesbury Faizan-e-Siddeeq-e-Akbar",
+      "address": "Unit 2, Chamberlain Road, Aylesbury HP19 8DY, United Kingdom",
+      "lat": 51.823,
+      "lng": -0.832,
+      "slug": "faizan-e-siddeeq-e-akbar",
+      "citySlug": "aylesbury",
+      "cityName": "Aylesbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.airmyprayer.co.uk/ayl-5"
+    },
+    {
+      "id": "darul-ummah-mosque",
+      "name": "Darul Ummah Mosque",
+      "address": "56 Bigland St, London E1 2ND, United Kingdom",
+      "lat": 51.5124856,
+      "lng": -0.0583446,
+      "slug": "darul-ummah-mosque",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "http://www.darulummah.org.uk"
+    },
+    {
+      "id": "khizra-mosque",
+      "name": "Khizra Mosque",
+      "address": "425 Cheetham Hill Road, Manchester M8 0PF, United Kingdom",
+      "lat": 53.5062208,
+      "lng": -2.2381206,
+      "slug": "khizra-mosque",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.khizramosque.org"
     }
   ]
 }
