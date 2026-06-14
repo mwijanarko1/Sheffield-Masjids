@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./admin";
 
 const DEFAULT_CITY = {
   slug: "sheffield",
@@ -137,15 +138,27 @@ export const listCities = query({
 });
 
 export const upsertCity = mutation({
-  args: cityValidator,
+  args: {
+    slug: v.string(),
+    name: v.string(),
+    region: v.optional(v.string()),
+    countryCode: v.string(),
+    countryName: v.string(),
+    timezone: v.string(),
+    lat: v.optional(v.number()),
+    lng: v.optional(v.number()),
+    adminSecret: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
-    const slug = normalizeCitySlug(args.slug);
+    const { adminSecret, ...data } = args;
+    requireAdmin(adminSecret);
+    const slug = normalizeCitySlug(data.slug);
     const existing = await ctx.db
       .query("cities")
       .withIndex("by_slug", (q) => q.eq("slug", slug))
       .unique();
 
-    const doc = { ...args, slug };
+    const doc = { ...data, slug };
     if (existing) {
       await ctx.db.patch(existing._id, doc);
       return { updated: existing._id };
@@ -156,28 +169,45 @@ export const upsertCity = mutation({
 });
 
 export const upsert = mutation({
-  args: mosqueValidator,
+  args: {
+    id: v.string(),
+    name: v.string(),
+    address: v.string(),
+    lat: v.number(),
+    lng: v.number(),
+    slug: v.string(),
+    citySlug: v.optional(v.string()),
+    cityName: v.optional(v.string()),
+    countryCode: v.optional(v.string()),
+    countryName: v.optional(v.string()),
+    timezone: v.optional(v.string()),
+    website: v.optional(v.string()),
+    isHidden: v.optional(v.boolean()),
+    adminSecret: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
+    const { adminSecret, ...data } = args;
+    requireAdmin(adminSecret);
     const existing = await ctx.db
       .query("mosques")
-      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .withIndex("by_slug", (q) => q.eq("slug", data.slug))
       .unique();
 
-    const citySlug = args.citySlug ? normalizeCitySlug(args.citySlug) : DEFAULT_CITY.slug;
+    const citySlug = data.citySlug ? normalizeCitySlug(data.citySlug) : DEFAULT_CITY.slug;
     const doc = {
-      id: args.id,
-      name: args.name,
-      address: args.address,
-      lat: args.lat,
-      lng: args.lng,
-      slug: args.slug,
+      id: data.id,
+      name: data.name,
+      address: data.address,
+      lat: data.lat,
+      lng: data.lng,
+      slug: data.slug,
       citySlug,
-      cityName: args.cityName ?? DEFAULT_CITY.name,
-      countryCode: args.countryCode ?? DEFAULT_CITY.countryCode,
-      countryName: args.countryName ?? DEFAULT_CITY.countryName,
-      timezone: args.timezone ?? DEFAULT_CITY.timezone,
-      website: args.website,
-      isHidden: args.isHidden ?? false,
+      cityName: data.cityName ?? DEFAULT_CITY.name,
+      countryCode: data.countryCode ?? DEFAULT_CITY.countryCode,
+      countryName: data.countryName ?? DEFAULT_CITY.countryName,
+      timezone: data.timezone ?? DEFAULT_CITY.timezone,
+      website: data.website,
+      isHidden: data.isHidden ?? false,
     };
 
     if (existing) {
@@ -190,11 +220,16 @@ export const upsert = mutation({
 });
 
 export const removeBySlug = mutation({
-  args: { slug: v.string() },
+  args: {
+    slug: v.string(),
+    adminSecret: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
+    const { adminSecret, slug } = args;
+    requireAdmin(adminSecret);
     const existing = await ctx.db
       .query("mosques")
-      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
       .unique();
 
     if (!existing) {

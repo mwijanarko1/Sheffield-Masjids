@@ -8,6 +8,13 @@
  *
  * For production: add CONVEX_PROD_URL to .env.local (from Convex dashboard → Deployments → Production → URL)
  *
+ * Authentication:
+ *   ADMIN_SECRET, CONVEX_DEV_ADMIN_SECRET, or CONVEX_PROD_ADMIN_SECRET must be set in .env.local
+ *   matching the value configured in the Convex dashboard for the target deployment.
+ *   Dev (no --prod): prefers CONVEX_DEV_ADMIN_SECRET, falls back to ADMIN_SECRET.
+ *   Prod (--prod):    prefers CONVEX_PROD_ADMIN_SECRET, falls back to ADMIN_SECRET.
+ *   Without a matching secret the script will abort before attempting any writes.
+ *
  * Run:
  *   bun scripts/seed-convex.ts                                   # full seed — all mosques, all months (dev)
  *   bun scripts/seed-convex.ts --prod                            # full seed (production URL)
@@ -48,6 +55,20 @@ const MONTH_FILES: Record<number, string> = {
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const MOSQUE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
+ * Resolve the admin secret based on target deployment.
+ * Resolution order:
+ *   Dev:  CONVEX_DEV_ADMIN_SECRET > DEV_SECRET > ADMIN_SECRET
+ *   Prod: CONVEX_PROD_ADMIN_SECRET > PROD_SECRET > ADMIN_SECRET
+ */
+function resolveAdminSecret(isProd: boolean): string {
+  const fallback = (process.env.ADMIN_SECRET || "").trim();
+  if (isProd) {
+    return (process.env.CONVEX_PROD_ADMIN_SECRET || process.env.PROD_SECRET || fallback || "").trim();
+  }
+  return (process.env.CONVEX_DEV_ADMIN_SECRET || process.env.DEV_SECRET || fallback || "").trim();
+}
 
 /** Lowercase English month file stem → 1–12 */
 const MONTH_NAME_TO_NUM: Record<string, number> = Object.fromEntries(
@@ -342,7 +363,7 @@ function parseJsonFile<T>(filePath: string, schema: z.ZodType<T>): T {
 }
 const upsertMosqueMutation = makeFunctionReference<"mutation">("mosques:upsert");
 
-async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsOnly?: Set<string>): Promise<MosqueSeed[]> {
+async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsOnly: Set<string> | undefined, adminSecret: string): Promise<MosqueSeed[]> {
   const mosquesFile = path.join(process.cwd(), "public", "data", "mosques.json");
   const parsed = parseJsonFile(mosquesFile, MosquesFileSchema);
   const mosques = slugsOnly
@@ -354,7 +375,7 @@ async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsO
     // Dev: unhide all mosques for testing
     const mosque = forceUnhide ? { ...raw, isHidden: false } : raw;
     try {
-      await client.mutation(upsertMosqueMutation, mosque);
+      await client.mutation(upsertMosqueMutation, { ...mosque, adminSecret });
       console.log(`  ✓ ${mosque.slug}`);
     } catch (err) {
       console.error(`  ✗ ${mosque.slug}:`, err instanceof Error ? err.message : err);
@@ -372,7 +393,8 @@ async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsO
 async function seedMonthly(
   client: ConvexHttpClient,
   mosqueSlug: string,
-  monthsOnly: Set<number> | null
+  monthsOnly: Set<number> | null,
+  adminSecret: string
 ) {
   const year = new Date().getFullYear();
   for (let monthNum = 1; monthNum <= 12; monthNum++) {
@@ -396,6 +418,7 @@ async function seedMonthly(
         prayerTimes: data.prayer_times,
         iqamahTimes: data.iqamah_times,
         jummahIqamah: data.jummah_iqamah,
+        adminSecret,
       });
       console.log(`  ✓ ${monthFile}`);
     } catch (err) {
@@ -405,7 +428,7 @@ async function seedMonthly(
   }
 }
 
-async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string) {
+async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string, adminSecret: string) {
   const filePath = path.join(getMosqueDataFsDir(process.cwd(), mosqueSlug), "ramadan.json");
   if (!fs.existsSync(filePath)) return;
 
@@ -420,6 +443,7 @@ async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string) {
       prayerTimes: data.prayer_times,
       iqamahTimes: data.iqamah_times,
       jummahIqamah: data.jummah_iqamah,
+      adminSecret,
     });
     console.log(`  ✓ ramadan`);
   } catch (err) {
@@ -430,6 +454,18 @@ async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string) {
 
 async function main() {
   const { isProd, useChanged, slugOnly, monthsOnly } = parseCli(process.argv.slice(2));
+  const adminSecret = resolveAdminSecret(isProd);
+  if (!adminSecret) {
+    const hint = isProd
+      ? "CONVEX_PROD_ADMIN_SECRET or ADMIN_SECRET"
+      : "CONVEX_DEV_ADMIN_SECRET or ADMIN_SECRET";
+    console.error(
+      `✖ No admin secret found for ${isProd ? "production" : "development"}.\n` +
+      `  Set ${hint} in .env.local matching the value configured in the Convex dashboard\n` +
+      `  (Settings → Environment Variables) for the target deployment.\n`
+    );
+    process.exit(1);
+  }
 
   const convexUrl = isProd
     ? process.env.CONVEX_PROD_URL
@@ -455,7 +491,7 @@ async function main() {
     const cwd = process.cwd();
 
     // Seed registry for just this slug
-    await seedMosques(client, !isProd, new Set([slugOnly]));
+    await seedMosques(client, !isProd, new Set([slugOnly]), adminSecret);
 
     // Seed DST calendar always (it's a one-time thing)
     const dstPath = path.join(cwd, "public", "docs", "dst-start-end.json");
@@ -466,6 +502,7 @@ async function main() {
         };
         await client.mutation(api.seed.seedUkDstCalendar, {
           ukDstDates: dstRaw.uk_dst_dates,
+          adminSecret,
         });
         console.log("UK DST calendar (BST start/end dates)\n  ✓ seeded\n");
       } catch (err) {
@@ -476,8 +513,8 @@ async function main() {
 
     // Seed monthly files for this slug
     console.log(`Mosque: ${slugOnly}`);
-    await seedMonthly(client, slugOnly, monthsOnly);
-    await seedRamadan(client, slugOnly);
+    await seedMonthly(client, slugOnly, monthsOnly, adminSecret);
+    await seedRamadan(client, slugOnly, adminSecret);
     console.log("");
     console.log("Done.");
     return;
@@ -540,7 +577,7 @@ async function main() {
     if (slugsOnly && slugsOnly.size > 0) {
       console.log(`Seeding registry for ${slugsOnly.size} changed mosque(s)...`);
     }
-    seededMosques = await seedMosques(client, isDev, slugsOnly && slugsOnly.size > 0 ? slugsOnly : undefined);
+    seededMosques = await seedMosques(client, isDev, slugsOnly && slugsOnly.size > 0 ? slugsOnly : undefined, adminSecret);
   } else {
     const mosquesFile = path.join(process.cwd(), "public", "data", "mosques.json");
     seededMosques = parseJsonFile(mosquesFile, MosquesFileSchema).mosques;
@@ -582,6 +619,7 @@ async function main() {
         };
         await client.mutation(api.seed.seedUkDstCalendar, {
           ukDstDates: dstRaw.uk_dst_dates,
+          adminSecret,
         });
         console.log("UK DST calendar (BST start/end dates)\n  ✓ seeded\n");
       } catch (err) {
@@ -603,20 +641,20 @@ async function main() {
       if (plan.monthlyBySlug.has(slug)) {
         let months = new Set(plan.monthlyBySlug.get(slug)!);
         if (monthsOnly) months = intersectMonthSets(months, monthsOnly);
-        if (months.size > 0) await seedMonthly(client, slug, months);
+        if (months.size > 0) await seedMonthly(client, slug, months, adminSecret);
         else
           console.log(
             "  (skip monthly: no overlap with changed files and --months, or empty after filter)\n"
           );
       }
-      if (plan.ramadanSlugs.has(slug)) await seedRamadan(client, slug);
+      if (plan.ramadanSlugs.has(slug)) await seedRamadan(client, slug, adminSecret);
       console.log("");
     }
   } else {
     for (const slug of mosqueSlugs) {
       console.log(`Mosque: ${slug}`);
-      await seedMonthly(client, slug, monthsOnly);
-      await seedRamadan(client, slug);
+      await seedMonthly(client, slug, monthsOnly, adminSecret);
+      await seedRamadan(client, slug, adminSecret);
       console.log("");
     }
   }

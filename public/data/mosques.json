@@ -43,6 +43,20 @@
       "website": "http://bradfordgrandmosque.co.uk"
     },
     {
+      "id": "brixton-hill-islamic-centre",
+      "name": "Brixton Hill Islamic Centre",
+      "address": "226A-228A Brixton Hill, London SW2 1HE, United Kingdom",
+      "lat": 51.4487467,
+      "lng": -0.1240323,
+      "slug": "brixton-hill-islamic-centre",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://www.bhic.org.uk"
+    },
+    {
       "id": "burnley-central-mosque",
       "name": "Burnley Central Mosque (Masjid Farooqe Azam)",
       "address": "North St, Burnley BB10 1LU, United Kingdom",
@@ -69,6 +83,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.jamiyat.org"
+    },
+    {
+      "id": "edinburgh-central-mosque",
+      "name": "Edinburgh Central Mosque",
+      "address": "50 Potterrow, Edinburgh EH8 9BT, United Kingdom",
+      "lat": 55.9451,
+      "lng": -3.1881,
+      "slug": "edinburgh-central-mosque",
+      "citySlug": "edinburgh",
+      "cityName": "Edinburgh",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://edmosque.org"
     },
     {
       "id": "masjid-faizul-islam",
@@ -523,6 +551,34 @@
       "website": "https://www.leedsgrandmosque.com"
     },
     {
+      "id": "islamic-centre-leicester",
+      "name": "Islamic Centre Leicester",
+      "address": "130 London Road, Leicester LE2 1QS, United Kingdom",
+      "lat": 52.6113297,
+      "lng": -1.1010396,
+      "slug": "islamic-centre-leicester",
+      "citySlug": "leicester",
+      "cityName": "Leicester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.islamiccentre.org"
+    },
+    {
+      "id": "lincoln-green-mosque",
+      "name": "Lincoln Green Mosque",
+      "address": "The Cherry Tree, Cherry Row, Leeds LS9 7LY, United Kingdom",
+      "lat": 53.8044817,
+      "lng": -1.5282348,
+      "slug": "lincoln-green-mosque",
+      "citySlug": "leeds",
+      "cityName": "Leeds",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "http://lincolngreenmosque.co.uk"
+    },
+    {
       "id": "loughborough-mosque",
       "name": "Loughborough Mosque (LMICA)",
       "address": "83-85 King Street, Loughborough LE11 1SD, United Kingdom",
@@ -811,6 +867,16 @@
       "website": "https://ummahcenter.mosqueprayertimes.org"
     },
     {
+      "id": "at-taqwa-masjid",
+      "name": "At-Taqwa Mosque Sheffield",
+      "address": "31-33 Andover Street, Sheffield S3 9EP, United Kingdom",
+      "lat": 53.3943353,
+      "lng": -1.4682155,
+      "slug": "at-taqwa-masjid",
+      "isHidden": false,
+      "website": "https://attaqwa-masjid.co.uk"
+    },
+    {
       "id": "west-london-islamic-cultural-centre",
       "name": "West London Islamic Cultural Centre (WLICC)",
       "address": "7 Bridges Place, London SW6 4HW, United Kingdom",
@@ -977,6 +1043,48 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.khizramosque.org"
+    },
+    {
+      "id": "witton-islamic-centre",
+      "name": "Witton Islamic Centre",
+      "address": "311-313 Witton Road, Birmingham B6 6NS, United Kingdom",
+      "lat": 52.5105758,
+      "lng": -1.887861,
+      "slug": "witton-islamic-centre",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://wittonislamiccentre.org.uk"
+    },
+    {
+      "id": "al-azhar-mosque",
+      "name": "Al Azhar Mosque",
+      "address": "Laygate, South Shields NE33 5RP, United Kingdom",
+      "lat": 54.9902364,
+      "lng": -1.5223353,
+      "slug": "al-azhar-mosque",
+      "citySlug": "south-shields",
+      "cityName": "South Shields",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://alazharsouthshields.com"
+    },
+    {
+      "id": "markazi-jamia-masjid-anwar-e-madina-suffa-tul-islam",
+      "name": "Markazi Jamia Masjid Anwar-E-Madina Suffa-Tul-Islam",
+      "address": "5 Crawshaw St, Dewsbury WF13 3ER, United Kingdom",
+      "lat": 53.68019555104016,
+      "lng": -1.656968215342748,
+      "slug": "markazi-jamia-masjid-anwar-e-madina-suffa-tul-islam",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
     }
   ]
 }

@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as admin from "../admin.js";
 import type * as mosques from "../mosques.js";
 import type * as prayerTimes from "../prayerTimes.js";
 import type * as seed from "../seed.js";
@@ -19,6 +20,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admin: typeof admin;
   mosques: typeof mosques;
   prayerTimes: typeof prayerTimes;
   seed: typeof seed;

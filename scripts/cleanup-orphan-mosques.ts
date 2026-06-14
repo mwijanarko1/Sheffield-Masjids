@@ -20,7 +20,21 @@ loadEnvConfig(process.cwd());
 
 const removeMosqueMutation = makeFunctionReference<"mutation">("mosques:removeBySlug");
 
-async function cleanup(convexUrl: string, label: string) {
+/**
+ * Resolve the admin secret based on target deployment.
+ * Resolution order:
+ *   Dev:  CONVEX_DEV_ADMIN_SECRET > DEV_SECRET > ADMIN_SECRET
+ *   Prod: CONVEX_PROD_ADMIN_SECRET > PROD_SECRET > ADMIN_SECRET
+ */
+function resolveAdminSecret(isProd: boolean): string {
+  const fallback = (process.env.ADMIN_SECRET || "").trim();
+  if (isProd) {
+    return (process.env.CONVEX_PROD_ADMIN_SECRET || process.env.PROD_SECRET || fallback || "").trim();
+  }
+  return (process.env.CONVEX_DEV_ADMIN_SECRET || process.env.DEV_SECRET || fallback || "").trim();
+}
+
+async function cleanup(convexUrl: string, label: string, adminSecret: string) {
   console.log(`\n=== Cleaning up ${label} (${convexUrl}) ===\n`);
 
   const client = new ConvexHttpClient(convexUrl);
@@ -48,7 +62,7 @@ async function cleanup(convexUrl: string, label: string) {
   // 4. Delete each orphan
   for (const m of orphans) {
     try {
-      const result = await client.mutation(removeMosqueMutation, { slug: m.slug });
+      const result = await client.mutation(removeMosqueMutation, { slug: m.slug, adminSecret });
       console.log(`  ✗ Deleted: ${m.slug} (${m.name})`);
     } catch (err) {
       console.error(`  ✗ Failed: ${m.slug} —`, err instanceof Error ? err.message : err);
@@ -71,12 +85,21 @@ async function main() {
   const devUrl = process.env.CONVEX_URL || process.env.NEXT_PUBLIC_CONVEX_URL;
   const prodUrl = process.env.CONVEX_PROD_URL;
 
+  const devSecret = resolveAdminSecret(false);
+  const prodSecret = resolveAdminSecret(true);
+
   if (doDev) {
     if (!devUrl) {
       console.error("Missing CONVEX_URL / NEXT_PUBLIC_CONVEX_URL");
       process.exit(1);
     }
-    await cleanup(devUrl, "DEV");
+    if (!devSecret) {
+      console.error(
+        "✖ No admin secret for development. Set CONVEX_DEV_ADMIN_SECRET or ADMIN_SECRET in .env.local."
+      );
+      process.exit(1);
+    }
+    await cleanup(devUrl, "DEV", devSecret);
   }
 
   if (doProd) {
@@ -84,7 +107,13 @@ async function main() {
       console.error("Missing CONVEX_PROD_URL");
       process.exit(1);
     }
-    await cleanup(prodUrl, "PROD");
+    if (!prodSecret) {
+      console.error(
+        "✖ No admin secret for production. Set CONVEX_PROD_ADMIN_SECRET or ADMIN_SECRET in .env.local."
+      );
+      process.exit(1);
+    }
+    await cleanup(prodUrl, "PROD", prodSecret);
   }
 
   console.log("\nDone.");
