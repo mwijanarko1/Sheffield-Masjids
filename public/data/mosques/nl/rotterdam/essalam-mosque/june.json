@@ -1,0 +1,88 @@
+{
+  "month": "JUNE",
+  "prayer_times": [
+    {
+      "date": 22,
+      "fajr": "03:49",
+      "shurooq": "05:15",
+      "dhuhr": "13:49",
+      "asr": "18:12",
+      "maghrib": "22:13",
+      "isha": "23:29"
+    },
+    {
+      "date": 23,
+      "fajr": "03:50",
+      "shurooq": "05:16",
+      "dhuhr": "13:49",
+      "asr": "18:12",
+      "maghrib": "22:13",
+      "isha": "23:29"
+    },
+    {
+      "date": 24,
+      "fajr": "03:50",
+      "shurooq": "05:16",
+      "dhuhr": "13:49",
+      "asr": "18:12",
+      "maghrib": "22:13",
+      "isha": "23:29"
+    },
+    {
+      "date": 25,
+      "fajr": "03:50",
+      "shurooq": "05:16",
+      "dhuhr": "13:50",
+      "asr": "18:12",
+      "maghrib": "22:13",
+      "isha": "23:29"
+    },
+    {
+      "date": 26,
+      "fajr": "03:51",
+      "shurooq": "05:17",
+      "dhuhr": "13:50",
+      "asr": "18:12",
+      "maghrib": "22:13",
+      "isha": "23:29"
+    },
+    {
+      "date": 27,
+      "fajr": "03:51",
+      "shurooq": "05:17",
+      "dhuhr": "13:50",
+      "asr": "18:13",
+      "maghrib": "22:13",
+      "isha": "23:30"
+    },
+    {
+      "date": 28,
+      "fajr": "03:51",
+      "shurooq": "05:18",
+      "dhuhr": "13:50",
+      "asr": "18:13",
+      "maghrib": "22:13",
+      "isha": "23:30"
+    },
+    {
+      "date": 29,
+      "fajr": "03:52",
+      "shurooq": "05:18",
+      "dhuhr": "13:50",
+      "asr": "18:13",
+      "maghrib": "22:13",
+      "isha": "23:29"
+    },
+    {
+      "date": 30,
+      "fajr": "03:52",
+      "shurooq": "05:19",
+      "dhuhr": "13:51",
+      "asr": "18:13",
+      "maghrib": "22:12",
+      "isha": "23:29"
+    }
+  ],
+  "iqamah_times": [],
+  "jummah_iqamah": ""
+}

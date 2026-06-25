@@ -1,0 +1,54 @@
+{
+  "month": "JUNE",
+  "prayer_times": [
+    { "date": 1, "fajr": "03:06", "shurooq": "04:45", "dhuhr": "13:17", "asr": "18:56", "maghrib": "21:34", "isha": "22:37" },
+    { "date": 2, "fajr": "03:05", "shurooq": "04:45", "dhuhr": "13:18", "asr": "18:56", "maghrib": "21:35", "isha": "22:38" },
+    { "date": 3, "fajr": "03:04", "shurooq": "04:44", "dhuhr": "13:18", "asr": "18:57", "maghrib": "21:36", "isha": "22:39" },
+    { "date": 4, "fajr": "03:04", "shurooq": "04:43", "dhuhr": "13:18", "asr": "18:58", "maghrib": "21:38", "isha": "22:39" },
+    { "date": 5, "fajr": "03:02", "shurooq": "04:42", "dhuhr": "13:18", "asr": "18:58", "maghrib": "21:39", "isha": "22:40" },
+    { "date": 6, "fajr": "03:01", "shurooq": "04:42", "dhuhr": "13:18", "asr": "18:59", "maghrib": "21:40", "isha": "22:41" },
+    { "date": 7, "fajr": "03:01", "shurooq": "04:41", "dhuhr": "13:18", "asr": "18:59", "maghrib": "21:40", "isha": "22:41" },
+    { "date": 8, "fajr": "03:00", "shurooq": "04:40", "dhuhr": "13:19", "asr": "19:00", "maghrib": "21:41", "isha": "22:42" },
+    { "date": 9, "fajr": "02:59", "shurooq": "04:40", "dhuhr": "13:19", "asr": "19:01", "maghrib": "21:42", "isha": "22:43" },
+    { "date": 10, "fajr": "02:59", "shurooq": "04:40", "dhuhr": "13:19", "asr": "19:01", "maghrib": "21:43", "isha": "22:44" },
+    { "date": 11, "fajr": "02:58", "shurooq": "04:39", "dhuhr": "13:19", "asr": "19:01", "maghrib": "21:44", "isha": "22:44" },
+    { "date": 12, "fajr": "02:58", "shurooq": "04:39", "dhuhr": "13:19", "asr": "19:02", "maghrib": "21:44", "isha": "22:45" },
+    { "date": 13, "fajr": "02:58", "shurooq": "04:39", "dhuhr": "13:20", "asr": "19:02", "maghrib": "21:45", "isha": "22:45" },
+    { "date": 14, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:20", "asr": "19:03", "maghrib": "21:46", "isha": "22:46" },
+    { "date": 15, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:20", "asr": "19:03", "maghrib": "21:46", "isha": "22:46" },
+    { "date": 16, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:20", "asr": "19:03", "maghrib": "21:47", "isha": "22:47" },
+    { "date": 17, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:21", "asr": "19:04", "maghrib": "21:47", "isha": "22:47" },
+    { "date": 18, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:21", "asr": "19:04", "maghrib": "21:47", "isha": "22:47" },
+    { "date": 19, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:21", "asr": "19:04", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 20, "fajr": "02:58", "shurooq": "04:38", "dhuhr": "13:21", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 21, "fajr": "02:58", "shurooq": "04:39", "dhuhr": "13:21", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 22, "fajr": "02:59", "shurooq": "04:39", "dhuhr": "13:22", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 23, "fajr": "02:59", "shurooq": "04:39", "dhuhr": "13:22", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 24, "fajr": "02:59", "shurooq": "04:40", "dhuhr": "13:22", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 25, "fajr": "03:00", "shurooq": "04:40", "dhuhr": "13:22", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 26, "fajr": "03:00", "shurooq": "04:41", "dhuhr": "13:22", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 27, "fajr": "03:01", "shurooq": "04:41", "dhuhr": "13:23", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 28, "fajr": "03:01", "shurooq": "04:42", "dhuhr": "13:23", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 29, "fajr": "03:01", "shurooq": "04:42", "dhuhr": "13:23", "asr": "19:05", "maghrib": "21:48", "isha": "22:48" },
+    { "date": 30, "fajr": "03:02", "shurooq": "04:43", "dhuhr": "13:23", "asr": "19:05", "maghrib": "21:47", "isha": "22:47" }
+  ],
+  "iqamah_times": [
+    {
+      "date_range": "1-6",
+      "fajr": "04:00",
+      "dhuhr": "14:00",
+      "asr": "20:00",
+      "maghrib": "Adhan+0",
+      "isha": "23:00"
+    },
+    {
+      "date_range": "7-30",
+      "fajr": "03:45",
+      "dhuhr": "14:00",
+      "asr": "20:15",
+      "maghrib": "Adhan+0",
+      "isha": "23:00"
+    }
+  ],
+  "jummah_iqamah": "14:00"
+}

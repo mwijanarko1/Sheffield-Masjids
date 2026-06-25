@@ -310,7 +310,7 @@ const MonthlyFileSchema = z
     month: z.string().min(1),
     prayer_times: z.array(PrayerTimeSchema),
     iqamah_times: z.array(IqamahTimeRangeSchema),
-    jummah_iqamah: z.string().min(1),
+    jummah_iqamah: z.string(),
   })
   .strict();
 
@@ -334,7 +334,7 @@ const RamadanFileSchema = z
     gregorian_end: z.string().min(1),
     prayer_times: z.array(RamadanPrayerTimeSchema),
     iqamah_times: z.array(IqamahTimeRangeSchema),
-    jummah_iqamah: z.string().min(1),
+    jummah_iqamah: z.string(),
   })
   .passthrough();
 
