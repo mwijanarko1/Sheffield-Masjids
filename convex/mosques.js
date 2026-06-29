@@ -83,6 +83,28 @@ function sortMosques(mosques) {
   });
 }
 
+async function bumpDataRevision(ctx) {
+  const now = Date.now();
+  const existing = await ctx.db
+    .query("dataRevisions")
+    .withIndex("by_key", (q) => q.eq("key", "global"))
+    .unique();
+
+  if (existing) {
+    await ctx.db.patch(existing._id, {
+      dataRevision: existing.dataRevision + 1,
+      updatedAt: now,
+    });
+    return;
+  }
+
+  await ctx.db.insert("dataRevisions", {
+    key: "global",
+    dataRevision: 1,
+    updatedAt: now,
+  });
+}
+
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -161,10 +183,13 @@ export const upsertCity = mutation({
     const doc = { ...data, slug };
     if (existing) {
       await ctx.db.patch(existing._id, doc);
+      await bumpDataRevision(ctx);
       return { updated: existing._id };
     }
 
-    return { inserted: await ctx.db.insert("cities", doc) };
+    const inserted = await ctx.db.insert("cities", doc);
+    await bumpDataRevision(ctx);
+    return { inserted };
   },
 });
 
@@ -208,14 +233,18 @@ export const upsert = mutation({
       timezone: data.timezone ?? DEFAULT_CITY.timezone,
       website: data.website,
       isHidden: data.isHidden ?? false,
+      updatedAt: Date.now(),
     };
 
     if (existing) {
       await ctx.db.patch(existing._id, doc);
+      await bumpDataRevision(ctx);
       return { updated: existing._id };
     }
 
-    return { inserted: await ctx.db.insert("mosques", doc) };
+    const inserted = await ctx.db.insert("mosques", doc);
+    await bumpDataRevision(ctx);
+    return { inserted };
   },
 });
 
@@ -237,6 +266,7 @@ export const removeBySlug = mutation({
     }
 
     await ctx.db.delete(existing._id);
+    await bumpDataRevision(ctx);
     return { deleted: true };
   },
 });

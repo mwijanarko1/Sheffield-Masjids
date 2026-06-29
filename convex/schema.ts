@@ -62,6 +62,7 @@ export default defineSchema({
     timezone: v.optional(v.string()),
     website: v.optional(v.string()),
     isHidden: v.optional(v.boolean()),
+    updatedAt: v.optional(v.number()),
   })
     .index("by_slug", ["slug"])
     .index("by_city_slug", ["citySlug"])
@@ -75,6 +76,7 @@ export default defineSchema({
     prayerTimes: v.array(prayerTimeValidator),
     iqamahTimes: v.array(iqamahTimeRangeValidator),
     jummahIqamah: v.string(),
+    updatedAt: v.optional(v.number()),
   })
     .index("by_mosque_month_year", ["mosqueSlug", "month", "year"]),
 
@@ -86,6 +88,7 @@ export default defineSchema({
     prayerTimes: v.array(ramadanPrayerTimeValidator),
     iqamahTimes: v.array(iqamahTimeRangeValidator),
     jummahIqamah: v.string(),
+    updatedAt: v.optional(v.number()),
   })
     .index("by_mosque", ["mosqueSlug"])
     .index("by_mosque_and_start", ["mosqueSlug", "gregorianStart"]),
@@ -100,5 +103,12 @@ export default defineSchema({
         end_date: v.string(),
       }),
     ),
+    updatedAt: v.optional(v.number()),
+  }).index("by_key", ["key"]),
+
+  dataRevisions: defineTable({
+    key: v.literal("global"),
+    dataRevision: v.number(),
+    updatedAt: v.number(),
   }).index("by_key", ["key"]),
 });

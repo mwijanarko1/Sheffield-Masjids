@@ -34,6 +34,28 @@ const ramadanPrayerTimeValidator = v.object({
   isha: v.string(),
 });
 
+async function bumpDataRevision(ctx: any) {
+  const now = Date.now();
+  const existing = await ctx.db
+    .query("dataRevisions")
+    .withIndex("by_key", (q: any) => q.eq("key", "global"))
+    .unique();
+
+  if (existing) {
+    await ctx.db.patch(existing._id, {
+      dataRevision: existing.dataRevision + 1,
+      updatedAt: now,
+    });
+    return;
+  }
+
+  await ctx.db.insert("dataRevisions", {
+    key: "global",
+    dataRevision: 1,
+    updatedAt: now,
+  });
+}
+
 /**
  * Seed monthly prayer times. Idempotent: replaces existing if same mosque/month/year.
  */
@@ -78,13 +100,17 @@ export const seedMonthly = mutation({
       prayerTimes: data.prayerTimes,
       iqamahTimes: data.iqamahTimes,
       jummahIqamah: data.jummahIqamah,
+      updatedAt: Date.now(),
     };
 
     if (existing) {
       await ctx.db.patch(existing._id, doc);
+      await bumpDataRevision(ctx);
       return { updated: existing._id };
     } else {
-      return { inserted: await ctx.db.insert("monthlyPrayerTimes", doc) };
+      const inserted = await ctx.db.insert("monthlyPrayerTimes", doc);
+      await bumpDataRevision(ctx);
+      return { inserted };
     }
   },
 });
@@ -130,13 +156,17 @@ export const seedRamadan = mutation({
       prayerTimes: data.prayerTimes,
       iqamahTimes: data.iqamahTimes,
       jummahIqamah: data.jummahIqamah,
+      updatedAt: Date.now(),
     };
 
     if (existing) {
       await ctx.db.patch(existing._id, doc);
+      await bumpDataRevision(ctx);
       return { updated: existing._id };
     } else {
-      return { inserted: await ctx.db.insert("ramadanTimetables", doc) };
+      const inserted = await ctx.db.insert("ramadanTimetables", doc);
+      await bumpDataRevision(ctx);
+      return { inserted };
     }
   },
 });
@@ -170,15 +200,17 @@ export const seedUkDstCalendar = mutation({
       .unique();
 
     if (existing) {
-      await ctx.db.patch(existing._id, { ukDstDates: data.ukDstDates });
+      await ctx.db.patch(existing._id, { ukDstDates: data.ukDstDates, updatedAt: Date.now() });
+      await bumpDataRevision(ctx);
       return { updated: existing._id };
     }
 
-    return {
-      inserted: await ctx.db.insert("ukDstCalendar", {
-        key: "singleton",
-        ukDstDates: data.ukDstDates,
-      }),
-    };
+    const inserted = await ctx.db.insert("ukDstCalendar", {
+      key: "singleton",
+      ukDstDates: data.ukDstDates,
+      updatedAt: Date.now(),
+    });
+    await bumpDataRevision(ctx);
+    return { inserted };
   },
 });

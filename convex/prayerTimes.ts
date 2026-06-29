@@ -145,10 +145,57 @@ export const getRamadan = query({
   },
 });
 
+export const getDataRevision = query({
+  args: {},
+  handler: async (ctx) => {
+    const doc = await ctx.db
+      .query("dataRevisions")
+      .withIndex("by_key", (q) => q.eq("key", "global"))
+      .unique();
+
+    return {
+      dataRevision: doc?.dataRevision ?? 0,
+      updatedAt: doc?.updatedAt ?? 0,
+    };
+  },
+});
+
 /**
  * UK DST calendar for prayer-time logic (same shape as public/docs/dst-start-end.json).
  * Returns null if not seeded yet — callers fall back to static JSON.
  */
+export const getDataVersions = query({
+  args: {
+    mosqueSlug: v.string(),
+    month: v.string(),
+    year: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const mosqueSlug = validateMosqueSlug(args.mosqueSlug);
+    const month = validateMonth(args.month);
+    const year = validateYear(args.year ?? new Date().getFullYear());
+
+    const [monthly, ramadanDocs, dst, mosques] = await Promise.all([
+      ctx.db
+        .query("monthlyPrayerTimes")
+        .withIndex("by_mosque_month_year", (q) =>
+          q.eq("mosqueSlug", mosqueSlug).eq("month", month).eq("year", year)
+        )
+        .unique(),
+      ctx.db.query("ramadanTimetables").withIndex("by_mosque", (q) => q.eq("mosqueSlug", mosqueSlug)).collect(),
+      ctx.db.query("ukDstCalendar").withIndex("by_key", (q) => q.eq("key", "singleton")).unique(),
+      ctx.db.query("mosques").collect(),
+    ]);
+
+    return {
+      mosquesUpdatedAt: Math.max(0, ...mosques.map((m) => m.updatedAt ?? 0)),
+      monthlyUpdatedAt: monthly?.updatedAt ?? 0,
+      ramadanUpdatedAt: Math.max(0, ...ramadanDocs.map((r) => r.updatedAt ?? 0)),
+      dstUpdatedAt: dst?.updatedAt ?? 0,
+    };
+  },
+});
+
 export const getUkDstDates = query({
   args: {},
   handler: async (ctx) => {
