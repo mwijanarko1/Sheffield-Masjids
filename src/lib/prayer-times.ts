@@ -655,6 +655,11 @@ type RamadanLoadResult =
   | { data: RamadanData; inRange: false }
   | null;
 
+function mightBeRamadanDate(date: Date): boolean {
+  const { month } = getDateInSheffield(date);
+  return month >= 1 && month <= 4;
+}
+
 /** Load Ramadan timetable for a mosque (Convex or static JSON). Exported for RamadanTimetable. */
 export async function loadRamadanCalendar(slug: string): Promise<RamadanData | null> {
   const safeSlug = normalizeMosqueSlug(slug);
@@ -749,12 +754,14 @@ function isDateWithinRamadanRange(date: Date, ramadanData: RamadanData): boolean
  * When inRange is false, the mosque has a Ramadan calendar but the date is outside it.
  */
 async function loadRamadanData(slug: string, date: Date): Promise<RamadanLoadResult> {
+  if (!mightBeRamadanDate(date)) return null;
   const data = await loadRamadanCalendar(slug);
   if (!data) return null;
   return { data, inRange: isDateWithinRamadanRange(date, data) };
 }
 
 export async function isDateInRamadanPeriod(slug: string, date: Date): Promise<boolean> {
+  if (!mightBeRamadanDate(date)) return false;
   const data = await loadRamadanCalendar(slug);
   if (!data) return false;
   return isDateWithinRamadanRange(date, data);

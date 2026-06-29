@@ -29,6 +29,20 @@
       "website": "https://aberdeenmosque.org/prayer-times-central"
     },
     {
+      "id": "afecc-glasgow",
+      "name": "AFECC Glasgow (Al-Farooq Education and Community Centre)",
+      "address": "32-38 Dixon Ave, Glasgow G42 8EJ, United Kingdom",
+      "lat": 55.834795,
+      "lng": -4.262617,
+      "slug": "afecc-glasgow",
+      "citySlug": "glasgow",
+      "cityName": "Glasgow",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.afecc.co.uk/glasgow-prayer-times/"
+    },
+    {
       "id": "al-azhar-mosque",
       "name": "Al Azhar Mosque",
       "address": "Laygate, South Shields NE33 5RP, United Kingdom",
@@ -308,6 +322,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.jamiyat.org"
+    },
+    {
+      "id": "masjid-at-taqwa-bradford",
+      "name": "Masjid At-Taqwa",
+      "address": "807 Great Horton Rd, Bradford BD7 4AG, United Kingdom",
+      "lat": 53.775234,
+      "lng": -1.797217,
+      "slug": "masjid-at-taqwa-bradford",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidat-taqwa.co.uk"
+    },
+    {
+      "id": "masjid-as-sunnah",
+      "name": "Masjid As-Sunnah (Albaseerah)",
+      "address": "3 Paternoster Lane, Bradford BD7 3DS, United Kingdom",
+      "lat": 53.780517,
+      "lng": -1.78435,
+      "slug": "masjid-as-sunnah",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://albaseerah.com"
     },
     {
       "id": "cheadle-masjid",
