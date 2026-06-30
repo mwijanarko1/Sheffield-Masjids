@@ -7,11 +7,11 @@
     "minVersionCode": 1
   },
   "ios": {
-    "version": "1.3",
+    "version": "1.3.1",
     "build": 5,
     "appStoreUrl": "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
   },
-  "pub_date": "2026-06-26T14:44:11Z",
+  "pub_date": "2026-06-30T19:28:21Z",
   "notes": {
     "en": "New update available",
     "ar": "تحديث جديد متاح",
