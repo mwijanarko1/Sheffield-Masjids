@@ -57,12 +57,44 @@
       "website": "https://alazharsouthshields.com"
     },
     {
+      "id": "alfurqan-islamic-centre",
+      "name": "Al Furqan Islamic Centre",
+      "address": "Manchester, United Kingdom",
+      "lat": 53.4548429997952,
+      "lng": -2.2322030423286257,
+      "slug": "alfurqan-islamic-centre",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://alfurqanmcr.org"
+    },
+    {
+      "id": "almaktoum-mosque",
+      "name": "Al Maktoum Mosque Dundee and The Islamic Cultural Centre",
+      "address": "15 Wilkie's Lane, Dundee DD1 5HB, United Kingdom",
+      "lat": 56.45955,
+      "lng": -2.98638,
+      "slug": "almaktoum-mosque",
+      "citySlug": "dundee",
+      "cityName": "Dundee",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://almaktoummosque.org"
+    },
+    {
       "id": "al-huda-academy",
       "name": "Al-Huda Academy",
       "address": "Al Huda Academy, Ouseburn Croft, Darnall, Sheffield S9 3FY",
       "lat": 53.38820835522969,
       "lng": -1.4261000315160608,
       "slug": "al-huda-academy",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "http://alhudaacademy.co.uk/"
     },
@@ -104,48 +136,6 @@
       "isHidden": false
     },
     {
-      "id": "al-rawdha-mosque",
-      "name": "Milton Keynes Islamic & Cultural Association (Al-Rawdha Mosque)",
-      "address": "401 South Row, Central Milton Keynes MK9 2PG, United Kingdom",
-      "lat": 52.036846585120834,
-      "lng": -0.7587811044903313,
-      "slug": "al-rawdha-mosque",
-      "citySlug": "milton-keynes",
-      "cityName": "Milton Keynes",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.mkica.org"
-    },
-    {
-      "id": "alfurqan-islamic-centre",
-      "name": "Al Furqan Islamic Centre",
-      "address": "Manchester, United Kingdom",
-      "lat": 53.4548429997952,
-      "lng": -2.2322030423286257,
-      "slug": "alfurqan-islamic-centre",
-      "citySlug": "manchester",
-      "cityName": "Manchester",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://alfurqanmcr.org"
-    },
-    {
-      "id": "almaktoum-mosque",
-      "name": "Al Maktoum Mosque Dundee and The Islamic Cultural Centre",
-      "address": "15 Wilkie's Lane, Dundee DD1 5HB, United Kingdom",
-      "lat": 56.45955,
-      "lng": -2.98638,
-      "slug": "almaktoum-mosque",
-      "citySlug": "dundee",
-      "cityName": "Dundee",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://almaktoummosque.org"
-    },
-    {
       "id": "at-taqwa-masjid",
       "name": "At-Taqwa Mosque Sheffield",
       "address": "31-33 Andover Street, Sheffield S3 9EP, United Kingdom",
@@ -154,6 +144,34 @@
       "slug": "at-taqwa-masjid",
       "isHidden": false,
       "website": "https://attaqwa-masjid.co.uk"
+    },
+    {
+      "id": "faizan-e-siddeeq-e-akbar",
+      "name": "Aylesbury Faizan-e-Siddeeq-e-Akbar",
+      "address": "Unit 2, Chamberlain Road, Aylesbury HP19 8DY, United Kingdom",
+      "lat": 51.823,
+      "lng": -0.832,
+      "slug": "faizan-e-siddeeq-e-akbar",
+      "citySlug": "aylesbury",
+      "cityName": "Aylesbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.airmyprayer.co.uk/ayl-5"
+    },
+    {
+      "id": "bmjm-dundee",
+      "name": "Baitul Mukarram Jame Mosque (DMCT)",
+      "address": "44/A Court Street, Dundee DD3 7QQ, United Kingdom",
+      "lat": 56.47397,
+      "lng": -2.96356,
+      "slug": "bmjm-dundee",
+      "citySlug": "dundee",
+      "cityName": "Dundee",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://bmjmdundee.com"
     },
     {
       "id": "birmingham-central-mosque",
@@ -182,20 +200,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://asmuk.org/blackhall-mosque"
-    },
-    {
-      "id": "bmjm-dundee",
-      "name": "Baitul Mukarram Jame Mosque (DMCT)",
-      "address": "44/A Court Street, Dundee DD3 7QQ, United Kingdom",
-      "lat": 56.47397,
-      "lng": -2.96356,
-      "slug": "bmjm-dundee",
-      "citySlug": "dundee",
-      "cityName": "Dundee",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://bmjmdundee.com"
     },
     {
       "id": "bradford-grand-mosque",
@@ -282,6 +286,20 @@
       "website": "https://masjidfarooqeazam.org.uk"
     },
     {
+      "id": "shah-jalal-masjid-burnley",
+      "name": "Shah Jalal Masjid",
+      "address": "Burleigh St, Burnley BB12 0DA, United Kingdom",
+      "lat": 53.796351040521806,
+      "lng": -2.246426430690589,
+      "slug": "shah-jalal-masjid-burnley",
+      "citySlug": "burnley",
+      "cityName": "Burnley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "bury-park-masjid",
       "name": "Bury Park Jamie Masjid",
       "address": "21-27 Bury Park Road, Luton LU1 1HB, United Kingdom",
@@ -322,34 +340,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.jamiyat.org"
-    },
-    {
-      "id": "masjid-at-taqwa-bradford",
-      "name": "Masjid At-Taqwa",
-      "address": "807 Great Horton Rd, Bradford BD7 4AG, United Kingdom",
-      "lat": 53.775234,
-      "lng": -1.797217,
-      "slug": "masjid-at-taqwa-bradford",
-      "citySlug": "bradford",
-      "cityName": "Bradford",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://masjidat-taqwa.co.uk"
-    },
-    {
-      "id": "masjid-as-sunnah",
-      "name": "Masjid As-Sunnah (Albaseerah)",
-      "address": "3 Paternoster Lane, Bradford BD7 3DS, United Kingdom",
-      "lat": 53.780517,
-      "lng": -1.78435,
-      "slug": "masjid-as-sunnah",
-      "citySlug": "bradford",
-      "cityName": "Bradford",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://albaseerah.com"
     },
     {
       "id": "cheadle-masjid",
@@ -394,18 +384,27 @@
       "website": "https://croydonict.com"
     },
     {
-      "id": "daar-hadeeth-masjid",
-      "name": "Masjid Daar Al-Hadeeth",
-      "address": "96B Lower Clapton Road, London E5 0QR, United Kingdom",
-      "lat": 51.5533734,
-      "lng": -0.0528971,
-      "slug": "daar-hadeeth-masjid",
-      "citySlug": "london",
-      "cityName": "London",
+      "id": "dbwa",
+      "name": "Dacorum Bangladeshi Welfare Association (DBWA) - Baytus Salaam",
+      "address": "Stevenage Rise, Hemel Hempstead HP2 6BH, United Kingdom",
+      "lat": 51.77262985735205,
+      "lng": -0.45640352698587805,
+      "slug": "dbwa",
+      "citySlug": "hemel-hempstead",
+      "cityName": "Hemel Hempstead",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
-      "website": "https://daarhadeeth.com"
+      "website": "https://www.dbwa.org.uk"
+    },
+    {
+      "id": "darululoom-siddiqia-masjid",
+      "name": "Dar Ul Uloom Siddiqia Masjid",
+      "address": "24 Burngreave Rd, Sheffield S3 9DD",
+      "lat": 53.392,
+      "lng": -1.468,
+      "slug": "darululoom-siddiqia-masjid",
+      "isHidden": false
     },
     {
       "id": "darul-ummah-mosque",
@@ -422,15 +421,6 @@
       "website": "http://www.darulummah.org.uk"
     },
     {
-      "id": "darululoom-siddiqia-masjid",
-      "name": "Dar Ul Uloom Siddiqia Masjid",
-      "address": "24 Burngreave Rd, Sheffield S3 9DD",
-      "lat": 53.392,
-      "lng": -1.468,
-      "slug": "darululoom-siddiqia-masjid",
-      "isHidden": false
-    },
-    {
       "id": "darussalam-masjid",
       "name": "Darussalam Masjid & Cultural Centre",
       "address": "North Hyde House/North Hyde Wharf, Hayes Rd, Southall UB2 5NS, United Kingdom",
@@ -443,20 +433,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.darussalamcentre.org"
-    },
-    {
-      "id": "dbwa",
-      "name": "Dacorum Bangladeshi Welfare Association (DBWA) - Baytus Salaam",
-      "address": "Stevenage Rise, Hemel Hempstead HP2 6BH, United Kingdom",
-      "lat": 51.77262985735205,
-      "lng": -0.45640352698587805,
-      "slug": "dbwa",
-      "citySlug": "hemel-hempstead",
-      "cityName": "Hemel Hempstead",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.dbwa.org.uk"
     },
     {
       "id": "didsbury-mosque",
@@ -541,20 +517,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://exetermosque.org.uk"
-    },
-    {
-      "id": "faizan-e-siddeeq-e-akbar",
-      "name": "Aylesbury Faizan-e-Siddeeq-e-Akbar",
-      "address": "Unit 2, Chamberlain Road, Aylesbury HP19 8DY, United Kingdom",
-      "lat": 51.823,
-      "lng": -0.832,
-      "slug": "faizan-e-siddeeq-e-akbar",
-      "citySlug": "aylesbury",
-      "cityName": "Aylesbury",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.airmyprayer.co.uk/ayl-5"
     },
     {
       "id": "fatima-community-centre",
@@ -648,20 +610,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://hounslowmasjid.co.uk"
-    },
-    {
-      "id": "iccuk",
-      "name": "London Central Mosque",
-      "address": "146 Park Road, London NW8 7RG, United Kingdom",
-      "lat": 51.529,
-      "lng": -0.1652,
-      "slug": "iccuk",
-      "citySlug": "london",
-      "cityName": "London",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.iccuk.org"
     },
     {
       "id": "ilford-islamic-centre",
@@ -799,6 +747,20 @@
       "website": "http://lincolngreenmosque.co.uk"
     },
     {
+      "id": "iccuk",
+      "name": "London Central Mosque",
+      "address": "146 Park Road, London NW8 7RG, United Kingdom",
+      "lat": 51.529,
+      "lng": -0.1652,
+      "slug": "iccuk",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.iccuk.org"
+    },
+    {
       "id": "loughborough-mosque",
       "name": "Loughborough Mosque (LMICA)",
       "address": "83-85 King Street, Loughborough LE11 1SD, United Kingdom",
@@ -893,20 +855,6 @@
       "website": ""
     },
     {
-      "id": "masjid-al-hikmah",
-      "name": "Masjid Alhikmah & Community Centre",
-      "address": "41 Nelson Street, Aberdeen AB24 5ER, United Kingdom",
-      "lat": 57.154199216464576,
-      "lng": -2.097523663234562,
-      "slug": "masjid-al-hikmah",
-      "citySlug": "aberdeen",
-      "cityName": "Aberdeen",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://masjidalhikmah.org.uk"
-    },
-    {
       "id": "masjid-al-huda-sheffield",
       "name": "Masjid al Huda Sheffield",
       "address": "(next to St Silas Church), Hanover St, Highfield, Sheffield S3 7WT",
@@ -931,6 +879,20 @@
       "website": "https://www.newhammosques.com/masjid-al-humera"
     },
     {
+      "id": "masjid-al-hikmah",
+      "name": "Masjid Alhikmah & Community Centre",
+      "address": "41 Nelson Street, Aberdeen AB24 5ER, United Kingdom",
+      "lat": 57.154199216464576,
+      "lng": -2.097523663234562,
+      "slug": "masjid-al-hikmah",
+      "citySlug": "aberdeen",
+      "cityName": "Aberdeen",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidalhikmah.org.uk"
+    },
+    {
       "id": "masjid-ar-rahmah",
       "name": "Masjid Ar-Rahmah",
       "address": "189 Northumberland Rd, Southampton SO14 0EL, United Kingdom",
@@ -943,6 +905,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://masjidrahmah.co.uk"
+    },
+    {
+      "id": "masjid-as-sunnah",
+      "name": "Masjid As-Sunnah (Albaseerah)",
+      "address": "3 Paternoster Lane, Bradford BD7 3DS, United Kingdom",
+      "lat": 53.780517,
+      "lng": -1.78435,
+      "slug": "masjid-as-sunnah",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://albaseerah.com"
+    },
+    {
+      "id": "masjid-at-taqwa-bradford",
+      "name": "Masjid At-Taqwa",
+      "address": "807 Great Horton Rd, Bradford BD7 4AG, United Kingdom",
+      "lat": 53.775234,
+      "lng": -1.797217,
+      "slug": "masjid-at-taqwa-bradford",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidat-taqwa.co.uk"
     },
     {
       "id": "masjid-at-taqwa",
@@ -987,6 +977,20 @@
       "website": ""
     },
     {
+      "id": "daar-hadeeth-masjid",
+      "name": "Masjid Daar Al-Hadeeth",
+      "address": "96B Lower Clapton Road, London E5 0QR, United Kingdom",
+      "lat": 51.5533734,
+      "lng": -0.0528971,
+      "slug": "daar-hadeeth-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://daarhadeeth.com"
+    },
+    {
       "id": "masjid-darussalam",
       "name": "Masjid Darussalam (Darussalam Education Centre)",
       "address": "184 Whalley New Road, Blackburn BB1 9TN, United Kingdom",
@@ -1013,20 +1017,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.gloucestermasjid.org"
-    },
-    {
-      "id": "masjid-e-irfan",
-      "name": "Masjid-e-Irfan",
-      "address": "49 Eldon Road, Blackburn BB1 8BE, United Kingdom",
-      "lat": 53.75625683614228,
-      "lng": -2.4911186748639307,
-      "slug": "masjid-e-irfan",
-      "citySlug": "blackburn",
-      "cityName": "Blackburn",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": ""
     },
     {
       "id": "masjid-e-noor",
@@ -1253,6 +1243,48 @@
       "website": "https://masjidzeenatulislam.org.uk"
     },
     {
+      "id": "masjid-e-irfan",
+      "name": "Masjid-e-Irfan",
+      "address": "49 Eldon Road, Blackburn BB1 8BE, United Kingdom",
+      "lat": 53.75625683614228,
+      "lng": -2.4911186748639307,
+      "slug": "masjid-e-irfan",
+      "citySlug": "blackburn",
+      "cityName": "Blackburn",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "al-rawdha-mosque",
+      "name": "Milton Keynes Islamic & Cultural Association (Al-Rawdha Mosque)",
+      "address": "401 South Row, Central Milton Keynes MK9 2PG, United Kingdom",
+      "lat": 52.036846585120834,
+      "lng": -0.7587811044903313,
+      "slug": "al-rawdha-mosque",
+      "citySlug": "milton-keynes",
+      "cityName": "Milton Keynes",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.mkica.org"
+    },
+    {
+      "id": "essalam-mosque",
+      "name": "Moskee Essalam Rotterdam",
+      "address": "Vredesplein 7, 3074 SN Rotterdam, Netherlands",
+      "lat": 51.8987817,
+      "lng": 4.5133885,
+      "slug": "essalam-mosque",
+      "citySlug": "rotterdam",
+      "cityName": "Rotterdam",
+      "countryCode": "NL",
+      "countryName": "Netherlands",
+      "isHidden": false,
+      "website": "https://www.essalamrotterdam.nl"
+    },
+    {
       "id": "muslim-welfare-house",
       "name": "Muslim Welfare House Sheffield",
       "address": "10-12 Severn Rd, Sheffield S10 2SU",
@@ -1317,6 +1349,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "http://www.scunthorpemosque.co.uk"
+    },
+    {
+      "id": "shahporan-masjid",
+      "name": "Shahporan Masjid",
+      "address": "444 Hackney Road, London E2 6QL, United Kingdom",
+      "lat": 51.5319986,
+      "lng": -0.0607922,
+      "slug": "shahporan-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://shahporanmasjid.uk/prayer-time/"
     },
     {
       "id": "sheffield-grand-mosque",
@@ -1395,18 +1441,18 @@
       "website": "https://wittonislamiccentre.org.uk"
     },
     {
-      "id": "essalam-mosque",
-      "name": "Moskee Essalam Rotterdam",
-      "address": "Vredesplein 7, 3074 SN Rotterdam, Netherlands",
-      "lat": 51.8987817,
-      "lng": 4.5133885,
-      "slug": "essalam-mosque",
-      "citySlug": "rotterdam",
-      "cityName": "Rotterdam",
-      "countryCode": "NL",
-      "countryName": "Netherlands",
+      "id": "wycombe-islamic-centre",
+      "name": "Wycombe Islamic Centre (Masjid As-Salam)",
+      "address": "Wycombe Islamic Centre, St Marks Close (off Totteridge Road), High Wycombe, Bucks HP13 6GN, United Kingdom",
+      "lat": 51.6304,
+      "lng": -0.7361,
+      "slug": "wycombe-islamic-centre",
+      "citySlug": "high-wycombe",
+      "cityName": "High Wycombe",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
-      "website": "https://www.essalamrotterdam.nl"
+      "website": "https://www.wise-web.org/prayer-times/"
     }
   ]
 }

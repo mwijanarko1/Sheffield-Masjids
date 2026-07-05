@@ -115,6 +115,35 @@ export const seedMonthly = mutation({
   },
 });
 
+export const removeMonthly = mutation({
+  args: {
+    mosqueSlug: v.string(),
+    month: v.string(),
+    year: v.number(),
+    adminSecret: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const { adminSecret, ...key } = args;
+    requireAdmin(adminSecret);
+
+    const existing = await ctx.db
+      .query("monthlyPrayerTimes")
+      .withIndex("by_mosque_month_year", (q) =>
+        q
+          .eq("mosqueSlug", key.mosqueSlug)
+          .eq("month", key.month)
+          .eq("year", key.year)
+      )
+      .unique();
+
+    if (!existing) return { deleted: false, reason: "not_found" };
+
+    await ctx.db.delete(existing._id);
+    await bumpDataRevision(ctx);
+    return { deleted: true };
+  },
+});
+
 /**
  * Seed Ramadan timetable. Idempotent: replaces existing if same mosque and gregorian range.
  */
@@ -189,9 +218,9 @@ export const seedUkDstCalendar = mutation({
     const { adminSecret, ...data } = args;
     requireAdmin(adminSecret);
 
-    // Input-size guard: ~50 years of DST dates is more than enough
-    if (data.ukDstDates.length > 50) {
-      throw new Error("ukDstDates exceeds maximum of 50 entries");
+    // Input-size guard: enough for the bundled 2025–2100 DST file.
+    if (data.ukDstDates.length > 100) {
+      throw new Error("ukDstDates exceeds maximum of 100 entries");
     }
 
     const existing = await ctx.db
