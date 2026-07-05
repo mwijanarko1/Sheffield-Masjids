@@ -668,6 +668,20 @@
       "website": "https://www.islamiccentre.org"
     },
     {
+      "id": "islamic-dawah-academy",
+      "name": "Islamic Da'wah Academy (Masjid Al-Farooq)",
+      "address": "120 Melbourne Road, Leicester LE2 0DS, United Kingdom",
+      "lat": 52.6328,
+      "lng": -1.1142,
+      "slug": "islamic-dawah-academy",
+      "citySlug": "leicester",
+      "cityName": "Leicester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://www.idauk.org/"
+    },
+    {
       "id": "jamia-masjid-ghausia",
       "name": "Jamia Masjid Ghausia",
       "address": "Firth Park Road, Sheffield S5 6WN",
