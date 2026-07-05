@@ -678,7 +678,7 @@
       "cityName": "Leicester",
       "countryCode": "GB",
       "countryName": "United Kingdom",
-      "isHidden": true,
+      "isHidden": false,
       "website": "https://www.idauk.org/"
     },
     {
