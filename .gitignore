@@ -46,3 +46,7 @@ next-env.d.ts
 # template-specific
 /docs
 /for-agent
+
+# Pix Agent
+.pi/
+.pi-lens/
