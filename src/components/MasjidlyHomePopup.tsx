@@ -9,7 +9,8 @@ const MASJIDLY_CLICKED_KEY = "masjidly_download_clicked";
 
 const APP_STORE_URL =
   "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833";
-const ANDROID_APK_PATH = "/masjidly/Masjidly-1.2.0.apk";
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en";
 
 function markClicked() {
   try {
@@ -163,13 +164,14 @@ export default function MasjidlyHomePopup() {
                     </a>
 
                     <a
-                      href={ANDROID_APK_PATH}
-                      download="Masjidly-1.2.0.apk"
+                      href={PLAY_STORE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={handleDownloadClick}
                       className="group flex w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-white/14 bg-white/[0.05] px-4 py-3 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset] backdrop-blur-sm transition hover:border-white/22 hover:bg-white/[0.08] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080f24] sm:py-3.5"
                     >
                       <span className="min-w-0 flex-1 text-left text-sm font-semibold leading-tight sm:text-[0.95rem]">
-                        Download Android APK
+                        Get it on Google Play
                       </span>
                       <span
                         className="shrink-0 text-base font-semibold text-white/35 transition group-hover:translate-x-0.5 group-hover:text-white/55"

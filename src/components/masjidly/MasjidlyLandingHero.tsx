@@ -32,8 +32,9 @@ function AppStoreBadge() {
 function AndroidBadge() {
   return (
     <a
-      href="/masjidly/Masjidly-1.2.0.apk"
-      download="Masjidly-1.2.0.apk"
+      href="https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en"
+      target="_blank"
+      rel="noopener noreferrer"
       className="inline-flex h-12 min-w-[10.5rem] items-center gap-2.5 rounded-xl bg-[#1a1a1a] px-4 py-2 text-white shadow-lg transition hover:bg-black hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] focus-visible:ring-offset-2"
     >
       <span className="inline-flex shrink-0 text-[#3DDC84]" aria-hidden>
@@ -45,7 +46,7 @@ function AndroidBadge() {
         <span className="block text-[9px] font-medium uppercase tracking-wide text-white/80">
           Get it on
         </span>
-        <span className="block text-[15px] font-semibold tracking-tight">Android</span>
+        <span className="block text-[15px] font-semibold tracking-tight">Google Play</span>
       </span>
     </a>
   );
