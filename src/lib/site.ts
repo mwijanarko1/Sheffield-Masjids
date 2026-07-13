@@ -1,4 +1,10 @@
 export const SITE_NAME = "Sheffield Masjids";
+
+/** Masjidly store links (website CTAs; keep in sync with public/masjidly/latest.json). */
+export const MASJIDLY_APP_STORE_URL =
+  "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833";
+export const MASJIDLY_PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en";
 /** Default document title — lead with the main search phrase people use. */
 export const SITE_TITLE = `Sheffield Prayer Times | Mosques & Iqamah | ${SITE_NAME}`;
 export const SITE_DESCRIPTION =

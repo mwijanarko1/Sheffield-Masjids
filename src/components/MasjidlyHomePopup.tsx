@@ -3,14 +3,13 @@
 import { useEffect, useState } from "react";
 import { NIGHT_GRADIENT } from "@/components/DynamicBackground";
 import { useMasjidlyPromoOverlay } from "@/contexts/MasjidlyPromoOverlayContext";
+import {
+  MASJIDLY_APP_STORE_URL,
+  MASJIDLY_PLAY_STORE_URL,
+} from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const MASJIDLY_CLICKED_KEY = "masjidly_download_clicked";
-
-const APP_STORE_URL =
-  "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833";
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en";
 
 function markClicked() {
   try {
@@ -146,7 +145,7 @@ export default function MasjidlyHomePopup() {
 
                   <div className="flex flex-col gap-2.5">
                     <a
-                      href={APP_STORE_URL}
+                      href={MASJIDLY_APP_STORE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={handleDownloadClick}
@@ -164,7 +163,7 @@ export default function MasjidlyHomePopup() {
                     </a>
 
                     <a
-                      href={PLAY_STORE_URL}
+                      href={MASJIDLY_PLAY_STORE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={handleDownloadClick}

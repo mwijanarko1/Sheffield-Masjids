@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
 import MasjidlyMarketingHeader from "@/components/masjidly/MasjidlyMarketingHeader";
+import {
+  MASJIDLY_APP_STORE_URL,
+  MASJIDLY_PLAY_STORE_URL,
+} from "@/lib/site";
 
 /**
  * Top padding for hero column so the first line clears the fixed floating header bar
@@ -11,7 +15,7 @@ const MASJIDLY_FLOATING_HEADER_PAD =
 function AppStoreBadge() {
   return (
     <a
-      href="https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
+      href={MASJIDLY_APP_STORE_URL}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex h-12 min-w-[10.5rem] items-center gap-2.5 rounded-xl bg-[#1a1a1a] px-4 py-2 text-white shadow-lg transition hover:bg-black hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] focus-visible:ring-offset-2"
@@ -32,7 +36,7 @@ function AppStoreBadge() {
 function AndroidBadge() {
   return (
     <a
-      href="https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en"
+      href={MASJIDLY_PLAY_STORE_URL}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex h-12 min-w-[10.5rem] items-center gap-2.5 rounded-xl bg-[#1a1a1a] px-4 py-2 text-white shadow-lg transition hover:bg-black hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] focus-visible:ring-offset-2"

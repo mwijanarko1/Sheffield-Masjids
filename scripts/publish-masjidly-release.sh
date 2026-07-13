@@ -4,98 +4,97 @@ set -euo pipefail
 #
 # publish-masjidly-release.sh
 # ============================
-# Publishes a new Masjidly Android APK release.
-#
-# Workflow:
-#   1. Takes a built APK from the Masjidly Expo project
-#   2. Copies it to public/masjidly/masjidly-latest.apk
-#   3. Updates public/masjidly/latest.json with new version info
-#   4. Commits and pushes to deploy
+# Updates public/masjidly/latest.json for a store-distributed Masjidly release.
+# Android is on Google Play; iOS is on the App Store. No APK is hosted.
 #
 # Usage:
-#   ./scripts/publish-masjidly-release.sh <path-to-apk> <version> <version_code>
+#   ./scripts/publish-masjidly-release.sh \
+#     --android-version 1.3 --android-version-code 10 \
+#     [--ios-version 1.3.1] [--ios-build 5]
 #
 # Example:
 #   ./scripts/publish-masjidly-release.sh \
-#     ../masjidly/apps/expo/android/app/build/outputs/apk/release/app-release.apk \
-#     1.2.0 \
-#     7
-#
-# The SHA-256 hash is computed automatically.
+#     --android-version 1.3 --android-version-code 10
 #
 
-if [[ $# -lt 3 ]]; then
-  echo "Usage: $0 <path-to-apk> <version> <version_code>"
-  echo ""
-  echo "Example:"
-  echo "  $0 ../masjidly/apps/expo/android/app/build/outputs/apk/release/app-release.apk 1.2.0 7"
+ANDROID_VERSION=""
+ANDROID_VERSION_CODE=""
+IOS_VERSION=""
+IOS_BUILD=""
+
+usage() {
+  echo "Usage: $0 --android-version <x.y[.z]> --android-version-code <n> [--ios-version <x.y.z>] [--ios-build <n>]"
   exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --android-version) ANDROID_VERSION="${2:-}"; shift 2 ;;
+    --android-version-code) ANDROID_VERSION_CODE="${2:-}"; shift 2 ;;
+    --ios-version) IOS_VERSION="${2:-}"; shift 2 ;;
+    --ios-build) IOS_BUILD="${2:-}"; shift 2 ;;
+    -h|--help) usage ;;
+    *) echo "Unknown arg: $1"; usage ;;
+  esac
+done
+
+if [[ -z "$ANDROID_VERSION" || -z "$ANDROID_VERSION_CODE" ]]; then
+  usage
 fi
 
-SRC_APK="$1"
-VERSION="$2"
-VERSION_CODE="$3"
 LATEST_JSON="public/masjidly/latest.json"
-DEST_APK="public/masjidly/masjidly-latest.apk"
+PLAY_STORE_URL="https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en"
 
 cd "$(dirname "$0")/.."
-ROOT="$(pwd)"
 
-# Validate source APK exists
-if [[ ! -f "$SRC_APK" ]]; then
-  echo "❌ APK not found: $SRC_APK"
+if [[ ! -f "$LATEST_JSON" ]]; then
+  echo "❌ Missing $LATEST_JSON"
   exit 1
 fi
 
-echo "📦 Masjidly Release Publisher"
-echo "=============================="
-echo "Source:      $SRC_APK"
-echo "Version:     $VERSION"
-echo "VersionCode: $VERSION_CODE"
+echo "📦 Masjidly Release Publisher (store)"
+echo "====================================="
+echo "Android: $ANDROID_VERSION ($ANDROID_VERSION_CODE)"
+[[ -n "$IOS_VERSION" ]] && echo "iOS:     $IOS_VERSION${IOS_BUILD:+ ($IOS_BUILD)}"
 echo ""
 
-# Compute SHA-256
-SHA256=$(shasum -a 256 "$SRC_APK" | awk '{print $1}')
-echo "🔐 SHA256: $SHA256"
-
-# Copy APK to public directory
-echo ""
-echo "📋 Copying APK to $DEST_APK ..."
-cp "$SRC_APK" "$DEST_APK"
-echo "✅ APK copied ($(du -h "$DEST_APK" | cut -f1))"
-
-# Update latest.json
-echo ""
-echo "📝 Updating $LATEST_JSON ..."
 PUB_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-jq \
-  --arg v "$VERSION" \
-  --argjson vc "$VERSION_CODE" \
-  --arg sha "$SHA256" \
-  --arg pub "$PUB_DATE" \
-  '.android.version = $v
-   | .android.versionCode = $vc
-   | .android.sha256 = $sha
-   | .pub_date = $pub' \
-  "$LATEST_JSON" > "${LATEST_JSON}.tmp" \
+JQ_ARGS=(
+  --arg v "$ANDROID_VERSION"
+  --argjson vc "$ANDROID_VERSION_CODE"
+  --arg url "$PLAY_STORE_URL"
+  --arg pub "$PUB_DATE"
+)
+JQ_PROG='.android.version = $v
+  | .android.versionCode = $vc
+  | .android.url = $url
+  | .android.sha256 = ""
+  | .pub_date = $pub'
+
+if [[ -n "$IOS_VERSION" ]]; then
+  JQ_ARGS+=(--arg iv "$IOS_VERSION")
+  JQ_PROG+=' | .ios.version = $iv'
+fi
+if [[ -n "$IOS_BUILD" ]]; then
+  JQ_ARGS+=(--argjson ib "$IOS_BUILD")
+  JQ_PROG+=' | .ios.build = $ib'
+fi
+
+jq "${JQ_ARGS[@]}" "$JQ_PROG" "$LATEST_JSON" > "${LATEST_JSON}.tmp" \
   && mv "${LATEST_JSON}.tmp" "$LATEST_JSON"
 
 echo "✅ $LATEST_JSON updated."
-
-# Stage changes
 echo ""
 echo "📤 Staging and committing..."
-git add "$DEST_APK" "$LATEST_JSON"
-git diff --cached --quiet || git commit -m "chore(release): publish Masjidly v${VERSION} (${VERSION_CODE})"
+git add "$LATEST_JSON"
+git diff --cached --quiet || git commit -m "chore(release): Masjidly Android v${ANDROID_VERSION} (${ANDROID_VERSION_CODE})"
 
-# Push
 echo ""
 echo "☁️  Pushing to origin..."
 git push origin main
 
 echo ""
-echo "🎉 Done! Published Masjidly v${VERSION}"
-echo "   APK: https://sheffieldmasjids.com/masjidly/masjidly-latest.apk"
+echo "🎉 Done! Published Masjidly Android v${ANDROID_VERSION}"
 echo "   JSON: https://sheffieldmasjids.com/masjidly/latest.json"
-echo "   SHA256: $SHA256"
+echo "   Play: $PLAY_STORE_URL"
