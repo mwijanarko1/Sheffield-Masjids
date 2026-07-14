@@ -85,6 +85,20 @@
       "website": "https://www.alhuda-masjid.co.uk/"
     },
     {
+      "id": "al-manaar-institute-bradford",
+      "name": "Al Manaar Institute Of Bradford",
+      "address": "239 Otley Road, Bradford BD3 0LP, United Kingdom",
+      "lat": 53.805774,
+      "lng": -1.740887,
+      "slug": "al-manaar-institute-bradford",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.airmyprayer.co.uk/brd-1015"
+    },
+    {
       "id": "al-rahma-mosque",
       "name": "Al-Rahma Mosque",
       "address": "29-31 Hatherley St, Liverpool L8 2TJ, United Kingdom",
@@ -640,6 +654,20 @@
       "website": "https://www.mosquee-strasbourg.com"
     },
     {
+      "id": "green-lane-masjid",
+      "name": "Green Lane Masjid & Community Centre",
+      "address": "20 Green Lane, Small Heath, Birmingham B9 5DB, United Kingdom",
+      "lat": 52.4731,
+      "lng": -1.8641,
+      "slug": "green-lane-masjid",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://greenlanemasjid.org"
+    },
+    {
       "id": "hounslow-jamia-masjid",
       "name": "Hounslow Jamia Masjid and Islamic Centre",
       "address": "367 Wellington Road South, Hounslow TW4 5HU, United Kingdom",
@@ -1103,6 +1131,20 @@
       "website": "https://masjideumar.org"
     },
     {
+      "id": "masjid-e-umer",
+      "name": "Masjid e Umer",
+      "address": "79 Queens Road, Walthamstow, London E17 8QR, United Kingdom",
+      "lat": 51.5784399,
+      "lng": -0.0232808,
+      "slug": "masjid-e-umer",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.masjideumer.org.uk"
+    },
+    {
       "id": "masjid-e-vali",
       "name": "Masjid E Vali",
       "address": "Issa Hikmah Centre, Preston New Road, Blackburn BB2 6PS, United Kingdom",
@@ -1271,6 +1313,20 @@
       "website": "https://masjidsunnahsheffield.co.uk"
     },
     {
+      "id": "masjid-tawhid-leyton",
+      "name": "Masjid Tawhid Leyton",
+      "address": "80 High Road, Leyton, London E15 2BP, United Kingdom",
+      "lat": 51.5531259,
+      "lng": -0.0046621,
+      "slug": "masjid-tawhid-leyton",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.masjidtawhid.org"
+    },
+    {
       "id": "masjid-usman-huddersfield",
       "name": "Masjid Usman",
       "address": "32 Upper George St, Spring Wood, Huddersfield, HD1 4AW",
@@ -1335,6 +1391,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.newcastlecentralmosque.com"
+    },
+    {
+      "id": "park-royal-community-centre",
+      "name": "Park Royal Community Centre",
+      "address": "41-43 Standard Road (1st floor), London NW10 6HF, United Kingdom",
+      "lat": 51.5277567,
+      "lng": -0.2643845,
+      "slug": "park-royal-community-centre",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://mawaqit.net/en/park-royal-community-centre-london-nw10-6hf-united-kingdom"
     },
     {
       "id": "raza-jamia-masjid",
@@ -1439,6 +1509,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "http://www.southamptonisoc.org/"
+    },
+    {
+      "id": "west-london-islamic-centre",
+      "name": "West London Islamic Centre (WLIC)",
+      "address": "Singapore Road, West Ealing, London W13 0SQ, United Kingdom",
+      "lat": 51.511,
+      "lng": -0.326,
+      "slug": "west-london-islamic-centre",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.wliconline.org"
     },
     {
       "id": "west-london-islamic-cultural-centre",
