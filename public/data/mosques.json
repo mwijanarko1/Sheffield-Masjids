@@ -790,16 +790,16 @@
     },
     {
       "id": "khizra-mosque",
-      "name": "Khizra Mosque",
+      "name": "Khizra Mosque & Community Centre",
       "address": "425 Cheetham Hill Road, Manchester M8 0PF, United Kingdom",
-      "lat": 53.5062208,
-      "lng": -2.2381206,
+      "lat": 53.506168,
+      "lng": -2.238678,
       "slug": "khizra-mosque",
       "citySlug": "manchester",
       "cityName": "Manchester",
       "countryCode": "GB",
       "countryName": "United Kingdom",
-      "isHidden": false,
+      "isHidden": true,
       "website": "https://www.khizramosque.org"
     },
     {
