@@ -977,6 +977,20 @@
       "website": "https://www.newhammosques.com/masjid-al-humera"
     },
     {
+      "id": "masjid-al-jannah",
+      "name": "Masjid Al-Jannah",
+      "address": "St Thomas Rd, Derby DE23 8RL, United Kingdom",
+      "lat": 52.9014896,
+      "lng": -1.4779383,
+      "slug": "masjid-al-jannah",
+      "citySlug": "derby",
+      "cityName": "Derby",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.masjid-al-jannah.co.uk/prayer"
+    },
+    {
       "id": "masjid-ar-rahmah",
       "name": "Masjid Ar-Rahmah",
       "address": "189 Northumberland Rd, Southampton SO14 0EL, United Kingdom",
