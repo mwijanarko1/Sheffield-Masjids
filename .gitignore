@@ -50,3 +50,6 @@ next-env.d.ts
 # Pix Agent
 .pi/
 .pi-lens/
+
+# Android APK binaries (host via Play Store / Releases)
+*.apk
