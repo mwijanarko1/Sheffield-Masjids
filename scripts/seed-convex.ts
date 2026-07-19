@@ -157,7 +157,13 @@ function diffRegistrySlugs(cwd: string): Set<string> {
           oldEntry.lng !== m.lng ||
           oldEntry.isHidden !== m.isHidden ||
           oldEntry.name !== m.name ||
-          oldEntry.address !== m.address
+          oldEntry.address !== m.address ||
+          oldEntry.citySlug !== m.citySlug ||
+          oldEntry.cityName !== m.cityName ||
+          oldEntry.countryCode !== m.countryCode ||
+          oldEntry.countryName !== m.countryName ||
+          oldEntry.timezone !== m.timezone ||
+          oldEntry.website !== m.website
         ) {
           changed.add(m.slug); // modified
         }

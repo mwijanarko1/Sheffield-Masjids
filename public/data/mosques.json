@@ -119,6 +119,10 @@
       "lat": 53.39326273741454,
       "lng": -1.457577445008736,
       "slug": "al-rahman-mosque",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false
     },
     {
@@ -170,6 +174,10 @@
       "lat": 53.3943353,
       "lng": -1.4682155,
       "slug": "at-taqwa-masjid",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://attaqwa-masjid.co.uk"
     },
@@ -432,6 +440,10 @@
       "lat": 53.392,
       "lng": -1.468,
       "slug": "darululoom-siddiqia-masjid",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false
     },
     {
@@ -609,6 +621,10 @@
       "lat": 53.4189585499368,
       "lng": -1.4457827744236673,
       "slug": "firth-park-cultural-centre",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false
     },
     {
@@ -641,7 +657,7 @@
     },
     {
       "id": "grande-mosquee-de-strasbourg",
-      "name": "Grande Mosqu\u00e9e de Strasbourg",
+      "name": "Grande Mosquée de Strasbourg",
       "address": "5 Boulevard de la Victoire, 67000 Strasbourg, France",
       "lat": 48.5872,
       "lng": 7.7495,
@@ -772,6 +788,10 @@
       "lat": 53.408,
       "lng": -1.455,
       "slug": "jamia-masjid-ghausia",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false
     },
     {
@@ -865,6 +885,10 @@
       "lat": 53.364138901927774,
       "lng": -1.473326602699712,
       "slug": "madina-masjid-sheffield",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.madinamasjid.org.uk"
     },
@@ -909,6 +933,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://manchestercentralmosque.org"
+    },
+    {
+      "id": "manchester-jame-masjid",
+      "name": "Manchester Jame Masjid",
+      "address": "50A Birch Lane, Longsight, Manchester M13 0WN, United Kingdom",
+      "lat": 53.45715846932409,
+      "lng": -2.205316390218048,
+      "slug": "manchester-jame-masjid",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://manchesterjamemasjid.com"
     },
     {
       "id": "markazi-jamia-masjid-anwar-e-madina-suffa-tul-islam",
@@ -959,6 +997,10 @@
       "lat": 53.37556048193791,
       "lng": -1.4832991315079853,
       "slug": "masjid-al-huda-sheffield",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://masjidhudasheff.com"
     },
@@ -1249,6 +1291,10 @@
       "lat": 53.394425713526154,
       "lng": -1.4268957008302363,
       "slug": "masjid-quba-education-centre",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false
     },
     {
@@ -1272,6 +1318,10 @@
       "lat": 53.3893364595497,
       "lng": -1.4815868756857322,
       "slug": "masjid-risalah",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false
     },
     {
@@ -1323,6 +1373,10 @@
       "lat": 53.39261164313249,
       "lng": -1.455033658492879,
       "slug": "masjid-sunnah-sheffield",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://masjidsunnahsheffield.co.uk"
     },
@@ -1375,6 +1429,10 @@
       "lat": 53.37942065683938,
       "lng": -1.4964534779182512,
       "slug": "muslim-welfare-house",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.mwhs.org.uk"
     },
@@ -1483,6 +1541,10 @@
       "lat": 53.40482539006257,
       "lng": -1.4410684296565177,
       "slug": "sheffield-grand-mosque",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://sheffieldgrandmosque.co.uk"
     },
@@ -1493,6 +1555,10 @@
       "lat": 53.399944908642254,
       "lng": -1.4510603315154327,
       "slug": "sheffield-ummah-center",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://ummahcenter.mosqueprayertimes.org"
     },
