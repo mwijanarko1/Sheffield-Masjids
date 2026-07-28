@@ -1,6 +1,15 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { requireAdmin } from "./admin";
+import {
+  buildRamadanDayMap,
+  hasMeaningfulMonthlyIqamahChange,
+  hasMeaningfulRamadanIqamahChange,
+  monthNameToNumber,
+  newPublishEventId,
+  type IqamahTimeRange,
+} from "./lib/iqamahChangeDetect";
 
 const prayerTimeValidator = v.object({
   date: v.number(),
@@ -56,8 +65,25 @@ async function bumpDataRevision(ctx: any) {
   });
 }
 
+async function scheduleIfNeeded(
+  ctx: any,
+  mosqueSlug: string,
+  publishEventId: string | undefined,
+  shouldNotify: boolean,
+) {
+  if (!shouldNotify) return { iqamahChangeAlertScheduled: false as const };
+  const eventId = publishEventId?.trim() || newPublishEventId();
+  await ctx.scheduler.runAfter(0, internal.pushSend.sendIqamahChangeAlerts, {
+    mosqueSlug,
+    publishEventId: eventId,
+    attempt: 0,
+  });
+  return { iqamahChangeAlertScheduled: true as const, publishEventId: eventId };
+}
+
 /**
  * Seed monthly prayer times. Idempotent: replaces existing if same mosque/month/year.
+ * Detects future iqamah changes and schedules at most one push per publishEventId.
  */
 export const seedMonthly = mutation({
   args: {
@@ -69,9 +95,11 @@ export const seedMonthly = mutation({
     iqamahTimes: v.array(iqamahTimeRangeValidator),
     jummahIqamah: v.string(),
     adminSecret: v.optional(v.string()),
+    /** Shared across multi-file seed of one mosque so monthly+ramadan produce one alert. */
+    publishEventId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const { adminSecret, ...data } = args;
+    const { adminSecret, publishEventId, ...data } = args;
     requireAdmin(adminSecret);
 
     // Input-size guard
@@ -92,6 +120,25 @@ export const seedMonthly = mutation({
       )
       .unique();
 
+    const monthNumber = monthNameToNumber(data.month) ?? 0;
+    const nextSnap = {
+      year: data.year,
+      monthNumber,
+      iqamahTimes: data.iqamahTimes as IqamahTimeRange[],
+      jummahIqamah: data.jummahIqamah,
+    };
+    const prevSnap =
+      existing && monthNumber > 0
+        ? {
+            year: existing.year,
+            monthNumber,
+            iqamahTimes: existing.iqamahTimes as IqamahTimeRange[],
+            jummahIqamah: existing.jummahIqamah,
+          }
+        : null;
+    const shouldNotify =
+      monthNumber > 0 && hasMeaningfulMonthlyIqamahChange(prevSnap, nextSnap);
+
     const doc = {
       mosqueSlug: data.mosqueSlug,
       month: data.month,
@@ -106,11 +153,13 @@ export const seedMonthly = mutation({
     if (existing) {
       await ctx.db.patch(existing._id, doc);
       await bumpDataRevision(ctx);
-      return { updated: existing._id };
+      const alert = await scheduleIfNeeded(ctx, data.mosqueSlug, publishEventId, shouldNotify);
+      return { updated: existing._id, ...alert };
     } else {
       const inserted = await ctx.db.insert("monthlyPrayerTimes", doc);
       await bumpDataRevision(ctx);
-      return { inserted };
+      // First insert: no alert (avoids bulk seed spam).
+      return { inserted, iqamahChangeAlertScheduled: false as const };
     }
   },
 });
@@ -157,9 +206,10 @@ export const seedRamadan = mutation({
     iqamahTimes: v.array(iqamahTimeRangeValidator),
     jummahIqamah: v.string(),
     adminSecret: v.optional(v.string()),
+    publishEventId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const { adminSecret, ...data } = args;
+    const { adminSecret, publishEventId, ...data } = args;
     requireAdmin(adminSecret);
 
     // Input-size guards
@@ -177,6 +227,24 @@ export const seedRamadan = mutation({
       )
       .unique();
 
+    const nextSnap = {
+      gregorianStart: data.gregorianStart,
+      gregorianEnd: data.gregorianEnd,
+      ramadanDayToGregorian: buildRamadanDayMap(data.prayerTimes),
+      iqamahTimes: data.iqamahTimes as IqamahTimeRange[],
+      jummahIqamah: data.jummahIqamah,
+    };
+    const prevSnap = existing
+      ? {
+          gregorianStart: existing.gregorianStart,
+          gregorianEnd: existing.gregorianEnd,
+          ramadanDayToGregorian: buildRamadanDayMap(existing.prayerTimes),
+          iqamahTimes: existing.iqamahTimes as IqamahTimeRange[],
+          jummahIqamah: existing.jummahIqamah,
+        }
+      : null;
+    const shouldNotify = hasMeaningfulRamadanIqamahChange(prevSnap, nextSnap);
+
     const doc = {
       mosqueSlug: data.mosqueSlug,
       month: data.month,
@@ -191,11 +259,12 @@ export const seedRamadan = mutation({
     if (existing) {
       await ctx.db.patch(existing._id, doc);
       await bumpDataRevision(ctx);
-      return { updated: existing._id };
+      const alert = await scheduleIfNeeded(ctx, data.mosqueSlug, publishEventId, shouldNotify);
+      return { updated: existing._id, ...alert };
     } else {
       const inserted = await ctx.db.insert("ramadanTimetables", doc);
       await bumpDataRevision(ctx);
-      return { inserted };
+      return { inserted, iqamahChangeAlertScheduled: false as const };
     }
   },
 });

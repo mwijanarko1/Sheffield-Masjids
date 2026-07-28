@@ -144,15 +144,31 @@ After adding/modifying data, seed both databases:
 ```bash
 # Dev (forces all mosques isHidden=false for testing)
 npx tsx scripts/seed-convex.ts --changed
+# or: npm run seed:dev -- --changed
 
 # Prod (respects isHidden from mosques.json)
 npx tsx scripts/seed-convex.ts --changed --prod
+# or: npm run seed:prod -- --changed
 ```
 
 - `--changed` flag seeds only modified mosque files (incremental, faster)
 - Omit `--changed` to seed all mosques (full re-seed)
 - **Dev**: `upbeat-goat-583.eu-west-1.convex.cloud` — forces `isHidden: false`
 - **Prod**: `zany-mockingbird-207.eu-west-1.convex.cloud` — respects file values
+
+### Agent npm/npx allowlist (seed only)
+
+Default: do **not** run `npm` / `npx` (tell the user to run it), except when the user asks to seed.
+
+**Allowed** (exact family only — no other npm/npx):
+
+| Command | Notes |
+|---------|--------|
+| `npx tsx scripts/seed-convex.ts` … | Optional flags: `--changed`, `--prod` |
+| `npm run seed:dev` … | Optional `-- --changed` |
+| `npm run seed:prod` … | Optional `-- --changed` |
+
+**Not allowed:** any other `npm`/`npx` (`install`, `build`, `convex …`, random packages, etc.). Still require `/build` (or an explicit ask) for those.
 
 ---
 

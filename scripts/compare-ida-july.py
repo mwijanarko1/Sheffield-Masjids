@@ -1,0 +1,123 @@
+import json
+from pathlib import Path
+
+USER_DATA = {
+  "month": "JULY 2026",
+  "prayer_times": [
+    { "date": 1, "fajr": "01:16", "shurooq": "04:45", "dhuhr": "13:13", "asr": "18:48", "maghrib": "21:34", "isha": "22:34" },
+    { "date": 2, "fajr": "01:16", "shurooq": "04:46", "dhuhr": "13:14", "asr": "18:47", "maghrib": "21:34", "isha": "22:34" },
+    { "date": 3, "fajr": "01:16", "shurooq": "04:47", "dhuhr": "13:14", "asr": "18:47", "maghrib": "21:33", "isha": "22:33" },
+    { "date": 4, "fajr": "01:16", "shurooq": "04:48", "dhuhr": "13:14", "asr": "18:47", "maghrib": "21:33", "isha": "22:33" },
+    { "date": 5, "fajr": "01:16", "shurooq": "04:48", "dhuhr": "13:14", "asr": "18:47", "maghrib": "21:32", "isha": "22:32" },
+    { "date": 6, "fajr": "01:16", "shurooq": "04:49", "dhuhr": "13:14", "asr": "18:47", "maghrib": "21:32", "isha": "22:32" },
+    { "date": 7, "fajr": "01:16", "shurooq": "04:50", "dhuhr": "13:15", "asr": "18:46", "maghrib": "21:31", "isha": "22:31" },
+    { "date": 8, "fajr": "01:16", "shurooq": "04:51", "dhuhr": "13:15", "asr": "18:46", "maghrib": "21:30", "isha": "22:30" },
+    { "date": 9, "fajr": "01:16", "shurooq": "04:52", "dhuhr": "13:15", "asr": "18:46", "maghrib": "21:30", "isha": "22:30" },
+    { "date": 10, "fajr": "01:16", "shurooq": "04:53", "dhuhr": "13:15", "asr": "18:45", "maghrib": "21:29", "isha": "22:30" },
+    { "date": 11, "fajr": "01:16", "shurooq": "04:54", "dhuhr": "13:15", "asr": "18:45", "maghrib": "21:28", "isha": "22:29" },
+    { "date": 12, "fajr": "01:16", "shurooq": "04:56", "dhuhr": "13:15", "asr": "18:45", "maghrib": "21:27", "isha": "22:28" },
+    { "date": 13, "fajr": "01:16", "shurooq": "04:57", "dhuhr": "13:15", "asr": "18:44", "maghrib": "21:26", "isha": "22:28" },
+    { "date": 14, "fajr": "01:16", "shurooq": "04:58", "dhuhr": "13:15", "asr": "18:44", "maghrib": "21:25", "isha": "22:27" },
+    { "date": 15, "fajr": "01:16", "shurooq": "04:59", "dhuhr": "13:16", "asr": "18:43", "maghrib": "21:24", "isha": "22:26" },
+    { "date": 16, "fajr": "01:16", "shurooq": "05:01", "dhuhr": "13:16", "asr": "18:43", "maghrib": "21:23", "isha": "22:26" },
+    { "date": 17, "fajr": "01:16", "shurooq": "05:02", "dhuhr": "13:16", "asr": "18:42", "maghrib": "21:22", "isha": "22:25" },
+    { "date": 18, "fajr": "01:16", "shurooq": "05:03", "dhuhr": "13:16", "asr": "18:41", "maghrib": "21:21", "isha": "22:24" },
+    { "date": 19, "fajr": "01:16", "shurooq": "05:04", "dhuhr": "13:16", "asr": "18:41", "maghrib": "21:19", "isha": "22:23" },
+    { "date": 20, "fajr": "01:16", "shurooq": "05:06", "dhuhr": "13:16", "asr": "18:40", "maghrib": "21:18", "isha": "22:22" },
+    { "date": 21, "fajr": "01:16", "shurooq": "05:07", "dhuhr": "13:16", "asr": "18:39", "maghrib": "21:17", "isha": "22:21" },
+    { "date": 22, "fajr": "01:16", "shurooq": "05:09", "dhuhr": "13:16", "asr": "18:39", "maghrib": "21:16", "isha": "22:21" },
+    { "date": 23, "fajr": "01:16", "shurooq": "05:10", "dhuhr": "13:16", "asr": "18:38", "maghrib": "21:14", "isha": "22:19" },
+    { "date": 24, "fajr": "01:16", "shurooq": "05:12", "dhuhr": "13:16", "asr": "18:37", "maghrib": "21:13", "isha": "22:19" },
+    { "date": 25, "fajr": "01:16", "shurooq": "05:13", "dhuhr": "13:16", "asr": "18:36", "maghrib": "21:11", "isha": "22:17" },
+    { "date": 26, "fajr": "01:16", "shurooq": "05:14", "dhuhr": "13:16", "asr": "18:35", "maghrib": "21:10", "isha": "22:16" },
+    { "date": 27, "fajr": "01:30", "shurooq": "05:16", "dhuhr": "13:16", "asr": "18:35", "maghrib": "21:08", "isha": "22:15" },
+    { "date": 28, "fajr": "01:44", "shurooq": "05:18", "dhuhr": "13:16", "asr": "18:34", "maghrib": "21:07", "isha": "22:14" },
+    { "date": 29, "fajr": "01:53", "shurooq": "05:19", "dhuhr": "13:16", "asr": "18:33", "maghrib": "21:05", "isha": "22:13" },
+    { "date": 30, "fajr": "02:01", "shurooq": "05:21", "dhuhr": "13:16", "asr": "18:32", "maghrib": "21:03", "isha": "22:11" },
+    { "date": 31, "fajr": "02:08", "shurooq": "05:22", "dhuhr": "13:16", "asr": "18:31", "maghrib": "21:02", "isha": "22:11" }
+  ],
+  "iqamah_times": [
+    {"date_range": "1-2", "fajr": "04:15", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:50"},
+    {"date_range": "3", "fajr": "04:20", "dhuhr": "13:25", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:50"},
+    {"date_range": "4-9", "fajr": "01:30", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:50"},
+    {"date_range": "10", "fajr": "04:30", "dhuhr": "13:25", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:45"},
+    {"date_range": "11-12", "fajr": "01:30", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:45"},
+    {"date_range": "13-16", "fajr": "04:30", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:45"},
+    {"date_range": "17", "fajr": "04:35", "dhuhr": "13:25", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:40"},
+    {"date_range": "18-19", "fajr": "01:30", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:40"},
+    {"date_range": "20-23", "fajr": "04:35", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:40"},
+    {"date_range": "24", "fajr": "04:45", "dhuhr": "13:25", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:30"},
+    {"date_range": "25-26", "fajr": "01:30", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:30"},
+    {"date_range": "27-30", "fajr": "04:45", "dhuhr": "13:55", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:30"},
+    {"date_range": "31", "fajr": "04:55", "dhuhr": "13:25", "asr": "19:40", "maghrib": "Adhan+0", "isha": "22:20"}
+  ],
+  "jummah_iqamah": ["13:25", "14:50", "15:15"]
+}
+
+
+def parse_range(r):
+    if "-" in r:
+        start, end = map(int, r.split("-"))
+        return list(range(start, end + 1))
+    return [int(r)]
+
+
+def build_user_daily_iqamah(prayer_times, iqamah_ranges):
+    maghrib_by_day = {pt["date"]: pt["maghrib"] for pt in prayer_times}
+    daily = {}
+    for rng in iqamah_ranges:
+        for day in parse_range(rng["date_range"]):
+            daily[day] = {
+                "date_range": str(day),
+                "fajr": rng["fajr"],
+                "dhuhr": rng["dhuhr"],
+                "asr": rng["asr"],
+                "maghrib": maghrib_by_day[day] if rng["maghrib"] == "Adhan+0" else rng["maghrib"],
+                "isha": rng["isha"],
+            }
+    return [daily[d] for d in sorted(daily)]
+
+
+def main():
+    my_file = Path("public/data/mosques/gb/leicester/islamic-dawah-academy/july.json")
+    my_data = json.loads(my_file.read_text())
+
+    my_pt = {pt["date"]: pt for pt in my_data["prayer_times"]}
+    user_pt = {pt["date"]: pt for pt in USER_DATA["prayer_times"]}
+
+    prayer_diffs = []
+    for d in range(1, 32):
+        for key in ["fajr", "shurooq", "dhuhr", "asr", "maghrib", "isha"]:
+            if my_pt[d][key] != user_pt[d][key]:
+                prayer_diffs.append(f"Day {d} {key}: PDF={my_pt[d][key]} USER={user_pt[d][key]}")
+
+    my_iq = {iq["date_range"]: iq for iq in my_data["iqamah_times"]}
+    user_iq = {iq["date_range"]: iq for iq in build_user_daily_iqamah(USER_DATA["prayer_times"], USER_DATA["iqamah_times"])}
+
+    iqamah_diffs = []
+    for d in range(1, 32):
+        key = str(d)
+        for field in ["fajr", "dhuhr", "asr", "maghrib", "isha"]:
+            if my_iq[key][field] != user_iq[key][field]:
+                iqamah_diffs.append(f"Day {d} {field}: PDF={my_iq[key][field]} USER={user_iq[key][field]}")
+
+    if prayer_diffs:
+        print("Prayer time differences:")
+        for d in prayer_diffs:
+            print(" ", d)
+    else:
+        print("Prayer times: MATCH")
+
+    if iqamah_diffs:
+        print("\nIqamah time differences:")
+        for d in iqamah_diffs:
+            print(" ", d)
+    else:
+        print("Iqamah times: MATCH")
+
+    print(f"\nMy jummah: {my_data['jummah_iqamah']}")
+    print(f"User jummah: {' / '.join(USER_DATA['jummah_iqamah'])}")
+
+
+if __name__ == "__main__":
+    main()

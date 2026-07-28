@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test:calendar-export": "tsx --test src/features/calendar-export/lib/*.test.ts",
+    "test:iqamah-push": "tsx --test convex/lib/iqamahChangeDetect.test.ts convex/lib/pushTransport.test.ts",
     "seed:dev": "tsx scripts/seed-convex.ts",
     "seed:prod": "tsx scripts/seed-convex.ts --prod"
   },

@@ -396,11 +396,17 @@ async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsO
 /**
  * @param monthsOnly - if null, seed every month file that exists; otherwise only listed month numbers (1–12).
  */
+// Production currently runs the older validator, so production callers omit this until Convex is deployed.
+function newPublishEventId(mosqueSlug: string): string {
+  return `seed_${mosqueSlug}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
 async function seedMonthly(
   client: ConvexHttpClient,
   mosqueSlug: string,
   monthsOnly: Set<number> | null,
-  adminSecret: string
+  adminSecret: string,
+  publishEventId?: string,
 ) {
   const year = new Date().getFullYear();
   for (let monthNum = 1; monthNum <= 12; monthNum++) {
@@ -425,6 +431,7 @@ async function seedMonthly(
         iqamahTimes: data.iqamah_times,
         jummahIqamah: data.jummah_iqamah,
         adminSecret,
+        ...(publishEventId ? { publishEventId } : {}),
       });
       console.log(`  ✓ ${monthFile}`);
     } catch (err) {
@@ -434,7 +441,12 @@ async function seedMonthly(
   }
 }
 
-async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string, adminSecret: string) {
+async function seedRamadan(
+  client: ConvexHttpClient,
+  mosqueSlug: string,
+  adminSecret: string,
+  publishEventId?: string,
+) {
   const filePath = path.join(getMosqueDataFsDir(process.cwd(), mosqueSlug), "ramadan.json");
   if (!fs.existsSync(filePath)) return;
 
@@ -450,6 +462,7 @@ async function seedRamadan(client: ConvexHttpClient, mosqueSlug: string, adminSe
       iqamahTimes: data.iqamah_times,
       jummahIqamah: data.jummah_iqamah,
       adminSecret,
+      ...(publishEventId ? { publishEventId } : {}),
     });
     console.log(`  ✓ ramadan`);
   } catch (err) {
@@ -519,8 +532,9 @@ async function main() {
 
     // Seed monthly files for this slug
     console.log(`Mosque: ${slugOnly}`);
-    await seedMonthly(client, slugOnly, monthsOnly, adminSecret);
-    await seedRamadan(client, slugOnly, adminSecret);
+    const publishEventId = isProd ? undefined : newPublishEventId(slugOnly);
+    await seedMonthly(client, slugOnly, monthsOnly, adminSecret, publishEventId);
+    await seedRamadan(client, slugOnly, adminSecret, publishEventId);
     console.log("");
     console.log("Done.");
     return;
@@ -644,23 +658,25 @@ async function main() {
     const slugs = new Set([...plan.monthlyBySlug.keys(), ...plan.ramadanSlugs]);
     for (const slug of [...slugs].sort()) {
       console.log(`Mosque: ${slug}`);
+      const publishEventId = isProd ? undefined : newPublishEventId(slug);
       if (plan.monthlyBySlug.has(slug)) {
         let months = new Set(plan.monthlyBySlug.get(slug)!);
         if (monthsOnly) months = intersectMonthSets(months, monthsOnly);
-        if (months.size > 0) await seedMonthly(client, slug, months, adminSecret);
+        if (months.size > 0) await seedMonthly(client, slug, months, adminSecret, publishEventId);
         else
           console.log(
             "  (skip monthly: no overlap with changed files and --months, or empty after filter)\n"
           );
       }
-      if (plan.ramadanSlugs.has(slug)) await seedRamadan(client, slug, adminSecret);
+      if (plan.ramadanSlugs.has(slug)) await seedRamadan(client, slug, adminSecret, publishEventId);
       console.log("");
     }
   } else {
     for (const slug of mosqueSlugs) {
       console.log(`Mosque: ${slug}`);
-      await seedMonthly(client, slug, monthsOnly, adminSecret);
-      await seedRamadan(client, slug, adminSecret);
+      const publishEventId = isProd ? undefined : newPublishEventId(slug);
+      await seedMonthly(client, slug, monthsOnly, adminSecret, publishEventId);
+      await seedRamadan(client, slug, adminSecret, publishEventId);
       console.log("");
     }
   }

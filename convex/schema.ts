@@ -111,4 +111,42 @@ export default defineSchema({
     dataRevision: v.number(),
     updatedAt: v.number(),
   }).index("by_key", ["key"]),
+
+  /**
+   * Device push subscriptions for iqamah-change alerts.
+   * Public registration (no auth) — validate tightly and rate-limit.
+   * Tokens are sensitive; never log full values.
+   */
+  pushSubscriptions: defineTable({
+    token: v.string(),
+    platform: v.union(v.literal("ios"), v.literal("android")),
+    mosqueSlug: v.string(),
+    iqamahChangeAlertsEnabled: v.boolean(),
+    lastSeenAt: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_token", ["token"])
+    .index("by_mosque_enabled", ["mosqueSlug", "iqamahChangeAlertsEnabled"])
+    .index("by_last_seen", ["lastSeenAt"]),
+
+  /**
+   * Dedup + delivery tracking for one admin publish/import event per mosque.
+   */
+  iqamahChangeAlertsSent: defineTable({
+    mosqueSlug: v.string(),
+    publishEventId: v.string(),
+    status: v.union(v.literal("in_progress"), v.literal("completed")),
+    deliveredFingerprints: v.array(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    completedAt: v.optional(v.number()),
+  }).index("by_mosque_event", ["mosqueSlug", "publishEventId"]),
+
+  /** Simple fixed-window counters for unauthenticated public mutations. */
+  rateLimitBuckets: defineTable({
+    key: v.string(),
+    windowStart: v.number(),
+    count: v.number(),
+  }).index("by_key", ["key"]),
 });

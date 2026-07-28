@@ -9,8 +9,14 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as lib_iqamahChangeDetect from "../lib/iqamahChangeDetect.js";
+import type * as lib_pushTransport from "../lib/pushTransport.js";
 import type * as mosques from "../mosques.js";
 import type * as prayerTimes from "../prayerTimes.js";
+import type * as pushDelivery from "../pushDelivery.js";
+import type * as pushProviders from "../pushProviders.js";
+import type * as pushSend from "../pushSend.js";
+import type * as pushSubscriptions from "../pushSubscriptions.js";
 import type * as seed from "../seed.js";
 
 import type {
@@ -21,8 +27,14 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  "lib/iqamahChangeDetect": typeof lib_iqamahChangeDetect;
+  "lib/pushTransport": typeof lib_pushTransport;
   mosques: typeof mosques;
   prayerTimes: typeof prayerTimes;
+  pushDelivery: typeof pushDelivery;
+  pushProviders: typeof pushProviders;
+  pushSend: typeof pushSend;
+  pushSubscriptions: typeof pushSubscriptions;
   seed: typeof seed;
 }>;
 

@@ -1591,6 +1591,34 @@
       "website": "http://www.southamptonisoc.org/"
     },
     {
+      "id": "swinburne-islamic-society",
+      "name": "Swinburne Islamic Society (SWINIS Musalla)",
+      "address": "GS308/GS305, Level 3, George Building (GS), Swinburne University of Technology, Hawthorn VIC 3122, Australia",
+      "lat": -37.8226,
+      "lng": 145.0354,
+      "slug": "swinburne-islamic-society",
+      "citySlug": "melbourne",
+      "cityName": "Melbourne",
+      "countryCode": "AU",
+      "countryName": "Australia",
+      "isHidden": false,
+      "website": "https://www.swinis.org/"
+    },
+    {
+      "id": "taiyabah-masjid",
+      "name": "Taiyabah Masjid",
+      "address": "31a Draycott Street, Bolton BL1 8HD, United Kingdom",
+      "lat": 53.5920356,
+      "lng": -2.4313867,
+      "slug": "taiyabah-masjid",
+      "citySlug": "bolton",
+      "cityName": "Bolton",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.taiyabahmasjid.com"
+    },
+    {
       "id": "west-london-islamic-centre",
       "name": "West London Islamic Centre (WLIC)",
       "address": "Singapore Road, West Ealing, London W13 0SQ, United Kingdom",
