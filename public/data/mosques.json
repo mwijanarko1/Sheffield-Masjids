@@ -57,6 +57,20 @@
       "website": "https://alazharsouthshields.com"
     },
     {
+      "id": "al-hashim-academy",
+      "name": "Al-Hashim Academy",
+      "address": "Cambridge Street, Batley, WF17 5JH, United Kingdom",
+      "lat": 53.712732,
+      "lng": -1.634704,
+      "slug": "al-hashim-academy",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "al-huda-academy",
       "name": "Al-Huda Academy",
       "address": "Al Huda Academy, Ouseburn Croft, Darnall, Sheffield S9 3FY",
@@ -83,6 +97,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.alhuda-masjid.co.uk/"
+    },
+    {
+      "id": "al-ihsan-trust",
+      "name": "Al-Ihsan Trust",
+      "address": "Track Rd, Batley, WF17 7AA, United Kingdom",
+      "lat": 53.70312,
+      "lng": -1.642315,
+      "slug": "al-ihsan-trust",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
     },
     {
       "id": "al-manaar-institute-bradford",
@@ -420,6 +448,20 @@
       "website": "https://daarhadeeth.com"
     },
     {
+      "id": "darul-ilm",
+      "name": "Darul Ilm",
+      "address": "Brewery Lane, Kirklees, WF12 9HU, United Kingdom",
+      "lat": 53.674621,
+      "lng": -1.636687,
+      "slug": "darul-ilm",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://darulilm.org.uk/"
+    },
+    {
       "id": "darul-ummah-mosque",
       "name": "Darul Ummah Mosque",
       "address": "56 Bigland St, London E1 2ND, United Kingdom",
@@ -459,6 +501,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.darussalamcentre.org"
+    },
+    {
+      "id": "dawatal-islam-mosque",
+      "name": "Dawatal Islam Mosque",
+      "address": "West Acre Drive, Soothill, Batley, WF17 6PE, United Kingdom",
+      "lat": 53.714123,
+      "lng": -1.622237,
+      "slug": "dawatal-islam-mosque",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "http://dawatalislam.co.uk"
     },
     {
       "id": "dbwa",
@@ -657,7 +713,7 @@
     },
     {
       "id": "grande-mosquee-de-strasbourg",
-      "name": "Grande Mosquée de Strasbourg",
+      "name": "Grande Mosqu\u00e9e de Strasbourg",
       "address": "5 Boulevard de la Victoire, 67000 Strasbourg, France",
       "lat": 48.5872,
       "lng": 7.7495,
@@ -710,6 +766,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.iccuk.org"
+    },
+    {
+      "id": "ilahi-masjid",
+      "name": "Ilahi Masjid",
+      "address": "23 Hope Street, Dewsbury, WF13 2BT, United Kingdom",
+      "lat": 53.69783,
+      "lng": -1.63768,
+      "slug": "ilahi-masjid",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
     },
     {
       "id": "ilford-islamic-centre",
@@ -782,6 +852,34 @@
       "website": "https://www.idauk.org/"
     },
     {
+      "id": "islamic-tarbiyah-academy",
+      "name": "Islamic Tarbiyah Academy",
+      "address": "45 Boothroyd Ln, Westtown, Dewsbury, WF13 2RB, United Kingdom",
+      "lat": 53.69064,
+      "lng": -1.640876,
+      "slug": "islamic-tarbiyah-academy",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "jame-masjid",
+      "name": "Jame Masjid",
+      "address": "Henry Street, Batley, WF17 6JJ, United Kingdom",
+      "lat": 53.70235,
+      "lng": -1.631295,
+      "slug": "jame-masjid",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "jamia-masjid-ghausia",
       "name": "Jamia Masjid Ghausia",
       "address": "Firth Park Road, Sheffield S5 6WN",
@@ -803,6 +901,20 @@
       "slug": "jamia-masjid-minhaj-ul-quran",
       "citySlug": "nelson",
       "cityName": "Nelson",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "jumma-masjid",
+      "name": "Jumma Masjid",
+      "address": "206 Bradford Road, Batley, WF13 2HD, United Kingdom",
+      "lat": 53.700873,
+      "lng": -1.630611,
+      "slug": "jumma-masjid",
+      "citySlug": "batley",
+      "cityName": "Batley",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
@@ -879,6 +991,20 @@
       "website": "https://lboromasjid.co.uk"
     },
     {
+      "id": "madina-masjid",
+      "name": "Madina Masjid",
+      "address": "Purlwell Lane, Mount Pleasant, Batley, WF17 7NQ, United Kingdom",
+      "lat": 53.709376,
+      "lng": -1.636399,
+      "slug": "madina-masjid",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "madina-masjid-sheffield",
       "name": "Madina Masjid Sheffield",
       "address": "24 Wolseley Rd, Lowfield, Sheffield S8 0ZU, United Kingdom",
@@ -901,6 +1027,48 @@
       "slug": "madni-jamia-masjid-huddersfield",
       "citySlug": "huddersfield",
       "cityName": "Huddersfield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "madrasah-al-amanah",
+      "name": "Madrasah Al-Amanah",
+      "address": "Church Street, Dewsbury, WF13 3LA, United Kingdom",
+      "lat": 53.678106,
+      "lng": -1.664206,
+      "slug": "madrasah-al-amanah",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "madrasah-islamiyah-dewsbury",
+      "name": "Madrasah Islamiyah",
+      "address": "53 Headfield Road, Dewsbury, WF12 9JQ, United Kingdom",
+      "lat": 53.680988,
+      "lng": -1.630687,
+      "slug": "madrasah-islamiyah-dewsbury",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "madressah-al-hira",
+      "name": "Madressah Al Hira",
+      "address": "2 William St, Staincliffe, Dewsbury, WF13 4AY, United Kingdom",
+      "lat": 53.706601,
+      "lng": -1.655284,
+      "slug": "madressah-al-hira",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
@@ -1033,6 +1201,20 @@
       "website": "https://www.masjid-al-jannah.co.uk/prayer"
     },
     {
+      "id": "masjid-ali",
+      "name": "Masjid Ali",
+      "address": "117 High St, Heckmondwike, WF16 0AL, United Kingdom",
+      "lat": 53.709123,
+      "lng": -1.666746,
+      "slug": "masjid-ali",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-ar-rahmah",
       "name": "Masjid Ar-Rahmah",
       "address": "189 Northumberland Rd, Southampton SO14 0EL, United Kingdom",
@@ -1129,6 +1311,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://time.my-masjid.com/timingscreen/b37875db-4976-47c0-b0e2-4256b0bbe73b"
+    },
+    {
+      "id": "masjid-e-abu-bakr-dewsbury",
+      "name": "Masjid-e-Abu Bakr",
+      "address": "555 Lees Hall Road, Dewsbury, WF12 9EN, United Kingdom",
+      "lat": 53.673045,
+      "lng": -1.645189,
+      "slug": "masjid-e-abu-bakr-dewsbury",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-e-bilal-dewsbury",
+      "name": "Masjid-e-Bilal",
+      "address": "105 Parker Road, Dewsbury, WF12 0AR, United Kingdom",
+      "lat": 53.673032,
+      "lng": -1.630028,
+      "slug": "masjid-e-bilal-dewsbury",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidebilal.org.uk/"
     },
     {
       "id": "masjid-e-ghousia",
@@ -1243,6 +1453,20 @@
       "website": "https://isghmasjidhamza.org/"
     },
     {
+      "id": "masjid-hilal",
+      "name": "Masjid Hilal",
+      "address": "Hyrstlands Rd, Batley Carr, Batley, WF17 7JU, United Kingdom",
+      "lat": 53.701695,
+      "lng": -1.634845,
+      "slug": "masjid-hilal",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-ibrahim-huddersfield",
       "name": "Masjid Ibrahim",
       "address": "62 Halifax Old Rd, Birkby, Huddersfield, HD1 6HG",
@@ -1265,6 +1489,48 @@
       "slug": "masjid-iman-huddersfield",
       "citySlug": "huddersfield",
       "cityName": "Huddersfield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-mahmoodia",
+      "name": "Masjid Mahmoodia",
+      "address": "Taylor Street, Batley, WF17 5BA, United Kingdom",
+      "lat": 53.709152,
+      "lng": -1.630675,
+      "slug": "masjid-mahmoodia",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-noor",
+      "name": "Masjid Noor",
+      "address": "Dark Lane, Batley, WF17 7RN, United Kingdom",
+      "lat": 53.7103,
+      "lng": -1.641951,
+      "slug": "masjid-noor",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-noor-ul-islam",
+      "name": "Masjid Noor-ul-Islam",
+      "address": "Snowdon Street, Batley, WF17 7RS, United Kingdom",
+      "lat": 53.70989,
+      "lng": -1.640092,
+      "slug": "masjid-noor-ul-islam",
+      "citySlug": "batley",
+      "cityName": "Batley",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
@@ -1312,6 +1578,20 @@
       "website": "https://mquba.org"
     },
     {
+      "id": "masjid-quba-thornhill",
+      "name": "Masjid Quba",
+      "address": "The Common, Thornhill, WF12 0LL, United Kingdom",
+      "lat": 53.671271,
+      "lng": -1.623301,
+      "slug": "masjid-quba-thornhill",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-risalah",
       "name": "Masjid Risalah",
       "address": "51 Montgomery Terrace Rd, Sheffield S6 3BW, United Kingdom",
@@ -1323,6 +1603,20 @@
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false
+    },
+    {
+      "id": "masjid-salaam",
+      "name": "Masjid Salaam",
+      "address": "4 New St, Earlsheaton, Dewsbury, WF12 8JJ, United Kingdom",
+      "lat": 53.686959,
+      "lng": -1.613228,
+      "slug": "masjid-salaam",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
     },
     {
       "id": "masjid-salahuddin-stoke",
@@ -1381,6 +1675,34 @@
       "website": "https://masjidsunnahsheffield.co.uk"
     },
     {
+      "id": "masjid-talha",
+      "name": "Masjid Talha",
+      "address": "Nowell St, Dewsbury, WF13 4JT, United Kingdom",
+      "lat": 53.695913,
+      "lng": -1.642937,
+      "slug": "masjid-talha",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-taqwa",
+      "name": "Masjid Taqwa",
+      "address": "13 Park Rd, Batley, WF17 5LP, United Kingdom",
+      "lat": 53.715881,
+      "lng": -1.629631,
+      "slug": "masjid-taqwa",
+      "citySlug": "batley",
+      "cityName": "Batley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-tawhid-leyton",
       "name": "Masjid Tawhid Leyton",
       "address": "80 High Road, Leyton, London E15 2BP, United Kingdom",
@@ -1395,6 +1717,20 @@
       "website": "https://www.masjidtawhid.org"
     },
     {
+      "id": "masjid-umar",
+      "name": "Masjid Umar",
+      "address": "North View, Savile Town, Dewsbury, WF12 9LF, United Kingdom",
+      "lat": 53.683365,
+      "lng": -1.627902,
+      "slug": "masjid-umar",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-usman-huddersfield",
       "name": "Masjid Usman",
       "address": "32 Upper George St, Spring Wood, Huddersfield, HD1 4AW",
@@ -1403,6 +1739,20 @@
       "slug": "masjid-usman-huddersfield",
       "citySlug": "huddersfield",
       "cityName": "Huddersfield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-uthman",
+      "name": "Masjid Uthman",
+      "address": "Green Ln, Dewsbury, Dewsbury, WF13 4DH, United Kingdom",
+      "lat": 53.698202,
+      "lng": -1.651051,
+      "slug": "masjid-uthman",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
@@ -1673,6 +2023,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.wise-web.org/prayer-times/"
+    },
+    {
+      "id": "zakaria-masjid",
+      "name": "Zakaria Masjid",
+      "address": "2 chapel street, Dewsbury, WF12 9NQ, United Kingdom",
+      "lat": 53.683728,
+      "lng": -1.63176,
+      "slug": "zakaria-masjid",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.zakariamasjid.org.uk/"
     }
   ]
 }
