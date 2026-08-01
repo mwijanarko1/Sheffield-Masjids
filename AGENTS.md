@@ -192,6 +192,7 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 | Al Furqan | Framer site — image timetable (OCR if permitted) | Image |
 | Newham Mosques | Google Sheets published CSV | CSV |
 | Croydon ICT | REST API JSON | JSON |
+| Masjid Faizul Islam (Birmingham) | Facebook posts (timetable images/PDFs) — website `faizulislam.co.uk` is down/unusable | Facebook / manual from user |
 
 ---
 
