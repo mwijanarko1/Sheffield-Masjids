@@ -1019,6 +1019,20 @@
       "website": "https://www.madinamasjid.org.uk"
     },
     {
+      "id": "madinat-al-zahra",
+      "name": "Madinat al Zahra",
+      "address": "Bartle Lane, Bradford BD7 4QF, United Kingdom",
+      "lat": 53.77842,
+      "lng": -1.7918,
+      "slug": "madinat-al-zahra",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.madinatalzahra.co.uk/"
+    },
+    {
       "id": "madni-jamia-masjid-huddersfield",
       "name": "Madni Jamia Masjid",
       "address": "12 Macham St, Lockwood, Huddersfield, HD1 3QZ",
@@ -1465,6 +1479,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": ""
+    },
+    {
+      "id": "masjid-ibrahim-chorley",
+      "name": "Masjid Ibrahim",
+      "address": "Park Road, Chorley, Lancashire PR7 1QN, United Kingdom",
+      "lat": 53.6571502,
+      "lng": -2.6320577,
+      "slug": "masjid-ibrahim-chorley",
+      "citySlug": "chorley",
+      "cityName": "Chorley",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://ar-rahmah.org.uk/masjid.html"
     },
     {
       "id": "masjid-ibrahim-huddersfield",
