@@ -29,6 +29,21 @@
       "website": "https://aberdeenmosque.org/prayer-times-central"
     },
     {
+      "id": "abu-dhabi-mosques",
+      "name": "Abu Dhabi Prayer Times",
+      "address": "Abu Dhabi, United Arab Emirates",
+      "lat": 24.4539,
+      "lng": 54.3773,
+      "slug": "abu-dhabi-mosques",
+      "citySlug": "abu-dhabi",
+      "cityName": "Abu Dhabi",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/abu-dhabi"
+    },
+    {
       "id": "afecc-glasgow",
       "name": "AFECC Glasgow (Al-Farooq Education and Community Centre)",
       "address": "32-38 Dixon Ave, Glasgow G42 8EJ, United Kingdom",
@@ -43,6 +58,21 @@
       "website": "https://www.afecc.co.uk/glasgow-prayer-times/"
     },
     {
+      "id": "ajman-mosques",
+      "name": "Ajman Prayer Times",
+      "address": "Ajman, United Arab Emirates",
+      "lat": 25.4052,
+      "lng": 55.5136,
+      "slug": "ajman-mosques",
+      "citySlug": "ajman",
+      "cityName": "Ajman",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/ajman"
+    },
+    {
       "id": "al-azhar-mosque",
       "name": "Al Azhar Mosque",
       "address": "Laygate, South Shields NE33 5RP, United Kingdom",
@@ -55,6 +85,48 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://alazharsouthshields.com"
+    },
+    {
+      "id": "alfurqan-islamic-centre",
+      "name": "Al Furqan Islamic Centre",
+      "address": "Manchester, United Kingdom",
+      "lat": 53.4548429997952,
+      "lng": -2.2322030423286257,
+      "slug": "alfurqan-islamic-centre",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://alfurqanmcr.org"
+    },
+    {
+      "id": "almaktoum-mosque",
+      "name": "Al Maktoum Mosque Dundee and The Islamic Cultural Centre",
+      "address": "15 Wilkie's Lane, Dundee DD1 5HB, United Kingdom",
+      "lat": 56.45955,
+      "lng": -2.98638,
+      "slug": "almaktoum-mosque",
+      "citySlug": "dundee",
+      "cityName": "Dundee",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://almaktoummosque.org"
+    },
+    {
+      "id": "al-manaar-institute-bradford",
+      "name": "Al Manaar Institute Of Bradford",
+      "address": "239 Otley Road, Bradford BD3 0LP, United Kingdom",
+      "lat": 53.805774,
+      "lng": -1.740887,
+      "slug": "al-manaar-institute-bradford",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.airmyprayer.co.uk/brd-1015"
     },
     {
       "id": "al-hashim-academy",
@@ -113,20 +185,6 @@
       "website": ""
     },
     {
-      "id": "al-manaar-institute-bradford",
-      "name": "Al Manaar Institute Of Bradford",
-      "address": "239 Otley Road, Bradford BD3 0LP, United Kingdom",
-      "lat": 53.805774,
-      "lng": -1.740887,
-      "slug": "al-manaar-institute-bradford",
-      "citySlug": "bradford",
-      "cityName": "Bradford",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.airmyprayer.co.uk/brd-1015"
-    },
-    {
       "id": "al-rahma-mosque",
       "name": "Al-Rahma Mosque",
       "address": "29-31 Hatherley St, Liverpool L8 2TJ, United Kingdom",
@@ -154,48 +212,6 @@
       "isHidden": false
     },
     {
-      "id": "al-rawdha-mosque",
-      "name": "Milton Keynes Islamic & Cultural Association (Al-Rawdha Mosque)",
-      "address": "401 South Row, Central Milton Keynes MK9 2PG, United Kingdom",
-      "lat": 52.036846585120834,
-      "lng": -0.7587811044903313,
-      "slug": "al-rawdha-mosque",
-      "citySlug": "milton-keynes",
-      "cityName": "Milton Keynes",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.mkica.org"
-    },
-    {
-      "id": "alfurqan-islamic-centre",
-      "name": "Al Furqan Islamic Centre",
-      "address": "Manchester, United Kingdom",
-      "lat": 53.4548429997952,
-      "lng": -2.2322030423286257,
-      "slug": "alfurqan-islamic-centre",
-      "citySlug": "manchester",
-      "cityName": "Manchester",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://alfurqanmcr.org"
-    },
-    {
-      "id": "almaktoum-mosque",
-      "name": "Al Maktoum Mosque Dundee and The Islamic Cultural Centre",
-      "address": "15 Wilkie's Lane, Dundee DD1 5HB, United Kingdom",
-      "lat": 56.45955,
-      "lng": -2.98638,
-      "slug": "almaktoum-mosque",
-      "citySlug": "dundee",
-      "cityName": "Dundee",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://almaktoummosque.org"
-    },
-    {
       "id": "at-taqwa-masjid",
       "name": "At-Taqwa Mosque Sheffield",
       "address": "31-33 Andover Street, Sheffield S3 9EP, United Kingdom",
@@ -208,6 +224,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://attaqwa-masjid.co.uk"
+    },
+    {
+      "id": "faizan-e-siddeeq-e-akbar",
+      "name": "Aylesbury Faizan-e-Siddeeq-e-Akbar",
+      "address": "Unit 2, Chamberlain Road, Aylesbury HP19 8DY, United Kingdom",
+      "lat": 51.823,
+      "lng": -0.832,
+      "slug": "faizan-e-siddeeq-e-akbar",
+      "citySlug": "aylesbury",
+      "cityName": "Aylesbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.airmyprayer.co.uk/ayl-5"
+    },
+    {
+      "id": "bmjm-dundee",
+      "name": "Baitul Mukarram Jame Mosque (DMCT)",
+      "address": "44/A Court Street, Dundee DD3 7QQ, United Kingdom",
+      "lat": 56.47397,
+      "lng": -2.96356,
+      "slug": "bmjm-dundee",
+      "citySlug": "dundee",
+      "cityName": "Dundee",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://bmjmdundee.com"
     },
     {
       "id": "birmingham-central-mosque",
@@ -236,20 +280,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://asmuk.org/blackhall-mosque"
-    },
-    {
-      "id": "bmjm-dundee",
-      "name": "Baitul Mukarram Jame Mosque (DMCT)",
-      "address": "44/A Court Street, Dundee DD3 7QQ, United Kingdom",
-      "lat": 56.47397,
-      "lng": -2.96356,
-      "slug": "bmjm-dundee",
-      "citySlug": "dundee",
-      "cityName": "Dundee",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://bmjmdundee.com"
     },
     {
       "id": "bradford-grand-mosque",
@@ -434,18 +464,31 @@
       "website": "https://croydonict.com"
     },
     {
-      "id": "daar-hadeeth-masjid",
-      "name": "Masjid Daar Al-Hadeeth",
-      "address": "96B Lower Clapton Road, London E5 0QR, United Kingdom",
-      "lat": 51.5533734,
-      "lng": -0.0528971,
-      "slug": "daar-hadeeth-masjid",
-      "citySlug": "london",
-      "cityName": "London",
+      "id": "dbwa",
+      "name": "Dacorum Bangladeshi Welfare Association (DBWA) - Baytus Salaam",
+      "address": "Stevenage Rise, Hemel Hempstead HP2 6BH, United Kingdom",
+      "lat": 51.77262985735205,
+      "lng": -0.45640352698587805,
+      "slug": "dbwa",
+      "citySlug": "hemel-hempstead",
+      "cityName": "Hemel Hempstead",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "isHidden": false,
-      "website": "https://daarhadeeth.com"
+      "website": "https://www.dbwa.org.uk"
+    },
+    {
+      "id": "darululoom-siddiqia-masjid",
+      "name": "Dar Ul Uloom Siddiqia Masjid",
+      "address": "24 Burngreave Rd, Sheffield S3 9DD",
+      "lat": 53.392,
+      "lng": -1.468,
+      "slug": "darululoom-siddiqia-masjid",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false
     },
     {
       "id": "darul-ilm",
@@ -476,19 +519,6 @@
       "website": "http://www.darulummah.org.uk"
     },
     {
-      "id": "darululoom-siddiqia-masjid",
-      "name": "Dar Ul Uloom Siddiqia Masjid",
-      "address": "24 Burngreave Rd, Sheffield S3 9DD",
-      "lat": 53.392,
-      "lng": -1.468,
-      "slug": "darululoom-siddiqia-masjid",
-      "citySlug": "sheffield",
-      "cityName": "Sheffield",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false
-    },
-    {
       "id": "darussalam-masjid",
       "name": "Darussalam Masjid & Cultural Centre",
       "address": "North Hyde House/North Hyde Wharf, Hayes Rd, Southall UB2 5NS, United Kingdom",
@@ -517,20 +547,6 @@
       "website": "http://dawatalislam.co.uk"
     },
     {
-      "id": "dbwa",
-      "name": "Dacorum Bangladeshi Welfare Association (DBWA) - Baytus Salaam",
-      "address": "Stevenage Rise, Hemel Hempstead HP2 6BH, United Kingdom",
-      "lat": 51.77262985735205,
-      "lng": -0.45640352698587805,
-      "slug": "dbwa",
-      "citySlug": "hemel-hempstead",
-      "cityName": "Hemel Hempstead",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.dbwa.org.uk"
-    },
-    {
       "id": "didsbury-mosque",
       "name": "Didsbury Mosque",
       "address": "271 Burton Rd, Manchester M20 2WA, United Kingdom",
@@ -543,6 +559,21 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://didsburymosque.org"
+    },
+    {
+      "id": "dubai-mosques",
+      "name": "Dubai Prayer Times",
+      "address": "Dubai, United Arab Emirates",
+      "lat": 25.2048,
+      "lng": 55.2708,
+      "slug": "dubai-mosques",
+      "citySlug": "dubai",
+      "cityName": "Dubai",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/dubai"
     },
     {
       "id": "dundee-central-mosque",
@@ -601,20 +632,6 @@
       "website": ""
     },
     {
-      "id": "essalam-mosque",
-      "name": "Moskee Essalam Rotterdam",
-      "address": "Vredesplein 7, 3074 SN Rotterdam, Netherlands",
-      "lat": 51.8987817,
-      "lng": 4.5133885,
-      "slug": "essalam-mosque",
-      "citySlug": "rotterdam",
-      "cityName": "Rotterdam",
-      "countryCode": "NL",
-      "countryName": "Netherlands",
-      "isHidden": false,
-      "website": "https://www.essalamrotterdam.nl"
-    },
-    {
       "id": "exeter-mosque",
       "name": "Exeter Mosque (Islamic Centre of the South West)",
       "address": "12-13 York Road, Exeter EX4 6PG, United Kingdom",
@@ -627,20 +644,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://exetermosque.org.uk"
-    },
-    {
-      "id": "faizan-e-siddeeq-e-akbar",
-      "name": "Aylesbury Faizan-e-Siddeeq-e-Akbar",
-      "address": "Unit 2, Chamberlain Road, Aylesbury HP19 8DY, United Kingdom",
-      "lat": 51.823,
-      "lng": -0.832,
-      "slug": "faizan-e-siddeeq-e-akbar",
-      "citySlug": "aylesbury",
-      "cityName": "Aylesbury",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.airmyprayer.co.uk/ayl-5"
     },
     {
       "id": "fatima-community-centre",
@@ -684,6 +687,21 @@
       "isHidden": false
     },
     {
+      "id": "fujairah-mosques",
+      "name": "Fujairah Prayer Times",
+      "address": "Fujairah, United Arab Emirates",
+      "lat": 25.1288,
+      "lng": 56.3265,
+      "slug": "fujairah-mosques",
+      "citySlug": "fujairah",
+      "cityName": "Fujairah",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/fujairah"
+    },
+    {
       "id": "glasgow-central-mosque",
       "name": "Glasgow Central Mosque",
       "address": "1 Mosque Ave, Glasgow G5 8XW, United Kingdom",
@@ -713,7 +731,7 @@
     },
     {
       "id": "grande-mosquee-de-strasbourg",
-      "name": "Grande Mosqu\u00e9e de Strasbourg",
+      "name": "Grande Mosquée de Strasbourg",
       "address": "5 Boulevard de la Victoire, 67000 Strasbourg, France",
       "lat": 48.5872,
       "lng": 7.7495,
@@ -752,20 +770,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://hounslowmasjid.co.uk"
-    },
-    {
-      "id": "iccuk",
-      "name": "London Central Mosque",
-      "address": "146 Park Road, London NW8 7RG, United Kingdom",
-      "lat": 51.529,
-      "lng": -0.1652,
-      "slug": "iccuk",
-      "citySlug": "london",
-      "cityName": "London",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://www.iccuk.org"
     },
     {
       "id": "ilahi-masjid",
@@ -977,6 +981,20 @@
       "website": "http://lincolngreenmosque.co.uk"
     },
     {
+      "id": "iccuk",
+      "name": "London Central Mosque",
+      "address": "146 Park Road, London NW8 7RG, United Kingdom",
+      "lat": 51.529,
+      "lng": -0.1652,
+      "slug": "iccuk",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.iccuk.org"
+    },
+    {
       "id": "loughborough-mosque",
       "name": "Loughborough Mosque (LMICA)",
       "address": "83-85 King Street, Loughborough LE11 1SD, United Kingdom",
@@ -1159,20 +1177,6 @@
       "website": ""
     },
     {
-      "id": "masjid-al-hikmah",
-      "name": "Masjid Alhikmah & Community Centre",
-      "address": "41 Nelson Street, Aberdeen AB24 5ER, United Kingdom",
-      "lat": 57.154199216464576,
-      "lng": -2.097523663234562,
-      "slug": "masjid-al-hikmah",
-      "citySlug": "aberdeen",
-      "cityName": "Aberdeen",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://masjidalhikmah.org.uk"
-    },
-    {
       "id": "masjid-al-huda-sheffield",
       "name": "Masjid al Huda Sheffield",
       "address": "(next to St Silas Church), Hanover St, Highfield, Sheffield S3 7WT",
@@ -1213,6 +1217,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.masjid-al-jannah.co.uk/prayer"
+    },
+    {
+      "id": "masjid-al-hikmah",
+      "name": "Masjid Alhikmah & Community Centre",
+      "address": "41 Nelson Street, Aberdeen AB24 5ER, United Kingdom",
+      "lat": 57.154199216464576,
+      "lng": -2.097523663234562,
+      "slug": "masjid-al-hikmah",
+      "citySlug": "aberdeen",
+      "cityName": "Aberdeen",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidalhikmah.org.uk"
     },
     {
       "id": "masjid-ali",
@@ -1257,20 +1275,6 @@
       "website": "https://albaseerah.com"
     },
     {
-      "id": "masjid-at-taqwa",
-      "name": "Masjid At-Taqwa (Synott Islamic Center)",
-      "address": "10415 Synott Road, Sugar Land, TX 77498, United States",
-      "lat": 29.6652862,
-      "lng": -95.6157653,
-      "slug": "masjid-at-taqwa",
-      "citySlug": "houston",
-      "cityName": "Houston",
-      "countryCode": "US",
-      "countryName": "United States",
-      "isHidden": false,
-      "website": "https://www.masjidattaqwa.com/prayers"
-    },
-    {
       "id": "masjid-at-taqwa-bradford",
       "name": "Masjid At-Taqwa",
       "address": "807 Great Horton Rd, Bradford BD7 4AG, United Kingdom",
@@ -1283,6 +1287,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://masjidat-taqwa.co.uk"
+    },
+    {
+      "id": "masjid-at-taqwa",
+      "name": "Masjid At-Taqwa (Synott Islamic Center)",
+      "address": "10415 Synott Road, Sugar Land, TX 77498, United States",
+      "lat": 29.6652862,
+      "lng": -95.6157653,
+      "slug": "masjid-at-taqwa",
+      "citySlug": "houston",
+      "cityName": "Houston",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://www.masjidattaqwa.com/prayers"
     },
     {
       "id": "masjid-at-tawheed",
@@ -1313,6 +1331,20 @@
       "website": ""
     },
     {
+      "id": "daar-hadeeth-masjid",
+      "name": "Masjid Daar Al-Hadeeth",
+      "address": "96B Lower Clapton Road, London E5 0QR, United Kingdom",
+      "lat": 51.5533734,
+      "lng": -0.0528971,
+      "slug": "daar-hadeeth-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://daarhadeeth.com"
+    },
+    {
       "id": "masjid-darussalam",
       "name": "Masjid Darussalam (Darussalam Education Centre)",
       "address": "184 Whalley New Road, Blackburn BB1 9TN, United Kingdom",
@@ -1327,34 +1359,6 @@
       "website": "https://time.my-masjid.com/timingscreen/b37875db-4976-47c0-b0e2-4256b0bbe73b"
     },
     {
-      "id": "masjid-e-abu-bakr-dewsbury",
-      "name": "Masjid-e-Abu Bakr",
-      "address": "555 Lees Hall Road, Dewsbury, WF12 9EN, United Kingdom",
-      "lat": 53.673045,
-      "lng": -1.645189,
-      "slug": "masjid-e-abu-bakr-dewsbury",
-      "citySlug": "dewsbury",
-      "cityName": "Dewsbury",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": ""
-    },
-    {
-      "id": "masjid-e-bilal-dewsbury",
-      "name": "Masjid-e-Bilal",
-      "address": "105 Parker Road, Dewsbury, WF12 0AR, United Kingdom",
-      "lat": 53.673032,
-      "lng": -1.630028,
-      "slug": "masjid-e-bilal-dewsbury",
-      "citySlug": "dewsbury",
-      "cityName": "Dewsbury",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": "https://masjidebilal.org.uk/"
-    },
-    {
       "id": "masjid-e-ghousia",
       "name": "Masjid e Ghousia (Gloucester Ghousia Masjid)",
       "address": "14 Charles Street, Gloucester GL1 4AG, United Kingdom",
@@ -1367,20 +1371,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.gloucestermasjid.org"
-    },
-    {
-      "id": "masjid-e-irfan",
-      "name": "Masjid-e-Irfan",
-      "address": "49 Eldon Road, Blackburn BB1 8BE, United Kingdom",
-      "lat": 53.75625683614228,
-      "lng": -2.4911186748639307,
-      "slug": "masjid-e-irfan",
-      "citySlug": "blackburn",
-      "cityName": "Blackburn",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": ""
     },
     {
       "id": "masjid-e-noor",
@@ -1579,6 +1569,20 @@
       "website": "https://masjidomar.org.uk"
     },
     {
+      "id": "masjid-quba-thornhill",
+      "name": "Masjid Quba",
+      "address": "The Common, Thornhill, WF12 0LL, United Kingdom",
+      "lat": 53.671271,
+      "lng": -1.623301,
+      "slug": "masjid-quba-thornhill",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
       "id": "masjid-quba-education-centre",
       "name": "Masjid Quba Education Centre",
       "address": "120 Worksop Road, Attercliffe, Sheffield S9 3TN",
@@ -1604,20 +1608,6 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://mquba.org"
-    },
-    {
-      "id": "masjid-quba-thornhill",
-      "name": "Masjid Quba",
-      "address": "The Common, Thornhill, WF12 0LL, United Kingdom",
-      "lat": 53.671271,
-      "lng": -1.623301,
-      "slug": "masjid-quba-thornhill",
-      "citySlug": "dewsbury",
-      "cityName": "Dewsbury",
-      "countryCode": "GB",
-      "countryName": "United Kingdom",
-      "isHidden": false,
-      "website": ""
     },
     {
       "id": "masjid-risalah",
@@ -1801,6 +1791,76 @@
       "website": "https://masjidzeenatulislam.org.uk"
     },
     {
+      "id": "masjid-e-abu-bakr-dewsbury",
+      "name": "Masjid-e-Abu Bakr",
+      "address": "555 Lees Hall Road, Dewsbury, WF12 9EN, United Kingdom",
+      "lat": 53.673045,
+      "lng": -1.645189,
+      "slug": "masjid-e-abu-bakr-dewsbury",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "masjid-e-bilal-dewsbury",
+      "name": "Masjid-e-Bilal",
+      "address": "105 Parker Road, Dewsbury, WF12 0AR, United Kingdom",
+      "lat": 53.673032,
+      "lng": -1.630028,
+      "slug": "masjid-e-bilal-dewsbury",
+      "citySlug": "dewsbury",
+      "cityName": "Dewsbury",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidebilal.org.uk/"
+    },
+    {
+      "id": "masjid-e-irfan",
+      "name": "Masjid-e-Irfan",
+      "address": "49 Eldon Road, Blackburn BB1 8BE, United Kingdom",
+      "lat": 53.75625683614228,
+      "lng": -2.4911186748639307,
+      "slug": "masjid-e-irfan",
+      "citySlug": "blackburn",
+      "cityName": "Blackburn",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "al-rawdha-mosque",
+      "name": "Milton Keynes Islamic & Cultural Association (Al-Rawdha Mosque)",
+      "address": "401 South Row, Central Milton Keynes MK9 2PG, United Kingdom",
+      "lat": 52.036846585120834,
+      "lng": -0.7587811044903313,
+      "slug": "al-rawdha-mosque",
+      "citySlug": "milton-keynes",
+      "cityName": "Milton Keynes",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.mkica.org"
+    },
+    {
+      "id": "essalam-mosque",
+      "name": "Moskee Essalam Rotterdam",
+      "address": "Vredesplein 7, 3074 SN Rotterdam, Netherlands",
+      "lat": 51.8987817,
+      "lng": 4.5133885,
+      "slug": "essalam-mosque",
+      "citySlug": "rotterdam",
+      "cityName": "Rotterdam",
+      "countryCode": "NL",
+      "countryName": "Netherlands",
+      "isHidden": false,
+      "website": "https://www.essalamrotterdam.nl"
+    },
+    {
       "id": "muslim-welfare-house",
       "name": "Muslim Welfare House Sheffield",
       "address": "10-12 Severn Rd, Sheffield S10 2SU",
@@ -1855,6 +1915,21 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://mawaqit.net/en/park-royal-community-centre-london-nw10-6hf-united-kingdom"
+    },
+    {
+      "id": "ras-al-khaimah-mosques",
+      "name": "Ras Al Khaimah Prayer Times",
+      "address": "Ras Al Khaimah, United Arab Emirates",
+      "lat": 25.7895,
+      "lng": 55.9432,
+      "slug": "ras-al-khaimah-mosques",
+      "citySlug": "ras-al-khaimah",
+      "cityName": "Ras Al Khaimah",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/ras-al-khaimah"
     },
     {
       "id": "raza-jamia-masjid",
@@ -1925,6 +2000,21 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://shahporanmasjid.uk/prayer-time/"
+    },
+    {
+      "id": "sharjah-mosques",
+      "name": "Sharjah Prayer Times",
+      "address": "Sharjah, United Arab Emirates",
+      "lat": 25.3463,
+      "lng": 55.4209,
+      "slug": "sharjah-mosques",
+      "citySlug": "sharjah",
+      "cityName": "Sharjah",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/sharjah"
     },
     {
       "id": "sheffield-grand-mosque",
@@ -2009,6 +2099,21 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.taiyabahmasjid.com"
+    },
+    {
+      "id": "umm-al-quwain-mosques",
+      "name": "Umm Al Quwain Prayer Times",
+      "address": "Umm Al Quwain, United Arab Emirates",
+      "lat": 25.5647,
+      "lng": 55.5552,
+      "slug": "umm-al-quwain-mosques",
+      "citySlug": "umm-al-quwain",
+      "cityName": "Umm Al Quwain",
+      "countryCode": "AE",
+      "countryName": "United Arab Emirates",
+      "timezone": "Asia/Dubai",
+      "isHidden": false,
+      "website": "https://www.khaleejtimes.com/prayer-time-uae/umm-al-quwain"
     },
     {
       "id": "west-london-islamic-centre",
