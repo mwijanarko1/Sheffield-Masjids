@@ -1871,6 +1871,20 @@
       "website": "https://razajamiamasjid.co.uk"
     },
     {
+      "id": "samr-centre",
+      "name": "Samr Centre",
+      "address": "62 Harewood Drive, Clayhall, Ilford IG5 0PH, United Kingdom",
+      "lat": 51.5944114,
+      "lng": 0.0593608,
+      "slug": "samr-centre",
+      "citySlug": "ilford",
+      "cityName": "Ilford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.samrcentre.org/salah-times"
+    },
+    {
       "id": "scunthorpe-central-mosque",
       "name": "Scunthorpe Central Mosque (Madani Masjid & EQIM)",
       "address": "40-44 Percival Street, Scunthorpe DN15 6JD, United Kingdom",
