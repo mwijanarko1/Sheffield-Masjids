@@ -1261,6 +1261,20 @@
       "website": "https://masjidrahmah.co.uk"
     },
     {
+      "id": "masjid-as-sahabah",
+      "name": "Masjid As-Sahabah",
+      "address": "295-297 Haggerston Road, Hackney, London E8 4EN, United Kingdom",
+      "lat": 51.540247,
+      "lng": -0.075991,
+      "slug": "masjid-as-sahabah",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidsahabah.org/"
+    },
+    {
       "id": "masjid-as-sunnah",
       "name": "Masjid As-Sunnah (Albaseerah)",
       "address": "3 Paternoster Lane, Bradford BD7 3DS, United Kingdom",
@@ -1273,6 +1287,21 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://albaseerah.com"
+    },
+    {
+      "id": "masjid-assalaam",
+      "name": "Masjid Assalaam",
+      "address": "43 Pear Tree Road, Derby DE23 6PZ, UK",
+      "lat": 52.9078687,
+      "lng": -1.4782576,
+      "slug": "masjid-assalaam",
+      "citySlug": "derby",
+      "cityName": "Derby",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "timezone": "Europe/London",
+      "isHidden": false,
+      "website": "https://www.masjidassalaam4all.org"
     },
     {
       "id": "masjid-at-taqwa-bradford",
