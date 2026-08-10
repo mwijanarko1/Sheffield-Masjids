@@ -72,11 +72,20 @@ function parseTimetableHtml(html) {
     let tdMatch;
     while ((tdMatch = tdRe.exec(inner)) !== null) tds.push(stripTdInner(tdMatch[1]));
     // Date formats seen in the wild: "1 January 2026", "1-11-2026", "Sun 1-11-2026",
-    // "1 Rajab 1448", "Sun 1-11-2026 22 Jumādā al-Ula 1448" (hijri leaks into cell)
+    // "1 Rajab 1448", "Sun 1-11-2026 22 Jumādā al-Ula 1448", "January 1, 2026",
+    // "01/12/2026" (dd/mm/yyyy; hijri leaks into cell)
     let dayNum = parseInt(/^(\d{1,2})[-\s]/.exec(tds[0] || '')?.[1] ?? '', 10);
     if (!Number.isFinite(dayNum)) {
       const m2 = /^\w+\s+(\d{1,2})[-\s]/.exec(tds[0] || '');
       dayNum = m2 ? parseInt(m2[1], 10) : NaN;
+    }
+    if (!Number.isFinite(dayNum)) {
+      const m3 = /^[A-Z][a-z]+ (\d{1,2}),/.exec(tds[0] || '');
+      dayNum = m3 ? parseInt(m3[1], 10) : NaN;
+    }
+    if (!Number.isFinite(dayNum)) {
+      const m4 = /^(\d{1,2})\//.exec(tds[0] || '');
+      dayNum = m4 ? parseInt(m4[1], 10) : NaN;
     }
     if (!Number.isFinite(dayNum)) continue;
     const weekday = (tds[1] || '').trim();
