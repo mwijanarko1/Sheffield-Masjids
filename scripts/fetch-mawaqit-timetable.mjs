@@ -40,7 +40,7 @@ async function fetchConfData(url) {
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
   const html = await res.text();
   // confData is a single-line JSON object; capture from `{` up to the matching closing `};`
-  const start = html.indexOf('let confData = ');
+  const start = html.indexOf('confData = ');
   if (start === -1) throw new Error('confData JSON not found in page');
   const objStart = html.indexOf('{', start);
   let depth = 0;
