@@ -2549,6 +2549,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "http://www.masjidibrahimslough.com"
+    },
+    {
+      "id": "walsall-central-mosque",
+      "name": "Walsall Central Mosque (Central Mosque Committee)",
+      "address": "Selborne Street, Chuckery, Walsall WS1 2JN, United Kingdom",
+      "lat": 52.58287,
+      "lng": -1.970859,
+      "slug": "walsall-central-mosque",
+      "citySlug": "walsall",
+      "cityName": "Walsall",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": ""
+    },
+    {
+      "id": "aisha-mosque-and-islamic-centre",
+      "name": "Aisha Mosque & Islamic Centre",
+      "address": "4 Rutter Street, Walsall WS1 4HJ, United Kingdom",
+      "lat": 52.575507,
+      "lng": -1.986053,
+      "slug": "aisha-mosque-and-islamic-centre",
+      "citySlug": "walsall",
+      "cityName": "Walsall",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.aishamosque.org"
     }
   ]
 }
