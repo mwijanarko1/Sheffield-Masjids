@@ -47,14 +47,16 @@ function toHHMM(s) {
 /** Laravel platform times are 12h without suffix: fajr/sunrise are AM, all other prayers are PM. */
 function parse12hNoSuffix(s, pm) {
   const t = String(s || '').trim().toLowerCase();
-  const m12 = t.match(/(\d{1,2}):(\d{2})\s*(am|pm)/);
+  // Some entries carry two jamaat times "12:30/1:15" — take the first.
+  const first = t.split('/')[0].trim();
+  const m12 = first.match(/(\d{1,2}):(\d{2})\s*(am|pm)/);
   if (m12) {
     let h = parseInt(m12[1], 10);
     if (m12[3] === 'pm' && h !== 12) h += 12;
     if (m12[3] === 'am' && h === 12) h = 0;
     return `${String(h).padStart(2, '0')}:${m12[2]}`;
   }
-  const m = t.match(/^(\d{1,2}):(\d{2})$/);
+  const m = first.match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return '';
   let h = parseInt(m[1], 10);
   if (pm) {

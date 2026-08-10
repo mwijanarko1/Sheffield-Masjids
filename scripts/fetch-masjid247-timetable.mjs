@@ -66,8 +66,12 @@ function convertMonth(monthJson, monthName) {
     if (!Number.isFinite(date)) continue;
 
     const maghrib = toHHMM(d.begMaghrib) || toHHMM(d.jamMaghrib);
+    // jummah1 may hold a real time (e.g. "12:40") or text ("Jamea") meaning
+    // "Jumu'ah held at the main masjid" — only treat real times as the jummah value.
     const jummahTime = toHHMM(d.jummah1) || toHHMM(d.jummah2);
     if (!jummah && jummahTime) jummah = jummahTime;
+    const isTextJummah = /^[A-Za-z]/.test(String(d.jummah1 || ''));
+    const jamDhuhr = /^\d{1,2}:\d{2}/.test(String(d.jamDhuhr || '')) ? toHHMM(d.jamDhuhr) : (jummahTime || '');
 
     prayerTimes.push({
       date,
@@ -82,7 +86,7 @@ function convertMonth(monthJson, monthName) {
     iqamahTimes.push({
       date_range: String(date),
       fajr: toHHMM(d.jamFajr),
-      dhuhr: toHHMM(d.jamDhuhr),
+      dhuhr: jamDhuhr,
       asr: toHHMM(d.jamAsar),
       maghrib: toHHMM(d.jamMaghrib),
       isha: toHHMM(d.jamEsha)
