@@ -85,11 +85,13 @@ function convertYear(json, year) {
     const a = pick(t.asr);
     const mg = pick(t.maghrib);
     const is = pick(t.isha);
+    const sh = pick(t.shouruq || t.shurooq || t.sunrise);
 
     const slot = {
       fajr: toHHMM12(f.salahTime), dhuhr: toHHMM12(z.salahTime),
       asr: toHHMM12(a.salahTime), maghrib: toHHMM12(mg.salahTime),
       isha: toHHMM12(is.salahTime),
+      shurooq: toHHMM12(sh.salahTime),
       iFajr: toHHMM12(f.iqamahTime), iDhuhr: toHHMM12(z.iqamahTime),
       iAsr: toHHMM12(a.iqamahTime), iMaghrib: toHHMM12(mg.iqamahTime),
       iIsha: toHHMM12(is.iqamahTime)
@@ -108,7 +110,7 @@ function convertYear(json, year) {
       prayerTimes.push({
         date: d,
         fajr: slot.fajr,
-        shurooq: '',
+        shurooq: slot.shurooq,
         dhuhr: slot.dhuhr,
         asr: slot.asr,
         maghrib: slot.maghrib,
