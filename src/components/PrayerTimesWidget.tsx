@@ -233,7 +233,7 @@ export default function PrayerTimesWidget({
     const checkDate = selectedDate || new Date();
     const inDSTAdjustment = mosqueTimetableAlreadyIncludesDst(mosque.slug)
       ? false
-      : typeof inDSTAdjustmentHint === 'boolean'
+      : inDSTAdjustmentHint !== undefined
         ? inDSTAdjustmentHint
         : await isInDSTAdjustmentPeriod(checkDate);
     const isFriday = checkDate.getDay() === 5;
@@ -438,9 +438,10 @@ export default function PrayerTimesWidget({
           setError(`Data not available for ${mosque.name} for this period.`);
         }
       } finally {
-        if (!isCurrentRequest()) return;
-        setIsLoading(false);
-        setIsTransitioning(false);
+        if (isCurrentRequest()) {
+          setIsLoading(false);
+          setIsTransitioning(false);
+        }
       }
     };
 

@@ -13,33 +13,6 @@ const DEFAULT_CITY = {
   lng: -1.4701,
 };
 
-const cityValidator = v.object({
-  slug: v.string(),
-  name: v.string(),
-  region: v.optional(v.string()),
-  countryCode: v.string(),
-  countryName: v.string(),
-  timezone: v.string(),
-  lat: v.optional(v.number()),
-  lng: v.optional(v.number()),
-});
-
-const mosqueValidator = v.object({
-  id: v.string(),
-  name: v.string(),
-  address: v.string(),
-  lat: v.number(),
-  lng: v.number(),
-  slug: v.string(),
-  citySlug: v.optional(v.string()),
-  cityName: v.optional(v.string()),
-  countryCode: v.optional(v.string()),
-  countryName: v.optional(v.string()),
-  timezone: v.optional(v.string()),
-  website: v.optional(v.string()),
-  isHidden: v.optional(v.boolean()),
-});
-
 function normalizeCitySlug(citySlug) {
   const normalized = citySlug.trim().toLowerCase();
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(normalized)) {

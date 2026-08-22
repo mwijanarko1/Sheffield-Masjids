@@ -405,14 +405,6 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         setSelectedDate(d);
     };
 
-    const safeHeaderTextStyle = {
-        color: "rgba(255, 255, 255, 0.9)",
-        textShadow: "0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(0,0,0,0.35)",
-    };
-    const safeMutedTextStyle = {
-        color: "rgba(255, 255, 255, 0.72)",
-        textShadow: "0 1px 2px rgba(0,0,0,0.6), 0 0 6px rgba(0,0,0,0.35)",
-    };
     const safeRowStyle = (isActive: boolean) => ({
         background: isActive
             ? "linear-gradient(135deg, rgba(255, 179, 128, 0.45) 0%, rgba(255, 120, 60, 0.35) 100%)"

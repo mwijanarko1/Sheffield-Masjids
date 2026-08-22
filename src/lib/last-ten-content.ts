@@ -217,7 +217,7 @@ export function getInitialDhulHijjahChecklistDay(
   return ctx.currentDay;
 }
 
-export function createEmptyLastTenChecklistState(): LastTenChecklistState {
+export function createEmptyLastTenChecklistState() {
   const state: LastTenChecklistState = {};
   for (const night of LAST_TEN_NIGHTS) {
     state[String(night)] = {};

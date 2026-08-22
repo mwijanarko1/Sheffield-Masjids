@@ -67,7 +67,7 @@ export default function DhulHijjahContent({ mosques }: Props) {
         setStartTime(may17Times.maghrib);
         setEndTime(may27Times.maghrib);
         setLoading(false);
-      } catch (err) {
+      } catch {
         if (cancelled) return;
         setError("Could not load prayer times for the selected mosque.");
         setLoading(false);

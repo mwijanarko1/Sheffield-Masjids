@@ -10,7 +10,6 @@ import * as path from "path";
 const adhan = require("adhan");
 
 const COORDS = new adhan.Coordinates(51.3776, -0.1022);
-const YEAR = 2026;
 const OUT_DIR = path.join(
   process.cwd(),
   "public/data/mosques/gb/london/croydon-ict"
@@ -34,7 +33,7 @@ function fmt(t: Date): string {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Europe/London",
-  } as Intl.DateTimeFormatOptions);
+  });
 }
 
 // OCR-extracted data: [gregMonth, gregDay] -> { fajr, fajrJamat, shurooq, dhuhr, dhuhrJamat, asr, asrJamat, maghrib, isha, ishaJamat }
@@ -46,6 +45,10 @@ type DayData = {
   isha: string; ishaJamat: string;
 };
 
+type PrayerTime = { date: number; fajr: string; shurooq: string; dhuhr: string; asr: string; maghrib: string; isha: string };
+type IqamahTime = { date_range: string; fajr: string; dhuhr: string; asr: string; maghrib: string; isha: string };
+type MonthResult = { prayerTimes: PrayerTime[]; iqamahTimes: IqamahTime[] };
+
 function fixTime(t: string): string {
   if (!t) return "";
   const m = t.match(/^(\d{1,2}):(\d{2})$/);
@@ -56,7 +59,7 @@ function fixTime(t: string): string {
 }
 
 // Full data from June 2026 image (Dhul Hijjah 1447)
-const june2026Data: Record<string, DayData> = {
+const june2026Data = {
   "2026-05-18": { fajr: "03:16", fajrJamat: "04:00", shurooq: "05:02", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:11", asrJamat: "17:30", maghrib: "20:53", isha: "22:04", ishaJamat: "22:30" },
   "2026-05-19": { fajr: "03:13", fajrJamat: "04:00", shurooq: "05:00", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:12", asrJamat: "17:30", maghrib: "20:55", isha: "22:07", ishaJamat: "22:30" },
   "2026-05-20": { fajr: "03:12", fajrJamat: "04:00", shurooq: "04:59", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:12", asrJamat: "17:30", maghrib: "20:56", isha: "22:08", ishaJamat: "22:30" },
@@ -87,10 +90,10 @@ const june2026Data: Record<string, DayData> = {
   "2026-06-14": { fajr: "02:39", fajrJamat: "03:00", shurooq: "04:40", dhuhr: "13:06", dhuhrJamat: "13:30", asr: "17:24", asrJamat: "17:45", maghrib: "21:22", isha: "22:43", ishaJamat: "23:00" },
   "2026-06-15": { fajr: "02:39", fajrJamat: "03:00", shurooq: "04:40", dhuhr: "13:06", dhuhrJamat: "13:30", asr: "17:24", asrJamat: "17:45", maghrib: "21:23", isha: "22:44", ishaJamat: "23:00" },
   "2026-06-16": { fajr: "02:39", fajrJamat: "03:00", shurooq: "04:40", dhuhr: "13:06", dhuhrJamat: "13:30", asr: "17:24", asrJamat: "17:45", maghrib: "21:23", isha: "22:44", ishaJamat: "23:00" },
-};
+} satisfies Record<string, DayData>;
 
 // Full data from May 2026 image (Dhul Qadah 1447)
-const may2026Data: Record<string, DayData> = {
+const may2026Data = {
   "2026-04-19": { fajr: "04:21", fajrJamat: "05:00", shurooq: "05:54", dhuhr: "13:05", dhuhrJamat: "13:30", asr: "16:52", asrJamat: "17:15", maghrib: "20:07", isha: "21:21", ishaJamat: "21:30" },
   "2026-04-20": { fajr: "04:19", fajrJamat: "05:00", shurooq: "05:52", dhuhr: "13:05", dhuhrJamat: "13:30", asr: "16:53", asrJamat: "17:15", maghrib: "20:09", isha: "21:23", ishaJamat: "21:30" },
   "2026-04-21": { fajr: "04:15", fajrJamat: "05:00", shurooq: "05:49", dhuhr: "13:04", dhuhrJamat: "13:30", asr: "16:54", asrJamat: "17:15", maghrib: "20:10", isha: "21:24", ishaJamat: "21:30" },
@@ -110,10 +113,10 @@ const may2026Data: Record<string, DayData> = {
   "2026-05-14": { fajr: "03:23", fajrJamat: "04:15", shurooq: "05:07", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:09", asrJamat: "17:30", maghrib: "20:48", isha: "21:58", ishaJamat: "22:15" },
   "2026-05-15": { fajr: "03:21", fajrJamat: "04:00", shurooq: "05:06", dhuhr: "13:02", dhuhrJamat: "13:15", asr: "17:10", asrJamat: "17:30", maghrib: "20:49", isha: "21:59", ishaJamat: "22:15" },
   "2026-05-16": { fajr: "03:20", fajrJamat: "04:00", shurooq: "05:05", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:10", asrJamat: "17:30", maghrib: "20:51", isha: "22:02", ishaJamat: "22:15" },
-};
+} satisfies Record<string, DayData>;
 
 // Full data from May 2025 image (Dhul Qadah 1446)
-const may2025Data: Record<string, DayData> = {
+const may2025Data = {
   "2025-04-29": { fajr: "03:57", fajrJamat: "04:30", shurooq: "05:33", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:00", asrJamat: "17:15", maghrib: "20:24", isha: "21:35", ishaJamat: "21:45" },
   "2025-04-30": { fajr: "03:54", fajrJamat: "04:30", shurooq: "05:31", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:00", asrJamat: "17:15", maghrib: "20:26", isha: "21:37", ishaJamat: "21:45" },
   "2025-05-01": { fajr: "03:51", fajrJamat: "04:30", shurooq: "05:29", dhuhr: "13:02", dhuhrJamat: "13:30", asr: "17:01", asrJamat: "17:15", maghrib: "20:27", isha: "21:38", ishaJamat: "21:45" },
@@ -143,14 +146,14 @@ const may2025Data: Record<string, DayData> = {
   "2025-05-26": { fajr: "03:01", fajrJamat: "03:30", shurooq: "04:52", dhuhr: "13:06", dhuhrJamat: "13:30", asr: "17:16", asrJamat: "17:45", maghrib: "21:05", isha: "22:19", ishaJamat: "22:30" },
   "2025-05-27": { fajr: "02:59", fajrJamat: "03:30", shurooq: "04:51", dhuhr: "13:07", dhuhrJamat: "13:30", asr: "17:16", asrJamat: "17:45", maghrib: "21:06", isha: "22:20", ishaJamat: "22:30" },
   "2025-05-28": { fajr: "02:58", fajrJamat: "03:30", shurooq: "04:50", dhuhr: "13:07", dhuhrJamat: "13:30", asr: "17:17", asrJamat: "17:45", maghrib: "21:07", isha: "22:22", ishaJamat: "22:30" },
-};
+} satisfies Record<string, DayData>;
 
 // Merge all OCR data into one map
-const ocrData: Record<string, DayData> = {
+const ocrData = {
   ...june2026Data,
   ...may2026Data,
   ...may2025Data,
-};
+} satisfies Record<string, DayData>;
 
 function addMinutes(timeStr: string, minutes: number): string {
   if (!timeStr) return timeStr;
@@ -171,11 +174,11 @@ function calculateMonth(params: {
   month: number;
   year: number;
   ocrData: Record<string, DayData>;
-}): { prayerTimes: any[]; iqamahTimes: any[] } {
+}): MonthResult {
   const { month, year, ocrData } = params;
   const days = month === 2 && year === 2024 ? 29 : DAYS_IN_MONTH[month - 1];
-  const prayerTimes: any[] = [];
-  const iqamahTimes: any[] = [];
+  const prayerTimes: PrayerTime[] = [];
+  const iqamahTimes: IqamahTime[] = [];
 
   for (let day = 1; day <= days; day++) {
     const key = `${year}-${pad2(month)}-${pad2(day)}`;
@@ -263,13 +266,6 @@ for (let m = 1; m <= 12; m++) {
   fs.writeFileSync(filePath, JSON.stringify(monthData, null, 2));
   console.log(`✓ ${MONTH_NAMES[m - 1]} (${prayerTimes.length} days)`);
 }
-
-// Also generate for 2025
-const outDir2025 = path.join(
-  process.cwd(),
-  "public/data/mosques/gb/london/croydon-ict"
-);
-// Same directory for now - just showing verification
 
 // Verify day 23 May 2026
 const mayFile = path.join(OUT_DIR, "may.json");

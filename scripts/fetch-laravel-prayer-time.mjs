@@ -37,13 +37,6 @@ function parseArgs(argv) {
   return { baseUrl, token, citySlug, slug, country };
 }
 
-function toHHMM(s) {
-  if (!s || s === '') return '';
-  const m = /(\d{1,2}):(\d{2})/.exec(String(s));
-  if (!m) return '';
-  return `${m[1].padStart(2, '0')}:${m[2]}`;
-}
-
 /** Laravel platform times are 12h without suffix: fajr/sunrise are AM, all other prayers are PM. */
 function parse12hNoSuffix(s, pm) {
   const t = String(s || '').trim().toLowerCase();

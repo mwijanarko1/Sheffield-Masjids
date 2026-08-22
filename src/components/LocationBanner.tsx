@@ -100,7 +100,7 @@ export function LocationBanner({ mosques, onSelectMosque }: LocationBannerProps)
   const [locationStatus, setLocationStatus] = useState<LocationStatus>("idle");
 
   const requestUserLocation = useCallback(() => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+    if (!("geolocation" in navigator)) {
       setLocationStatus("unsupported");
       setUserLocation(null);
       return;

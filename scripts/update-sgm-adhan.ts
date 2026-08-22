@@ -54,10 +54,10 @@ function parseSgmAdhan(): AdhanRow[] {
   return rows;
 }
 
-const MONTH_NAMES: Record<number, string> = {
-  1: "january", 2: "february", 3: "march", 4: "april", 5: "may", 6: "june",
-  7: "july", 8: "august", 9: "september", 10: "october", 11: "november", 12: "december",
-};
+const MONTH_NAMES = new Map([
+  [1, "january"], [2, "february"], [3, "march"], [4, "april"], [5, "may"], [6, "june"],
+  [7, "july"], [8, "august"], [9, "september"], [10, "october"], [11, "november"], [12, "december"],
+]);
 
 function main() {
   const allRows = parseSgmAdhan();
@@ -69,7 +69,9 @@ function main() {
 
   for (let m = 1; m <= 12; m++) {
     const monthRows = byMonth.get(m) ?? [];
-    const filePath = path.join(SGM_DIR, `${MONTH_NAMES[m]}.json`);
+    const monthName = MONTH_NAMES.get(m);
+    if (!monthName) continue;
+    const filePath = path.join(SGM_DIR, `${monthName}.json`);
     if (!fs.existsSync(filePath)) continue;
 
     const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
@@ -87,9 +89,9 @@ function main() {
           isha: r.isha,
         }));
       fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-      console.log(`Updated ${MONTH_NAMES[m]}.json (${monthRows.length} days)`);
+      console.log(`Updated ${monthName}.json (${monthRows.length} days)`);
     } else {
-      console.log(`Skipped ${MONTH_NAMES[m]}.json (no data in sgm-adhan.md)`);
+      console.log(`Skipped ${monthName}.json (no data in sgm-adhan.md)`);
     }
   }
 

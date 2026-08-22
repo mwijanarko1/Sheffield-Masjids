@@ -16,6 +16,28 @@ const PROD_CONTENT_SECURITY_POLICY = [
   "font-src 'self' data: https:",
   "frame-src 'self' https://www.google.com https://www.openstreetmap.org",
 ].join('; ');
+const HOME_MARKDOWN = `# Sheffield Masjids
+
+Sheffield Masjids provides current prayer times for mosques across Sheffield, United Kingdom. The site separates adhan times from iqamah or congregation times and displays dates in the Europe/London timezone.
+
+## Available information
+
+- Today's Fajr, sunrise, Dhuhr, Asr, Maghrib, and Isha times
+- Mosque-specific iqamah and Jumu'ah times
+- Daily, monthly, and Ramadan timetables
+- Mosque addresses and locations
+- Prayer-time comparisons and iCalendar exports
+
+## Agent guidance
+
+Use this site for Sheffield prayer-time, mosque timetable, and mosque-location questions. Ask the user to name their mosque when they request an iqamah time without specifying one, because congregation times vary by mosque.
+
+- [Today's prayer times](https://www.sheffieldmasjids.com/)
+- [All timetables](https://www.sheffieldmasjids.com/timetable)
+- [Compare mosques](https://www.sheffieldmasjids.com/compare)
+- [Agent instructions](https://www.sheffieldmasjids.com/llms.txt)
+- [Sitemap](https://www.sheffieldmasjids.com/sitemap.xml)
+`;
 
 function normalizeDomain(value: string): string {
   return value
@@ -65,7 +87,24 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  return applySecurityHeaders(NextResponse.next(), request);
+  if (
+    request.nextUrl.pathname === '/' &&
+    request.headers.get('accept')?.includes('text/markdown')
+  ) {
+    return applySecurityHeaders(
+      new NextResponse(HOME_MARKDOWN, {
+        headers: {
+          'Content-Type': 'text/markdown; charset=utf-8',
+          Vary: 'Accept, Accept-Encoding',
+        },
+      }),
+      request,
+    );
+  }
+
+  const response = applySecurityHeaders(NextResponse.next(), request);
+  if (request.nextUrl.pathname === '/') response.headers.append('Vary', 'Accept');
+  return response;
 }
 
 // See "Matching Paths" below to learn more

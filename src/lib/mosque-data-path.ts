@@ -1,4 +1,3 @@
-import path from "path";
 import mosquesData from "../../public/data/mosques.json";
 
 export type MosqueLocation = {
@@ -71,26 +70,20 @@ export function getMosqueDataFsDir(
   const country = normalizeCountryCode(resolved.countryCode);
   const city = normalizeCitySlug(resolved.citySlug);
   const safeSlug = normalizeMosqueSlugForPath(slug);
-  return path.join(projectRoot, "public", "data", "mosques", country, city, safeSlug);
+  return `${projectRoot.replace(/[\\/]+$/, "")}/public/data/mosques/${country}/${city}/${safeSlug}`;
 }
 
 /** Resolve country/city for a slug from the static registry (defaults to Sheffield). */
 export function resolveMosqueLocationForSlug(slug: string): MosqueLocation {
   const safeSlug = normalizeMosqueSlugForPath(slug);
-  const mosques = (mosquesData as { mosques?: Array<Record<string, unknown>> }).mosques ?? [];
+  const mosques = mosquesData.mosques ?? [];
 
   for (const record of mosques) {
-    if (typeof record.slug !== "string" || record.slug.trim().toLowerCase() !== safeSlug) {
+    if (record.slug.trim().toLowerCase() !== safeSlug) {
       continue;
     }
-    const citySlug =
-      typeof record.citySlug === "string" && record.citySlug.trim()
-        ? record.citySlug
-        : DEFAULT_LOCATION.citySlug;
-    const countryCode =
-      typeof record.countryCode === "string" && record.countryCode.trim()
-        ? record.countryCode
-        : DEFAULT_LOCATION.countryCode;
+    const citySlug = record.citySlug.trim() || DEFAULT_LOCATION.citySlug;
+    const countryCode = record.countryCode.trim() || DEFAULT_LOCATION.countryCode;
     return { countryCode, citySlug };
   }
 

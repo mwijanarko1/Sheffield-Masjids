@@ -91,7 +91,7 @@ function main() {
   fs.mkdirSync(outDir, { recursive: true });
 
   const raw = fs.readFileSync(srcPath, "utf-8");
-  const data = JSON.parse(raw) as { timetable: AndalusDay[] };
+  const data: { timetable: AndalusDay[] } = JSON.parse(raw);
   const timetable = data.timetable;
 
   for (let monthNum = 1; monthNum <= 12; monthNum++) {

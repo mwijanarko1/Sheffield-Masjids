@@ -32,50 +32,28 @@ function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
   };
 }
 
-function toNumber(value: unknown): number | null {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string") {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
-  }
-  return null;
+type MosqueSource = Partial<Omit<Mosque, "lat" | "lng">> & {
+  lat?: number | string;
+  lng?: number | string;
+};
+
+function toNumber(value: number | string | undefined): number | null {
+  if (value === undefined || value === "") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
-function normalizeMosque(value: unknown): Mosque | null {
-  if (!value || typeof value !== "object") return null;
-  const record = value as Record<string, unknown>;
-
-  const id = typeof record.id === "string" ? record.id.trim() : "";
-  const name = typeof record.name === "string" ? record.name.trim() : "";
-  const address = typeof record.address === "string" ? record.address.trim() : "";
-  const slug = typeof record.slug === "string" ? record.slug.trim() : "";
+function normalizeMosque(record: MosqueSource): Mosque | null {
+  const id = record.id?.trim() ?? "";
+  const name = record.name?.trim() ?? "";
+  const address = record.address?.trim() ?? "";
+  const slug = record.slug?.trim() ?? "";
   const lat = toNumber(record.lat);
   const lng = toNumber(record.lng);
 
   if (!id || !name || !address || !slug || lat === null || lng === null) {
     return null;
   }
-
-  const citySlug =
-    typeof record.citySlug === "string" && record.citySlug.trim()
-      ? record.citySlug.trim().toLowerCase()
-      : DEFAULT_SHEFFIELD_LOCATION.citySlug;
-  const cityName =
-    typeof record.cityName === "string" && record.cityName.trim()
-      ? record.cityName.trim()
-      : DEFAULT_SHEFFIELD_LOCATION.cityName;
-  const countryCode =
-    typeof record.countryCode === "string" && record.countryCode.trim()
-      ? record.countryCode.trim().toUpperCase()
-      : DEFAULT_SHEFFIELD_LOCATION.countryCode;
-  const countryName =
-    typeof record.countryName === "string" && record.countryName.trim()
-      ? record.countryName.trim()
-      : DEFAULT_SHEFFIELD_LOCATION.countryName;
-  const timezone =
-    typeof record.timezone === "string" && record.timezone.trim()
-      ? record.timezone.trim()
-      : DEFAULT_SHEFFIELD_LOCATION.timezone;
 
   const mosque: Mosque = {
     id,
@@ -84,18 +62,14 @@ function normalizeMosque(value: unknown): Mosque | null {
     lat,
     lng,
     slug,
-    citySlug,
-    cityName,
-    countryCode,
-    countryName,
-    timezone,
+    citySlug: record.citySlug?.trim().toLowerCase() || DEFAULT_SHEFFIELD_LOCATION.citySlug,
+    cityName: record.cityName?.trim() || DEFAULT_SHEFFIELD_LOCATION.cityName,
+    countryCode: record.countryCode?.trim().toUpperCase() || DEFAULT_SHEFFIELD_LOCATION.countryCode,
+    countryName: record.countryName?.trim() || DEFAULT_SHEFFIELD_LOCATION.countryName,
+    timezone: record.timezone?.trim() || DEFAULT_SHEFFIELD_LOCATION.timezone,
   };
-  if (typeof record.website === "string" && record.website.trim()) {
-    mosque.website = record.website.trim();
-  }
-  if (typeof record.isHidden === "boolean") {
-    mosque.isHidden = record.isHidden;
-  }
+  if (record.website?.trim()) mosque.website = record.website.trim();
+  if (record.isHidden !== undefined) mosque.isHidden = record.isHidden;
 
   return mosque;
 }
@@ -110,7 +84,7 @@ function dedupeMosques(mosques: Mosque[]): Mosque[] {
 }
 
 const STATIC_MOSQUES = dedupeMosques(
-  ((mosquesData as { mosques?: unknown[] }).mosques ?? [])
+  (mosquesData.mosques ?? [])
     .map(normalizeMosque)
     .filter((mosque): mosque is Mosque => mosque !== null),
 );

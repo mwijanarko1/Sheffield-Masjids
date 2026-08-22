@@ -10,7 +10,6 @@
  *   node scripts/fetch-masjid247-timetable.mjs 2076 preston jamea-masjid
  */
 import { writeFileSync, mkdirSync } from 'fs';
-import { gunzipSync } from 'zlib';
 import { execFileSync } from 'child_process';
 import { mosqueDataFsDir } from './lib/mosque-data-path.mjs';
 
@@ -70,7 +69,6 @@ function convertMonth(monthJson, monthName) {
     // "Jumu'ah held at the main masjid" — only treat real times as the jummah value.
     const jummahTime = toHHMM(d.jummah1) || toHHMM(d.jummah2);
     if (!jummah && jummahTime) jummah = jummahTime;
-    const isTextJummah = /^[A-Za-z]/.test(String(d.jummah1 || ''));
     const jamDhuhr = /^\d{1,2}:\d{2}/.test(String(d.jamDhuhr || '')) ? toHHMM(d.jamDhuhr) : (jummahTime || '');
 
     prayerTimes.push({

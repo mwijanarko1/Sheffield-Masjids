@@ -46,7 +46,7 @@ export const beginDelivery = internalMutation({
     });
     return {
       action: "proceed" as const,
-      deliveredFingerprints: [] as string[],
+      deliveredFingerprints: Array<string>(),
       recordId,
     };
   },
@@ -105,7 +105,7 @@ export const loadEnabledSubscribers = internalQuery({
       .collect();
     return rows.map((r) => ({
       token: r.token,
-      platform: r.platform as "ios" | "android",
+      platform: r.platform,
       fingerprint: tokenFingerprint(r.token),
     }));
   },

@@ -8,7 +8,6 @@ import {
   hasMeaningfulRamadanIqamahChange,
   monthNameToNumber,
   newPublishEventId,
-  type IqamahTimeRange,
 } from "./lib/iqamahChangeDetect";
 
 const prayerTimeValidator = v.object({
@@ -124,7 +123,7 @@ export const seedMonthly = mutation({
     const nextSnap = {
       year: data.year,
       monthNumber,
-      iqamahTimes: data.iqamahTimes as IqamahTimeRange[],
+      iqamahTimes: data.iqamahTimes,
       jummahIqamah: data.jummahIqamah,
     };
     const prevSnap =
@@ -132,7 +131,7 @@ export const seedMonthly = mutation({
         ? {
             year: existing.year,
             monthNumber,
-            iqamahTimes: existing.iqamahTimes as IqamahTimeRange[],
+            iqamahTimes: existing.iqamahTimes,
             jummahIqamah: existing.jummahIqamah,
           }
         : null;
@@ -231,7 +230,7 @@ export const seedRamadan = mutation({
       gregorianStart: data.gregorianStart,
       gregorianEnd: data.gregorianEnd,
       ramadanDayToGregorian: buildRamadanDayMap(data.prayerTimes),
-      iqamahTimes: data.iqamahTimes as IqamahTimeRange[],
+      iqamahTimes: data.iqamahTimes,
       jummahIqamah: data.jummahIqamah,
     };
     const prevSnap = existing
@@ -239,7 +238,7 @@ export const seedRamadan = mutation({
           gregorianStart: existing.gregorianStart,
           gregorianEnd: existing.gregorianEnd,
           ramadanDayToGregorian: buildRamadanDayMap(existing.prayerTimes),
-          iqamahTimes: existing.iqamahTimes as IqamahTimeRange[],
+          iqamahTimes: existing.iqamahTimes,
           jummahIqamah: existing.jummahIqamah,
         }
       : null;

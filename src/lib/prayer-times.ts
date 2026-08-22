@@ -25,6 +25,17 @@ type TimedCacheEntry<T> = {
   expiresAt: number;
 };
 
+type SheffieldDate = {
+  year: number;
+  month: number;
+  day: number;
+};
+
+function parseTrustedJson<T>(source: string): T {
+  // SAFETY: Callers only use bundled or same-origin JSON governed by the named return contract.
+  return JSON.parse(source) as T;
+}
+
 function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
   return {
     value,
@@ -96,11 +107,11 @@ function isRetriableStatus(status: number): boolean {
   return status === 408 || status === 425 || status === 429 || status >= 500;
 }
 
-function isRetriableFetchError(error: unknown): boolean {
-  if (error instanceof DOMException && error.name === 'AbortError') {
+function isRetriableFetchError(cause: unknown): boolean {
+  if (cause instanceof DOMException && cause.name === 'AbortError') {
     return true;
   }
-  return error instanceof TypeError;
+  return cause instanceof TypeError;
 }
 
 async function fetchWithTimeout(input: string, timeoutMs = FETCH_TIMEOUT_MS): Promise<Response> {
@@ -146,7 +157,7 @@ async function fetchWithRetry(input: string, attempts = FETCH_RETRY_ATTEMPTS): P
 const SHEFFIELD_TZ = 'Europe/London';
 
 /** Calendar date in Sheffield (Europe/London). Use for lookups, not for moment-in-time. */
-export function getDateInSheffield(date: Date): { year: number; month: number; day: number } {
+export function getDateInSheffield(date: Date): SheffieldDate {
   const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: SHEFFIELD_TZ, year: 'numeric', month: 'numeric', day: 'numeric' });
   const parts = formatter.formatToParts(date);
   const year = Number(parts.find((p) => p.type === 'year')?.value ?? 0);
@@ -160,7 +171,7 @@ function getCurrentYearInSheffield(): number {
 }
 
 async function getConvexClient(): Promise<InstanceType<typeof import('convex/browser').ConvexHttpClient> | null> {
-  const url = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_CONVEX_URL : undefined;
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
   if (!url) {
     convexClient = null;
     convexClientUrl = null;
@@ -634,22 +645,6 @@ interface RamadanData {
 const ramadanDataCache = new Map<string, TimedCacheEntry<RamadanData | null>>();
 const ramadanDataInFlight = new Map<string, Promise<RamadanData | null>>();
 
-function toDateOnly(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function parseDateToLocalDay(value: string): Date | null {
-  const exactIso = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (exactIso) {
-    const [, y, m, d] = exactIso;
-    return new Date(Number(y), Number(m) - 1, Number(d));
-  }
-
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
-  return toDateOnly(parsed);
-}
-
 type RamadanLoadResult =
   | { data: RamadanData; inRange: true }
   | { data: RamadanData; inRange: false }
@@ -792,9 +787,11 @@ function getRamadanDay(date: Date, ramadanData: RamadanData): number {
 /**
  * Find prayer times for a Ramadan day, supporting sparse data (e.g. days 1, 10, 20, 30)
  */
-function findRamadanDayData(prayerTimes: { ramadan_day: number; [key: string]: unknown }[], ramadanDay: number): { ramadan_day: number; [key: string]: unknown } | undefined {
-  let closestPrevious: { ramadan_day: number; [key: string]: unknown } | undefined;
-  let earliest: { ramadan_day: number; [key: string]: unknown } | undefined;
+type RamadanPrayerTime = RamadanData["prayer_times"][number];
+
+function findRamadanDayData(prayerTimes: RamadanPrayerTime[], ramadanDay: number): RamadanPrayerTime | undefined {
+  let closestPrevious: RamadanPrayerTime | undefined;
+  let earliest: RamadanPrayerTime | undefined;
 
   for (const day of prayerTimes) {
     if (!earliest || day.ramadan_day < earliest.ramadan_day) {
@@ -814,20 +811,20 @@ function findRamadanDayData(prayerTimes: { ramadan_day: number; [key: string]: u
 }
 
 // Month names mapping
-const MONTH_FILES: Record<number, string> = {
-  1: 'january',
-  2: 'february',
-  3: 'march',
-  4: 'april',
-  5: 'may',
-  6: 'june',
-  7: 'july',
-  8: 'august',
-  9: 'september',
-  10: 'october',
-  11: 'november',
-  12: 'december'
-};
+const MONTH_FILES = new Map<number, string>([
+  [1, 'january'],
+  [2, 'february'],
+  [3, 'march'],
+  [4, 'april'],
+  [5, 'may'],
+  [6, 'june'],
+  [7, 'july'],
+  [8, 'august'],
+  [9, 'september'],
+  [10, 'october'],
+  [11, 'november'],
+  [12, 'december'],
+] as const);
 
 /**
  * Find prayer times for a date, supporting both full (daily) and sparse (sample dates) monthly data.
@@ -865,7 +862,7 @@ export async function loadMonthlyPrayerTimes(
 ): Promise<MonthlyPrayerTimes> {
   const safeSlug = normalizeMosqueSlug(slug);
   const mosqueLocation = location ?? resolveMosqueLocationForSlug(safeSlug);
-  const monthFile = MONTH_FILES[month];
+  const monthFile = MONTH_FILES.get(month);
 
   if (!monthFile) {
     throw new Error(`Invalid month: ${month}`);
@@ -914,7 +911,7 @@ export async function loadMonthlyPrayerTimes(
         const fs = await import('fs/promises');
         const path = await import('path');
         const filePath = path.join(getMosqueDataFsDir(process.cwd(), safeSlug, mosqueLocation), `${monthFile}.json`);
-        data = JSON.parse(await fs.readFile(filePath, 'utf-8')) as MonthlyPrayerTimes;
+        data = parseTrustedJson<MonthlyPrayerTimes>(await fs.readFile(filePath, 'utf-8'));
       } else {
         const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
         const response = await fetchWithRetry(publicUrl);
@@ -923,7 +920,7 @@ export async function loadMonthlyPrayerTimes(
           throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
         }
 
-        data = await response.json() as MonthlyPrayerTimes;
+        data = parseTrustedJson<MonthlyPrayerTimes>(await response.text());
       }
 
       const resolved = await applyMasjidRisalahMarchIqamahIfNeeded(safeSlug, month, year, data);
@@ -992,12 +989,12 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
       if (dayData) {
         return {
           date: dateStr,
-          fajr: dayData.fajr as string,
-          sunrise: dayData.shurooq as string,
-          dhuhr: dayData.dhuhr as string,
-          asr: dayData.asr as string,
-          maghrib: dayData.maghrib as string,
-          isha: dayData.isha as string
+          fajr: dayData.fajr,
+          sunrise: dayData.shurooq,
+          dhuhr: dayData.dhuhr,
+          asr: dayData.asr,
+          maghrib: dayData.maghrib,
+          isha: dayData.isha
         };
       }
     }
@@ -1056,12 +1053,12 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
       if (dayData) {
         return {
           date: dateStr,
-          fajr: dayData.fajr as string,
-          sunrise: dayData.shurooq as string,
-          dhuhr: dayData.dhuhr as string,
-          asr: dayData.asr as string,
-          maghrib: dayData.maghrib as string,
-          isha: dayData.isha as string
+          fajr: dayData.fajr,
+          sunrise: dayData.shurooq,
+          dhuhr: dayData.dhuhr,
+          asr: dayData.asr,
+          maghrib: dayData.maghrib,
+          isha: dayData.isha
         };
       }
     }
@@ -1167,10 +1164,10 @@ export async function getIqamahTimesForSpecificDateWithDstMapping(
  */
 export function getCurrentPrayer(prayerTimes: DailyPrayerTimes): string | null {
   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
-  const prayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+  const prayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
 
   const times = prayers.map(prayer => {
-    const timeVal = prayerTimes[prayer as keyof DailyPrayerTimes];
+    const timeVal = prayerTimes[prayer];
     if (!timeVal) return { prayer, time: new Date(0) };
     const [hours, minutes] = timeVal.split(':');
     const parsedHours = parseInt(hours, 10);
@@ -1402,15 +1399,15 @@ const SHEFFIELD_DISPLAY_TZ = 'Europe/London';
  * Format date for display (Sheffield/UK timezone)
  */
 export function formatDateForDisplay(date: Date, timeZone: string = SHEFFIELD_DISPLAY_TZ): string {
-  const dayNames: Record<string, string> = {
-    'Monday': 'Mon',
-    'Tuesday': 'Tues',
-    'Wednesday': 'Wed',
-    'Thursday': 'Thurs',
-    'Friday': 'Fri',
-    'Saturday': 'Sat',
-    'Sunday': 'Sun'
-  };
+  const dayNames = new Map([
+    ['Monday', 'Mon'],
+    ['Tuesday', 'Tues'],
+    ['Wednesday', 'Wed'],
+    ['Thursday', 'Thurs'],
+    ['Friday', 'Fri'],
+    ['Saturday', 'Sat'],
+    ['Sunday', 'Sun'],
+  ]);
 
   const opts: Intl.DateTimeFormatOptions = { timeZone, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
   const parts = new Intl.DateTimeFormat('en-GB', opts).formatToParts(date);
@@ -1419,7 +1416,7 @@ export function formatDateForDisplay(date: Date, timeZone: string = SHEFFIELD_DI
   const month = parts.find((p) => p.type === 'month')?.value ?? '';
   const year = parts.find((p) => p.type === 'year')?.value ?? '';
 
-  const shortDay = dayNames[weekday as keyof typeof dayNames] || weekday;
+  const shortDay = dayNames.get(weekday) || weekday;
   return `${shortDay} ${day} ${month} ${year}`;
 }
 

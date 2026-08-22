@@ -38,23 +38,23 @@ export type RamadanIqamahSnapshot = {
   jummahIqamah: string;
 };
 
-const MONTH_NAME_TO_NUMBER: Record<string, number> = {
-  january: 1,
-  february: 2,
-  march: 3,
-  april: 4,
-  may: 5,
-  june: 6,
-  july: 7,
-  august: 8,
-  september: 9,
-  october: 10,
-  november: 11,
-  december: 12,
-};
+const MONTH_NAME_TO_NUMBER = new Map([
+  ["january", 1],
+  ["february", 2],
+  ["march", 3],
+  ["april", 4],
+  ["may", 5],
+  ["june", 6],
+  ["july", 7],
+  ["august", 8],
+  ["september", 9],
+  ["october", 10],
+  ["november", 11],
+  ["december", 12],
+]);
 
 export function monthNameToNumber(month: string): number | null {
-  return MONTH_NAME_TO_NUMBER[month.trim().toLowerCase()] ?? null;
+  return MONTH_NAME_TO_NUMBER.get(month.trim().toLowerCase()) ?? null;
 }
 
 export function parseDateRange(range: string): { start: number; end: number } | null {
@@ -145,10 +145,16 @@ function rangeIntersectsTodayOrFutureRamadan(
   return false;
 }
 
+type ChangedRanges = {
+  prevOnly: IqamahTimeRange[];
+  nextOnly: IqamahTimeRange[];
+  bothChanged: boolean;
+};
+
 function changedRanges(
   prev: IqamahTimeRange[],
   next: IqamahTimeRange[],
-): { prevOnly: IqamahTimeRange[]; nextOnly: IqamahTimeRange[]; bothChanged: boolean } {
+): ChangedRanges {
   const prevMap = new Map(prev.map((r) => [r.date_range, r]));
   const nextMap = new Map(next.map((r) => [r.date_range, r]));
   const prevOnly: IqamahTimeRange[] = [];
@@ -274,10 +280,12 @@ export function hasMeaningfulRamadanIqamahChange(
   return false;
 }
 
+type RamadanDayMap = Record<number, string>;
+
 export function buildRamadanDayMap(
   prayerTimes: Array<{ ramadan_day: number; gregorian: string }>,
-): Record<number, string> {
-  const map: Record<number, string> = {};
+) {
+  const map: RamadanDayMap = {};
   for (const row of prayerTimes) {
     map[row.ramadan_day] = row.gregorian;
   }

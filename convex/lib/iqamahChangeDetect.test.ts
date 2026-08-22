@@ -78,10 +78,6 @@ test("future iqamah change → notification", () => {
 });
 
 test("past-only iqamah change → no notification", () => {
-  const prev = monthly(2026, 7, baseRanges);
-  const nextRanges = baseRanges.map((r) =>
-    r.date_range === "1-15" ? { ...r, isha: "22:00" } : r,
-  );
   // today is day 10; range 1-15 still includes today → this WOULD notify.
   // Use a fully past month instead.
   const pastPrev = monthly(2026, 5, baseRanges);

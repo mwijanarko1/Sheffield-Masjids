@@ -23,14 +23,14 @@ type MosqueRecord = {
 
 test("every non-hidden mosque has non-empty location fields", () => {
   const file = join(process.cwd(), "public", "data", "mosques.json");
-  const data = JSON.parse(readFileSync(file, "utf8")) as { mosques: MosqueRecord[] };
+  const data: { mosques: MosqueRecord[] } = JSON.parse(readFileSync(file, "utf8"));
 
   const incomplete = data.mosques
     .filter((mosque) => !mosque.isHidden)
     .filter((mosque) =>
       REQUIRED_LOCATION_FIELDS.some((field) => {
         const value = mosque[field];
-        return typeof value !== "string" || value.trim() === "";
+        return !value?.trim();
       }),
     )
     .map((mosque) => mosque.id ?? mosque.slug ?? mosque.name ?? "unknown");

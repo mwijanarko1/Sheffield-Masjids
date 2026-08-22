@@ -76,7 +76,7 @@ export default function HomeHeaderCards({ mosques }: HomeHeaderCardsProps) {
   }, []);
 
   const requestUserLocation = useCallback(() => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+    if (!("geolocation" in navigator)) {
       setLocationStatus("unsupported");
       setUserLocation(null);
       return;

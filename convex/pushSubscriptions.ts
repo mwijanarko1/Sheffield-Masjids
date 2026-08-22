@@ -11,6 +11,13 @@ const REGISTER_WINDOW_MS = 60_000;
 const REGISTER_MAX_PER_WINDOW = 60;
 const MAX_SUBSCRIPTIONS = 50_000;
 
+type PreferencePatch = {
+  lastSeenAt: number;
+  updatedAt: number;
+  mosqueSlug?: string;
+  iqamahChangeAlertsEnabled?: boolean;
+};
+
 function validateMosqueSlug(slug: string): string {
   const normalized = slug.trim().toLowerCase();
   if (normalized.length === 0 || normalized.length > 64 || !MOSQUE_SLUG_RE.test(normalized)) {
@@ -153,7 +160,7 @@ export const updatePreferences = mutation({
       throw new Error("Unknown token");
     }
 
-    const patch: Record<string, unknown> = {
+    const patch: PreferencePatch = {
       lastSeenAt: Date.now(),
       updatedAt: Date.now(),
     };

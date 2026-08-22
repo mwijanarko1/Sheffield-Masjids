@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export interface DirectionAwareTabItem {
     id: string | number;
-    label: React.ReactNode;
+    label: string;
     icon?: React.ReactNode;
     href?: string;
     /** Called when this tab is selected. */
@@ -58,7 +58,6 @@ export function DirectionAwareTabs({
 
     // Whether the pill has been placed at least once (skip transition on first paint)
     const [ready, setReady] = useState(false);
-    const [direction, setDirection] = useState<"left" | "right">("right");
 
     const activeIndex = tabs.findIndex((t) => t.id === activeId);
     const prevIndexRef = useRef(activeIndex);
@@ -67,8 +66,7 @@ export function DirectionAwareTabs({
     const updatePill = useCallback(() => {
         const el = tabRefs.current[activeIndex];
         if (!el) return;
-        const parent = el.offsetParent as HTMLElement | null;
-        if (!parent) return;
+        if (!el.offsetParent) return;
         setPillRect({ left: el.offsetLeft, width: el.offsetWidth });
     }, [activeIndex]);
 
@@ -87,7 +85,6 @@ export function DirectionAwareTabs({
     useEffect(() => {
         const prev = prevIndexRef.current;
         if (prev !== activeIndex) {
-            setDirection(activeIndex > prev ? "right" : "left");
             prevIndexRef.current = activeIndex;
         }
     }, [activeIndex]);
@@ -144,7 +141,7 @@ export function DirectionAwareTabs({
                         }}
                         role="tab"
                         aria-selected={isActive}
-                        aria-label={typeof tab.label === "string" ? tab.label : undefined}
+                        aria-label={tab.label}
                         onClick={() => handleTabClick(tab, index)}
                         className={cn(
                             "relative z-10 flex flex-col items-center justify-center gap-1 sm:gap-1.5",

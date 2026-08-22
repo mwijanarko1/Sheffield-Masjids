@@ -73,13 +73,9 @@ function extractCsrf(html) {
 }
 
 async function fetchWithCookies(url, opts = {}, cookieJar = "") {
-  const res = await fetch(url, {
-    ...opts,
-    headers: {
-      ...opts.headers,
-      ...(cookieJar ? { Cookie: cookieJar } : {}),
-    },
-  });
+  const headers = new Headers(opts.headers);
+  if (cookieJar) headers.set("Cookie", cookieJar);
+  const res = await fetch(url, { ...opts, headers });
   const raw = res.headers.getSetCookie?.() ?? res.headers.get("set-cookie");
   const newCookies = cookieHeaderFromSetCookie(raw);
   const merged = mergeCookieHeader(cookieJar, raw);

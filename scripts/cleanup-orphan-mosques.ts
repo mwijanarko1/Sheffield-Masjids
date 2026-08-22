@@ -62,7 +62,7 @@ async function cleanup(convexUrl: string, label: string, adminSecret: string) {
   // 4. Delete each orphan
   for (const m of orphans) {
     try {
-      const result = await client.mutation(removeMosqueMutation, { slug: m.slug, adminSecret });
+      await client.mutation(removeMosqueMutation, { slug: m.slug, adminSecret });
       console.log(`  ✗ Deleted: ${m.slug} (${m.name})`);
     } catch (err) {
       console.error(`  ✗ Failed: ${m.slug} —`, err instanceof Error ? err.message : err);

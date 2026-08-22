@@ -5,7 +5,6 @@ import type { CalendarExportMode } from "@/features/calendar-export/types";
 import { getMosqueBySlug } from "@/lib/mosques";
 import { getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
 
-const VALID_MODES = new Set<CalendarExportMode>(["adhan", "iqamah", "both"]);
 const VALID_RANGE = new Set(["year", "month"]);
 const MONTH_NAMES = [
   "January",
@@ -46,11 +45,11 @@ function parseMonth(value: string | null): number {
 }
 
 function parseMode(value: string | null): CalendarExportMode {
-  const mode = (value ?? "iqamah").toLowerCase() as CalendarExportMode;
-  if (!VALID_MODES.has(mode)) {
-    throw new Error("Invalid mode. Use adhan, iqamah, or both.");
+  const mode = (value ?? "iqamah").toLowerCase();
+  if (mode === "adhan" || mode === "iqamah" || mode === "both") {
+    return mode;
   }
-  return mode;
+  throw new Error("Invalid mode. Use adhan, iqamah, or both.");
 }
 
 function contentDispositionFilename(slug: string, year: number, range: string, mode: CalendarExportMode): string {

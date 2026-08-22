@@ -7,11 +7,16 @@ import {
   createEmptyLastTenChecklistState,
 } from "@/lib/last-ten-content";
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+type StoredValue = string | number | boolean | null | StoredRecord | StoredValue[];
+interface StoredRecord {
+  [key: string]: StoredValue;
 }
 
-function sanitizeChecklistState(raw: unknown): LastTenChecklistState {
+function isRecord(value: StoredValue): value is StoredRecord {
+  return value !== null && !Array.isArray(value) && Object(value) === value;
+}
+
+function sanitizeChecklistState(raw: StoredValue): LastTenChecklistState {
   const nextState = createEmptyLastTenChecklistState();
 
   if (!isRecord(raw)) {
@@ -25,7 +30,7 @@ function sanitizeChecklistState(raw: unknown): LastTenChecklistState {
 
     nextState[night] = Object.entries(value).reduce<Record<string, boolean>>(
       (items, [itemId, checked]) => {
-        if (typeof checked !== "boolean") return items;
+        if (checked !== true && checked !== false) return items;
 
         // Migrate old blessings-on-prophet to new split ids
         if (itemId === "blessings-on-prophet" && checked) {
@@ -89,7 +94,7 @@ export function useLastTenChecklist() {
     setState((currentState) => {
       const current = currentState[nightKey] ?? {};
       const isChecked = !current[itemId];
-      const updates: Record<string, boolean> = { ...current, [itemId]: isChecked };
+      const updates = { ...current, [itemId]: isChecked } satisfies Record<string, boolean>;
 
       // Cascade: checking 100 salawat implies 20 and 5; checking 20 implies 5
       if (isChecked) {

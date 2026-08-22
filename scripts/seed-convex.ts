@@ -38,20 +38,20 @@ import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
 
 loadEnvConfig(process.cwd());
 
-const MONTH_FILES: Record<number, string> = {
-  1: "january",
-  2: "february",
-  3: "march",
-  4: "april",
-  5: "may",
-  6: "june",
-  7: "july",
-  8: "august",
-  9: "september",
-  10: "october",
-  11: "november",
-  12: "december",
-};
+const MONTH_FILES = new Map([
+  [1, "january"],
+  [2, "february"],
+  [3, "march"],
+  [4, "april"],
+  [5, "may"],
+  [6, "june"],
+  [7, "july"],
+  [8, "august"],
+  [9, "september"],
+  [10, "october"],
+  [11, "november"],
+  [12, "december"],
+]);
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const MOSQUE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -169,7 +169,6 @@ function diffRegistrySlugs(cwd: string): Set<string> {
         }
       }
     }
-    return changed;
     // Detect deletions: slugs in old but not in current
     const currentSlugs = new Set(current.mosques.map((m) => m.slug));
     for (const oldSlug of oldSlugs) {
@@ -333,6 +332,14 @@ const RamadanPrayerTimeSchema = z
   })
   .passthrough();
 
+const DstFileSchema = z.object({
+  uk_dst_dates: z.array(z.object({
+    year: z.number().int(),
+    start_date: z.string().min(1),
+    end_date: z.string().min(1),
+  })),
+});
+
 const RamadanFileSchema = z
   .object({
     month: z.string().min(1),
@@ -412,7 +419,8 @@ async function seedMonthly(
   for (let monthNum = 1; monthNum <= 12; monthNum++) {
     if (monthsOnly && !monthsOnly.has(monthNum)) continue;
 
-    const monthFile = MONTH_FILES[monthNum];
+    const monthFile = MONTH_FILES.get(monthNum);
+    if (!monthFile) continue;
     const filePath = path.join(
       getMosqueDataFsDir(process.cwd(), mosqueSlug),
       `${monthFile}.json`
@@ -431,7 +439,7 @@ async function seedMonthly(
         iqamahTimes: data.iqamah_times,
         jummahIqamah: data.jummah_iqamah,
         adminSecret,
-        ...(publishEventId ? { publishEventId } : {}),
+        publishEventId,
       });
       console.log(`  ✓ ${monthFile}`);
     } catch (err) {
@@ -462,7 +470,7 @@ async function seedRamadan(
       iqamahTimes: data.iqamah_times,
       jummahIqamah: data.jummah_iqamah,
       adminSecret,
-      ...(publishEventId ? { publishEventId } : {}),
+      publishEventId,
     });
     console.log(`  ✓ ramadan`);
   } catch (err) {
@@ -516,9 +524,7 @@ async function main() {
     const dstPath = path.join(cwd, "public", "docs", "dst-start-end.json");
     if (fs.existsSync(dstPath)) {
       try {
-        const dstRaw = JSON.parse(fs.readFileSync(dstPath, "utf-8")) as {
-          uk_dst_dates: { year: number; start_date: string; end_date: string }[];
-        };
+        const dstRaw = parseJsonFile(dstPath, DstFileSchema);
         await client.mutation(api.seed.seedUkDstCalendar, {
           ukDstDates: dstRaw.uk_dst_dates,
           adminSecret,
@@ -578,7 +584,7 @@ async function main() {
       a[0].localeCompare(b[0])
     )) {
       const m = [...nums].sort((x, y) => x - y);
-      console.log(`  • ${slug}: ${m.map((n) => MONTH_FILES[n]).join(", ")}`);
+      console.log(`  • ${slug}: ${m.map((n) => MONTH_FILES.get(n)).join(", ")}`);
     }
     for (const slug of [...changedPlan.ramadanSlugs].sort()) {
       console.log(`  • ${slug}: ramadan.json`);
@@ -634,9 +640,7 @@ async function main() {
   if (!useChanged || changedPlan!.dstChanged) {
     if (fs.existsSync(dstPath)) {
       try {
-        const dstRaw = JSON.parse(fs.readFileSync(dstPath, "utf-8")) as {
-          uk_dst_dates: { year: number; start_date: string; end_date: string }[];
-        };
+        const dstRaw = parseJsonFile(dstPath, DstFileSchema);
         await client.mutation(api.seed.seedUkDstCalendar, {
           ukDstDates: dstRaw.uk_dst_dates,
           adminSecret,

@@ -56,11 +56,13 @@ export async function deliverToSubscribers(
   return outcomes;
 }
 
-export function partitionDeliveryOutcomes(outcomes: DeliveryOutcome[]): {
+type PartitionedDeliveryOutcomes = {
   succeeded: DeliveryOutcome[];
   temporary: DeliveryOutcome[];
   permanent: DeliveryOutcome[];
-} {
+};
+
+export function partitionDeliveryOutcomes(outcomes: DeliveryOutcome[]): PartitionedDeliveryOutcomes {
   const succeeded: DeliveryOutcome[] = [];
   const temporary: DeliveryOutcome[] = [];
   const permanent: DeliveryOutcome[] = [];

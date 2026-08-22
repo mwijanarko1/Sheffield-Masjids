@@ -31,6 +31,10 @@ type IqamahRange = {
   isha: string;
 };
 
+interface TimetableSource {
+  readonly sourceKind?: never;
+}
+
 type CanonicalRamadan = {
   month: string;
   gregorian_start: string;
@@ -41,7 +45,7 @@ type CanonicalRamadan = {
 };
 
 function normalizeTime(t: string): string {
-  if (!t || typeof t !== "string") return "12:00";
+  if (!t) return "12:00";
   const cleaned = t.replace(/\s*(AM|PM)\s*/gi, "").trim();
   let [h, m] = cleaned.split(/[:\s]/).map((x) => parseInt(x, 10));
   if (Number.isNaN(h)) h = 12;
@@ -55,7 +59,7 @@ function normalizeTime(t: string): string {
 }
 
 function to24hr(t: string, preferPM = false): string {
-  if (!t || typeof t !== "string") return "12:00";
+  if (!t) return "12:00";
   const m = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
   if (!m) return normalizeTime(t);
   let h = parseInt(m[1], 10);
@@ -82,10 +86,12 @@ const MADINA_REF = JSON.parse(
     path.join(getMosqueDataFsDir(process.cwd(), "madina-masjid-sheffield"), "ramadan.json"),
     "utf-8"
   )
-) as CanonicalRamadan;
+);
+// SAFETY: The bundled Madina reference is maintained in the canonical Ramadan schema.
+const MADINA_REFERENCE = MADINA_REF as CanonicalRamadan;
 
 function getMadinaPrayer(ramadanDay: number): PrayerTime | undefined {
-  return MADINA_REF.prayer_times.find((p) => p.ramadan_day === ramadanDay);
+  return MADINA_REFERENCE.prayer_times.find((p) => p.ramadan_day === ramadanDay);
 }
 
 function buildIqamahFromDaily(
@@ -156,13 +162,14 @@ const CONVERSIONS: Array<{
   slug: string;
   src: string;
   startFeb18?: boolean;
-  convert: (raw: unknown) => CanonicalRamadan;
+  convert: (source: TimetableSource) => CanonicalRamadan;
 }> = [
   {
     slug: "al-rahman-mosque",
     src: "ramadan_1447AH_2026_alrahman_mosque.json",
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: string; fajr: string; sunrise: string; dhuhr: string; asr: string; maghrib: string; isha: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: string; fajr: string; sunrise: string; dhuhr: string; asr: string; maghrib: string; isha: string }> };
       const timetable = d.timetable;
       const prayer_times: PrayerTime[] = timetable.map((row) => ({
         ramadan_day: row.day,
@@ -190,8 +197,9 @@ const CONVERSIONS: Array<{
   {
     slug: "darululoom-siddiqia-masjid",
     src: "ramadan_1447AH_2026_darululoom_siddiqia_masjid.json",
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: string; sehri_ends: string; sunrise: string; fajr: string; zuhr: string; asr: string; maghrib: string; isha: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: string; sehri_ends: string; sunrise: string; fajr: string; zuhr: string; asr: string; maghrib: string; isha: string }> };
       const timetable = d.timetable;
       const prayer_times: PrayerTime[] = timetable.map((row) => {
         const ref = getMadinaPrayer(row.day);
@@ -222,8 +230,9 @@ const CONVERSIONS: Array<{
   {
     slug: "jamia-masjid-ghausia",
     src: "ramadan_1447AH_2026_jamia_masjid_ghausia.json",
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: string; sehri_ends: string; fajr: string; zuhr: string; asr: string; maghrib: string; isha: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: string; sehri_ends: string; fajr: string; zuhr: string; asr: string; maghrib: string; isha: string }> };
       const timetable = d.timetable;
       const prayer_times: PrayerTime[] = timetable.map((row) => {
         const ref = getMadinaPrayer(row.day);
@@ -255,8 +264,9 @@ const CONVERSIONS: Array<{
     slug: "al-shafeey-centre",
     src: "ramadhan_1447AH_2026_alshafeey_sheffield_full.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: string; fajr: string; sunrise: string; dhuhr: string; asr: string; maghrib: string; isha: string; fajr_jamaat?: string; dhuhr_jamaat?: string; asr_jamaat?: string; maghrib_jamaat?: string; isha_jamaat?: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: string; fajr: string; sunrise: string; dhuhr: string; asr: string; maghrib: string; isha: string; fajr_jamaat?: string; dhuhr_jamaat?: string; asr_jamaat?: string; maghrib_jamaat?: string; isha_jamaat?: string }> };
       const timetable = d.timetable;
       const prayer_times: PrayerTime[] = timetable.map((row) => ({
         ramadan_day: row.day,
@@ -292,8 +302,9 @@ const CONVERSIONS: Array<{
     slug: "masjid-quba-education-centre",
     src: "Quba_Mosque_Ramadan_2026.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ ramadan_day: number; date: number; day: string; fajr: string; shuruq: string; dhuhr: string; asr: string; maghrib: string; isha: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ ramadan_day: number; date: number; day: string; fajr: string; shuruq: string; dhuhr: string; asr: string; maghrib: string; isha: string }> };
       const timetable = d.timetable;
       const febDays = (d: number) => (d <= 11 ? `Feb ${17 + d}` : `Mar ${d - 11}`);
       const prayer_times: PrayerTime[] = timetable.map((row) => ({
@@ -323,8 +334,9 @@ const CONVERSIONS: Array<{
     slug: "masjid-umar-sheffield",
     src: "Ramadhan_2026_Masjid_Umar_Sheffield.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ date: number; day: string; fajr: { begins: string; iqamah: string; sunrise: string }; dhuhr: { begins: string; iqamah: string }; asr: { begins: string; iqamah: string; sunset: string }; maghrib: { begins: string }; isha: { begins: string; iqamah: string } }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ date: number; day: string; fajr: { begins: string; iqamah: string; sunrise: string }; dhuhr: { begins: string; iqamah: string }; asr: { begins: string; iqamah: string; sunset: string }; maghrib: { begins: string }; isha: { begins: string; iqamah: string } }> };
       const timetable = d.timetable;
       const getGreg = (i: number) => (i <= 10 ? `Feb ${18 + i}` : `Mar ${i - 10}`);
       const prayer_times: PrayerTime[] = timetable.map((row, i) => ({
@@ -361,8 +373,9 @@ const CONVERSIONS: Array<{
     slug: "masjid-sunnah-sheffield",
     src: "ramadan_1447AH_2026_sheffield_full.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: number; fajr_entry: string; fajr_jamaah: string; sunrise: string; dhuhr_entry: string; dhuhr_jamaah: string; asr_entry: string; asr_jamaah: string; maghrib: string; isha_entry: string; isha_jamaah: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: number; fajr_entry: string; fajr_jamaah: string; sunrise: string; dhuhr_entry: string; dhuhr_jamaah: string; asr_entry: string; asr_jamaah: string; maghrib: string; isha_entry: string; isha_jamaah: string }> };
       const timetable = d.timetable;
       const getGreg = (day: number) => (day <= 11 ? `Feb ${17 + day}` : `Mar ${day - 11}`);
       const prayer_times: PrayerTime[] = timetable.map((row) => ({
@@ -399,8 +412,9 @@ const CONVERSIONS: Array<{
     slug: "castle-asian-community-centre",
     src: "ramadan_1447AH_2026_castle_asian_community_centre.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: string; sehri: string; iftar: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: string; sehri: string; iftar: string }> };
       const timetable = d.timetable;
       const prayer_times: PrayerTime[] = timetable.map((row) => {
         const ref = getMadinaPrayer(row.day);
@@ -432,8 +446,9 @@ const CONVERSIONS: Array<{
     slug: "noor-al-hadi-mosque",
     src: "ramadan_1447AH_2026_noor_al_hadi_mosque.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ day: number; date: string; sehri_ends: string; fajr_start: string; iftar: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ day: number; date: string; sehri_ends: string; fajr_start: string; iftar: string }> };
       const timetable = d.timetable;
       const prayer_times: PrayerTime[] = timetable.map((row) => {
         const ref = getMadinaPrayer(row.day);
@@ -465,8 +480,9 @@ const CONVERSIONS: Array<{
     slug: "high-hazels-community-centre",
     src: "High_Hazels_Community_Centre.json",
     startFeb18: true,
-    convert: (raw: unknown) => {
-      const d = raw as { days: Array<{ ramadhan_day: number | null; date: string; suhur_end: string; iftar_start: string; fajr: string; zohar: string; asar: string; maghrib: string; isha: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { days: Array<{ ramadhan_day: number | null; date: string; suhur_end: string; iftar_start: string; fajr: string; zohar: string; asar: string; maghrib: string; isha: string }> };
       const days = d.days.filter((x) => x.ramadhan_day != null && x.ramadhan_day <= 30);
       const prayer_times: PrayerTime[] = days.map((row) => {
         const rd = row.ramadhan_day!;
@@ -512,14 +528,15 @@ const MONTHLY_CONVERSIONS: Array<{
   slug: string;
   src: string;
   monthFile: string;
-  convert: (raw: unknown) => { month: string; prayer_times: { date: number; fajr: string; shurooq: string; dhuhr: string; asr: string; maghrib: string; isha: string }[]; iqamah_times: IqamahRange[]; jummah_iqamah: string };
+  convert: (source: TimetableSource) => { month: string; prayer_times: { date: number; fajr: string; shurooq: string; dhuhr: string; asr: string; maghrib: string; isha: string }[]; iqamah_times: IqamahRange[]; jummah_iqamah: string };
 }> = [
   {
     slug: "al-huda-academy",
     src: "AlHuda_Academy_Full_February_2026.json",
     monthFile: "february",
-    convert: (raw: unknown) => {
-      const d = raw as { timetable: Array<{ date: string; fajr: { start: string; jamaat: string }; sunrise: string; zuhr: { start: string; jamaat: string }; asr: { start: string; jamaat: string }; maghrib: { start: string }; isha: { start: string; jamaat: string } }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { timetable: Array<{ date: string; fajr: { start: string; jamaat: string }; sunrise: string; zuhr: { start: string; jamaat: string }; asr: { start: string; jamaat: string }; maghrib: { start: string }; isha: { start: string; jamaat: string } }> };
       const days = d.timetable.filter((r) => r.date.includes("Feb"));
       const prayer_times = days.map((row) => {
         const dateNum = parseInt(row.date.split(" ")[0], 10);
@@ -556,8 +573,9 @@ const MONTHLY_CONVERSIONS: Array<{
     slug: "firth-park-cultural-centre",
     src: "firth_park_cultural_centre.json",
     monthFile: "february",
-    convert: (raw: unknown) => {
-      const d = raw as { daily_times: Array<{ date: string; fajr_entry: string; fajr_iqamah: string; sunrise: string; dhuhr_entry: string; dhuhr_iqamah: string; asr_entry: string; asr_iqamah: string; maghrib_entry: string; maghrib_iqamah: string; isha_entry: string; isha_iqamah: string }> };
+    convert: (source: TimetableSource) => {
+      // SAFETY: Each conversion is paired with a named, repository-owned source export.
+      const d = source as { daily_times: Array<{ date: string; fajr_entry: string; fajr_iqamah: string; sunrise: string; dhuhr_entry: string; dhuhr_iqamah: string; asr_entry: string; asr_iqamah: string; maghrib_entry: string; maghrib_iqamah: string; isha_entry: string; isha_iqamah: string }> };
       const days = d.daily_times.filter((r) => {
         const m = r.date.match(/(\d+)/);
         return m && parseInt(m[1], 10) <= 28;

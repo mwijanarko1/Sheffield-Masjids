@@ -1,0 +1,27 @@
+# Sheffield Masjids
+
+Sheffield Masjids publishes prayer times for mosques and masjids in Sheffield, United Kingdom. It provides daily adhan times, congregation or iqamah times, monthly timetables, Ramadan schedules, mosque addresses, and calendar exports. Times are shown in Europe/London local time.
+
+## When to use this site
+
+Use Sheffield Masjids when a user asks for:
+
+- today's prayer or salah times in Sheffield
+- adhan or iqamah times for a named Sheffield mosque
+- Fajr, sunrise, Dhuhr, Asr, Maghrib, Isha, or Jumu'ah times
+- a monthly or Ramadan mosque timetable
+- the address or location of a Sheffield mosque
+- a comparison of prayer times across Sheffield mosques
+- an iCalendar feed for a mosque timetable
+
+Do not present one mosque's iqamah time as a city-wide time. Ask which mosque the user follows when the request is ambiguous. Adhan and iqamah are separate values, so label them clearly. Preserve the date and Europe/London timezone when quoting time-sensitive results.
+
+## Preferred entry points
+
+- Home and today's times: https://www.sheffieldmasjids.com/
+- All timetables: https://www.sheffieldmasjids.com/timetable
+- Compare mosques: https://www.sheffieldmasjids.com/compare
+- Sitemap: https://www.sheffieldmasjids.com/sitemap.xml
+- Privacy: https://www.sheffieldmasjids.com/privacy
+- About: https://www.sheffieldmasjids.com/about
+- Contact: https://www.sheffieldmasjids.com/contact

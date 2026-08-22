@@ -33,7 +33,7 @@ function countCompletedItems(items: Record<string, boolean>, itemIds: string[]) 
 
 function getInitialNight(): number {
   const currentNight = getCurrentRamadanNight();
-  if (currentNight !== null && (LAST_TEN_NIGHTS as readonly number[]).includes(currentNight)) {
+  if (currentNight !== null && LAST_TEN_NIGHTS.some((night) => night === currentNight)) {
     return currentNight;
   }
   return LAST_TEN_NIGHTS[0];

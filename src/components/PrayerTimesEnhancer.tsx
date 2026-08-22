@@ -32,9 +32,8 @@ export default function PrayerTimesEnhancer({
   const [canEnhance, setCanEnhance] = useState(false);
 
   useEffect(() => {
-    const supportsModernTailwindColor = typeof CSS !== "undefined" &&
-      typeof CSS.supports === "function" &&
-      CSS.supports("color", "color-mix(in oklab, white, black)");
+    const supportsModernTailwindColor =
+      "CSS" in globalThis && CSS.supports("color", "color-mix(in oklab, white, black)");
 
     setCanEnhance(supportsModernTailwindColor);
   }, []);

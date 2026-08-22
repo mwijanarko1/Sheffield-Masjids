@@ -36,13 +36,14 @@ function base64url(input: Buffer | string): string {
     .replace(/\//g, "_");
 }
 
+type JwtClaims = Record<string, string | number>;
+
 function signEs256Jwt(
-  payload: Record<string, unknown>,
+  payload: JwtClaims,
   privateKeyPem: string,
   keyId?: string,
 ): string {
-  const header: Record<string, unknown> = { alg: "ES256", typ: "JWT" };
-  if (keyId) header.kid = keyId;
+  const header = { alg: "ES256", typ: "JWT", kid: keyId };
   const headerB64 = base64url(JSON.stringify(header));
   const payloadB64 = base64url(JSON.stringify(payload));
   const data = `${headerB64}.${payloadB64}`;
@@ -135,7 +136,7 @@ async function getFcmAccessToken(): Promise<string | null> {
   if (!res.ok) {
     return null;
   }
-  const json = (await res.json()) as { access_token?: string; expires_in?: number };
+  const json: { access_token?: string; expires_in?: number } = await res.json();
   if (!json.access_token) return null;
   fcmAccessCache = {
     token: json.access_token,

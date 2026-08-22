@@ -113,18 +113,18 @@ async function main() {
     let added = 0;
     for (const item of list) {
       const raw = item.date || item.day || '';
-      const d = typeof raw === 'string' ? raw.slice(0, 10) : '';
+      const d = String(raw).slice(0, 10);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
       if (!d.startsWith(String(year))) continue;
       const f = item.fajr, z = item.dhuhr, a = item.asr, mg = item.maghrib, is = item.isha;
       const iq = item.iqamah || item.jamaah || {};
       daysByDate.set(d, {
-        fajr: toHHMM(typeof f === 'string' ? f : f?.time || f?.begins),
-        sunrise: toHHMM(typeof item.sunrise === 'string' ? item.sunrise : item.sunrise?.time),
-        dhuhr: toHHMM(typeof z === 'string' ? z : z?.time || z?.begins),
-        asr: toHHMM(typeof a === 'string' ? a : a?.time || a?.begins),
-        maghrib: toHHMM(typeof mg === 'string' ? mg : mg?.time || mg?.begins),
-        isha: toHHMM(typeof is === 'string' ? is : is?.time || is?.begins),
+        fajr: toHHMM(f?.time || f?.begins || f),
+        sunrise: toHHMM(item.sunrise?.time || item.sunrise),
+        dhuhr: toHHMM(z?.time || z?.begins || z),
+        asr: toHHMM(a?.time || a?.begins || a),
+        maghrib: toHHMM(mg?.time || mg?.begins || mg),
+        isha: toHHMM(is?.time || is?.begins || is),
         iFajr: toHHMM(iq.fajr), iDhuhr: toHHMM(iq.dhuhr),
         iAsr: toHHMM(iq.asr), iMaghrib: toHHMM(iq.maghrib), iIsha: toHHMM(iq.isha),
         jummah: toHHMM(iq.jumuah || iq.jummah)

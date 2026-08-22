@@ -156,7 +156,7 @@ export function FloatingTabBar() {
     </nav>
   );
 
-  if (!mounted || typeof document === "undefined") return null;
+  if (!mounted) return null;
   /* Hide tab bar on Masjidly product pages and while the home Masjidly promo is open */
   if (pathname?.startsWith("/masjidly") || masjidlyPromo?.promoOpen) return null;
   return createPortal(navContent, document.body);

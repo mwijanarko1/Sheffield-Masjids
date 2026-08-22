@@ -40,7 +40,8 @@ export function CustomSelect({
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+      const target = event.target;
+      if (!(target instanceof Node)) return;
       const inContainer = containerRef.current?.contains(target);
       const inDropdown = dropdownRef.current?.contains(target);
       if (!inContainer && !inDropdown) {
@@ -53,7 +54,7 @@ export function CustomSelect({
   }, []);
 
   React.useLayoutEffect(() => {
-    if (isOpen && listFitsContent && buttonRef.current && typeof document !== "undefined") {
+    if (isOpen && listFitsContent && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setDropdownPosition({ top: rect.bottom + 4, left: rect.left + rect.width / 2 });
     }
@@ -116,7 +117,7 @@ export function CustomSelect({
       </button>
 
       {isOpen &&
-        (listFitsContent && typeof document !== "undefined"
+        (listFitsContent
           ? createPortal(
               <div
                 ref={dropdownRef}

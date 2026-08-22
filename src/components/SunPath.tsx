@@ -15,13 +15,13 @@ const CURVE_BOTTOM = 54;
 const SVG_HEIGHT = 72;
 const VIEW_WIDTH = 400;
 
-const LABEL_MAP: Record<string, string> = {
-  fajr: "Fajr",
-  dhuhr: "Dhuhr",
-  asr: "Asr",
-  maghrib: "Maghrib",
-  isha: "Isha",
-};
+const LABEL_MAP = new Map([
+  ["fajr", "Fajr"],
+  ["dhuhr", "Dhuhr"],
+  ["asr", "Asr"],
+  ["maghrib", "Maghrib"],
+  ["isha", "Isha"],
+]);
 
 const getPercentOfDay = (
   timeStr: string,
@@ -120,7 +120,7 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
 
     let t = getPercentOfDay(currentStr, startTime, endTime);
 
-    const [startH, startM] = startTime.split(":").map(Number);
+    const [startH] = startTime.split(":").map(Number);
     const [endH, endM] = endTime.split(":").map(Number);
 
     if (h >= 0 && h < startH) {
@@ -220,7 +220,7 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
               fontSize={compact ? 8 : 9}
               fontWeight="500"
             >
-              {LABEL_MAP[pt.id] ?? pt.id}
+              {LABEL_MAP.get(pt.id) ?? pt.id}
             </text>
           </g>
         ))}

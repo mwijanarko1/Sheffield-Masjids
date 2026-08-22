@@ -166,7 +166,9 @@ export default function MonthlyCalendarExportModal({
           </Select>
 
           <div className="flex gap-2">
-            <Select value={range} onValueChange={(v) => setRange(v as CalendarExportRange)}>
+            <Select value={range} onValueChange={(value) => {
+              if (value === "month" || value === "year") setRange(value);
+            }}>
               <SelectTrigger className="h-9 flex-1 rounded-xl border-white/10 bg-white/10 px-3 text-xs font-normal text-white/90 shadow-none backdrop-blur-none sm:text-sm">
                 <SelectValue />
               </SelectTrigger>
@@ -176,7 +178,9 @@ export default function MonthlyCalendarExportModal({
               </SelectContent>
             </Select>
 
-            <Select value={mode} onValueChange={(v) => setMode(v as CalendarExportMode)}>
+            <Select value={mode} onValueChange={(value) => {
+              if (value === "adhan" || value === "iqamah" || value === "both") setMode(value);
+            }}>
               <SelectTrigger className="h-9 flex-1 rounded-xl border-white/10 bg-white/10 px-3 text-xs font-normal text-white/90 shadow-none backdrop-blur-none sm:text-sm">
                 <SelectValue />
               </SelectTrigger>

@@ -17,14 +17,6 @@ interface LastTenChecklistProps {
   onToggleItem: (itemId: string) => void;
 }
 
-function renderTextBlock(content?: string | string[]) {
-  if (!content) return null;
-  const lines = Array.isArray(content) ? content : [content];
-  return lines.map((line, index) => (
-    <p key={`${line.slice(0, 24)}-${index}`}>{line}</p>
-  ));
-}
-
 export default function LastTenChecklist({
   night,
   difficulty,

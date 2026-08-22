@@ -8,9 +8,7 @@ export const RAMADAN_START_DATE = "2026-02-18";
  * Key = Ramadan day, value = { maghrib, nextFajr }.
  * `nextFajr` is the fajr of the following Gregorian day.
  */
-export const NIGHT_BOUNDARIES: Readonly<
-  Record<number, { maghrib: string; nextFajr: string }>
-> = {
+export const NIGHT_BOUNDARIES = {
   1: { maghrib: "17:25", nextFajr: "05:40" },
   2: { maghrib: "17:27", nextFajr: "05:38" },
   3: { maghrib: "17:29", nextFajr: "05:36" },
@@ -41,12 +39,19 @@ export const NIGHT_BOUNDARIES: Readonly<
   28: { maghrib: "18:17", nextFajr: "04:40" },
   29: { maghrib: "18:18", nextFajr: "04:38" },
   30: { maghrib: "18:20", nextFajr: "04:38" },
-};
+} satisfies Readonly<Record<number, { maghrib: string; nextFajr: string }>>;
 
-interface SheffieldDateTimeParts {
+function getNightBoundary(day: number) {
+  return Object.entries(NIGHT_BOUNDARIES).find(([key]) => Number(key) === day)?.[1];
+}
+
+interface SheffieldDateParts {
   year: number;
   month: number;
   day: number;
+}
+
+interface SheffieldDateTimeParts extends SheffieldDateParts {
   hour: number;
   minute: number;
   second: number;
@@ -88,7 +93,7 @@ function getSheffieldDateTimeParts(now: Date): SheffieldDateTimeParts {
   };
 }
 
-function parseDateOnly(value: string): { year: number; month: number; day: number } {
+function parseDateOnly(value: string): SheffieldDateParts {
   const [year, month, day] = value.split("-").map(Number);
   return { year, month, day };
 }
@@ -160,7 +165,7 @@ export function getCurrentRamadanNight(now: Date = new Date()): number | null {
     return hour * 3600 + minute * 60 + second;
   })();
 
-  const previousNight = NIGHT_BOUNDARIES[ramadanDay - 1];
+  const previousNight = getNightBoundary(ramadanDay - 1);
   if (previousNight && currentSeconds < parseTimeToSeconds(previousNight.nextFajr)) {
     return ramadanDay - 1;
   }
@@ -178,8 +183,8 @@ export function getRamadanNightCountdown(
 
   const { hour, minute, second } = getSheffieldDateTimeParts(now);
   const currentSeconds = hour * 3600 + minute * 60 + second;
-  const previousNight = NIGHT_BOUNDARIES[ramadanDay - 1];
-  const tonight = NIGHT_BOUNDARIES[ramadanDay];
+  const previousNight = getNightBoundary(ramadanDay - 1);
+  const tonight = getNightBoundary(ramadanDay);
 
   if (!tonight) {
     return null;
