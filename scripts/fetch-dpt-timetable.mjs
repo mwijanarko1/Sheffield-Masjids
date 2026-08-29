@@ -59,6 +59,12 @@ function parseTime(s) {
  * Date, Day, Fajr Begins, Fajr Iqamah, Sunrise, Zuhr Begins, Zuhr Iqamah,
  * Asr Begins, Asr Iqamah, Maghrib Begins, Maghrib Iqamah, Isha Begins, Isha Iqamah
  * -> 13 cells. Some tables lack maghrib iqamah (12 cells) — handled.
+ *
+ * Variant (14 cells, e.g. alhudabolton): the Asr group has 3 columns
+ * (Standard, Hanafi, Iqamah) with a placeholder Asr Begins:
+ * [0]date [1]day [2]FajrBegins [3]FajrIqamah [4]Sunrise [5]DhuhrBegins
+ * [6]DhuhrIqamah [7]AsrBegins(ph) [8]AsrStandard [9]AsrHanafi [10]AsrIqamah
+ * [11]MaghribBegins [12]MaghribIqamah [13]IshaBegins [14]IshaIqamah
  */
 function parseTimetableHtml(html) {
   const rows = [];
@@ -71,10 +77,11 @@ function parseTimetableHtml(html) {
     const tds = [];
     let tdMatch;
     while ((tdMatch = tdRe.exec(inner)) !== null) tds.push(stripTdInner(tdMatch[1]));
+    if (tds.length < 12) continue;
     // Date formats seen in the wild: "1 January 2026", "1-11-2026", "Sun 1-11-2026",
     // "1 Rajab 1448", "Sun 1-11-2026 22 Jumādā al-Ula 1448", "January 1, 2026",
-    // "01/12/2026" (dd/mm/yyyy; hijri leaks into cell)
-    let dayNum = parseInt(/^(\d{1,2})[-\s]/.exec(tds[0] || '')?.[1] ?? '', 10);
+    // "01/12/2026" (dd/mm/yyyy; hijri leaks into cell), "30th September 2026 ..."
+    let dayNum = parseInt(/^(\d{1,2})(?:st|nd|rd|th)?[-\s]/.exec(tds[0] || '')?.[1] ?? '', 10);
     if (!Number.isFinite(dayNum)) {
       const m2 = /^\w+\s+(\d{1,2})[-\s]/.exec(tds[0] || '');
       dayNum = m2 ? parseInt(m2[1], 10) : NaN;
@@ -95,17 +102,36 @@ function parseTimetableHtml(html) {
     const shurooq = parseTime(tds[4]);
     const dhuhr = parseTime(tds[5]);
     const dhuhrIqamah = parseTime(tds[6]);
-    const asr = parseTime(tds[7]);
-    const asrIqamah = parseTime(tds[8]);
-    const maghrib = parseTime(tds[9]);
-    const maghribIqamah = parseTime(tds[10]);
-    const isha = parseTime(tds[11]);
-    const ishaIqamah = parseTime(tds[12]);
+    let asr, asrIqamah, maghrib, maghribIqamah, isha, ishaIqamah;
+    if (tds.length === 14) {
+      // 14-col variant: [7]AsrStandard [8]AsrHanafi [9]AsrIqamah
+      // [10]MaghribBegins [11]MaghribIqamah [12]IshaBegins [13]IshaIqamah
+      asr = parseTime(tds[7]);
+      asrIqamah = parseTime(tds[9]);
+      maghrib = parseTime(tds[10]);
+      maghribIqamah = parseTime(tds[11]);
+      isha = parseTime(tds[12]);
+      ishaIqamah = parseTime(tds[13]);
+    } else {
+      asr = parseTime(tds[7]);
+      asrIqamah = parseTime(tds[8]);
+      maghrib = parseTime(tds[9]);
+      maghribIqamah = parseTime(tds[10]);
+      isha = parseTime(tds[11]);
+      ishaIqamah = parseTime(tds[12]);
+    }
 
     rows.push({ date: dayNum, weekday, fajr, fajrIqamah, shurooq, dhuhr, dhuhrIqamah, asr, asrIqamah, maghrib, maghribIqamah, isha, ishaIqamah });
   }
   rows.sort((a, b) => a.date - b.date);
-  return rows;
+  // Dedupe by date (keep first occurrence); source feeds sometimes repeat a
+  // near-month-end date and omit the real last day.
+  const seen = new Set();
+  return rows.filter((r) => {
+    if (seen.has(r.date)) return false;
+    seen.add(r.date);
+    return true;
+  });
 }
 
 function convertToProjectFormat(days, monthName) {

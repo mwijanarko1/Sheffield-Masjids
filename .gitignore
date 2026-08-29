@@ -57,3 +57,16 @@ next-env.d.ts
 
 # Local agent / tool config
 .devin/
+
+tmp/
+__pycache__/
+*.py[cod]
+/all_easyocr_text.txt
+/*_crop.png
+/horizontal.png
+/vertical.png
+/screenshot-*.jpg
+/easyocr_test.py
+/ocr_*.py
+/find_*.py
+/get_bounding_boxes*.py
