@@ -16,7 +16,7 @@
  *   Without a matching secret the script will abort before attempting any writes.
  *
  * Run:
- *   bun scripts/seed-convex.ts                                   # full seed — all mosques, all months (dev)
+ *   bun scripts/seed-convex.ts                                   # full seed: all mosques, all months (dev)
  *   bun scripts/seed-convex.ts --prod                            # full seed (production URL)
  *   bun scripts/seed-convex.ts --changed                         # only JSON changed vs HEAD (+ untracked under mosques/)
  *   bun scripts/seed-convex.ts --slug <slug>                     # seed only one mosque (registry + monthly)
@@ -70,17 +70,17 @@ function resolveAdminSecret(isProd: boolean): string {
   return (process.env.CONVEX_DEV_ADMIN_SECRET || process.env.DEV_SECRET || fallback || "").trim();
 }
 
-/** Lowercase English month file stem → 1–12 */
+/** Lowercase English month file stem -> 1-12 */
 const MONTH_NAME_TO_NUM: Record<string, number> = Object.fromEntries(
-  Object.entries(MONTH_FILES).map(([n, name]) => [name.toLowerCase(), Number(n)])
+  Array.from(MONTH_FILES.entries()).map(([n, name]) => [name.toLowerCase(), Number(n)])
 );
 
 type ChangedPlan = {
   registryChanged: boolean;
-  /** Only populated when registryChanged — slugs added/modified in mosques.json */
+  /** Only populated when registryChanged: slugs added/modified in mosques.json */
   changedRegistrySlugs: Set<string>;
   dstChanged: boolean;
-  /** slug → month numbers touched */
+  /** slug -> month numbers touched */
   monthlyBySlug: Map<string, Set<number>>;
   ramadanSlugs: Set<string>;
 };
@@ -401,7 +401,7 @@ async function seedMosques(client: ConvexHttpClient, forceUnhide = false, slugsO
 }
 
 /**
- * @param monthsOnly - if null, seed every month file that exists; otherwise only listed month numbers (1–12).
+ * @param monthsOnly - if null, seed every month file that exists; otherwise only listed month numbers (1-12).
  */
 // Production currently runs the older validator, so production callers omit this until Convex is deployed.
 function newPublishEventId(mosqueSlug: string): string {
@@ -651,7 +651,7 @@ async function main() {
       }
       await delay(200);
     } else {
-      console.warn("public/docs/dst-start-end.json not found — skip UK DST seed\n");
+      console.warn("public/docs/dst-start-end.json not found - skip UK DST seed\n");
     }
   } else {
     console.log("Skipping UK DST calendar (dst-start-end.json unchanged)\n");
