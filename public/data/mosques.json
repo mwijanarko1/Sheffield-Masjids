@@ -176,6 +176,20 @@
       "website": "https://razajamiamasjid.co.uk"
     },
     {
+      "id": "altrincham-mosque",
+      "name": "Altrincham Mosque (AHMA)",
+      "address": "Islamic Cultural Centre, Grove Lane, Hale, Altrincham, Cheshire WA15 8JG, United Kingdom",
+      "lat": 53.3808392,
+      "lng": -2.3278406,
+      "slug": "altrincham-mosque",
+      "citySlug": "altrincham",
+      "cityName": "Altrincham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.altrinchammosque.org/"
+    },
+    {
       "id": "faizan-e-siddeeq-e-akbar",
       "name": "Aylesbury Faizan-e-Siddeeq-e-Akbar",
       "address": "Unit 2, Chamberlain Road, Aylesbury HP19 8DY, United Kingdom",
