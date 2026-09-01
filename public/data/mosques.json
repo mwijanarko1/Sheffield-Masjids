@@ -13,7 +13,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/abu-dhabi"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "ajman-mosques",
@@ -28,7 +28,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/ajman"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "dubai-mosques",
@@ -43,7 +43,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/dubai"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "fujairah-mosques",
@@ -58,7 +58,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/fujairah"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "ras-al-khaimah-mosques",
@@ -73,7 +73,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/ras-al-khaimah"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "sharjah-mosques",
@@ -88,7 +88,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/sharjah"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "umm-al-quwain-mosques",
@@ -103,7 +103,7 @@
       "countryName": "United Arab Emirates",
       "timezone": "Asia/Dubai",
       "isHidden": false,
-      "website": "https://www.khaleejtimes.com/prayer-time-uae/umm-al-quwain"
+      "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
       "id": "swinburne-islamic-society",
