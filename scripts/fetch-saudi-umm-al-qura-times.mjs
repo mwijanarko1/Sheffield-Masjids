@@ -38,6 +38,8 @@ const CITIES = [
   { citySlug: "najran", cityName: "Najran", lat: 17.52, lng: 44.2 },
   { citySlug: "hofuf", sourceSlug: "al-hofuf", cityName: "Hofuf", lat: 25.408, lng: 49.6132 },
   { citySlug: "jazan", cityName: "Jazan", lat: 16.89, lng: 42.54 },
+  // Not in the official city list; served via coordinates (Aramco camp near Hofuf).
+  { citySlug: "udhailiyah", cityName: "Udhailiyah", lat: 25.14, lng: 49.3, website: null },
 ].map((city) => ({ ...city, mosqueSlug: `${city.citySlug}-mosques` }));
 
 const MONTHS = [
@@ -116,7 +118,7 @@ function buildMonthlyJson(rows, monthIndex) {
 }
 
 function registryEntry(city) {
-  return {
+  const entry = {
     id: city.mosqueSlug,
     name: `${city.cityName} Prayer Times`,
     address: `${city.cityName}, Saudi Arabia`,
@@ -129,8 +131,11 @@ function registryEntry(city) {
     countryName: "Saudi Arabia",
     timezone: "Asia/Riyadh",
     isHidden: false,
-    website: `https://ummulqura.org.sa/en/prayer-times/${city.sourceSlug ?? city.citySlug}`,
   };
+  if (city.website !== null) {
+    entry.website = city.website ?? `https://ummulqura.org.sa/en/prayer-times/${city.sourceSlug ?? city.citySlug}`;
+  }
+  return entry;
 }
 
 function updateRegistry(entries) {

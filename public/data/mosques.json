@@ -3601,6 +3601,20 @@
       "timezone": "Asia/Riyadh",
       "isHidden": false,
       "website": "https://ummulqura.org.sa/en/prayer-times/jazan"
+    },
+    {
+      "id": "udhailiyah-mosques",
+      "name": "Udhailiyah Prayer Times",
+      "address": "Udhailiyah, Saudi Arabia",
+      "lat": 25.14,
+      "lng": 49.3,
+      "slug": "udhailiyah-mosques",
+      "citySlug": "udhailiyah",
+      "cityName": "Udhailiyah",
+      "countryCode": "SA",
+      "countryName": "Saudi Arabia",
+      "timezone": "Asia/Riyadh",
+      "isHidden": false
     }
   ]
 }
