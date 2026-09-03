@@ -121,6 +121,8 @@ Each mosque must have an entry in `/public/data/mosques.json`:
 - Direct text parsing from user-provided raw data
 - **OCR (tesseract)** on images — only when explicitly permitted by the user
 
+Load `extract-mosque-prayer-times` before HTTP extraction. Known traps: Newham/Humera Sheets (`2PACX` + `gid`, separate jamat vs `salahBeginning`, 12h +12), Witton DPT (HTTP not HTTPS, GET not POST, thead-only means no month data), Brand Lane (single-day embed, stop and request PDF), HTML tables with `Sep 1, 2026` date cells and nested iqamah spans. Write Python files instead of quoted one-liners. `scripts/seed-convex.ts` maps month names with `Array.from(MONTH_FILES.entries())`.
+
 ### ❌ Banned:
 - **Astronomical calculations** — never compute/calculate prayer times using libraries, formulas, or algorithms
 - **Placeholder/extrapolated data** without marking `isHidden: true`
