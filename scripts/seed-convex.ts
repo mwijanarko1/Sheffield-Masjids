@@ -425,7 +425,24 @@ async function seedMonthly(
       getMosqueDataFsDir(process.cwd(), mosqueSlug),
       `${monthFile}.json`
     );
-    if (!fs.existsSync(filePath)) continue;
+    if (!fs.existsSync(filePath)) {
+      // Full seed skips gaps. --changed / --months: missing file means delete that Convex month.
+      if (!monthsOnly) continue;
+      try {
+        const result = (await client.mutation(api.seed.removeMonthly, {
+          mosqueSlug,
+          month: monthFile,
+          year,
+          adminSecret,
+        })) as { deleted?: boolean; reason?: string };
+        if (result?.deleted) console.log(`  ✓ ${monthFile} (removed)`);
+        else console.log(`  · ${monthFile} (no file, ${result?.reason ?? "not in Convex"})`);
+      } catch (err) {
+        console.error(`  ✗ ${monthFile} remove:`, err instanceof Error ? err.message : err);
+      }
+      await delay(200);
+      continue;
+    }
 
     const data: MonthlyFile = parseJsonFile(filePath, MonthlyFileSchema);
 
