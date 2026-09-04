@@ -20,6 +20,7 @@
  *   bun scripts/seed-convex.ts --prod                            # full seed (production URL)
  *   bun scripts/seed-convex.ts --changed                         # only JSON changed vs HEAD (+ untracked under mosques/)
  *   bun scripts/seed-convex.ts --slug <slug>                     # seed only one mosque (registry + monthly)
+ *   bun scripts/seed-convex.ts --slug al-huda-preston,al-ansaar  # seed multiple mosques (comma-separated)
  *   bun scripts/seed-convex.ts --months 4,5                      # only those months, every mosque
  *   npm run seed:dev -- --changed --months april
  *   npm run seed:dev -- --slug south-essex-islamic-trust         # single mosque, dev
@@ -233,7 +234,8 @@ function parseCli(argv: string[]) {
   --prod        Use CONVEX_PROD_URL instead of dev.
   --changed     Only seed files that differ from HEAD or are untracked under public/data/mosques
                 (requires git). Skips unchanged months.
-  --slug <id>   Seed only the specified mosque (registry + monthly). Skips everything else.
+  --slug <ids>  Seed only the specified mosque(s) (registry + monthly). Comma-separated for multiple.
+                Skips everything else. Use this after committing fixes to avoid full re-seeds.
   --months A,B  Comma-separated month numbers or names (e.g. 4,5 or april,may).
                 With --changed: only applies to changed monthly files (intersection).
                 Without --changed: only those months for every mosque.
@@ -242,22 +244,34 @@ Examples:
   tsx scripts/seed-convex.ts --changed
   tsx scripts/seed-convex.ts --changed --months april
   tsx scripts/seed-convex.ts --slug south-essex-islamic-trust
-  tsx scripts/seed-convex.ts --slug south-essex-islamic-trust --prod
+  tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston --prod
   tsx scripts/seed-convex.ts --months 6,7,8`);
     process.exit(0);
   }
 
   let monthsCsv: string | undefined;
-  let slugOnly: string | undefined;
+  let slugArg: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a.startsWith("--months=")) monthsCsv = a.slice("--months=".length);
     else if (a === "--months" || a === "-m") monthsCsv = argv[i + 1];
-    else if (a.startsWith("--slug=")) slugOnly = a.slice("--slug=".length);
-    else if (a === "--slug") slugOnly = argv[i + 1];
+    else if (a.startsWith("--slug=")) slugArg = a.slice("--slug=".length);
+    else if (a === "--slug") slugArg = argv[i + 1];
   }
-  if (slugOnly !== undefined && !MOSQUE_SLUG_RE.test(slugOnly)) {
-    throw new Error(`Invalid slug: "${slugOnly}". Must match ${MOSQUE_SLUG_RE}`);
+  let slugOnly: Set<string> | undefined;
+  if (slugArg !== undefined) {
+    slugOnly = new Set();
+    for (const part of slugArg.split(",")) {
+      const s = part.trim();
+      if (!s) continue;
+      if (!MOSQUE_SLUG_RE.test(s)) {
+        throw new Error(`Invalid slug: "${s}". Must match ${MOSQUE_SLUG_RE}`);
+      }
+      slugOnly.add(s);
+    }
+    if (slugOnly.size === 0) {
+      throw new Error(`--slug requires at least one valid slug.`);
+    }
   }
   const monthsOnly = monthsCsv ? parseMonthsCsv(monthsCsv) : null;
   return { isProd, useChanged, slugOnly, monthsOnly };
@@ -528,14 +542,15 @@ async function main() {
     process.exit(1);
   }
 
-  // ── ─slug mode: seed exactly one mosque ──
+  // ── ─slug mode: seed specific mosque(s) ──
   if (slugOnly) {
-    console.log(`Single-mosque seed (--slug ${slugOnly}) on ${isProd ? "PRODUCTION" : "DEV"} (${convexUrl})\n`);
+    const slugList = [...slugOnly].sort();
+    console.log(`Slug seed (--slug ${slugList.join(",")}) on ${isProd ? "PRODUCTION" : "DEV"} (${convexUrl})\n`);
     const client = new ConvexHttpClient(convexUrl);
     const cwd = process.cwd();
 
-    // Seed registry for just this slug
-    await seedMosques(client, !isProd, new Set([slugOnly]), adminSecret);
+    // Seed registry for just these slugs
+    await seedMosques(client, !isProd, slugOnly, adminSecret);
 
     // Seed DST calendar always (it's a one-time thing)
     const dstPath = path.join(cwd, "public", "docs", "dst-start-end.json");
@@ -553,12 +568,14 @@ async function main() {
       await delay(200);
     }
 
-    // Seed monthly files for this slug
-    console.log(`Mosque: ${slugOnly}`);
-    const publishEventId = isProd ? undefined : newPublishEventId(slugOnly);
-    await seedMonthly(client, slugOnly, monthsOnly, adminSecret, publishEventId);
-    await seedRamadan(client, slugOnly, adminSecret, publishEventId);
-    console.log("");
+    // Seed monthly files for each slug
+    for (const slug of slugList) {
+      console.log(`Mosque: ${slug}`);
+      const publishEventId = isProd ? undefined : newPublishEventId(slug);
+      await seedMonthly(client, slug, monthsOnly, adminSecret, publishEventId);
+      await seedRamadan(client, slug, adminSecret, publishEventId);
+      console.log("");
+    }
     console.log("Done.");
     return;
   }

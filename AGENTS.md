@@ -144,19 +144,24 @@ Load `extract-mosque-prayer-times` before HTTP extraction. Known traps: Newham/H
 After adding/modifying data, seed both databases:
 
 ```bash
-# Dev (forces all mosques isHidden=false for testing)
-npx tsx scripts/seed-convex.ts --changed
-# or: npm run seed:dev -- --changed
+# Preferred: target specific mosques by slug (works after committing, no full re-seed)
+npx tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston
+npx tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston --prod
 
-# Prod (respects isHidden from mosques.json)
+# Incremental: only files changed vs HEAD (use before committing, not after)
+npx tsx scripts/seed-convex.ts --changed
 npx tsx scripts/seed-convex.ts --changed --prod
-# or: npm run seed:prod -- --changed
+
+# Full re-seed (all mosques, all months, slow, avoid unless necessary)
+npx tsx scripts/seed-convex.ts
+npx tsx scripts/seed-convex.ts --prod
 ```
 
-- `--changed` flag seeds only modified mosque files (incremental, faster)
-- Omit `--changed` to seed all mosques (full re-seed)
-- **Dev**: `upbeat-goat-583.eu-west-1.convex.cloud` — forces `isHidden: false`
-- **Prod**: `zany-mockingbird-207.eu-west-1.convex.cloud` — respects file values
+- `--slug <ids>`: seed only the named mosque(s), comma-separated. Use this after committing fixes.
+- `--changed`: seeds only files that differ from HEAD. Use before committing, not after.
+- Omit both flags for a full re-seed (all 290 mosques x 12 months, takes ~10 min).
+- **Dev**: `upbeat-goat-583.eu-west-1.convex.cloud`, forces `isHidden: false`
+- **Prod**: `zany-mockingbird-207.eu-west-1.convex.cloud`, respects file values
 
 ### Agent npm/npx allowlist (seed only)
 
@@ -166,9 +171,9 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 
 | Command | Notes |
 |---------|--------|
-| `npx tsx scripts/seed-convex.ts` … | Optional flags: `--changed`, `--prod` |
-| `npm run seed:dev` … | Optional `-- --changed` |
-| `npm run seed:prod` … | Optional `-- --changed` |
+| `npx tsx scripts/seed-convex.ts` … | Optional flags: `--changed`, `--prod`, `--slug <ids>` |
+| `npm run seed:dev` … | Optional `-- --changed`, `-- --slug <ids>` |
+| `npm run seed:prod` … | Optional `-- --changed`, `-- --slug <ids>` |
 
 **Not allowed:** any other `npm`/`npx` (`install`, `build`, `convex …`, random packages, etc.). Still require `/build` (or an explicit ask) for those.
 
