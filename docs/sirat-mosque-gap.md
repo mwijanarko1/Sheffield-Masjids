@@ -7,6 +7,29 @@ Our registry at time of pull: 212 GB mosques. Matched against Sirat: 74.
 **Gap: 500 mosques below** (+ 31 possible duplicates awaiting manual check).
 Websites present for 227 of 500 gap mosques; the rest show `no website listed`.
 
+## Agent workflow (read this first if you were given this file to work through)
+
+Work the list top to bottom in batches:
+
+1. Pick the next row without `[DONE]` or `[VISION-DEFERRED]`. Prefer a mosque with a website, in a city where we have low coverage. HTTP extraction comes strictly first (see step 3): never work a `[VISION-DEFERRED]` row while unprocessed website rows remain.
+2. Load the `extract-mosque-prayer-times` skill and follow it. Never import Sirat prayer times; re-verify all times from the mosque's own published source.
+3. HTTP extraction only, strictly in this order: (a) exhaust every mosque extractable over plain HTTP: JSON/REST endpoints, CSV/Google Sheets, HTML tables, text PDFs (`pdftotext -layout`); (b) only when no HTTP-extractable rows remain, start working `[VISION-DEFERRED]` rows. If the only source is images or scanned PDFs needing a vision model, do NOT extract: mark the row `[VISION-DEFERRED]` and move on to the next HTTP-extractable row.
+4. Write `public/data/mosques/gb/{citySlug}/{mosque-id}/{month}.json` files plus a `public/data/mosques.json` registry entry. Set `isHidden: true` when months are missing or the source only has partial data; `false` only for a verified full year.
+5. Validate day counts, date ordering, and spot-check values against the source, then seed dev (`npm run seed:dev -- --changed`) and verify. Ask the user for explicit confirmation before seeding prod.
+6. Mark the finished row `[DONE]`, add it to the Done section below, and decrement the remaining count.
+
+## Done (extracted, seeded dev + prod)
+
+- [DONE] Madina Masjid Darwen (BB3) - full year, visible
+- [DONE] Lammack Prayer Room (BB2) - Jan-Oct, hidden until Nov-Dec publish
+- [DONE] Jamiatul Ilm Wal Huda (BB1) - Sep only, hidden (site keeps current month only)
+- [DONE] Masjid-E-Hamzah (OL7) - full year via DPT JSON API, visible
+- [DONE] Crawley Mosque (RH11) - Jan-Sep via DPT HTML, hidden (Oct-Dec not yet on site)
+- [DONE] St Albans Islamic Centre (AL1) - full year via DPT AJAX, verified vs published PDFs, visible
+- [DONE] Birmingham Jame Masjid (B6) - September only via MasjidBox, hidden (site keeps current month only)
+
+Rows below marked [DONE] are complete; remaining count: 493.
+
 ## How to use this file
 
 - Do NOT import their prayer times. Per project decision, times are re-checked
@@ -72,8 +95,8 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| London Colney Islamic Centre * | 174-174A High Street, Hertfordshire, London Colney, AL2 1JY | https://www.lcic.org.uk/ | mosque-000532 |
-| St Albans Islamic Centre * | 141 Hatfield Road, St Albans, AL1 4JX | https://icsta.org.uk/contact-us/ | mosque-000203 |
+| [VISION-DEFERRED] London Colney Islamic Centre * | 174-174A High Street, Hertfordshire, London Colney, AL2 1JY | https://www.lcic.org.uk/ | mosque-000532 |
+| [DONE] St Albans Islamic Centre * | 141 Hatfield Road, St Albans, AL1 4JX | https://icsta.org.uk/contact-us/ | mosque-000203 |
 | St. Albans Jamie Masjid * | 77 Hatfield Rd, Hertfordshire, St Albans, AL1 4JL | no website listed | mosque-000359 |
 | Welwyn Islamic Society * | 19 Martinfield, Welwyn Garden, AL7 1JG | no website listed | mosque-000267 |
 
@@ -86,8 +109,8 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Al-Habib Trust * | 101 Birchfield Road, Aston, Birmingham, B19 1LH | no website listed | mosque-000460 |
 | Amir-e-Millat Mosque and Community Centre * | 144-146 Stoney Lane, Sparkhill, Birmingham, B12 8AQ | no website listed | mosque-000550 |
 | Anjuman-e-Naqueb-ul-Islam * | 78-82 Washwood Heath Road, Saltley, Birmingham, B8 1RD | no website listed | mosque-000310 |
-| As-Suffa | 156 High Street, Birmingham, B6 4UX | https://as-suffa.org/ | mosque-000368 |
-| Birmingham Jame Masjid * | Trinity Road, Aston, Birmingham, B6 6AG | https://www.birminghamjamemasjid.org.uk/ | mosque-000285 |
+| [VISION-DEFERRED] As-Suffa | 156 High Street, Birmingham, B6 4UX | https://as-suffa.org/ | mosque-000368 |
+| [DONE] Birmingham Jame Masjid * | Trinity Road, Aston, Birmingham, B6 6AG | https://www.birminghamjamemasjid.org.uk/ | mosque-000285 |
 | Birmingham Muslim Foundation * | 460-474 Green Lane, Small Heath, Birmingham, B9 5QJ | https://bmf1.co.uk/contact-us/ | mosque-000516 |
 | Blackheath Jamia Mosque * | 143 - 150 Malt Mill Lane, Halesowen, B62 8JA | no website listed | mosque-000224 |
 | Bournville Masjid & Community Centre * | 122 Cob Lane, Birmingham, B30 1QD | https://www.sbmca.org.uk/ | mosque-000548 |
@@ -139,18 +162,18 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Clithero Mosque * | 93-97 Lowergate, Lancashire, Clitheroe, BB7 1AG | no website listed | mosque-000195 |
-| Daneshouse Masjid * | 53 Daneshouse Road, Burnley, BB10 1AF | https://www.diec.org.uk/ | mosque-000543 |
-| Jame Masjid-e-Noor * | 71 Saunders Road, Lancashire, Blackburn, BB2 6LS | https://masjidenoor.org/ | mosque-000120 |
+| [VISION-DEFERRED] Daneshouse Masjid * | 53 Daneshouse Road, Burnley, BB10 1AF | https://www.diec.org.uk/ | mosque-000543 |
+| [VISION-DEFERRED] Jame Masjid-e-Noor * | 71 Saunders Road, Lancashire, Blackburn, BB2 6LS | https://masjidenoor.org/ | mosque-000120 |
 | Jamia Masjid Usman Ghani * | Stanley Street, Nelson, Brierfield, BB9 5DL | no website listed | mosque-000287 |
 | Jamia Mosque Sultania & Education Centre * | Sackville Street, Lancashire, Nelson, Brierfield, BB9 5LE | no website listed | mosque-000498 |
-| Jamiatul Ilm Wal Huda | 30 Moss Street, Blackburn, BB1 5JT | https://www.jamiah.co.uk/ | mosque-000260 |
-| Lammack Prayer Room * | Whinney Lane, Lancashire, Blackburn, BB2 7BX | https://lammack.org/ | mosque-000450 |
-| Madina Masjid Darwen * | 21-23 Victoria Street, Darwen, BB3 3HB | https://darwenmosque.co.uk/ | mosque-000299 |
+| [DONE] Jamiatul Ilm Wal Huda | 30 Moss Street, Blackburn, BB1 5JT | https://www.jamiah.co.uk/ | mosque-000260 |
+| [DONE] Lammack Prayer Room * | Whinney Lane, Lancashire, Blackburn, BB2 7BX | https://lammack.org/ | mosque-000450 |
+| [DONE] Madina Masjid Darwen * | 21-23 Victoria Street, Darwen, BB3 3HB | https://darwenmosque.co.uk/ | mosque-000299 |
 | Masjid E Sajedeen * | Plane Tree Rd, Blackburn, BB1 5PA | no website listed | mosque-000046 |
 | Masjid e Saliheen (Blackburn) * | Masjid e Saliheen Didsbury Street Blackburn Lancashire, Blackburn, BB1 3JL | no website listed | mosque-000531 |
 | MASJID-E-ANISUL ISLAM * | Troy Street, Lancashire, Blackburn, BB1 6NY | no website listed | mosque-000016 |
-| Taleem Ul Islam * | 1-15, Whalley Old Road, Cob Wall, Blackburn, BB1 5JJ | https://taleemulislam.org.uk/ | mosque-000293 |
-| UKIM Ibrahim Masjid * | 2 Clegg Street, Lancashire, Burnley, BB10 1AX | https://ibrahimmasjid.co.uk/contact-us/ | mosque-000112 |
+| [VISION-DEFERRED] Taleem Ul Islam * | 1-15, Whalley Old Road, Cob Wall, Blackburn, BB1 5JJ | https://taleemulislam.org.uk/ | mosque-000293 |
+| [VISION-DEFERRED] UKIM Ibrahim Masjid * | 2 Clegg Street, Lancashire, Burnley, BB10 1AX | https://ibrahimmasjid.co.uk/contact-us/ | mosque-000112 |
 | UKIM Madina Masjid Nelson * | 144 Manchester Road, Nelson, BB9 7AH | no website listed | mosque-000534 |
 
 ### BD (14)
@@ -706,7 +729,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Bilal Jamia Masjid and Madressa * | 19-23 Ronald Street, Clarkfield, Lancashire, Oldham, OL4 1NE | https://bilaljamiamasjid.com/ | mosque-000578 |
 | Central Masjid Rochdale * | Mere Street, Lancashire, Rochdale, OL11 1HJ | no website listed | mosque-000542 |
 | Masjid Al Furqan * | 17 Philip Street Deeplish, Rochdale Lancashire, Rochdale, OL11 1NY | no website listed | mosque-000481 |
-| Masjid-E-Hamzah * | Katherine Street, Ashton-under-Lyne, OL7 0AN | https://masjidehamzah.co.uk/about-us/ | mosque-000524 |
+| [DONE] Masjid-E-Hamzah * | Katherine Street, Ashton-under-Lyne, OL7 0AN | https://masjidehamzah.co.uk/about-us/ | mosque-000524 |
 | Masjid-Ul-Aqsa * | 135 Windsor Road, Oldham, OL8 1RG | https://www.masjidulaqsa.org.uk/ | mosque-000458 |
 | Nagina Jamia Masjid * | 74 Werneth Hall Rd, Oldham, OL8 4BB | no website listed | mosque-000425 |
 | Neeli Mosque & Islamic Centre (UKIM) * | 25-27 Hare Street, Rochdale, OL11 1JL | no website listed | mosque-000454 |
@@ -781,7 +804,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Crawley Masjid and Islamic Center * | 157 London Rd, Crawley, RH10 9TA | no website listed | mosque-000480 |
-| Crawley Mosque - Quwat-Ul-Islam Masjed * | Broadwood Rise, Crawley, RH11 9SE | https://www.crawleymosque.com/ | mosque-000212 |
+| [DONE] Crawley Mosque - Quwat-Ul-Islam Masjed * | Broadwood Rise, Crawley, RH11 9SE | https://www.crawleymosque.com/ | mosque-000212 |
 | Madina Masjid Horsham * | 2 Park Terrace E, Horsham, RH13 5SN | no website listed | mosque-000421 |
 | Masjid Al Yaqeen * | 28 Warwick Road, Surrey, Redhill, RH1 1BU | https://masjidalyaqeen.co.uk/ | mosque-000012 |
 | Mid Sussex Islamic Centre & Masjid * | 19 Wivelsfield Rd, Haywards Heath, RH16 4EF | no website listed | mosque-000210 |
