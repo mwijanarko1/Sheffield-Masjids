@@ -27,8 +27,16 @@ Work the list top to bottom in batches:
 - [DONE] Crawley Mosque (RH11) - Jan-Sep via DPT HTML, hidden (Oct-Dec not yet on site)
 - [DONE] St Albans Islamic Centre (AL1) - full year via DPT AJAX, verified vs published PDFs, visible
 - [DONE] Birmingham Jame Masjid (B6) - September only via MasjidBox, hidden (site keeps current month only)
+- [DONE] Birmingham Muslim Foundation (B9) - September only via HTML table, hidden (site keeps current month only)
+- [DONE] Bournville Masjid & Community Centre (B30) - full year via Mawaqit widget, hidden (computed source)
+- [DONE] Cradley Heath Central Mosque (B64) - full year via POST form HTML tables, visible
+- [DONE] IQRA Masjid Coventry (CV5) - full year via DPT AJAX, visible
+- [DONE] Al-Furqan Mosque Glasgow (G4) - full year via DPT AJAX, visible
+- [DONE] Glasgow Mena Centre (G4) - full year via DPT AJAX, visible
+- [DONE] Jamia Islamia Glasgow (G41) - full year via DPT AJAX (dual Asr), visible
+- [DONE] Al Rahmah Community Centre Glasgow (G20) - full year via Mawaqit widget, hidden (computed source)
 
-Rows below marked [DONE] are complete; remaining count: 493.
+Rows below marked [DONE] are complete; remaining count: 483.
 
 ## How to use this file
 
@@ -111,11 +119,11 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Anjuman-e-Naqueb-ul-Islam * | 78-82 Washwood Heath Road, Saltley, Birmingham, B8 1RD | no website listed | mosque-000310 |
 | [VISION-DEFERRED] As-Suffa | 156 High Street, Birmingham, B6 4UX | https://as-suffa.org/ | mosque-000368 |
 | [DONE] Birmingham Jame Masjid * | Trinity Road, Aston, Birmingham, B6 6AG | https://www.birminghamjamemasjid.org.uk/ | mosque-000285 |
-| Birmingham Muslim Foundation * | 460-474 Green Lane, Small Heath, Birmingham, B9 5QJ | https://bmf1.co.uk/contact-us/ | mosque-000516 |
+| [DONE] Birmingham Muslim Foundation * | 460-474 Green Lane, Small Heath, Birmingham, B9 5QJ | https://bmf1.co.uk/contact-us/ | mosque-000516 |
 | Blackheath Jamia Mosque * | 143 - 150 Malt Mill Lane, Halesowen, B62 8JA | no website listed | mosque-000224 |
-| Bournville Masjid & Community Centre * | 122 Cob Lane, Birmingham, B30 1QD | https://www.sbmca.org.uk/ | mosque-000548 |
-| Cradley Heath Central Mosque & Islamic Centre * | Plant Street, West Midlands, Cradley Heath, B64 6EY | http://www.cradleyheathcentralmosque.co.uk/ | mosque-000013 |
-| Great Barr Muslim Foundation * | 394 Walsall Road, Birmingham, B42 2LX | https://gbmf.uk/ | mosque-000501 |
+| [DONE] Bournville Masjid & Community Centre * | 122 Cob Lane, Birmingham, B30 1QD | https://www.sbmca.org.uk/ | mosque-000548 |
+| [DONE] Cradley Heath Central Mosque & Islamic Centre * | Plant Street, West Midlands, Cradley Heath, B64 6EY | http://www.cradleyheathcentralmosque.co.uk/ | mosque-000013 |
+| [VISION-DEFERRED] Great Barr Muslim Foundation * | 394 Walsall Road, Birmingham, B42 2LX | https://gbmf.uk/ | mosque-000501 |
 | Halesowen/Dudley Yemeni Community Association * | Halesowen Cultural Centre, Highfield Lane, Halesowen, B63 4SG | https://www.yca-halesowen.org.uk/contact-us/ | mosque-000308 |
 | Hazrat Mujaddid Alf-e-Sani Trust Masjid & Education Centre * | 36 Dennis Road, Balsall Heath, Birmingham, B12 8BG | no website listed | mosque-000390 |
 | Hazrat Sultan Bahu Trust * | 17-21 Ombersley Road, Balsall Heath, Birmingham, B12 8UR | https://bahutrust.org/contact/ | mosque-000393 |
@@ -307,11 +315,11 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Faizan-e-Islam * | 202 Lockhurst Lane, Foleshill, Coventry, CV6 5NJ | https://dawateislamimidlands.net/prayer-time-table/ | mosque-000023 |
-| IQRA Masjid * | 176-184 Allesley Old Road, Coventry, CV5 8GJ | https://www.iqracentre.org/ | mosque-000426 |
+| [VISION-DEFERRED] Faizan-e-Islam * | 202 Lockhurst Lane, Foleshill, Coventry, CV6 5NJ | https://dawateislamimidlands.net/prayer-time-table/ | mosque-000023 |
+| [DONE] IQRA Masjid * | 176-184 Allesley Old Road, Coventry, CV5 8GJ | https://www.iqracentre.org/ | mosque-000426 |
 | Rugby Mosque * | Grosvenor Road, Rugby, CV21 3LE | https://rugby-mosque.org/contact-us/ | mosque-000410 |
-| Shah Jalal Mosque * | 75 Smith St, Coventry, CV6 5DX | no website listed | mosque-000347 |
-| Umar Education and Welfare Centre * | 137 Avon Street, Coventry, CV2 3GQ | https://uewt.co.uk/ | mosque-000383 |
+| [VISION-DEFERRED] Shah Jalal Mosque * | 75 Smith St, Coventry, CV6 5DX | no website listed | mosque-000347 |
+| [VISION-DEFERRED] Umar Education and Welfare Centre * | 137 Avon Street, Coventry, CV2 3GQ | https://uewt.co.uk/ | mosque-000383 |
 
 ### DA (2)
 
@@ -441,14 +449,14 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Al Rahmah Community Centre * | 10 Grovepark Place, Glasgow, G20 7NG | no website listed | mosque-000024 |
-| Al-Furqan Mosque * | 19 Carrington Street, Glasgow, G4 9AJ | https://alfurqanmosque.com/contact/ | mosque-000592 |
+| [DONE] Al Rahmah Community Centre * | 10 Grovepark Place, Glasgow, G20 7NG | no website listed | mosque-000024 |
+| [DONE] Al-Furqan Mosque * | 19 Carrington Street, Glasgow, G4 9AJ | https://alfurqanmosque.com/contact/ | mosque-000592 |
 | Bishopbriggs Islamic Community Centre * | 173 Auchinairn Road Bishopbriggs Glasgow, Bishopbriggs, G64 1NG | no website listed | mosque-000131 |
 | BMACC | 1 Speirs Rd, Glasgow, Bearsden, G61 2LX | no website listed | mosque-000346 |
 | Faizan E Attar - East Kilbride Islamic Centre * | 2c Alison Lea, East Kilbride, G74 3HW | no website listed | mosque-000484 |
-| Glasgow Mena Centre * | 83-85 Lister Street, Glasgow, G4 0BZ | https://www.menatrust.org.uk/contact/ | mosque-000052 |
+| [DONE] Glasgow Mena Centre * | 83-85 Lister Street, Glasgow, G4 0BZ | https://www.menatrust.org.uk/contact/ | mosque-000052 |
 | Islamic Education Trust Cumbernauld * | 5 Craighalbert Way, Lanarkshire, Cumbernauld, G68 0LS | https://islamictrust.org/contact-us/ | mosque-000411 |
-| Jamia Islamia Glasgow * | 275 Tantallon Road, Glasgow, G41 3JW | no website listed | mosque-000259 |
+| [DONE] Jamia Islamia Glasgow * | 275 Tantallon Road, Glasgow, G41 3JW | no website listed | mosque-000259 |
 
 ### GU (1)
 
