@@ -35,8 +35,10 @@ Work the list top to bottom in batches:
 - [DONE] Glasgow Mena Centre (G4) - full year via DPT AJAX, visible
 - [DONE] Jamia Islamia Glasgow (G41) - full year via DPT AJAX (dual Asr), visible
 - [DONE] Al Rahmah Community Centre Glasgow (G20) - full year via Mawaqit widget, hidden (computed source)
+- [DONE] Beeston Muslim Centre Nottingham (NG9) - full year via DPT AJAX, visible
+- [DONE] Madina Mosque Cardiff (CF24) - September only via MasjidBox REDUX_STATE, hidden (API limited to 7-day window)
 
-Rows below marked [DONE] are complete; remaining count: 483.
+Rows below marked [DONE] are complete; remaining count: 481.
 
 ## How to use this file
 
@@ -273,7 +275,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Al-Ikhlas Centre * | Al Ikhlas Culture and Education Centre Address: 92 Broadway, Cardiff, CF24 1NH | no website listed | mosque-000211 |
 | Al-Manar Centre * | 4 Glynrhondda St, Cardiff, CF24 4AN | no website listed | mosque-000488 |
 | Dar Ul-Isra | 21-23 Wyeverne Rd, Cardiff, CF24 4BG | no website listed | mosque-000186 |
-| Madina Mosque Cardiff * | Lucas Street, Cardiff, CF24 4NZ | https://madinamosquecardiff.org/ | mosque-000409 |
+| [DONE] Madina Mosque Cardiff * | Lucas Street, Cardiff, CF24 4NZ | https://madinamosquecardiff.org/ | mosque-000409 |
 | South Wales Islamic Centre * | Alice Street, Butetown, Cardiff, CF10 5LB | no website listed | mosque-000207 |
 
 ### CM (3)
@@ -679,13 +681,13 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Beeston Muslim Centre * | 4A Evelyn Street, Nottingham, Beeston, NG9 2EU | https://beestonmuslimcentre.co.uk/ | mosque-000031 |
-| Karimia Institute * | 512-514 Berridge Road West, Bobbersmill, Nottingham, NG7 5JU | https://www.karimia.com/ | mosque-000030 |
-| Karimia Masjid & Institute * | 141-143 Berridge Road, Forest Fields, Nottingham, NG7 6HR | https://www.karimia.com/ | mosque-000049 |
+| [DONE] Beeston Muslim Centre * | 4A Evelyn Street, Nottingham, Beeston, NG9 2EU | https://beestonmuslimcentre.co.uk/ | mosque-000031 |
+| [VISION-DEFERRED] Karimia Institute * | 512-514 Berridge Road West, Bobbersmill, Nottingham, NG7 5JU | https://www.karimia.com/ | mosque-000030 |
+| [VISION-DEFERRED] Karimia Masjid & Institute * | 141-143 Berridge Road, Forest Fields, Nottingham, NG7 6HR | https://www.karimia.com/ | mosque-000049 |
 | Masjid Al Khazra * | Queensberry Street, Nottingham, NG6 0DG | no website listed | mosque-000500 |
 | Meadows Muslim Centre * | Collygate Road, Nottingham, NG2 2EJ | no website listed | mosque-000252 |
 | Newark Islamic Centre * | 83-85 Appleton Gate, Newark, Newark-on-Trent, NG24 1LP | no website listed | mosque-000095 |
-| Shah Poran Islamic Centre * | 2-4 Gregory Boulevard, Hyson Green, Nottingham, NG7 6BG | https://www.baituljabbarmosque.org.uk/ | mosque-000007 |
+| [VISION-DEFERRED] Shah Poran Islamic Centre * | 2-4 Gregory Boulevard, Hyson Green, Nottingham, NG7 6BG | https://www.baituljabbarmosque.org.uk/ | mosque-000007 |
 
 ### NN (5)
 
@@ -934,10 +936,10 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | City Central Mosque Stoke-on-Trent * | City Central Mosque Regent Road, Staffordshire, Hanley, Stoke-on-Trent, ST1 3AY | no website listed | mosque-000348 |
-| Makki Masjid * | 59-61 Beresford Street, Stoke-on-Trent, ST4 2EX | https://makkimasjidstoke.co.uk/ | mosque-000496 |
-| Markaz Al-Huda | Former Queensbury Youth Centre, Furnace Road, Normacot, Stoke-on-Trent, ST3 1QZ | https://attawheedfoundation.co.uk/ | mosque-000124 |
-| Markaz As-Sunnah * | Ladywell Road, Tunstall, Stoke-on-Trent, ST6 5DE | https://attawheedfoundation.co.uk/markaz-as-sunnah/ | mosque-000355 |
-| Markaz At-Tawheed | Rectory Road, Shelton, Stoke-on-Trent, ST1 4PW | https://attawheedfoundation.co.uk/contact-us/ | mosque-000313 |
+| [VISION-DEFERRED] Makki Masjid * | 59-61 Beresford Street, Stoke-on-Trent, ST4 2EX | https://makkimasjidstoke.co.uk/ | mosque-000496 |
+| [VISION-DEFERRED] Markaz Al-Huda | Former Queensbury Youth Centre, Furnace Road, Normacot, Stoke-on-Trent, ST3 1QZ | https://attawheedfoundation.co.uk/ | mosque-000124 |
+| [VISION-DEFERRED] Markaz As-Sunnah * | Ladywell Road, Tunstall, Stoke-on-Trent, ST6 5DE | https://attawheedfoundation.co.uk/markaz-as-sunnah/ | mosque-000355 |
+| [VISION-DEFERRED] Markaz At-Tawheed | Rectory Road, Shelton, Stoke-on-Trent, ST1 4PW | https://attawheedfoundation.co.uk/contact-us/ | mosque-000313 |
 | Stafford Muslim Prayer Hall * | 17- 19 Greyfriars’ Place, Stafford, ST16 2SD | no website listed | mosque-000202 |
 
 ### SW (11)

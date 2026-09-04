@@ -3975,6 +3975,34 @@
       "countryName": "United Kingdom",
       "isHidden": true,
       "website": "https://muslimhouse.org.uk/"
+    },
+    {
+      "id": "beeston-muslim-centre",
+      "name": "Beeston Muslim Centre",
+      "address": "4A Evelyn Street, Beeston, Nottingham, NG9 2EU, United Kingdom",
+      "lat": 52.925,
+      "lng": -1.216,
+      "slug": "beeston-muslim-centre",
+      "citySlug": "nottingham",
+      "cityName": "Nottingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://beestonmuslimcentre.co.uk/"
+    },
+    {
+      "id": "madina-mosque-cardiff",
+      "name": "Madina Mosque Cardiff",
+      "address": "Lucas Street, Cardiff, CF24 4NZ, United Kingdom",
+      "lat": 51.4959,
+      "lng": -3.176,
+      "slug": "madina-mosque-cardiff",
+      "citySlug": "cardiff",
+      "cityName": "Cardiff",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://www.madinamosquecardiff.co.uk/"
     }
   ]
 }
