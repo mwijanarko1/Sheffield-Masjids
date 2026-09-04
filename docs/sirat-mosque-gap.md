@@ -246,10 +246,10 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 |---|---|---|---|
 | Bristol Central Mosque * | Owen Street, Easton, Bristol, BS5 6AP | no website listed | mosque-000133 |
 | Bristol jamia Mosque * | Green St, Totterdown, Bristol, BS3 4UB | no website listed | mosque-000189 |
-| Easton Jamia Masjid * | St Marks Road, Easton, Bristol, BS5 6JH | https://eastonjamiamasjid.co.uk/about-us/ | mosque-000508 |
+| [VISION-DEFERRED] Easton Jamia Masjid * | St Marks Road, Easton, Bristol, BS5 6JH | https://eastonjamiamasjid.co.uk/about-us/ | mosque-000508 |
 | Greenbank Masjid * | Castle Green Buildings, Greenbank Road, Bristol, BS5 6HE | no website listed | mosque-000360 |
 | Hazrat Bilal Masjid /Centre * | 41 Sevier Street, St.Werburghs, Bristol, BS2 9QX | no website listed | mosque-000385 |
-| Quran Academy * | 26 Abingdon Road, Fishponds, BS16 3NY | https://www.quranacademy.org.uk/ | mosque-000443 |
+| [DONE] Quran Academy * | 26 Abingdon Road, Fishponds, BS16 3NY | https://www.quranacademy.org.uk/ | mosque-000443 |
 | Weston Islamic Education Centre * | 66 Palmer Street, Weston-super-Mare, BS23 1RU | no website listed | mosque-000595 |
 
 ### CA (1)
@@ -512,14 +512,14 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Al Noor Masjid * | 170 Gascoigne road, Essex, Barking, IG11 7LH | no website listed | mosque-000344 |
 | AL-Ansar IEC | 833-835 High Rd Goodmayes Essex, London, IG3 8TD | no website listed | mosque-000339 |
 | Darul Ihsaan Barking * | 86 Longbridge Road, Barking, IG11 8SF | no website listed | mosque-000093 |
-| Eman Foundation | 2A Ashgrove Road, Ilford, London, IG3 9XE | https://emanfoundation.co.uk/contact | mosque-000200 |
+| [VISION-DEFERRED] Eman Foundation | 2A Ashgrove Road, Ilford, London, IG3 9XE | https://emanfoundation.co.uk/contact | mosque-000200 |
 | Hedgecock Community Centre * | 28 Stephen Jewers Gardens, Barking, IG11 9FA | https://hedgecockcentre.org.uk/contact/ | mosque-000219 |
 | Jabir Bin Zayd Islamic Centre * | 11-13 Broadway, East London, Barking, IG11 7LS | https://ahlulistiqamah.co.uk/index.php/en/about | mosque-000168 |
-| Masjid Al-Falah * | North Ilford Islamic Centre, 97 Kensington Gardens, Essex, Ilford, London, IG1 3EN | https://masjid-alfalah.org.uk/about | mosque-000587 |
+| [DONE] Masjid Al-Falah * | North Ilford Islamic Centre, 97 Kensington Gardens, Essex, Ilford, London, IG1 3EN | https://masjid-alfalah.org.uk/about | mosque-000587 |
 | MasjidAdam | 64 Seven Kings Road, Ilford Essex, Ilford, IG3 8DG | no website listed | mosque-000196 |
 | Newbury Park Masjid * | 117 Oaks Ln, Ilford, Newbury Park, London, IG2 7PY | no website listed | mosque-000102 |
 | Riverside Muslim Association (RMA) * | Rivergate Centre, Minter Road, Barking, IG11 0FJ | no website listed | mosque-000612 |
-| Seven Kings Muslim Educational Trust * | 645-647 High Road, Ilford, Seven Kings, London, IG3 8RG | https://skmet.org/ | mosque-000109 |
+| [DONE] Seven Kings Muslim Educational Trust * | 645-647 High Road, Ilford, Seven Kings, London, IG3 8RG | https://skmet.org/ | mosque-000109 |
 | Thames View Muslim Association * | 15B Farr Avenue, Barking, IG11 0NZ | https://www.tvmacharity.org.uk/Contact.html | mosque-000077 |
 
 ### IP (2)
@@ -604,9 +604,9 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Al Jalal Masjid * | Al-Jalal Masjid, 314 Biscot Road, Luton, LU3 1AZ | no website listed | mosque-000364 |
-| Central Mosque Luton * | 2-12 Westbourne Road, Luton, LU4 8JD | https://lutoncentralmosque.org/ | mosque-000059 |
+| [VISION-DEFERRED] Central Mosque Luton * | 2-12 Westbourne Road, Luton, LU4 8JD | https://lutoncentralmosque.org/ | mosque-000059 |
 | Hockwell Ring Masjid * | 13-17 Barley Lane. Luton. Beds, Luton, LU4 9HT | no website listed | mosque-000230 |
-| Leagrave Hall Masjid * | 145 High Street, Luton, LU4 9LE | https://leagravehallmasjid.com/ | mosque-000376 |
+| [DONE] Leagrave Hall Masjid * | 145 High Street, Luton, LU4 9LE | https://leagravehallmasjid.com/ | mosque-000376 |
 | Leagrave Hall Masjid * | 79-81 Leagrave Road, Luton, LU4 8HT | https://leagravehallmasjid.com/ | mosque-000536 |
 | Luton Islamic Centre * | 116 Bury Park Rd, Luton, LU1 1HE | no website listed | mosque-000558 |
 
@@ -790,11 +790,11 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Al Huda Preston * | 14 Avenham Road, Avenham, Preston, PR1 3TH | https://www.al-huda.org.uk/ | mosque-000521 |
-| Al-Ansaar Welfare & Education * | 140-142 Garstang Road, Fulwood, Preston, PR2 8NA | https://alansaar.org.uk/contact-us/ | mosque-000158 |
-| Masjid E Aqsa * | 95-101 Fishwick Parade, Preston, PR1 4XR | https://www.masjid-e-aqsa.net/homepage | mosque-000298 |
-| Masjid-e-Saliheen * | Grafton Street, Preston, PR1 8JH | https://masjidsaliheen.com/about-us/history | mosque-000476 |
-| UCLan Islamic Society - Friday Prayers * | Sir Tom Finney Sports Centre, Marsh Lane, Lancashire, Preston, PR1 2HE | https://www.uclansu.co.uk/groups/islamic-society/ | mosque-000165 |
+| [DONE] Al Huda Preston * | 14 Avenham Road, Avenham, Preston, PR1 3TH | https://www.al-huda.org.uk/ | mosque-000521 |
+| [DONE] Al-Ansaar Welfare & Education * | 140-142 Garstang Road, Fulwood, Preston, PR2 8NA | https://alansaar.org.uk/contact-us/ | mosque-000158 |
+| [DONE] Masjid E Aqsa * | 95-101 Fishwick Parade, Preston, PR1 4XR | https://www.masjid-e-aqsa.net/homepage | mosque-000298 |
+| [VISION-DEFERRED] Masjid-e-Saliheen * | Grafton Street, Preston, PR1 8JH | https://masjidsaliheen.com/about-us/history | mosque-000476 |
+| [VISION-DEFERRED] UCLan Islamic Society - Friday Prayers * | Sir Tom Finney Sports Centre, Marsh Lane, Lancashire, Preston, PR1 2HE | https://www.uclansu.co.uk/groups/islamic-society/ | mosque-000165 |
 
 ### RG (8)
 
@@ -885,11 +885,11 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Al-Hira Educational & Cultural Centre * | 68-72 Ragstone Road, Slough, SL1 2PX | https://alhiraslough.co.uk/contact/ | mosque-000491 |
+| [VISION-DEFERRED] Al-Hira Educational & Cultural Centre * | 68-72 Ragstone Road, Slough, SL1 2PX | https://alhiraslough.co.uk/contact/ | mosque-000491 |
 | Al-Tawheed Masjid (TIECM) * | 22 Cookham Road, Maidenhead, SL6 8AJ | https://tiecm.org/ | mosque-000152 |
 | JMIC Slough | Jamia Masjid & Islamic Centre, 83 Stoke Poges Lane, Slough, SL1 3NY | no website listed | mosque-000394 |
 | MASJID ILYAS * | Whitby Rd, Slough, SL1 3DW | no website listed | mosque-000123 |
-| Montem Lane Mosque * | 35 Montem Lane, Berkshire, Slough, SL1 2QW | https://www.sloughislamictrust.org.uk/Contact/ | mosque-000382 |
+| [VISION-DEFERRED] Montem Lane Mosque * | 35 Montem Lane, Berkshire, Slough, SL1 2QW | https://www.sloughislamictrust.org.uk/Contact/ | mosque-000382 |
 | The Slough Islamic Trust - Jamia Ghousia Masjid & Islamic Centre * | 78 Diamond Rd, Slough, SL1 1RX | no website listed | mosque-000365 |
 | Windsor Muslim Association * | Clewer Community Centre, Parsonage Lane, Berkshire, Windsor, SL4 5EW | no website listed | mosque-000292 |
 
@@ -913,7 +913,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Al-Hayat Centre * | Duke Road, Southampton, SO14 0SQ | https://alhayatcentre.co.uk/contact/ | mosque-000388 |
+| [VISION-DEFERRED] Al-Hayat Centre * | Duke Road, Southampton, SO14 0SQ | https://alhayatcentre.co.uk/contact/ | mosque-000388 |
 | Medina Mosque Southampton * | Southampton Medina Mosque Trust Ltd Compton Walk Off St Mary’s Road, Southampton, SO14 0BH | no website listed | mosque-000424 |
 | Shahjalal Mosque & Islamic Centre * | 121 Saint Mary's Rd, Southampton, SO14 0BL | no website listed | mosque-000204 |
 | Winchester Muslim Cultural Association * | Winchester Islamic Centre, 55 Hyde Street, Winchester, SO23 7DY | no website listed | mosque-000482 |
