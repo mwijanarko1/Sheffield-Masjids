@@ -157,7 +157,7 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
             y2="0"
           >
             <stop offset="0" stopColor="#FF8555" stopOpacity="0.4" />
-            <stop offset="0.5" stopColor="#FFB380" stopOpacity="1" />
+            <stop offset="0.5" stopColor="#47A6FF" stopOpacity="1" />
             <stop offset="1" stopColor="#FF8555" stopOpacity="0.4" />
           </linearGradient>
         </defs>
@@ -209,7 +209,7 @@ export function SunPath({ prayerData, compact = false }: SunPathProps) {
               cy={pt.y}
               r={compact ? 4 : 6}
               fill="#B85C38"
-              stroke="#FFB380"
+              stroke="#47A6FF"
               strokeWidth={compact ? 2 : 3}
             />
             <text

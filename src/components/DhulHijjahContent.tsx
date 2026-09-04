@@ -31,7 +31,7 @@ function formatTo12Hour(time: string): string {
   return `${hour12}:${String(m).padStart(2, "0")}${ampm}`;
 }
 
-/** DESIGN.md — micro uppercase column / meta label */
+/** DESIGN.md - micro uppercase column / meta label */
 const metaLabelClass =
   "mb-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--theme-text-muted)] sm:text-[10px] sm:tracking-[0.2em]";
 
@@ -142,13 +142,13 @@ export default function DhulHijjahContent({ mosques }: Props) {
                 <span
                   className={cn(
                     "inline-block font-bold leading-none tracking-tight text-5xl md:text-6xl lg:text-7xl",
-                    isBefore && "text-white/85",
+                    isBefore && "text-[var(--theme-fg,#fff)]/85",
                     isAfter && "text-[var(--theme-accent-countdown)]",
                     showDayGradient &&
                       "bg-gradient-to-b from-[var(--theme-on-primary)] to-[var(--theme-accent-countdown)] bg-clip-text text-transparent",
                   )}
                 >
-                  {isBefore ? "—" : isAfter ? "✓" : currentDay}
+                  {isBefore ? "-" : isAfter ? "✓" : currentDay}
                 </span>
                 <div className="mt-2 text-xs font-medium uppercase tracking-wider text-[var(--theme-accent-countdown)]/80">
                   {isBefore
@@ -171,15 +171,15 @@ export default function DhulHijjahContent({ mosques }: Props) {
               </div>
 
               <div className="mt-7 flex items-center justify-between gap-4 border-t border-white/10 pt-5 text-xs">
-                <div className="min-w-0 text-left text-white/45">
+                <div className="min-w-0 text-left text-[var(--theme-fg,#fff)]/45">
                   <div className={metaLabelClass}>Starts</div>
-                  <div className="truncate font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] sm:text-sm">
+                  <div className="truncate font-bold tabular-nums text-[var(--theme-fg,#fff)] [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] sm:text-sm">
                     17 May · {formatTo12Hour(startTime)}
                   </div>
                 </div>
-                <div className="min-w-0 text-right text-white/45">
+                <div className="min-w-0 text-right text-[var(--theme-fg,#fff)]/45">
                   <div className={metaLabelClass}>Ends</div>
-                  <div className="truncate font-bold tabular-nums text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] sm:text-sm">
+                  <div className="truncate font-bold tabular-nums text-[var(--theme-fg,#fff)] [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] sm:text-sm">
                     27 May · {formatTo12Hour(endTime)}
                   </div>
                 </div>

@@ -49,8 +49,8 @@ interface LastTenChecklistSectionProps {
   className?: string;
   accent?: LastTenChecklistAccent;
   /**
-   * When set (with embedded Dhul Hijjah page), the strip uses Islamic days 1–10, copy says “Day”,
-   * and Ramadan night countdown is hidden. Storage keys "1"…"10" are separate from Ramadan nights 18–30.
+   * When set (with embedded Dhul Hijjah page), the strip uses Islamic days 1-10, copy says “Day”,
+   * and Ramadan night countdown is hidden. Storage keys "1"…"10" are separate from Ramadan nights 18-30.
    */
   dhulHijjahDayContext?: DhulHijjahDayChecklistContext;
 }
@@ -165,7 +165,7 @@ export default function LastTenChecklistSection({
                     ? dhulAccent
                       ? "bg-gradient-to-r from-[var(--theme-accent-countdown)] to-[var(--theme-accent-countdown-deep)] text-[var(--theme-bg)] shadow-lg shadow-[rgba(255,133,56,0.22)]"
                       : "bg-[var(--theme-accent-countdown)] text-[var(--theme-bg)] shadow-lg"
-                    : "text-white/40 hover:bg-white/5 hover:text-white/70",
+                    : "text-[var(--theme-fg,#fff)]/40 hover:bg-white/5 hover:text-[var(--theme-fg,#fff)]/70",
                 )}
               >
                 {difficulty}
@@ -219,7 +219,7 @@ export default function LastTenChecklistSection({
             >
               <h2
               className={cn(
-                "font-black text-white",
+                "font-black text-[var(--theme-fg,#fff)]",
                 framedDhul ? "text-xl md:text-2xl lg:text-3xl" : "text-xl",
               )}
             >
@@ -238,7 +238,7 @@ export default function LastTenChecklistSection({
             </div>
           </div>
           {!isHydrated && (
-            <span className="shrink-0 text-xs text-white/40 animate-pulse">Synchronising…</span>
+            <span className="shrink-0 text-xs text-[var(--theme-fg,#fff)]/40 animate-pulse">Synchronising…</span>
           )}
         </div>
       </div>

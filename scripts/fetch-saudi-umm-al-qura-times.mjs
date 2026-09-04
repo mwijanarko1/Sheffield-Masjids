@@ -147,7 +147,7 @@ function updateRegistry(entries) {
     else registry.mosques.push(entry);
   }
   const json = JSON.stringify(registry, null, 2).replace(
-    /[^\x00-\x7f]/g,
+    /[\u0080-\uffff]/g,
     (character) => `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`,
   );
   writeFileSync(path, `${json}\n`);

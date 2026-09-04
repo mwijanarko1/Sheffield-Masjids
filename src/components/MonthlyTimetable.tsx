@@ -121,7 +121,7 @@ export default function MonthlyTimetable({
 
   return (
     <section
-      className="relative mx-auto max-w-5xl overflow-hidden rounded-xl border border-white/10 bg-[rgba(10,17,40,0.25)] text-white shadow-2xl backdrop-blur-[20px] saturate-[180%]"
+      className="relative mx-auto max-w-5xl overflow-hidden rounded-xl border border-white/25 bg-white/18 text-[var(--theme-fg,#fff)] shadow-2xl backdrop-blur-[20px] saturate-[160%]"
       aria-label="Monthly prayer timetable"
     >
       {/* Specular top edge shimmer */}
@@ -136,7 +136,7 @@ export default function MonthlyTimetable({
             type="button"
             onClick={goToPreviousMonth}
             aria-label="Previous month"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 bg-white/18 text-[var(--theme-fg,#fff)] shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/28 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
           >
             <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -147,7 +147,7 @@ export default function MonthlyTimetable({
             <span className="mb-2 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--theme-text-muted)] shadow-sm">
               Monthly Schedule
             </span>
-            <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+            <h2 className="text-2xl font-black tracking-tight text-[var(--theme-fg,#fff)] md:text-3xl">
               {selectedMonthName} {currentYear}
             </h2>
             <p className="mt-1 text-xs text-[var(--theme-text-muted)]">
@@ -159,7 +159,7 @@ export default function MonthlyTimetable({
             type="button"
             onClick={goToNextMonth}
             aria-label="Next month"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 bg-white/18 text-[var(--theme-fg,#fff)] shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/28 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
           >
             <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -180,8 +180,8 @@ export default function MonthlyTimetable({
         )}
 
         {!isLoading && !error && rows.length > 0 && (
-          <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/20">
-            <Table className="min-w-[1000px] text-sm text-white md:text-base">
+          <div className="overflow-x-auto rounded-xl border border-white/20 bg-black/10">
+            <Table className="min-w-[1000px] text-sm text-[var(--theme-fg,#fff)] md:text-base">
               <TableHeader className="bg-white/5">
                 <TableRow className="border-white/5 hover:bg-white/5">
                   <TableHead className="h-10 text-[10px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">Date</TableHead>
@@ -201,43 +201,43 @@ export default function MonthlyTimetable({
                     className={cn(
                       "border-white/5 transition-colors h-12",
                       row.isToday
-                        ? "bg-gradient-to-r from-[var(--theme-accent-countdown)]/30 to-[var(--theme-accent-countdown-deep)]/20 hover:brightness-105"
-                        : "hover:bg-white/5",
+                        ? "bg-gradient-to-r from-[#47A6FF]/35 to-[#2E8DFF]/25 hover:brightness-105"
+                        : "hover:bg-white/10",
                     )}
                     aria-current={row.isToday ? "date" : undefined}
                   >
-                    <TableCell className="font-bold text-white/90">{row.dayLabel}</TableCell>
+                    <TableCell className="font-bold text-[var(--theme-fg,#fff)]/90">{row.dayLabel}</TableCell>
                     <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
-                        <TimeDisplay time={row.fajrAdhan} className="text-white/90" />
-                        <TimeDisplay time={row.fajrIqamah} className="text-[10px] text-white/50" />
+                        <TimeDisplay time={row.fajrAdhan} className="text-[var(--theme-fg,#fff)]/90" />
+                        <TimeDisplay time={row.fajrIqamah} className="text-[10px] text-[var(--theme-fg-muted)]" />
                       </div>
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">
-                      <TimeDisplay time={row.sunrise} className="text-white/60" />
+                      <TimeDisplay time={row.sunrise} className="text-[var(--theme-fg-muted)]" />
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
-                        <TimeDisplay time={row.dhuhrAdhan} className="text-white/90" />
-                        <TimeDisplay time={row.dhuhrIqamah} className="text-[10px] text-white/50" />
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono tabular-nums">
-                      <div className="flex flex-col gap-0.5">
-                        <TimeDisplay time={row.asrAdhan} className="text-white/90" />
-                        <TimeDisplay time={row.asrIqamah} className="text-[10px] text-white/50" />
+                        <TimeDisplay time={row.dhuhrAdhan} className="text-[var(--theme-fg,#fff)]/90" />
+                        <TimeDisplay time={row.dhuhrIqamah} className="text-[10px] text-[var(--theme-fg-muted)]" />
                       </div>
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
-                        <TimeDisplay time={row.maghribAdhan} className="text-white/90" />
-                        <TimeDisplay time={row.maghribIqamah} className="text-[10px] text-white/50" />
+                        <TimeDisplay time={row.asrAdhan} className="text-[var(--theme-fg,#fff)]/90" />
+                        <TimeDisplay time={row.asrIqamah} className="text-[10px] text-[var(--theme-fg-muted)]" />
                       </div>
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">
                       <div className="flex flex-col gap-0.5">
-                        <TimeDisplay time={row.ishaAdhan} className="text-white/90" />
-                        <TimeDisplay time={row.ishaIqamah} className="text-[10px] text-white/50" />
+                        <TimeDisplay time={row.maghribAdhan} className="text-[var(--theme-fg,#fff)]/90" />
+                        <TimeDisplay time={row.maghribIqamah} className="text-[10px] text-[var(--theme-fg-muted)]" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-mono tabular-nums">
+                      <div className="flex flex-col gap-0.5">
+                        <TimeDisplay time={row.ishaAdhan} className="text-[var(--theme-fg,#fff)]/90" />
+                        <TimeDisplay time={row.ishaIqamah} className="text-[10px] text-[var(--theme-fg-muted)]" />
                       </div>
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">

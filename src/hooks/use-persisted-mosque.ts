@@ -71,25 +71,53 @@ export function usePersistedMosque(mosques: Mosque[], initialMosque?: Mosque | n
   );
   const [isHydrated, setIsHydrated] = useState(false);
 
-  const cityOptions = useMemo(() => buildCityOptions(mosques), [mosques]);
+  const selectedCountryCode = selectedMosque?.countryCode ?? "GB";
+  const countryOptions = useMemo(() => {
+    const countries = new Map(mosques.map((mosque) => [mosque.countryCode, mosque.countryName]));
+    return Array.from(countries, ([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [mosques]);
+  const mosquesInSelectedCountry = useMemo(
+    () => mosques.filter((mosque) => mosque.countryCode === selectedCountryCode),
+    [mosques, selectedCountryCode],
+  );
+  const cityOptions = useMemo(() => buildCityOptions(mosquesInSelectedCountry), [mosquesInSelectedCountry]);
 
   const mosquesInSelectedCity = useMemo(
-    () => mosquesInCity(mosques, selectedCitySlug),
-    [mosques, selectedCitySlug],
+    () => mosquesInCity(mosquesInSelectedCountry, selectedCitySlug),
+    [mosquesInSelectedCountry, selectedCitySlug],
   );
+
+  const setSelectedCountryCode = useCallback((countryCode: string) => {
+    const inCountry = mosques.filter((mosque) => mosque.countryCode === countryCode);
+    if (inCountry.length === 0) return;
+    const citySlug = pickDefaultCitySlug(buildCityOptions(inCountry));
+    setSelectedCitySlugState(citySlug);
+    setSelectedMosque(getDefaultHomeMosque(mosquesInCity(inCountry, citySlug)));
+  }, [mosques]);
 
   const setSelectedCitySlug = useCallback(
     (citySlug: string) => {
+      const nextList = mosquesInCity(mosquesInSelectedCountry, citySlug);
+      if (nextList.length === 0) return;
       setSelectedCitySlugState(citySlug);
-      const nextList = mosquesInCity(mosques, citySlug);
       setSelectedMosque(getDefaultHomeMosque(nextList));
     },
-    [mosques],
+    [mosquesInSelectedCountry],
   );
 
   useEffect(() => {
     if (mosques.length === 0) {
       setSelectedMosque(null);
+      setIsHydrated(true);
+      return;
+    }
+
+    const storedMosqueId = readStoredMosqueId();
+    const storedMosque = mosques.find((mosque) => mosque.id === storedMosqueId);
+    if (storedMosque) {
+      setSelectedMosque(storedMosque);
+      setSelectedCitySlugState(storedMosque.citySlug);
       setIsHydrated(true);
       return;
     }
@@ -104,17 +132,6 @@ export function usePersistedMosque(mosques: Mosque[], initialMosque?: Mosque | n
     setSelectedCitySlugState(citySlug);
 
     const inCity = mosquesInCity(mosques, citySlug);
-    const storedMosqueId = readStoredMosqueId();
-
-    if (storedMosqueId) {
-      const storedMosque = inCity.find((m) => m.id === storedMosqueId);
-      if (storedMosque) {
-        setSelectedMosque(storedMosque);
-        setIsHydrated(true);
-        return;
-      }
-    }
-
     setSelectedMosque((current) => {
       if (current && current.citySlug === citySlug) {
         const updated = inCity.find((m) => m.id === current.id);
@@ -139,6 +156,9 @@ export function usePersistedMosque(mosques: Mosque[], initialMosque?: Mosque | n
     selectedMosque,
     setSelectedMosque,
     isHydrated,
+    countryOptions,
+    selectedCountryCode,
+    setSelectedCountryCode,
     cityOptions,
     selectedCitySlug,
     setSelectedCitySlug,

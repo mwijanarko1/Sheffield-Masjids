@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import DynamicBackground from "@/components/DynamicBackground";
-import { FloatingTabBar } from "@/components/FloatingTabBar";
 import { MasjidlyPromoOverlayProvider } from "@/contexts/MasjidlyPromoOverlayContext";
+import { MasjidlyThemeProvider } from "@/contexts/MasjidlyThemeContext";
 import {
   getBaseUrl,
   MOSQUE_NAMES,
@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  icons: {
+    icon: "/masjidly/app-icon.png",
+    apple: "/masjidly/app-icon.png",
+  },
   keywords: [
     "Sheffield prayer times",
     "prayer times in Sheffield",
@@ -74,8 +78,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   userScalable: true,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0A1128" },
+    { media: "(prefers-color-scheme: light)", color: "#E0F2FE" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
   ],
 };
 
@@ -88,23 +92,24 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased text-foreground">
         <ConvexProvider>
-          <MasjidlyPromoOverlayProvider>
-            <DynamicBackground />
-            <a
-              href="#main-content"
-              className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#FFB380] px-4 py-2 font-medium text-[#0A1128] focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0A1128]"
-            >
-              Skip to main content
-            </a>
-            <div
-              id="main-content"
-              tabIndex={-1}
-              className="relative z-10 h-[100dvh] min-h-0 overflow-y-auto overflow-x-hidden"
-            >
-              {children}
-            </div>
-            <FloatingTabBar />
-          </MasjidlyPromoOverlayProvider>
+          <MasjidlyThemeProvider>
+            <MasjidlyPromoOverlayProvider>
+              <DynamicBackground />
+              <a
+                href="#main-content"
+                className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#47A6FF] px-4 py-2 font-medium text-white focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#1D2433]"
+              >
+                Skip to main content
+              </a>
+              <div
+                id="main-content"
+                tabIndex={-1}
+                className="relative z-10 h-[100dvh] min-h-0 overflow-y-auto overflow-x-hidden"
+              >
+                {children}
+              </div>
+            </MasjidlyPromoOverlayProvider>
+          </MasjidlyThemeProvider>
         </ConvexProvider>
         <Analytics />
       </body>

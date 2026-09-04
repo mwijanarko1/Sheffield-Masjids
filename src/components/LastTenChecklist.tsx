@@ -73,7 +73,7 @@ export default function LastTenChecklist({
                 htmlFor={checkboxId}
                 className={cn(
                   "flex-1 min-w-0 cursor-pointer text-sm font-medium leading-snug transition-colors duration-200 sm:text-[15px] break-words",
-                  checked ? "text-white/50 line-through" : "text-white/90",
+                  checked ? "text-[var(--theme-fg,#fff)]/50 line-through" : "text-[var(--theme-fg,#fff)]/90",
                 )}
               >
                 {actionPoint}
@@ -90,7 +90,7 @@ export default function LastTenChecklist({
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-ring-focus)]",
                   isOpen
                     ? "bg-[var(--theme-accent-countdown)]/15 text-[var(--theme-accent-countdown)]"
-                    : "text-white/40 hover:bg-white/8 hover:text-white/60",
+                    : "text-[var(--theme-fg,#fff)]/40 hover:bg-white/8 hover:text-[var(--theme-fg,#fff)]/60",
                 )}
               >
                 <ChevronDown
@@ -102,7 +102,7 @@ export default function LastTenChecklist({
               </button>
             </div>
 
-            {/* Expandable detail panel — source & benefit */}
+            {/* Expandable detail panel - source & benefit */}
             <div
               className={cn(
                 "grid transition-all duration-250 ease-out",
@@ -116,12 +116,12 @@ export default function LastTenChecklist({
                     <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--theme-accent-countdown)]/70">
                       Benefit
                     </h3>
-                    <p className="text-sm leading-relaxed text-white/70 break-words">
+                    <p className="text-sm leading-relaxed text-[var(--theme-fg,#fff)]/70 break-words">
                       {item.benefit}
                     </p>
                     {item.benefitAr && (
                       <p
-                        className="text-sm leading-relaxed text-white/50 break-words"
+                        className="text-sm leading-relaxed text-[var(--theme-fg,#fff)]/50 break-words"
                         dir="rtl"
                         lang="ar"
                       >
@@ -135,12 +135,12 @@ export default function LastTenChecklist({
                     <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--theme-accent-countdown)]/70">
                       Source
                     </h3>
-                    <p className="text-sm leading-relaxed text-white/70 break-words">
+                    <p className="text-sm leading-relaxed text-[var(--theme-fg,#fff)]/70 break-words">
                       {item.source}
                     </p>
                     {item.sourceAr && (
                       <p
-                        className="text-sm leading-relaxed text-white/50 break-words"
+                        className="text-sm leading-relaxed text-[var(--theme-fg,#fff)]/50 break-words"
                         dir="rtl"
                         lang="ar"
                       >

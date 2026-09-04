@@ -106,7 +106,7 @@ export default async function MosquePage({ params }: MosquePageProps) {
   const initialPrayerWidgetData = await getInitialPrayerWidgetData(mosque);
 
   return (
-    <main className="relative min-h-[100dvh] sm:min-h-screen pb-8 sm:pb-16 text-white">
+    <main className="relative min-h-[100dvh] sm:min-h-screen pb-8 sm:pb-16 text-[var(--theme-fg,#fff)]">
       <MosqueJsonLd mosque={mosque} />
       <div className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6 sm:pt-10 lg:px-8 xl:max-w-6xl">
         <Button
@@ -123,7 +123,7 @@ export default async function MosquePage({ params }: MosquePageProps) {
         </Button>
 
         <header className="mb-6 sm:mb-10">
-          <h1 className="mb-3 text-xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
+          <h1 className="mb-3 text-xl font-light leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
             {mosque.name} Prayer Times
           </h1>
           <p className="mb-4 flex items-start gap-2 text-sm text-muted-foreground sm:text-base">

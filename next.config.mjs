@@ -9,6 +9,8 @@ const nextConfig = {
   poweredByHeader: false,
   outputFileTracingRoot: projectRoot,
   turbopack: { root: projectRoot },
+  // Dev browsers hitting 127.0.0.1 instead of localhost need this for HMR/hydration.
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
 };
 
 export default nextConfig; 

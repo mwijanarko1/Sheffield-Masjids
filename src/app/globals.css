@@ -2,55 +2,59 @@
 
 /* Keep one consistent app theme across all routes */
 html {
-  color-scheme: dark;
+  color-scheme: light dark;
   overflow-x: hidden;
   overscroll-behavior: none;
 }
 
-/* Sheffield Masjids theme from DESIGN.md */
+/* Masjidly-aligned tokens from HomeDesign.swift */
 :root {
-  --theme-bg: #0a1128;
-  --theme-primary: #0a1128;
-  --theme-primary-container: #2d4a48;
+  --theme-bg: #020617;
+  --theme-primary: #1d2433;
+  --theme-primary-container: #2e8dff;
   --theme-on-primary: #ffffff;
   --theme-accent-teal: #7a9e9e;
   --theme-accent-teal-light: #a8c4c4;
   --theme-accent-warm: #c4956a;
   --theme-accent-warm-bright: #e8c49a;
-  --theme-accent-countdown: #ffb380;
-  --theme-accent-countdown-deep: #ff783c;
-  --theme-highlight-cream: #ffe2cb;
-  --theme-border-subtle: #3d4558;
-  --theme-text-muted: #b8c4e8;
-  --theme-ring-focus: #ffb380;
+  --theme-accent-countdown: #47a6ff;
+  --theme-accent-countdown-deep: #2e8dff;
+  --theme-highlight-cream: #e8f4ff;
+  --theme-highlight: #47a6ff;
+  --theme-highlight-bright: #2e8dff;
+  --theme-border-subtle: rgba(255, 255, 255, 0.22);
+  --theme-text-muted: rgba(255, 255, 255, 0.72);
+  --theme-ring-focus: #47a6ff;
+  --theme-fg: #ffffff;
+  --theme-fg-muted: rgba(255, 255, 255, 0.72);
 
-  --font-sans-local: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --font-sans-local: "Gill Sans", "Gill Sans MT", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-mono-local: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-/* shadcn/ui CSS variables - synchronized with DESIGN.md */
+/* shadcn/ui CSS variables - Masjidly accent */
 @layer base {
   :root {
-    --background: 223 60% 10%; /* #0a1128 */
-    --foreground: 0 0% 98%;    /* #ffffff-ish */
-    --card: 223 46% 14%;
-    --card-foreground: 0 0% 98%;
-    --popover: 223 46% 14%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 223 60% 10%;    /* matches background */
+    --background: 222 47% 6%;
+    --foreground: 0 0% 100%;
+    --card: 222 40% 14%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 40% 12%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 207 100% 64%; /* #47A6FF */
     --primary-foreground: 0 0% 100%;
-    --secondary: 223 33% 19%;
+    --secondary: 222 20% 20%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 223 33% 19%;
-    --muted-foreground: 223 44% 82%; /* #b8c4e8 */
-    --accent: 223 33% 19%;
-    --accent-foreground: 0 0% 98%;
+    --muted: 222 20% 18%;
+    --muted-foreground: 215 16% 72%;
+    --accent: 207 100% 64%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 223 18% 29%;     /* #3d4558-ish */
-    --input: 223 18% 29%;
-    --ring: 27 100% 75%;       /* #ffb380 */
-    --radius: 0.75rem;         /* 12px */
+    --border: 215 16% 40%;
+    --input: 215 16% 40%;
+    --ring: 207 100% 64%;
+    --radius: 0.75rem;
   }
 }
 
@@ -192,7 +196,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(71, 166, 255, 0.35);
 }
 
 /* Firefox - transparent scrollbar */
@@ -219,7 +223,7 @@ code {
 
 /* Focus styles */
 *:focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid #47a6ff;
   outline-offset: 2px;
 }
 
@@ -286,13 +290,13 @@ body {
 }
 
 .prose a {
-  color: #4f46e5;
+  color: #2e8dff;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .prose a:hover {
-  color: #4338ca;
+  color: #47a6ff;
 }
 
 .prose ul, .prose ol {
@@ -372,14 +376,14 @@ body {
   max-width: calc(100vw - 32px);
   padding: 6px 8px;
   border-radius: 999px;
-  /* Match AppHomePage prayer row aesthetic */
-  background: rgba(10, 17, 40, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  /* Masjidly frosted chrome */
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.08),
-    0 12px 40px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 12px 36px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   pointer-events: auto;
   position: relative;
   overflow-x: auto;
@@ -399,15 +403,11 @@ body {
   width: 0;
   height: calc(100% - 12px);
   border-radius: 999px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 179, 128, 0.4) 0%,
-    rgba(255, 120, 60, 0.3) 100%
-  );
+  background: linear-gradient(180deg, #47a6ff 0%, #2e8dff 100%);
   box-shadow:
-    0 0 20px -2px rgba(255, 133, 56, 0.3),
-    inset 0 1px 2px rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 179, 128, 0.4);
+    0 0 22px -2px rgba(71, 166, 255, 0.45),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(71, 166, 255, 0.55);
   overflow: hidden;
   transition:
     transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
@@ -421,7 +421,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+  background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%);
   pointer-events: none;
 }
 
@@ -434,8 +434,8 @@ body {
   padding: 8px 16px;
   border-radius: 999px;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   transition: color 0.2s, background 0.2s, transform 0.15s;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -447,13 +447,13 @@ body {
 
 .floating-tab:hover:not(.floating-tab-active) {
   color: white;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .floating-tab:focus-visible:not(.floating-tab-active) {
   color: white;
-  background: rgba(255, 255, 255, 0.06);
-  outline: 2px solid rgba(255, 179, 128, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  outline: 2px solid rgba(71, 166, 255, 0.65);
   outline-offset: 2px;
 }
 
@@ -462,8 +462,8 @@ body {
 }
 
 .floating-tab-active {
-  color: #ffe2cb;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 6px rgba(255, 179, 128, 0.4);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   background: transparent;
 }
 
@@ -473,11 +473,11 @@ body {
   justify-content: center;
   width: 24px;
   height: 24px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }
 
 .floating-tab-active .floating-tab-icon {
-  filter: drop-shadow(0 0 6px rgba(255, 179, 128, 0.5));
+  filter: drop-shadow(0 0 6px rgba(71, 166, 255, 0.55));
 }
 
 .floating-tab-label {

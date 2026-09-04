@@ -178,7 +178,7 @@ function updateRegistry(entries) {
     if (idx >= 0) registry.mosques[idx] = entry;
     else registry.mosques.push(entry);
   }
-  writeFileSync(path, `${JSON.stringify(registry, null, 2).replace(/[^\x00-\x7f]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`)}\n`);
+  writeFileSync(path, `${JSON.stringify(registry, null, 2).replace(/[\u0080-\uffff]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`)}\n`);
 }
 
 async function main() {

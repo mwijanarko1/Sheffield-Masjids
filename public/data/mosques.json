@@ -1801,6 +1801,20 @@
       "website": "https://www.eastlondonmosque.org.uk"
     },
     {
+      "id": "emca-al-nagashi",
+      "name": "EMCA Al Nagashi Mosque and Centre",
+      "address": "283-291 Wandsworth Road, London SW8 2ND, United Kingdom",
+      "lat": 51.4777009,
+      "lng": -0.1291855,
+      "slug": "emca-al-nagashi",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://emca.org.uk"
+    },
+    {
       "id": "finsbury-park-mosque",
       "name": "Finsbury Park Mosque",
       "address": "7-11 St Thomas's Road, London N4 2QH, United Kingdom",

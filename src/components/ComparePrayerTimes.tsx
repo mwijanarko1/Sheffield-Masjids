@@ -103,7 +103,7 @@ export default function ComparePrayerTimes({
     prayerKey: string,
     mosqueData: MosquePrayerData
   ): string => {
-    if (!mosqueData.prayerTimes || !mosqueData.iqamahTimes) return "—";
+    if (!mosqueData.prayerTimes || !mosqueData.iqamahTimes) return "-";
 
     const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate, mosqueData.mosque.slug);
     const iq = mosqueData.iqamahTimes;
@@ -112,7 +112,7 @@ export default function ComparePrayerTimes({
       case "Fajr":
         return getIqamahTime("fajr", pt.fajr, iq);
       case "Sunrise":
-        return "—";
+        return "-";
       case "Dhuhr":
         return getIqamahTime("dhuhr", pt.dhuhr, iq);
       case "Asr":
@@ -128,9 +128,9 @@ export default function ComparePrayerTimes({
           pt.maghrib,
         );
       case "Jummah":
-        return iq.jummah || "—";
+        return iq.jummah || "-";
       default:
-        return "—";
+        return "-";
     }
   };
 
@@ -138,7 +138,7 @@ export default function ComparePrayerTimes({
     prayerKey: string,
     mosqueData: MosquePrayerData
   ): string => {
-    if (!mosqueData.prayerTimes) return "—";
+    if (!mosqueData.prayerTimes) return "-";
     const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate, mosqueData.mosque.slug);
     switch (prayerKey) {
       case "Fajr":
@@ -154,9 +154,9 @@ export default function ComparePrayerTimes({
       case "Isha":
         return pt.isha;
       case "Jummah":
-        return "—";
+        return "-";
       default:
-        return "—";
+        return "-";
     }
   };
 
@@ -176,7 +176,7 @@ export default function ComparePrayerTimes({
       {(isOpen || standalone) && (
         <div
           id="compare-mosques-table"
-          className="relative overflow-hidden rounded-xl border border-white/10 bg-[rgba(10,17,40,0.25)] text-white shadow-2xl backdrop-blur-[20px] saturate-[180%]"
+          className="relative overflow-hidden rounded-xl border border-white/25 bg-white/18 text-[var(--theme-fg,#fff)] shadow-2xl backdrop-blur-[20px] saturate-[160%]"
         >
           {/* Specular top edge shimmer */}
           <div
@@ -187,26 +187,26 @@ export default function ComparePrayerTimes({
           <div className="relative z-10 px-4 pb-6 pt-6 md:px-6 md:pb-8 md:pt-8">
             <div className="mb-6 flex flex-col items-center gap-4 text-center md:mb-8 md:flex-row md:flex-wrap md:items-center md:justify-between md:text-left">
               <div className="w-full text-center md:w-auto md:text-left">
-                <span className="mb-2 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--theme-text-muted)] shadow-sm">
+                <span className="mb-2 inline-flex rounded-full border border-white/25 bg-white/5 px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--theme-text-muted)] shadow-sm">
                   Prayer Comparison
                 </span>
                 {standalone ? (
-                  <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+                  <h1 className="text-2xl font-light tracking-tight text-[var(--theme-fg,#fff)] md:text-3xl">
                     Mosque Comparison
                   </h1>
                 ) : (
-                  <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+                  <h2 className="text-2xl font-light tracking-tight text-[var(--theme-fg,#fff)] md:text-3xl">
                     Mosque Comparison
                   </h2>
                 )}
               </div>
-              <div className="flex shrink-0 items-center gap-2 sm:gap-3 bg-white/5 rounded-full p-1.5 border border-white/10">
+              <div className="flex shrink-0 items-center gap-2 sm:gap-3 bg-white/5 rounded-full p-1.5 border border-white/25">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={goToPrevDay}
                   aria-label="Previous day"
-                  className="min-h-10 min-w-10 rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
+                  className="min-h-10 min-w-10 rounded-full border border-white/25 bg-white/5 text-[var(--theme-fg,#fff)] shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
                 >
                   <svg
                     className="size-4"
@@ -222,7 +222,7 @@ export default function ComparePrayerTimes({
                     />
                   </svg>
                 </Button>
-                <span className="min-w-[140px] text-center text-sm font-bold tracking-tight text-white/90 sm:min-w-[160px]">
+                <span className="min-w-[140px] text-center text-sm font-medium tracking-tight text-[var(--theme-fg,#fff)]/90 sm:min-w-[160px]">
                   {formatDateForDisplay(selectedDate)}
                 </span>
                 <Button
@@ -230,7 +230,7 @@ export default function ComparePrayerTimes({
                   size="icon"
                   onClick={goToNextDay}
                   aria-label="Next day"
-                  className="min-h-10 min-w-10 rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
+                  className="min-h-10 min-w-10 rounded-full border border-white/25 bg-white/5 text-[var(--theme-fg,#fff)] shadow-sm transition-all duration-300 hover:scale-105 hover:bg-white/10 focus-visible:ring-[var(--theme-ring-focus)] touch-manipulation"
                 >
                   <svg
                     className="size-4"
@@ -255,20 +255,20 @@ export default function ComparePrayerTimes({
               </div>
             ) : isLoading ? (
               <div className="rounded-xl border border-white/5 bg-white/5 p-12 text-center text-[var(--theme-text-muted)] animate-pulse">
-                Loading prayer times…
+                Loading prayer times...
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-white/10 bg-black/20">
+              <div className="overflow-x-auto rounded-xl border border-white/25 bg-black/10">
                 <Table className="min-w-[920px] text-sm text-white sm:text-base">
                   <TableHeader className="bg-white/5">
                     <TableRow className="border-white/5 hover:bg-white/5">
-                      <TableHead className="h-12 w-[120px] bg-[var(--theme-bg)]/80 font-bold uppercase tracking-wider text-[var(--theme-text-muted)] backdrop-blur-md">
+                      <TableHead className="h-12 w-[120px] bg-white/10 font-bold uppercase tracking-wider text-[var(--theme-text-muted)] backdrop-blur-md">
                         Prayer
                       </TableHead>
                       {data.map(({ mosque, error }) => (
                         <TableHead
                           key={mosque.id}
-                          className="h-12 min-w-[140px] text-center text-xs font-black uppercase tracking-wide text-white sm:text-sm"
+                          className="h-12 min-w-[140px] text-center text-xs font-black uppercase tracking-wide text-[var(--theme-fg,#fff)] sm:text-sm"
                         >
                           <div className="truncate px-2" title={mosque.name}>
                             {mosque.name.replace(/ Sheffield$/, "")}
@@ -285,7 +285,7 @@ export default function ComparePrayerTimes({
                   <TableBody>
                     {PRAYER_NAMES.map((prayer) => (
                       <TableRow key={prayer} className="border-white/5 hover:bg-white/5 h-16">
-                          <TableCell className="bg-[var(--theme-bg)]/80 font-black text-white/80 backdrop-blur-md">
+                          <TableCell className="bg-white/10 font-black text-[var(--theme-fg-muted)] backdrop-blur-md">
                             {prayer}
                           </TableCell>
                         {data.map((mosqueData) => (
@@ -294,7 +294,7 @@ export default function ComparePrayerTimes({
                             className="text-center"
                           >
                             {mosqueData.error ? (
-                              <span className="text-white/20">—</span>
+                              <span className="text-[var(--theme-fg-muted)]">-</span>
                             ) : prayer === "Jummah" ? (
                               <span className="font-mono text-base font-bold text-[var(--theme-accent-countdown)]">
                                 {(() => {
@@ -308,7 +308,7 @@ export default function ComparePrayerTimes({
                               </span>
                             ) : (
                               <div className="flex flex-col gap-0.5">
-                                <span className="font-mono text-base font-bold text-white">
+                                <span className="font-mono text-base font-bold text-[var(--theme-fg,#fff)]">
                                   {(() => {
                                     const raw = getAdhanDisplay(prayer, mosqueData);
                                     return isValidTimeForMarkup(raw) ? (
@@ -319,7 +319,7 @@ export default function ComparePrayerTimes({
                                   })()}
                                 </span>
                                 {prayer !== "Sunrise" && (
-                                  <span className="font-mono text-[11px] font-medium text-white/40">
+                                  <span className="font-mono text-[11px] font-medium text-[var(--theme-fg-muted)]">
                                     {(() => {
                                       const raw = getIqamahDisplay(prayer, mosqueData);
                                       return isValidTimeForMarkup(raw) ? (

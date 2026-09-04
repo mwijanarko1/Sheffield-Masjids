@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   CalendarClock,
   CalendarRange,
@@ -159,5 +158,5 @@ export function FloatingTabBar() {
   if (!mounted) return null;
   /* Hide tab bar on Masjidly product pages and while the home Masjidly promo is open */
   if (pathname?.startsWith("/masjidly") || masjidlyPromo?.promoOpen) return null;
-  return createPortal(navContent, document.body);
+  return navContent;
 }
