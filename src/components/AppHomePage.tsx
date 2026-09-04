@@ -319,7 +319,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         <div className="relative isolate min-h-[100dvh] w-full">
             <MasjidlyHomePopup />
             <h1 className="sr-only">
-                Sheffield prayer times - adhan and iqamah for mosques across the city
+                UK mosque prayer times - adhan and iqamah in Sheffield and other cities
             </h1>
             <MasjidlyHomeHero
                 fg={fg}

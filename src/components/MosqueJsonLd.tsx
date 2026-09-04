@@ -18,13 +18,13 @@ export default function MosqueJsonLd({ mosque }: MosqueJsonLdProps) {
     "@type": "PlaceOfWorship",
     "@id": url,
     name: mosque.name,
-    description: `Prayer times and iqamah times for ${mosque.name} in Sheffield. Daily timetables, monthly schedules, and Ramadan times.`,
+    description: `Prayer times and iqamah times for ${mosque.name} in ${mosque.cityName}. Daily timetables, monthly schedules, and Ramadan times.`,
     url,
     address: {
       "@type": "PostalAddress",
       streetAddress: mosque.address,
-      addressLocality: "Sheffield",
-      addressCountry: "GB",
+      addressLocality: mosque.cityName,
+      addressCountry: mosque.countryCode,
     },
     geo: {
       "@type": "GeoCoordinates",
@@ -32,19 +32,12 @@ export default function MosqueJsonLd({ mosque }: MosqueJsonLdProps) {
       longitude: mosque.lng,
     },
     ...(mosque.website && { sameAs: mosque.website }),
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      opens: "00:00",
-      closes: "23:59",
-      description: "Open for five daily prayers. See timetable for exact prayer and iqamah times.",
-    },
   };
 
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
     />
   );
 }

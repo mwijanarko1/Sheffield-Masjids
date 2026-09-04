@@ -6,7 +6,7 @@ import { SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About",
-  description: `How ${SITE_NAME} collects and presents mosque prayer and iqamah times for Sheffield.`,
+  description: `How ${SITE_NAME} collects and presents mosque prayer and iqamah times for Sheffield and other UK cities.`,
   alternates: { canonical: "/about" },
 };
 
@@ -15,7 +15,7 @@ export default function AboutPage() {
     <AppLayout>
       <MasjidlyContentShell title={`About ${SITE_NAME}`}>
         <p>
-          {SITE_NAME} is a community prayer-time directory for Sheffield, United Kingdom. It helps residents and visitors find daily adhan times, mosque-specific iqamah times, Jumu&apos;ah information, monthly timetables, Ramadan schedules, and mosque locations in one place. The service is designed to make published mosque information easier to find without suggesting that every mosque follows the same congregation schedule.
+          {SITE_NAME} is a community prayer-time directory for Sheffield, other UK cities and locations beyond the UK. It helps residents and visitors find daily adhan times, mosque-specific iqamah times, Jumu&apos;ah information, monthly timetables, Ramadan schedules, and mosque locations in one place. The service is designed to make published mosque information easier to find without suggesting that every mosque follows the same congregation schedule.
         </p>
         <section>
           <h2>How the timetable works</h2>

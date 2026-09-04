@@ -5,12 +5,12 @@ export const MASJIDLY_APP_STORE_URL =
   "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833";
 export const MASJIDLY_PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en";
-/** Default document title — lead with the main search phrase people use. */
-export const SITE_TITLE = `Sheffield Prayer Times | Mosques & Iqamah | ${SITE_NAME}`;
+/** Default document title: lead with the main search phrase people use. */
+export const SITE_TITLE = `UK Mosque Prayer Times | Adhan & Iqamah | ${SITE_NAME}`;
 export const SITE_DESCRIPTION =
-  "Sheffield prayer times and iqamah (congregation) times for mosques and masjids across the city. Daily adhan times, monthly timetables, Ramadan schedules, and locations — all in UK (Europe/London) time.";
+  "Prayer times and iqamah for mosques in Sheffield, across the UK and beyond. Find mosque-specific daily adhan times, monthly timetables, Ramadan schedules and addresses.";
 
-/** Mosque names for SEO keywords – people search "[mosque name] prayer times Sheffield" */
+/** Mosque names for SEO keywords: people search "[mosque name] prayer times Sheffield" */
 export const MOSQUE_NAMES = [
   "Muslim Welfare House Sheffield",
   "Masjid Risalah",
@@ -33,7 +33,7 @@ export const MOSQUE_NAMES = [
   "Sheffield Ummah Center",
 ] as const;
 
-const DEFAULT_SITE_URL = "http://localhost:3000";
+const DEFAULT_SITE_URL = "https://www.sheffieldmasjids.com";
 
 export const HIDDEN_MOSQUE_SLUGS = new Set<string>();
 

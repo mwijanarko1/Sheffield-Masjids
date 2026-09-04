@@ -1,72 +1,62 @@
 import type { MetadataRoute } from "next";
 import { getMosques } from "@/lib/mosques";
 import { getBaseUrl } from "@/lib/site";
+import { getMosqueCities } from "@/lib/mosque-cities";
 
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
-  const lastModified = new Date();
   const mosques = await getMosques();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/`,
-      lastModified,
       changeFrequency: "daily",
       priority: 1,
     },
     {
       url: `${baseUrl}/compare`,
-      lastModified,
       changeFrequency: "daily",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/timetable`,
-      lastModified,
       changeFrequency: "daily",
       priority: 0.85,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/masjidly`,
-      lastModified,
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/masjidly/terms`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/masjidly/privacy`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 0.3,
     },
@@ -75,23 +65,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mosqueRoutes: MetadataRoute.Sitemap = mosques.flatMap((mosque) => [
     {
       url: `${baseUrl}/mosques/${mosque.slug}`,
-      lastModified,
       changeFrequency: "daily" as const,
       priority: 0.9,
     },
     {
       url: `${baseUrl}/mosques/${mosque.slug}/timetable`,
-      lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
     {
       url: `${baseUrl}/mosques/${mosque.slug}/ramadan-timetable`,
-      lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     },
   ]);
 
-  return [...staticRoutes, ...mosqueRoutes];
+  const cityRoutes: MetadataRoute.Sitemap = getMosqueCities(mosques).map((city) => ({
+    url: `${baseUrl}${city.href}`,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, { url: `${baseUrl}/mosques`, changeFrequency: "weekly", priority: 0.9 }, ...cityRoutes, ...mosqueRoutes];
 }

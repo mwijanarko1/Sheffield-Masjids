@@ -141,6 +141,11 @@ export default function MasjidlyHomeHero({
           <Settings size={20} strokeWidth={1.8} aria-hidden />
         </Link>
       </div>
+      <nav aria-label="Mosque directory" className="relative z-20 px-4 pt-3 text-center text-sm">
+        <Link href="/mosques" className="inline-flex min-h-11 items-center underline underline-offset-4" style={{ color: fg }}>
+          Browse mosques by city
+        </Link>
+      </nav>
 
       {/* Hero (Masjidly MinimalistPrayerPage) */}
       <div

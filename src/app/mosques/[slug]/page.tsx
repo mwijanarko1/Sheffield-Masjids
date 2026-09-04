@@ -65,18 +65,18 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${mosque.name} Prayer Times Sheffield`;
-  const fullTitle = `${mosque.name} Prayer Times Sheffield | ${SITE_NAME}`;
-  const description = `Sheffield prayer times and iqamah for ${mosque.name}: today's adhan, monthly timetable, Ramadan times, and address.`;
+  const title = `${mosque.name} Prayer Times in ${mosque.cityName}`;
+  const fullTitle = `${title} | ${SITE_NAME}`;
+  const description = `Prayer times and iqamah for ${mosque.name} in ${mosque.cityName}: today's adhan, monthly timetable, Ramadan times, and address.`;
 
   return {
     title,
     description,
     keywords: [
       `${mosque.name} prayer times`,
-      `${mosque.name} Sheffield`,
+      `${mosque.name} ${mosque.cityName}`,
       `${mosque.name} iqamah times`,
-      "Sheffield mosque prayer times",
+      `${mosque.cityName} mosque prayer times`,
     ],
     alternates: {
       canonical: `/mosques/${mosque.slug}`,
@@ -122,9 +122,16 @@ export default async function MosquePage({ params }: MosquePageProps) {
           </Link>
         </Button>
 
+        <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap gap-2 text-sm text-[var(--theme-highlight)]">
+          <Link href="/mosques">All mosques</Link>
+          <span aria-hidden>/</span>
+          <Link href={`/cities/${mosque.countryCode.toLowerCase()}/${mosque.citySlug}`}>
+            Mosques in {mosque.cityName}
+          </Link>
+        </nav>
         <header className="mb-6 sm:mb-10">
           <h1 className="mb-3 text-xl font-light leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
-            {mosque.name} Prayer Times
+            {mosque.name} Prayer Times in {mosque.cityName}
           </h1>
           <p className="mb-4 flex items-start gap-2 text-sm text-muted-foreground sm:text-base">
             <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-[var(--theme-highlight)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,6 +167,12 @@ export default async function MosquePage({ params }: MosquePageProps) {
 
           <section>
             <h2 className="mb-4 text-lg font-bold text-foreground">Prayer times</h2>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Adhan and iqamah times for {mosque.name} in {mosque.cityName}. Check the date shown and confirm any last-minute changes with the mosque.
+            </p>
+            <Link href={`/mosques/${mosque.slug}/timetable`} className="mb-4 inline-flex min-h-11 items-center text-sm text-[var(--theme-highlight)] underline underline-offset-4">
+              {mosque.name} monthly prayer timetable
+            </Link>
             {initialPrayerWidgetData ? (
               <div id={`mosque-prayer-times-static-${mosque.id}`}>
                 <StaticPrayerTimesWidget

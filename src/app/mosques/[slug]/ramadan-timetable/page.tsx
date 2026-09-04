@@ -24,9 +24,9 @@ export async function generateMetadata({
     return { title: "Not Found" };
   }
 
-  const title = `${mosque.name} Ramadan Timetable`;
-  const fullTitle = `${mosque.name} Ramadan Timetable | ${SITE_NAME}`;
-  const description = `Ramadan prayer times and iqamah times for ${mosque.name} in Sheffield.`;
+  const title = `${mosque.name} Ramadan Timetable in ${mosque.cityName}`;
+  const fullTitle = `${title} | ${SITE_NAME}`;
+  const description = `Ramadan prayer times and iqamah times for ${mosque.name} in ${mosque.cityName}.`;
 
   return {
     title,
@@ -56,7 +56,7 @@ export default async function RamadanTimetablePage({ params }: RamadanTimetableP
       <div className="max-w-6xl mx-auto px-4 py-6 sm:py-10 sm:px-6 lg:px-8 pb-safe">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Button variant="link" asChild className="h-auto p-0 text-[var(--theme-highlight)] hover:text-[var(--theme-highlight-bright)]">
-            <Link href="/">Back to home</Link>
+            <Link href={`/mosques/${mosque.slug}`}>{mosque.name} prayer times</Link>
           </Button>
         </div>
 

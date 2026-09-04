@@ -4,8 +4,9 @@ import { getBaseUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
  * JSON-LD WebSite schema for the homepage.
  * Reinforces entity + topic (Sheffield, prayer times) for discovery.
  */
-export default function WebsiteJsonLd() {
+export default function WebsiteJsonLd({ countries }: { countries: string[] }) {
   const baseUrl = getBaseUrl();
+  const coverage = countries.map((name) => ({ "@type": "Country", name }));
 
   const organizationId = `${baseUrl}/#organization`;
   const jsonLd = {
@@ -23,18 +24,7 @@ export default function WebsiteJsonLd() {
         url: baseUrl,
         inLanguage: "en-GB",
         description: SITE_DESCRIPTION,
-        about: {
-          "@type": "City",
-          name: "Sheffield",
-          containedInPlace: {
-            "@type": "AdministrativeArea",
-            name: "South Yorkshire",
-            containedInPlace: {
-              "@type": "Country",
-              name: "United Kingdom",
-            },
-          },
-        },
+        about: coverage,
         publisher: { "@id": organizationId },
       },
       {
@@ -57,10 +47,7 @@ export default function WebsiteJsonLd() {
           addressRegion: "South Yorkshire",
           addressCountry: "GB",
         },
-        areaServed: {
-          "@type": "City",
-          name: "Sheffield",
-        },
+        areaServed: coverage,
       },
     ],
   };
@@ -68,7 +55,7 @@ export default function WebsiteJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
     />
   );
 }

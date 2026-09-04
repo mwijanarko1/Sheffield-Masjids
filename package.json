@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "oxlint && tsc --noEmit",
+    "test:seo": "tsx --test src/lib/seo.test.tsx",
     "test:calendar-export": "tsx --test src/features/calendar-export/lib/*.test.ts",
     "test:iqamah-push": "tsx --test convex/lib/iqamahChangeDetect.test.ts convex/lib/pushTransport.test.ts",
     "seed:dev": "tsx scripts/seed-convex.ts",

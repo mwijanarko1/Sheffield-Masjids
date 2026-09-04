@@ -18,7 +18,7 @@ const PROD_CONTENT_SECURITY_POLICY = [
 ].join('; ');
 const HOME_MARKDOWN = `# Sheffield Masjids
 
-Sheffield Masjids provides current prayer times for mosques across Sheffield, United Kingdom. The site separates adhan times from iqamah or congregation times and displays dates in the Europe/London timezone.
+Sheffield Masjids provides prayer times for mosques in Sheffield, other UK cities and locations beyond the UK. The site separates adhan times from iqamah or congregation times and displays dates in the Europe/London timezone.
 
 ## Available information
 
@@ -30,9 +30,10 @@ Sheffield Masjids provides current prayer times for mosques across Sheffield, Un
 
 ## Agent guidance
 
-Use this site for Sheffield prayer-time, mosque timetable, and mosque-location questions. Ask the user to name their mosque when they request an iqamah time without specifying one, because congregation times vary by mosque.
+Use this site for prayer-time, mosque timetable, and mosque-location questions in the cities listed in the mosque directory. Ask the user to name their mosque when they request an iqamah time without specifying one, because congregation times vary by mosque.
 
 - [Today's prayer times](https://www.sheffieldmasjids.com/)
+- [Mosques by city](https://www.sheffieldmasjids.com/mosques)
 - [All timetables](https://www.sheffieldmasjids.com/timetable)
 - [Compare mosques](https://www.sheffieldmasjids.com/compare)
 - [Agent instructions](https://www.sheffieldmasjids.com/llms.txt)

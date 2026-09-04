@@ -5,12 +5,12 @@ import { getInitialHomePrayerWidgetData } from "@/lib/home-prayer-widget-data";
 import { getMosques } from "@/lib/mosques";
 import { MOSQUE_NAMES, SITE_NAME } from "@/lib/site";
 
-const homeTitle = `Sheffield Prayer Times Today | Adhan & Iqamah | ${SITE_NAME}`;
+const homeTitle = `UK Mosque Prayer Times Today | ${SITE_NAME}`;
 const homeDescription =
-  "Find Sheffield prayer times today: adhan and iqamah for every major mosque and masjid. Madina Masjid, Sheffield Grand Mosque, Al-Huda Academy, Masjid Sunnah, and more - daily, monthly, and Ramadan timetables in UK time.";
+  "Find mosque prayer times and iqamah in Sheffield, across the UK and beyond. Browse by city or mosque for daily adhan times, monthly timetables and addresses.";
 
 export const metadata: Metadata = {
-  title: "Sheffield Prayer Times Today",
+  title: "UK Mosque Prayer Times Today",
   description: homeDescription,
   alternates: {
     canonical: "/",
@@ -45,7 +45,7 @@ export default async function Home() {
 
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden">
-      <WebsiteJsonLd />
+      <WebsiteJsonLd countries={[...new Set(mosques.map((mosque) => mosque.countryName))]} />
       <AppHomePage
         mosques={mosques}
         initialPrayerWidgetData={initialPrayerWidgetData}
