@@ -2733,6 +2733,20 @@
       "website": "https://mwht.org.uk"
     },
     {
+      "id": "greenwich-islamic-centre",
+      "name": "Greenwich Islamic Centre",
+      "address": "131 Plumstead Rd, London SE18 7DW, United Kingdom",
+      "lat": 51.4908,
+      "lng": 0.0935,
+      "slug": "greenwich-islamic-centre",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://gicuk.org"
+    },
+    {
       "id": "sheffield-grand-mosque",
       "name": "Sheffield Grand Mosque",
       "address": "Grimesthorpe Rd, Sheffield S4 8DE, United Kingdom",
