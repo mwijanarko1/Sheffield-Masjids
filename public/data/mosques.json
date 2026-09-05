@@ -120,6 +120,21 @@
       "website": "https://www.swinis.org/"
     },
     {
+      "id": "masjid-omar-farooq",
+      "name": "Masjid Omar Farooq (AKM)",
+      "address": "4640 Kingston Rd, Scarborough, ON M1E 2P9, Canada",
+      "lat": 43.7751131,
+      "lng": -79.1778804,
+      "slug": "masjid-omar-farooq",
+      "citySlug": "scarborough",
+      "cityName": "Scarborough",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "timezone": "America/Toronto",
+      "isHidden": false,
+      "website": "https://masjidomarfarooq.com/"
+    },
+    {
       "id": "grande-mosquee-de-strasbourg",
       "name": "Grande Mosqu\u00e9e de Strasbourg",
       "address": "5 Boulevard de la Victoire, 67000 Strasbourg, France",
@@ -4129,6 +4144,36 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.quranacademy.org.uk/"
+    },
+    {
+      "id": "islamic-foundation-toronto",
+      "name": "Islamic Foundation of Toronto",
+      "address": "441 Nugget Ave, Scarborough, ON M1S 5E1, Canada",
+      "lat": 43.7980135,
+      "lng": -79.2417126,
+      "slug": "islamic-foundation-toronto",
+      "citySlug": "scarborough",
+      "cityName": "Scarborough",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "timezone": "America/Toronto",
+      "isHidden": false,
+      "website": "https://islamicfoundation.ca/"
+    },
+    {
+      "id": "markham-masjid",
+      "name": "Markham Masjid",
+      "address": "2900 Denison St, Markham, ON L3S 4J8, Canada",
+      "lat": 43.841865,
+      "lng": -79.2645127,
+      "slug": "markham-masjid",
+      "citySlug": "markham",
+      "cityName": "Markham",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "timezone": "America/Toronto",
+      "isHidden": false,
+      "website": "https://markhammasjid.ca/"
     }
   ]
 }
