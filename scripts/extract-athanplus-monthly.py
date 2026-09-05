@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Extract ISBCC full-year prayer times from AthanPlus monthly HTML widgets."""
+"""Extract full-year prayer times from AthanPlus monthly HTML widgets."""
+import argparse
 import json
 import re
 import urllib.request
@@ -7,12 +8,10 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-MASJID_ID = "zVKp9PLP"
 BASE_URL = (
     "https://timing.athanplus.com/masjid/widgets/monthly"
-    f"?theme=1&masjid_id={MASJID_ID}&date={{year}}-{{month:02d}}-01"
+    "?theme=1&masjid_id={masjid_id}&date={year}-{month:02d}-01"
 )
-OUT_DIR = Path("public/data/mosques/us/boston/islamic-society-boston-cultural-center")
 
 MONTH_NAMES = [
     "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -24,8 +23,8 @@ MONTH_FILES = [
 ]
 
 
-def fetch_month(year: int, month: int) -> str:
-    url = BASE_URL.format(year=year, month=month)
+def fetch_month(masjid_id: str, year: int, month: int) -> str:
+    url = BASE_URL.format(masjid_id=masjid_id, year=year, month=month)
     request = urllib.request.Request(
         url,
         headers={"User-Agent": "Mozilla/5.0 (compatible; Sheffield-Masjids/1.0)"},
@@ -135,12 +134,10 @@ def parse_jummah(html: str) -> str:
     return ""
 
 
-def main() -> None:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    year = 2026
-
+def extract_year(masjid_id: str, out_dir: Path, year: int = 2026) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
     for month_num in range(1, 13):
-        html = fetch_month(year, month_num)
+        html = fetch_month(masjid_id, year, month_num)
         prayer_rows = parse_prayer_rows(html)
         iqamah_sparse = parse_iqamah_rows(html)
         jummah = parse_jummah(html)
@@ -185,12 +182,21 @@ def main() -> None:
             "iqamah_times": iqamah_times,
             "jummah_iqamah": jummah or iqamah_times[0]["dhuhr"],
         }
-        out_path = OUT_DIR / f"{MONTH_FILES[month_num - 1]}.json"
+        out_path = out_dir / f"{MONTH_FILES[month_num - 1]}.json"
         out_path.write_text(json.dumps(output, indent=2) + "\n")
         print(
             f"Wrote {out_path} ({len(days)} days, "
             f"{len(iqamah_sparse)} iqamah anchors, jummah {output['jummah_iqamah']})"
         )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Extract AthanPlus monthly prayer times")
+    parser.add_argument("masjid_id", help="AthanPlus masjid_id")
+    parser.add_argument("out_dir", type=Path, help="Output directory for monthly JSON files")
+    parser.add_argument("--year", type=int, default=2026)
+    args = parser.parse_args()
+    extract_year(args.masjid_id, args.out_dir, args.year)
 
 
 if __name__ == "__main__":

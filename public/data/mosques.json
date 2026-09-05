@@ -3196,6 +3196,48 @@
       "website": "https://icorlando.org/"
     },
     {
+      "id": "islamic-center-naperville",
+      "name": "Islamic Center of Naperville (ICN 75th)",
+      "address": "25W530 75th St, Naperville, IL 60565, United States",
+      "lat": 41.7489,
+      "lng": -88.1865,
+      "slug": "islamic-center-naperville",
+      "citySlug": "naperville",
+      "cityName": "Naperville",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://icnmasjid.org/"
+    },
+    {
+      "id": "memphis-islamic-center",
+      "name": "Memphis Islamic Center",
+      "address": "10299 Humphrey Rd, Cordova, TN 38018, United States",
+      "lat": 35.1687,
+      "lng": -89.776,
+      "slug": "memphis-islamic-center",
+      "citySlug": "memphis",
+      "cityName": "Cordova",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://www.memphisislamiccenter.org/"
+    },
+    {
+      "id": "islamic-center-pittsburgh",
+      "name": "Islamic Center of Pittsburgh",
+      "address": "4100 Bigelow Blvd, Pittsburgh, PA 15213, United States",
+      "lat": 40.4606,
+      "lng": -79.9572,
+      "slug": "islamic-center-pittsburgh",
+      "citySlug": "pittsburgh",
+      "cityName": "Pittsburgh",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://www.icp-pgh.org/"
+    },
+    {
       "id": "masjid-hamza",
       "name": "Masjid Hamza (Mission Bend Islamic Center)",
       "address": "6233 Tres Lagunas Dr, Houston, TX 77083, United States",

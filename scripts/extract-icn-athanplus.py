@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract ISBCC full-year prayer times from AthanPlus monthly HTML widgets."""
+"""Extract ICN Naperville (75th) full-year prayer times from AthanPlus monthly HTML."""
 import json
 import re
 import urllib.request
@@ -7,12 +7,12 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-MASJID_ID = "zVKp9PLP"
+MASJID_ID = "BYADpxAN"
 BASE_URL = (
     "https://timing.athanplus.com/masjid/widgets/monthly"
     f"?theme=1&masjid_id={MASJID_ID}&date={{year}}-{{month:02d}}-01"
 )
-OUT_DIR = Path("public/data/mosques/us/boston/islamic-society-boston-cultural-center")
+OUT_DIR = Path("public/data/mosques/us/naperville/islamic-center-naperville")
 
 MONTH_NAMES = [
     "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",

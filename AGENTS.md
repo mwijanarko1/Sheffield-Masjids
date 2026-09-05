@@ -101,7 +101,7 @@ Each mosque must have an entry in `/public/data/mosques.json`:
 - `id` — must match the directory name (`{mosque-id}`)
 - `slug` — same as `id`
 - `citySlug` — must match parent directory name
-- `isHidden` — set to `true` for data that is placeholder, incomplete, or unverifiable; `false` for fully verified
+- `isHidden` — set to `true` only for **placeholder or unverifiable** data. **Partial years are fine** — missing months do not require `isHidden: true` if the published months are verified from the source.
 
 ---
 
@@ -111,20 +111,21 @@ Each mosque must have an entry in `/public/data/mosques.json`:
 - JSON APIs and REST endpoints
 - CSV exports (e.g. Google Sheets published CSVs)
 - HTML tables from rendered DOM (scraping)
-- PDFs with extractable text tables (via `pdftotext -layout`)
 - Data manually provided by the user (typed from timetables, PDFs, images)
 
 ### ✅ Allowed extraction methods:
 - `curl` / `fetch` to download structured data
 - Python to parse JSON, CSV, or HTML tables
-- `pdftotext -layout` for text-based PDFs
 - Direct text parsing from user-provided raw data
-- **OCR (tesseract)** on images — only when explicitly permitted by the user
+- **PDF and image timetables** — use the `extract-mosque-pdf-vision` skill only (vision model). **Do not use `pdftotext`, tesseract, or other text/OCR extraction on PDFs or images.**
 
 Load `extract-mosque-prayer-times` before HTTP extraction. Known traps: Newham/Humera Sheets (`2PACX` + `gid`, separate jamat vs `salahBeginning`, 12h +12), Witton DPT (HTTP not HTTPS, GET not POST, thead-only means no month data), Brand Lane (single-day embed, stop and request PDF), HTML tables with `Sep 1, 2026` date cells and nested iqamah spans. Write Python files instead of quoted one-liners. `scripts/seed-convex.ts` maps month names with `Array.from(MONTH_FILES.entries())`.
 
+When the **only** source is a PDF or image and vision has not been run, mark the mosque **`[VISION-DEFERRED]`** and move on to HTTP-extractable rows.
+
 ### ❌ Banned:
 - **Astronomical calculations** — never compute/calculate prayer times using libraries, formulas, or algorithms
+- **`pdftotext` / OCR on mosque PDFs or images** — vision skill only for those formats
 - **Placeholder/extrapolated data** without marking `isHidden: true`
 
 ---
