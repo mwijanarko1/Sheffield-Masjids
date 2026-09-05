@@ -7,7 +7,7 @@ Prayer times, iqamah times, and masjid locations for Sheffield, built with Next.
 - Daily prayer + iqamah schedule per masjid
 - Friday Jummah handling
 - Compare view across Sheffield masjids (`/compare`)
-- Last 10 nights Ramadan checklist (`/last-ten`) — with saved progress and night switcher
+- Last 10 nights Ramadan checklist (`/last-ten`) - with saved progress and night switcher
 - Dedicated masjid pages (`/mosques/[slug]`)
 - Monthly timetable browser (`/mosques/[slug]/timetable` and global `/timetable`)
 - Ramadan-only timetable support (`/mosques/[slug]/ramadan-timetable`)
@@ -22,7 +22,7 @@ Prayer times, iqamah times, and masjid locations for Sheffield, built with Next.
 
 - **Frontend:** Next.js 16 (App Router), React 19, TypeScript
 - **Styling:** Tailwind CSS v4 + shadcn/ui (Radix primitives)
-- **Backend:** Convex (real-time DB) — optional, falls back to static JSON
+- **Backend:** Convex (real-time DB) - optional, falls back to static JSON
 - **Package Manager:** Bun
 - **Analytics:** Vercel Analytics
 - **Time Libraries:** `adhan` (devDep), `moment-hijri`, custom DST logic
@@ -50,11 +50,13 @@ Create `.env.local` and set:
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
-NEXT_PUBLIC_CONVEX_URL=<your-convex-url>  # Optional — enables live backend
+NEXT_PUBLIC_CONVEX_URL=<your-convex-url>  # Optional - enables live backend
+WEBMCP_ORIGIN_TRIAL_TOKEN=<token>  # Optional - Chrome WebMCP origin trial
 ```
 
-- `NEXT_PUBLIC_SITE_URL` — Used for canonical URLs, `robots.txt`, and `sitemap.xml`. Falls back to `http://localhost:3000` if unset.
-- `NEXT_PUBLIC_CONVEX_URL` — When set, the app queries Convex for mosque registry, monthly prayer times, Ramadan timetables, and UK DST dates. Falls back to static JSON in `public/data/` if unset.
+- `NEXT_PUBLIC_SITE_URL` - Used for canonical URLs, `robots.txt`, and `sitemap.xml`. Falls back to `http://localhost:3000` if unset.
+- `NEXT_PUBLIC_CONVEX_URL` - When set, the app queries Convex for mosque registry, monthly prayer times, Ramadan timetables, and UK DST dates. Falls back to static JSON in `public/data/` if unset.
+- `WEBMCP_ORIGIN_TRIAL_TOKEN` - When set, sends an `Origin-Trial` header so Chrome can enable WebMCP without a local flag. Register at https://developer.chrome.com/origintrials. Local testing also works with `chrome://flags/#enable-webmcp-testing`.
 
 ## SEO Setup
 
@@ -68,7 +70,7 @@ NEXT_PUBLIC_CONVEX_URL=<your-convex-url>  # Optional — enables live backend
 
 | Route | Description |
 |-------|-------------|
-| `/` | Home — mosque selector, today's prayer times, map, compare link |
+| `/` | Home - mosque selector, today's prayer times, map, compare link |
 | `/compare` | Cross-masjid prayer comparison |
 | `/last-ten` | Last 10 nights Ramadan checklist with saved progress |
 | `/timetable` | Global timetable browser (all mosques, tabbed by month) |
@@ -100,9 +102,9 @@ public/
 ```
 
 Each monthly JSON file contains:
-- `prayer_times` — adhan times for each day
-- `iqamah_times` — iqamah time ranges for each prayer
-- `jummah_iqamah` — Friday Jummah iqamah time
+- `prayer_times` - adhan times for each day
+- `iqamah_times` - iqamah time ranges for each prayer
+- `jummah_iqamah` - Friday Jummah iqamah time
 
 ### Convex Integration (Optional)
 
@@ -170,18 +172,18 @@ When `NEXT_PUBLIC_CONVEX_URL` is set, the app uses a live backend:
 
 Located in `src/features/calendar-export/`:
 
-- `lib/build-monthly-calendar-events.ts` — Converts monthly prayer data to ICS events
-- `lib/ics.ts` — Generates valid ICS file content
-- `lib/download-calendar-file.ts` — Triggers browser download
+- `lib/build-monthly-calendar-events.ts` - Converts monthly prayer data to ICS events
+- `lib/ics.ts` - Generates valid ICS file content
+- `lib/download-calendar-file.ts` - Triggers browser download
 
 ## Useful Commands
 
-- `bun run dev` — Start local dev server
-- `bun run build` — Production build
-- `bun start` — Run production server
-- `bun run lint` — Run linter
-- `bunx tsc --noEmit` — Type-check
-- `bun run seed:dev` — Seed Convex from `public/data` (dev deployment)
+- `bun run dev` - Start local dev server
+- `bun run build` - Production build
+- `bun start` - Run production server
+- `bun run lint` - Run linter
+- `bunx tsc --noEmit` - Type-check
+- `bun run seed:dev` - Seed Convex from `public/data` (dev deployment)
 
 ## Data & Scripts
 
@@ -204,11 +206,11 @@ Located in `src/features/calendar-export/`:
 
 ## Known Risks
 
-1. **Dual data layer complexity** — The Convex ↔ static JSON fallback pattern means bugs can manifest differently depending on whether Convex is configured. Any change to data access logic must be tested in both modes.
-2. **DST logic complexity** — `lib/prayer-times.ts` contains intricate UK DST detection, embedded-DST timetable remapping, and sparse-data interpolation. Changes here carry regression risk.
-3. **Large core engine** — `src/lib/prayer-times.ts` is the core engine and is very large. It should be considered for future decomposition into smaller modules (DST handling, Convex integration, Ramadan logic, monthly lookup).
-4. **Client-side caching** — In-memory `Map` caches with TTL are not synchronized across tabs or server/client boundaries. Stale data may appear until TTL expiry.
-5. **No E2E tests** — The codebase has unit tests for calendar export and DST logic, but no Playwright/E2E test infrastructure.
+1. **Dual data layer complexity** - The Convex ↔ static JSON fallback pattern means bugs can manifest differently depending on whether Convex is configured. Any change to data access logic must be tested in both modes.
+2. **DST logic complexity** - `lib/prayer-times.ts` contains intricate UK DST detection, embedded-DST timetable remapping, and sparse-data interpolation. Changes here carry regression risk.
+3. **Large core engine** - `src/lib/prayer-times.ts` is the core engine and is very large. It should be considered for future decomposition into smaller modules (DST handling, Convex integration, Ramadan logic, monthly lookup).
+4. **Client-side caching** - In-memory `Map` caches with TTL are not synchronized across tabs or server/client boundaries. Stale data may appear until TTL expiry.
+5. **No E2E tests** - The codebase has unit tests for calendar export and DST logic, but no Playwright/E2E test infrastructure.
 
 ## License
 

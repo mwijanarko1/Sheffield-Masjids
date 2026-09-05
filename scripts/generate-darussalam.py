@@ -55,11 +55,14 @@ def extract_data(html, month_num):
         all_string_values = re.findall(r'"children":"([^"]+)"', tbody_section)
         all_dates = re.findall(r'\$","span",null,\{"children":(\d+)\}', tbody_section)
         
-        valid_values = {'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', '—'}
+        MISSING = "\u2014"
+        day_names_set = {'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'}
+        valid_values = day_names_set | {MISSING, '-'}
         time_pattern = re.compile(r'^\d{2}:\d{2}$')
-        data_values = [v for v in all_string_values if v in valid_values or time_pattern.match(v)]
-        
-        day_names_set = {'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'}
+        data_values = [
+            v for v in all_string_values
+            if v.lower() in valid_values or time_pattern.match(v)
+        ]
         
         rows = []
         for i in range(0, len(data_values), 12):
@@ -67,7 +70,7 @@ def extract_data(html, month_num):
                 break
             row_vals = data_values[i:i+12]
             day_name = row_vals[0]
-            if day_name not in day_names_set:
+            if day_name.lower() not in day_names_set:
                 continue
             
             date_num = int(all_dates[len(rows)]) if len(rows) < len(all_dates) else None
@@ -79,7 +82,7 @@ def extract_data(html, month_num):
             adhan_positions = {'fajr': 0, 'dhuhr': 3, 'asr': 5, 'maghrib': 7, 'isha': 9}
             iqamah_indices = [1, 4, 6, 8, 10]  # positions of iqamah in times list
             for idx in iqamah_indices:
-                if idx < len(times) and times[idx] == '—':
+                if idx < len(times) and times[idx] == MISSING:
                     # Find corresponding adhan time
                     adhan_idx = {'fajr': 0, 'dhuhr': 3, 'asr': 5, 'maghrib': 7, 'isha': 9}
                     for prayer, a_idx in adhan_idx.items():
@@ -92,7 +95,7 @@ def extract_data(html, month_num):
                     # asr_iqamah at idx=6, asr adhan at idx=5 ✓
                     # maghrib_iqamah at idx=8, maghrib adhan at idx=7 ✓
                     # isha_iqamah at idx=10, isha adhan at idx=9 ✓
-                    if idx - 1 >= 0 and idx - 1 < len(times) and times[idx-1] not in ('', '—'):
+                    if idx - 1 >= 0 and idx - 1 < len(times) and times[idx-1] not in ('', MISSING):
                         times[idx] = times[idx-1]  # Use adhan time for iqamah
             while len(times) < 11:
                 times.append('')

@@ -10,6 +10,7 @@ import {
   SITE_NAME,
   SITE_TITLE,
 } from "@/lib/site";
+import WebMcpTools from "@/components/WebMcpTools";
 import { ConvexProvider } from "@/providers/ConvexProvider";
 import "./globals.css";
 
@@ -91,6 +92,7 @@ export default function RootLayout({
           <MasjidlyThemeProvider>
             <MasjidlyPromoOverlayProvider>
               <DynamicBackground />
+              <WebMcpTools />
               <a
                 href="#main-content"
                 className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#47A6FF] px-4 py-2 font-medium text-white focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#1D2433]"

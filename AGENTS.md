@@ -222,3 +222,15 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 - City slugs use `gb/` prefix (country code ISO 3166-1 alpha-2)
 - Always seed **both** dev and prod after any change
 - Use `--changed` for incremental seeding when possible
+
+---
+
+## 10. Agent traps
+
+- Next.js 16: open previews at `http://localhost:<port>`, not `127.0.0.1`. `allowedDevOrigins` is set; 127.0.0.1 without it looks like a dead non-hydrated page.
+- Before starting a second Next server, inspect the existing listener cwd (`lsof -iTCP:<port> -sTCP:LISTEN`). Port 3000/3001 often already serve this repo or another project.
+- Remote is `mwijanarko1/Sheffield-Masjids`. Run `gh api user --jq .login` and switch to the `mwijanarko1` GitHub account before commit/push. `paretoeducation` gets 403.
+- Playwright MCP screenshots go under `/tmp/playwright-mcp`, never the repo root.
+- Read the exact discovered component path. Do not guess a subdirectory.
+- ImageMagick is not assumed. Use Pillow (`python3` + `PIL`) for lossless RGBA conversion.
+- Mosque PDF/HTML months from the same publisher vary: case-insensitive day names, strip `*` date affixes (`*16`, `16*`), and resolve Maghrib/Isha jamaat by min/max of the last two times rather than a fixed column index.

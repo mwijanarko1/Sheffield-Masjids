@@ -60,9 +60,8 @@ def parse_month_table(month_name):
             if s.startswith("•"):
                 break
             # Data lines start with a number
-            if re.match(r'^\d{1,2}\b', s) and not re.match(r'^\d+(ST|ND|RD|TH)', s):
-                # Clean asterisk
-                s_clean = re.sub(r'^(\d+)\*', r'\1', s)
+            if re.match(r'^\*?\d{1,2}\b', s) and not re.match(r'^\*?\d+(ST|ND|RD|TH)', s, re.I):
+                s_clean = re.sub(r'^\*?(\d+)\*?', r'\1', s)
                 data_lines.append(s_clean)
     
     return data_lines

@@ -26,3 +26,12 @@ Do not present one mosque's iqamah time as a city-wide time. Ask which mosque th
 - Privacy: https://www.sheffieldmasjids.com/privacy
 - About: https://www.sheffieldmasjids.com/about
 - Contact: https://www.sheffieldmasjids.com/contact
+
+## WebMCP tools
+
+When the browser exposes `document.modelContext`, this site registers:
+
+- `search_mosques` - find mosques by name, city, or country
+- `get_prayer_times` - adhan and iqamah for a mosque on a date
+- `open_mosque` - open a mosque detail page
+- `select_mosque` - set the preferred home mosque and open `/`

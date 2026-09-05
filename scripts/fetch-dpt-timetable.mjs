@@ -68,6 +68,7 @@ function parseTime(s) {
  */
 function parseTimetableHtml(html) {
   const rows = [];
+  let inferredDay = 0;
   const trRe = /<tr[^>]*>\s*([\s\S]*?)<\/tr>/gi;
   let trMatch;
   while ((trMatch = trRe.exec(html)) !== null) {
@@ -94,7 +95,13 @@ function parseTimetableHtml(html) {
       const m4 = /^(\d{1,2})\//.exec(tds[0] || '');
       dayNum = m4 ? parseInt(m4[1], 10) : NaN;
     }
-    if (!Number.isFinite(dayNum)) continue;
+    // Some DPT uploads leave the date cell blank; infer from row order.
+    if (!Number.isFinite(dayNum)) {
+      inferredDay += 1;
+      dayNum = inferredDay;
+    } else {
+      inferredDay = dayNum;
+    }
     const weekday = (tds[1] || '').trim();
 
     const fajr = parseTime(tds[2]);
