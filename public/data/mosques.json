@@ -3028,6 +3028,20 @@
       "website": "https://www.essalamrotterdam.nl"
     },
     {
+      "id": "moskee-elimaan",
+      "name": "Moskee El-Imaan",
+      "address": "IJssellaan 2, 8223 DA Lelystad, Netherlands",
+      "lat": 52.5247947,
+      "lng": 5.4794074,
+      "slug": "moskee-elimaan",
+      "citySlug": "lelystad",
+      "cityName": "Lelystad",
+      "countryCode": "NL",
+      "countryName": "Netherlands",
+      "isHidden": false,
+      "website": "https://moskeeelimaan.nl"
+    },
+    {
       "id": "brand-lane-islamic-center",
       "name": "Brand Lane Islamic Center (Masjid As Sabireen)",
       "address": "610 Brand Lane, Stafford, TX 77477, United States",
