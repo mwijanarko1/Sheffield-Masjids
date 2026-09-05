@@ -3154,6 +3154,48 @@
       "website": "https://adamscenter.org/"
     },
     {
+      "id": "diyanet-center-of-america",
+      "name": "Diyanet Center of America",
+      "address": "9610 Good Luck Rd, Lanham, MD 20706, United States",
+      "lat": 38.9972,
+      "lng": -76.8472,
+      "slug": "diyanet-center-of-america",
+      "citySlug": "lanham",
+      "cityName": "Lanham",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://diyanetamerica.org/"
+    },
+    {
+      "id": "islamic-society-boston-cultural-center",
+      "name": "Islamic Society of Boston Cultural Center (ISBCC)",
+      "address": "100 Malcolm X Blvd, Boston, MA 02120, United States",
+      "lat": 42.3314,
+      "lng": -71.0853,
+      "slug": "islamic-society-boston-cultural-center",
+      "citySlug": "boston",
+      "cityName": "Boston",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://isbcc.org/"
+    },
+    {
+      "id": "islamic-center-orlando",
+      "name": "Islamic Center of Orlando",
+      "address": "11543 Ruby Lake Rd, Orlando, FL 32836, United States",
+      "lat": 28.4089,
+      "lng": -81.5012,
+      "slug": "islamic-center-orlando",
+      "citySlug": "orlando",
+      "cityName": "Orlando",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://icorlando.org/"
+    },
+    {
       "id": "masjid-hamza",
       "name": "Masjid Hamza (Mission Bend Islamic Center)",
       "address": "6233 Tres Lagunas Dr, Houston, TX 77083, United States",
