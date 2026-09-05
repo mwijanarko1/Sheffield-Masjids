@@ -25,11 +25,17 @@ export default function DynamicBackground() {
     if (pathname?.startsWith("/masjidly")) return;
     const root = document.documentElement;
     const lightFg = MASJIDLY_MODERN_SKIES[theme].lightForeground;
+    root.style.setProperty("--theme-sky", MASJIDLY_MODERN_SKIES[theme].sky);
+    root.style.setProperty("--theme-edge", MASJIDLY_MODERN_SKIES[theme].sky.match(/#[0-9a-f]{6}/i)![0]);
     root.style.setProperty("--theme-fg", textColorForTheme(theme));
     root.style.setProperty("--theme-fg-muted", mutedTextForTheme(theme));
     root.style.setProperty("--theme-text-muted", mutedTextForTheme(theme));
     root.dataset.masjidlyTheme = theme;
     root.dataset.masjidlyFg = lightFg ? "light" : "dark";
+    return () => {
+      root.style.removeProperty("--theme-sky");
+      root.style.removeProperty("--theme-edge");
+    };
   }, [theme, pathname]);
 
   if (pathname?.startsWith("/masjidly")) return null;
@@ -47,6 +53,10 @@ export default function DynamicBackground() {
       }}
       aria-hidden
     >
+      <div
+        className="fixed inset-x-0 bottom-0 h-1"
+        style={{ backgroundColor: active.sky.match(/#[0-9a-f]{6}/gi)!.at(-1) }}
+      />
       <div
         className="absolute inset-0 transition-[background] duration-700 ease-in-out"
         style={{ background: active.sky }}

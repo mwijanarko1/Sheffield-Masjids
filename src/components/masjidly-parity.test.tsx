@@ -53,6 +53,12 @@ test("Modern skies use the Masjidly set2 palette and matching foregrounds", () =
   assert.equal(MASJIDLY_MODERN_SKIES.isha.sky, "linear-gradient(180deg, #000328 0%, #00458E 100%)");
   assert.equal(textColorForTheme("maghrib"), "#111111");
   assert.equal(textColorForTheme("isha"), "#FFFFFF");
+  for (const { sky } of Object.values(MASJIDLY_MODERN_SKIES)) {
+    const colors = sky.match(/#[0-9a-f]{6}/gi);
+    assert.ok(colors && colors.length >= 2);
+    assert.ok(sky.includes(`${colors[0]} 0%`));
+    assert.ok(sky.endsWith(`${colors.at(-1)} 100%)`));
+  }
 });
 
 test("Night icon is three four-point stars and sunset uses a downward arrow", () => {

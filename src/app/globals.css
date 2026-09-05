@@ -240,10 +240,17 @@ code {
   }
 }
 
+html,
+body {
+  background-image: var(--theme-sky, none);
+  background-size: 100% 100dvh;
+  background-repeat: no-repeat;
+}
+
 /* Base styles */
 body {
   font-family: var(--font-sans-local);
-  background-color: hsl(var(--background));
+  background-color: var(--theme-edge, hsl(var(--background)));
   color: hsl(var(--foreground));
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
