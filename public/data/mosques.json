@@ -4258,6 +4258,20 @@
       "website": "https://masjidhamza.co.uk/"
     },
     {
+      "id": "darul-elm-masjid",
+      "name": "Darul Elm Masjid and Community Centre",
+      "address": "115 Soho Hill, Birmingham, B19 1AY, United Kingdom",
+      "lat": 52.499,
+      "lng": -1.920083,
+      "slug": "darul-elm-masjid",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://darul-elm.org/"
+    },
+    {
       "id": "cradley-heath-central-mosque",
       "name": "Cradley Heath Central Mosque & Islamic Centre",
       "address": "Plant Street, Cradley Heath, B64 6EY, United Kingdom",

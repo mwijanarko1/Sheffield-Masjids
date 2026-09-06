@@ -46,6 +46,10 @@ Work the list top to bottom in batches:
 - [DONE] Masjid Abubakr Siddique (B66) - full year via DPT AJAX, visible
 - [DONE] Masjid e Hamza Birmingham (B13) - full year via prayer-times.json, visible
 
+## Done (added outside Sirat gap list)
+
+- [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
+
 Rows below marked [DONE] are complete; remaining count: 472.
 
 ## How to use this file
