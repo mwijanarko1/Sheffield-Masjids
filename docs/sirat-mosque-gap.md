@@ -45,12 +45,14 @@ Work the list top to bottom in batches:
 - [DONE] Manarat Foundation (B26) - Mar-Dec via HTML tables, hidden (Jan-Feb not published on site)
 - [DONE] Masjid Abubakr Siddique (B66) - full year via DPT AJAX, visible
 - [DONE] Masjid e Hamza Birmingham (B13) - full year via prayer-times.json, visible
+- [DONE] Masjid Eesa ibn Maryam (B28) - full year via DPT AJAX (arrahma.co.uk), visible
+- [DONE] Masjid Ul Madni (B6) - full year via DPT AJAX (madnimasjid.com), visible
 
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked [DONE] are complete; remaining count: 472.
+Rows below marked [DONE] are complete; remaining count: 470.
 
 ## How to use this file
 
@@ -152,16 +154,16 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Masjid al-Ummah Sandwell * | 215 High Street, West Midlands, Smethwick, B66 3AH | no website listed | mosque-000235 |
 | [VISION-DEFERRED] Masjid Baitul Amaan * | 253 Halfords Lane, Smethwick, B66 1BD | https://masjidbaitulamaan.org.uk/about/ | mosque-000079 |
 | [DONE] Masjid e Hamza * | 90 Church Road, Birmingham, B13 9AE | https://masjidhamza.co.uk/ | mosque-000319 |
-| Masjid Eesa ibn Maryam * | 14 Etwall Road, Hall Green, Birmingham, B28 0LE | https://arrahma.co.uk/ | mosque-000088 |
+| [DONE] Masjid Eesa ibn Maryam * | 14 Etwall Road, Hall Green, Birmingham, B28 0LE | https://arrahma.co.uk/ | mosque-000088 |
 | Masjid Imam Al-Shafi'i & Community Centre * | 238 Anthony Road, Alum Rock, Birmingham, B8 3AN | https://www.masjidimamshafii.com/ | mosque-000206 |
 | Masjid Mujadidia * | 339 Somerville Rd, Birmingham, B10 9DU | no website listed | mosque-000356 |
-| Masjid Qamarul Islam * | 168-170 Fosbrooke Road, Birmingham, B10 9JP | https://masjidqamarulislam.co.uk/ | mosque-000140 |
+| [VISION-DEFERRED] Masjid Qamarul Islam * | 168-170 Fosbrooke Road, Birmingham, B10 9JP | https://masjidqamarulislam.co.uk/ | mosque-000140 |
 | Masjid Sunnah Quinton * | 📍 1 Simmons Dr, Quinton, Birmingham, B32 1SL | no website listed | mosque-000342 |
 | Masjid Taqwa Birmingham * | 147 Kyrwicks Lane, Birmingham, B11 1SS | no website listed | mosque-000504 |
-| Masjid Ul Madni * | 58 Trinity Road, Aston, Birmingham, B6 6NH | https://madnimasjid.com/ | mosque-000546 |
+| [DONE] Masjid Ul Madni * | 58 Trinity Road, Aston, Birmingham, B6 6NH | https://madnimasjid.com/ | mosque-000546 |
 | Masjidus Sunnah An Nabawiyyah * | 125 Mansfield Rd, Aston, Birmingham, B6 6DA | no website listed | mosque-000314 |
 | Muslim Students House * | 517 Moseley Rd, Balsall Heath, Birmingham, B12 9BX | no website listed | mosque-000108 |
-| Paigham-E-Islam Trust Britain * | 423 Stratford Road, Sparkhill, Birmingham, B11 4LB | https://www.paigham-e-islam.co.uk/contact-us/ | mosque-000594 |
+| [VISION-DEFERRED] Paigham-E-Islam Trust Britain * | 423 Stratford Road, Sparkhill, Birmingham, B11 4LB | https://www.paigham-e-islam.co.uk/contact-us/ | mosque-000594 |
 | Qadria Trust * | 26 Alfred Street, Birmingham, B12 8JL | https://www.qadriatrust.com/ | mosque-000615 |
 | Soho Hill Muslim School * | 130 Soho Hill, West Midlands, Birmingham, B19 1AF | http://www.sohohillmuslim.org.uk/contact | mosque-000237 |
 | Sultan Bahu Centre * | 962 Alum Rock Road, Birmingham, B8 2LS | no website listed | mosque-000009 |

@@ -4272,6 +4272,34 @@
       "website": "https://darul-elm.org/"
     },
     {
+      "id": "masjid-eesa-ibn-maryam",
+      "name": "Masjid Eesa ibn Maryam",
+      "address": "14 Etwall Road, Hall Green, Birmingham, B28 0LE, United Kingdom",
+      "lat": 52.422148,
+      "lng": -1.850152,
+      "slug": "masjid-eesa-ibn-maryam",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://arrahma.co.uk/"
+    },
+    {
+      "id": "masjid-ul-madni",
+      "name": "Masjid Ul Madni",
+      "address": "58 Trinity Road, Aston, Birmingham, B6 6NH, United Kingdom",
+      "lat": 52.508124,
+      "lng": -1.895963,
+      "slug": "masjid-ul-madni",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://madnimasjid.com/"
+    },
+    {
       "id": "cradley-heath-central-mosque",
       "name": "Cradley Heath Central Mosque & Islamic Centre",
       "address": "Plant Street, Cradley Heath, B64 6EY, United Kingdom",
