@@ -2720,6 +2720,20 @@
       "website": "https://masjidsunnahsheffield.co.uk"
     },
     {
+      "id": "masjid-umar-yma",
+      "name": "Masjid Umar (YMA)",
+      "address": "306 Barnsley Road, Sheffield S4 7AH, United Kingdom",
+      "lat": 53.4085,
+      "lng": -1.4392,
+      "slug": "masjid-umar-yma",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.ymasheffield.org"
+    },
+    {
       "id": "masjid-al-huda-sheffield",
       "name": "Masjid al Huda Sheffield",
       "address": "(next to St Silas Church), Hanover St, Highfield, Sheffield S3 7WT",
