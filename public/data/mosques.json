@@ -4608,6 +4608,36 @@
       "timezone": "America/Toronto",
       "isHidden": false,
       "website": "https://markhammasjid.ca/"
+    },
+    {
+      "id": "masjid-toronto-dundas",
+      "name": "Masjid Toronto, Dundas",
+      "address": "56 Dundas St E, Toronto, ON M5B 1C6, Canada",
+      "lat": 43.65638,
+      "lng": -79.3788,
+      "slug": "masjid-toronto-dundas",
+      "citySlug": "toronto",
+      "cityName": "Toronto",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "timezone": "America/Toronto",
+      "isHidden": false,
+      "website": "https://centres.macnet.ca/masjidtoronto/"
+    },
+    {
+      "id": "icco-mississauga",
+      "name": "Islamic Community Centre of Ontario (ICCO)",
+      "address": "2550 Dunwin Dr, Mississauga, ON L5L 1T1, Canada",
+      "lat": 43.5285308,
+      "lng": -79.6809361,
+      "slug": "icco-mississauga",
+      "citySlug": "mississauga",
+      "cityName": "Mississauga",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "timezone": "America/Toronto",
+      "isHidden": false,
+      "website": "https://centres.macnet.ca/icco/"
     }
   ]
 }
