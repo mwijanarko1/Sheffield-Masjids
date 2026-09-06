@@ -62,7 +62,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         const { year, month, day } = getDateInSheffield(new Date());
         return new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
     });
-    const [currentTime, setCurrentTime] = useState(() => new Date());
+    const [currentTime, setCurrentTime] = useState(selectedDate);
     const [hijriDate, setHijriDate] = useState("");
     const [selectedPrayerIndex, setSelectedPrayerIndex] = useState(0);
     const [showHeroCountdown, setShowHeroCountdown] = useState(false);
