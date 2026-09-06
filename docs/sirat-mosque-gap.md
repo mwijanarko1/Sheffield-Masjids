@@ -49,12 +49,16 @@ Work the list top to bottom in batches:
 - [DONE] Masjid Ul Madni (B6) - full year via DPT AJAX (madnimasjid.com), visible
 - [DONE] Qadria Trust (B12) - full year via DPT AJAX (qadriatrust.com), visible
 - [DONE] Yemeni Community Association in Sandwell (B70) - full year via DPT AJAX (yca-sandwell.org.uk), visible
+- [DONE] Al-Medinah Mosque Brighton (BN1) - full year via Laravel API (almedinah.co.uk), visible
+- [DONE] BD5 Masjid (BD5) - September only via Amanahfy Next.js (bd5masjid.com), hidden
+- [DONE] Al-Jamia Suffa-Tul-Islam Grand Mosque (BD5) - already as `bradford-grand-mosque`, full year via PDF vision, visible
+- [DONE] Jamiyat Tablighul Islam Coventry Street (BD4) - already as `central-mosque-bradford`, full year via DPT AJAX (jamiyat.org), visible
 
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked [DONE] are complete; remaining count: 468.
+Rows below marked [DONE] are complete; remaining count: 464.
 
 ## How to use this file
 
@@ -181,7 +185,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Trowbridge Mosque * | 54 Longfield Road, Trowbridge, BA14 7AD | https://www.trowbridgemasjid.org/ | mosque-000366 |
+| [VISION-DEFERRED] Trowbridge Mosque * | 54 Longfield Road, Trowbridge, BA14 7AD | https://www.trowbridgemasjid.org/ | mosque-000366 |
 
 ### BB (14)
 
@@ -206,15 +210,15 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Al-Jamia Suffa-Tul-Islam Grand Mosque * | Horton Park Avenue, West Yorkshire, Bradford, BD5 0LD | https://www.bradfordgrandmosque.co.uk/ | mosque-000585 |
+| [DONE] Al-Jamia Suffa-Tul-Islam Grand Mosque * | Horton Park Avenue, West Yorkshire, Bradford, BD5 0LD | https://www.bradfordgrandmosque.co.uk/ | mosque-000585 |
 | Alhira Islamic Centre * | 12 Marsh St, Bradford, BD5 9NE | no website listed | mosque-000127 |
-| BD5 Masjid * | 49 Hastings Street, West Yorkshire, Bradford, BD5 9PQ | https://www.bd5masjid.com/ | mosque-000559 |
+| [DONE] BD5 Masjid * | 49 Hastings Street, West Yorkshire, Bradford, BD5 9PQ | https://www.bd5masjid.com/ | mosque-000559 |
 | Ghosiyah Masjid * | 206A Skipton Road, West Yorkshire, Keighley, BD21 2TA | no website listed | mosque-000453 |
 | Islam Bradford * | IslamBradford, 1 City Road, West Yorkshire, Bradford, BD8 8ER | no website listed | mosque-000433 |
 | Jamia Masjid Naqshbandia Aslamia * | 63 Tile Street, Bradford, BD8 8NX | no website listed | mosque-000001 |
-| Jamia Masjid Shan-e-Islam * | 80 Beamsley Rd, Frizinghall, Shipley, BD18 2DR | https://www.shaneislam.co.uk | mosque-000176 |
+| [VISION-DEFERRED] Jamia Masjid Shan-e-Islam * | 80 Beamsley Rd, Frizinghall, Shipley, BD18 2DR | https://www.shaneislam.co.uk | mosque-000176 |
 | Jamiyat Tabligh ul Islam * | 87-89 Ryan Street, West Bowling, Bradford, BD5 7AP | no website listed | mosque-000125 |
-| Jamiyat Tablighul Islam - Coventry Street * | 45 Coventry Street, East Bowling, Bradford, BD4 7HX | https://www.jamiyat.org/ | mosque-000177 |
+| [DONE] Jamiyat Tablighul Islam - Coventry Street * | 45 Coventry Street, East Bowling, Bradford, BD4 7HX | https://www.jamiyat.org/ | mosque-000177 |
 | Madressa Khaliliya & Education Centre (Masjid-e-Usman) * | 57 Upper Seymour Street, Bradford, BD3 9LJ | https://www.bsmks.org.uk | mosque-000172 |
 | Masjid Ibraheem & Education Centre * | Crofts Hall Lower Rushton Road, Bradford, BD3 8PX | no website listed | mosque-000492 |
 | Masjid Noorul Islam Bradford * | Masjid Noorul Islam 58-62 St Margaret’s Road, West Yorkshire, Bradford, BD7 3AE | no website listed | mosque-000068 |
@@ -235,16 +239,16 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Azhar Academy Bolton * | Devonshire Education Centre, 20 Devonshire Road, Lancashire, Heaton, Bolton, BL1 4PG | https://www.azharacademybolton.org/about-us | mosque-000469 |
 | Hulton Lane Centre for Education * | Linnyshaw Close, Bolton, BL3 4WL | https://tafseer-raheemi.com/introduction-raheemi-academy-hulton-lane-centre-hlc-bolton-27119/ | mosque-000336 |
 | Imaan Masjid * | 270 Bridgeman Street, Bolton, BL3 6SA | no website listed | mosque-000201 |
-| Jamia Khizra Mosque and Islamic Centre, Bury * | 21-25 Parker Street, Bury, BL9 0RJ | https://www.khizramosquebury.com/ | mosque-000408 |
-| Khizra Mosque - Walmersley Road * | 85 Walmersley Road, Bury, BL9 5AN | https://www.khizramosquebury.com/ | mosque-000146 |
-| MA Mission UK * | 365 Halliwell Road, Bolton, BL1 8DE | https://mamissionuk.com/ | mosque-000220 |
+| [VISION-DEFERRED] Jamia Khizra Mosque and Islamic Centre, Bury * | 21-25 Parker Street, Bury, BL9 0RJ | https://www.khizramosquebury.com/ | mosque-000408 |
+| [VISION-DEFERRED] Khizra Mosque - Walmersley Road * | 85 Walmersley Road, Bury, BL9 5AN | https://www.khizramosquebury.com/ | mosque-000146 |
+| [VISION-DEFERRED] MA Mission UK * | 365 Halliwell Road, Bolton, BL1 8DE | https://mamissionuk.com/ | mosque-000220 |
 | Zakariyya Jaame Masjid * | Zakariyya Jaam’e Masjid 20 Peace Street, Bolton, BL3 5LJ | no website listed | mosque-000506 |
 
 ### BN (3)
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Al-Medinah Mosque * | 24 Bedford Place, Brighton, Brighton and Hove, BN1 2PT | https://almedinah.co.uk/about-us | mosque-000389 |
+| [DONE] Al-Medinah Mosque * | 24 Bedford Place, Brighton, Brighton and Hove, BN1 2PT | https://almedinah.co.uk/about-us | mosque-000389 |
 | Brighton Mosque * | 150 Dyke Road, Brighton, BN1 5PA | no website listed | mosque-000422 |
 | Eastbourne Mosque * | 40 Ashford Square, Eastbourne, BN21 3TX | no website listed | mosque-000574 |
 

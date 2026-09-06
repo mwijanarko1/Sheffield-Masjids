@@ -4328,6 +4328,34 @@
       "website": "https://www.yca-sandwell.org.uk/"
     },
     {
+      "id": "bd5-masjid",
+      "name": "BD5 Masjid",
+      "address": "49 Hastings Street, Bradford, BD5 9PQ, United Kingdom",
+      "lat": 53.77497,
+      "lng": -1.765005,
+      "slug": "bd5-masjid",
+      "citySlug": "bradford",
+      "cityName": "Bradford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://www.bd5masjid.com/"
+    },
+    {
+      "id": "al-medinah-mosque",
+      "name": "Al-Medinah Mosque",
+      "address": "24 Bedford Place, Brighton, BN1 2PT, United Kingdom",
+      "lat": 50.824104,
+      "lng": -0.153889,
+      "slug": "al-medinah-mosque",
+      "citySlug": "brighton",
+      "cityName": "Brighton",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://almedinah.co.uk/"
+    },
+    {
       "id": "cradley-heath-central-mosque",
       "name": "Cradley Heath Central Mosque & Islamic Centre",
       "address": "Plant Street, Cradley Heath, B64 6EY, United Kingdom",
