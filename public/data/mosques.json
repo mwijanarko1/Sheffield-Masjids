@@ -4300,6 +4300,34 @@
       "website": "https://madnimasjid.com/"
     },
     {
+      "id": "qadria-trust",
+      "name": "Qadria Trust",
+      "address": "26 Alfred Street, Birmingham, B12 8JL, United Kingdom",
+      "lat": 52.457267,
+      "lng": -1.873659,
+      "slug": "qadria-trust",
+      "citySlug": "birmingham",
+      "cityName": "Birmingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.qadriatrust.com/"
+    },
+    {
+      "id": "yca-sandwell-masjid",
+      "name": "Yemeni Community Association in Sandwell",
+      "address": "Greets Green Access Centre, Tildasley Street, West Bromwich, B70 9SJ, United Kingdom",
+      "lat": 52.526786,
+      "lng": -2.006799,
+      "slug": "yca-sandwell-masjid",
+      "citySlug": "west-bromwich",
+      "cityName": "West Bromwich",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.yca-sandwell.org.uk/"
+    },
+    {
       "id": "cradley-heath-central-mosque",
       "name": "Cradley Heath Central Mosque & Islamic Centre",
       "address": "Plant Street, Cradley Heath, B64 6EY, United Kingdom",

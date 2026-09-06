@@ -47,12 +47,14 @@ Work the list top to bottom in batches:
 - [DONE] Masjid e Hamza Birmingham (B13) - full year via prayer-times.json, visible
 - [DONE] Masjid Eesa ibn Maryam (B28) - full year via DPT AJAX (arrahma.co.uk), visible
 - [DONE] Masjid Ul Madni (B6) - full year via DPT AJAX (madnimasjid.com), visible
+- [DONE] Qadria Trust (B12) - full year via DPT AJAX (qadriatrust.com), visible
+- [DONE] Yemeni Community Association in Sandwell (B70) - full year via DPT AJAX (yca-sandwell.org.uk), visible
 
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked [DONE] are complete; remaining count: 470.
+Rows below marked [DONE] are complete; remaining count: 468.
 
 ## How to use this file
 
@@ -164,7 +166,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Masjidus Sunnah An Nabawiyyah * | 125 Mansfield Rd, Aston, Birmingham, B6 6DA | no website listed | mosque-000314 |
 | Muslim Students House * | 517 Moseley Rd, Balsall Heath, Birmingham, B12 9BX | no website listed | mosque-000108 |
 | [VISION-DEFERRED] Paigham-E-Islam Trust Britain * | 423 Stratford Road, Sparkhill, Birmingham, B11 4LB | https://www.paigham-e-islam.co.uk/contact-us/ | mosque-000594 |
-| Qadria Trust * | 26 Alfred Street, Birmingham, B12 8JL | https://www.qadriatrust.com/ | mosque-000615 |
+| [DONE] Qadria Trust * | 26 Alfred Street, Birmingham, B12 8JL | https://www.qadriatrust.com/ | mosque-000615 |
 | Soho Hill Muslim School * | 130 Soho Hill, West Midlands, Birmingham, B19 1AF | http://www.sohohillmuslim.org.uk/contact | mosque-000237 |
 | Sultan Bahu Centre * | 962 Alum Rock Road, Birmingham, B8 2LS | no website listed | mosque-000009 |
 | Sutton Coldfield Muslim Association * | Anchorage Road Sutton Coldfield West Midlands, Royal Sutton Coldfield, B74 2PL | no website listed | mosque-000354 |
@@ -172,7 +174,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | UKIM Handsworth Islamic Centre * | 27 Putney Road, Handsworth, Birmingham, B20 3PP | no website listed | mosque-000029 |
 | Umar Masjid & Community Centre * | 318 Long Lane, Halesowen, B62 9LD | no website listed | mosque-000089 |
 | West Bromwich Jami Masjid & Islamic Centre * | 67 Dartmouth St, West Bromwich, B70 8BZ | no website listed | mosque-000213 |
-| Yemeni Community Association in Sandwell * | Greets Green Access Centre, Tildasley Street, West Midlands, West Bromwich, B70 9SJ | https://www.yca-sandwell.org.uk/ | mosque-000493 |
+| [DONE] Yemeni Community Association in Sandwell * | Greets Green Access Centre, Tildasley Street, West Midlands, West Bromwich, B70 9SJ | https://www.yca-sandwell.org.uk/ | mosque-000493 |
 | Zumunta Community * | Unit 39, Newtown Shopping Centre, Birmingham, B19 2SS | https://zumuntacommunity.org/ | mosque-000321 |
 
 ### BA (1)
