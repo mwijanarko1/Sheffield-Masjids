@@ -150,6 +150,21 @@
       "website": "https://www.lma.org.au/"
     },
     {
+      "id": "kuraby-mosque",
+      "name": "Masjid Al-Farooq (Kuraby Mosque)",
+      "address": "1408 Beenleigh Rd, Kuraby QLD 4112, Australia",
+      "lat": -27.5937,
+      "lng": 153.0924,
+      "slug": "kuraby-mosque",
+      "citySlug": "brisbane",
+      "cityName": "Brisbane",
+      "countryCode": "AU",
+      "countryName": "Australia",
+      "timezone": "Australia/Brisbane",
+      "isHidden": false,
+      "website": "https://www.kurabymosque.org.au/"
+    },
+    {
       "id": "masjid-omar-farooq",
       "name": "Masjid Omar Farooq (AKM)",
       "address": "4640 Kingston Rd, Scarborough, ON M1E 2P9, Canada",
