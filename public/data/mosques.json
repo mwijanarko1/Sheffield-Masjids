@@ -3238,6 +3238,34 @@
       "website": "https://www.icp-pgh.org/"
     },
     {
+      "id": "islamic-center-san-antonio",
+      "name": "Islamic Center of San Antonio (ICSA)",
+      "address": "8638 Fairhaven St, San Antonio, TX 78229, United States",
+      "lat": 29.5108,
+      "lng": -98.5586,
+      "slug": "islamic-center-san-antonio",
+      "citySlug": "san-antonio",
+      "cityName": "San Antonio",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://icsaonline.org/"
+    },
+    {
+      "id": "muslim-community-center-chicago",
+      "name": "Muslim Community Center (MCC Chicago)",
+      "address": "4380 N Elston Ave, Chicago, IL 60641, United States",
+      "lat": 41.9594,
+      "lng": -87.7253,
+      "slug": "muslim-community-center-chicago",
+      "citySlug": "chicago",
+      "cityName": "Chicago",
+      "countryCode": "US",
+      "countryName": "United States",
+      "isHidden": false,
+      "website": "https://mccchicago.org/"
+    },
+    {
       "id": "masjid-hamza",
       "name": "Masjid Hamza (Mission Bend Islamic Center)",
       "address": "6233 Tres Lagunas Dr, Houston, TX 77083, United States",
