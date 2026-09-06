@@ -120,6 +120,21 @@
       "website": "https://www.swinis.org/"
     },
     {
+      "id": "adelaide-city-mosque",
+      "name": "Adelaide City Mosque",
+      "address": "28-30 Little Gilbert St, Adelaide SA 5000, Australia",
+      "lat": -34.9287,
+      "lng": 138.5928,
+      "slug": "adelaide-city-mosque",
+      "citySlug": "adelaide",
+      "cityName": "Adelaide",
+      "countryCode": "AU",
+      "countryName": "Australia",
+      "timezone": "Australia/Adelaide",
+      "isHidden": false,
+      "website": "https://adelaidecitymosque.org.au/"
+    },
+    {
       "id": "masjid-omar-farooq",
       "name": "Masjid Omar Farooq (AKM)",
       "address": "4640 Kingston Rd, Scarborough, ON M1E 2P9, Canada",
