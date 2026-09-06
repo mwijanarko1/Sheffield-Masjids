@@ -135,6 +135,21 @@
       "website": "https://adelaidecitymosque.org.au/"
     },
     {
+      "id": "lakemba-mosque",
+      "name": "Lakemba Mosque (Imam Ali bin Abi Taleb Mosque)",
+      "address": "64-68 Wangee Rd, Lakemba NSW 2195, Australia",
+      "lat": -33.9204,
+      "lng": 151.076,
+      "slug": "lakemba-mosque",
+      "citySlug": "sydney",
+      "cityName": "Sydney",
+      "countryCode": "AU",
+      "countryName": "Australia",
+      "timezone": "Australia/Sydney",
+      "isHidden": false,
+      "website": "https://www.lma.org.au/"
+    },
+    {
       "id": "masjid-omar-farooq",
       "name": "Masjid Omar Farooq (AKM)",
       "address": "4640 Kingston Rd, Scarborough, ON M1E 2P9, Canada",

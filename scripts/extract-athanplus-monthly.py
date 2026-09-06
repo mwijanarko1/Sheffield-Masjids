@@ -48,7 +48,7 @@ def normalize_time(value: str, prayer: str) -> str:
             hour += 12
         if meridiem == "AM" and hour == 12:
             hour = 0
-    elif prayer in {"asr", "maghrib", "isha"} and hour < 12:
+    elif prayer in {"dhuhr", "asr", "maghrib", "isha"} and hour < 12:
         hour += 12
     elif prayer == "fajr" and hour == 12:
         hour = 0
