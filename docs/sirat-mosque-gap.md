@@ -37,8 +37,16 @@ Work the list top to bottom in batches:
 - [DONE] Al Rahmah Community Centre Glasgow (G20) - full year via Mawaqit widget, hidden (computed source)
 - [DONE] Beeston Muslim Centre Nottingham (NG9) - full year via DPT AJAX, visible
 - [DONE] Madina Mosque Cardiff (CF24) - September only via MasjidBox REDUX_STATE, hidden (API limited to 7-day window)
+- [DONE] Huda Masjid and Community Centre (B19) - full year via Mawaqit widget (huda-birmingham), hidden (computed source)
+- [DONE] Halesowen/Dudley YCA (B63) - full year via Mawaqit (masjid-al-warith-halesowen), hidden (computed source)
+- [DONE] Hazrat Sultan Bahu Trust (B12) - full year via DPT AJAX, visible
+- [DONE] Lozells Central Mosque (B19) - full year via DPT AJAX, visible
+- [DONE] Makki Masjid & Madrasa Birmingham (B21) - full year via DPT AJAX, visible
+- [DONE] Manarat Foundation (B26) - Mar-Dec via HTML tables, hidden (Jan-Feb not published on site)
+- [DONE] Masjid Abubakr Siddique (B66) - full year via DPT AJAX, visible
+- [DONE] Masjid e Hamza Birmingham (B13) - full year via prayer-times.json, visible
 
-Rows below marked [DONE] are complete; remaining count: 481.
+Rows below marked [DONE] are complete; remaining count: 472.
 
 ## How to use this file
 
@@ -126,20 +134,20 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | [DONE] Bournville Masjid & Community Centre * | 122 Cob Lane, Birmingham, B30 1QD | https://www.sbmca.org.uk/ | mosque-000548 |
 | [DONE] Cradley Heath Central Mosque & Islamic Centre * | Plant Street, West Midlands, Cradley Heath, B64 6EY | http://www.cradleyheathcentralmosque.co.uk/ | mosque-000013 |
 | [VISION-DEFERRED] Great Barr Muslim Foundation * | 394 Walsall Road, Birmingham, B42 2LX | https://gbmf.uk/ | mosque-000501 |
-| Halesowen/Dudley Yemeni Community Association * | Halesowen Cultural Centre, Highfield Lane, Halesowen, B63 4SG | https://www.yca-halesowen.org.uk/contact-us/ | mosque-000308 |
+| [DONE] Halesowen/Dudley Yemeni Community Association * | Halesowen Cultural Centre, Highfield Lane, Halesowen, B63 4SG | https://www.yca-halesowen.org.uk/contact-us/ | mosque-000308 |
 | Hazrat Mujaddid Alf-e-Sani Trust Masjid & Education Centre * | 36 Dennis Road, Balsall Heath, Birmingham, B12 8BG | no website listed | mosque-000390 |
-| Hazrat Sultan Bahu Trust * | 17-21 Ombersley Road, Balsall Heath, Birmingham, B12 8UR | https://bahutrust.org/contact/ | mosque-000393 |
-| Huda Masjid and Community Centre * | 1 Unett Street, Birmingham, B19 3BP | https://hudacentre.com/contact/ | mosque-000047 |
+| [DONE] Hazrat Sultan Bahu Trust * | 17-21 Ombersley Road, Balsall Heath, Birmingham, B12 8UR | https://bahutrust.org/contact/ | mosque-000393 |
+| [DONE] Huda Masjid and Community Centre * | 1 Unett Street, Birmingham, B19 3BP | https://hudacentre.com/contact/ | mosque-000047 |
 | Jamiat-us-Salam | 818 Alum Rock Road, Ward End, Birmingham, B8 2TX | https://www.jamiasalam.com/ | mosque-000295 |
 | Kings Heath Masjid * | 113 - 115 Station Road Kings Heath, Birmingham, B14 7TA | no website listed | mosque-000065 |
-| Lozells Central Mosque * | 213-217 Lozells Road, Lozells, Birmingham, B19 1RJ | https://www.lozellscentralmosque.co.uk/ | mosque-000581 |
-| Makki Masjid & Madrasa * | 75 Stafford Road, Handsworth, Birmingham, B21 9DU | https://www.makki.org.uk/ | mosque-000435 |
-| Manarat Foundation | 155 New Coventry Road, Sheldon, Solihull, B26 3DX | https://manaratfoundation.org.uk/ | mosque-000477 |
+| [DONE] Lozells Central Mosque * | 213-217 Lozells Road, Lozells, Birmingham, B19 1RJ | https://www.lozellscentralmosque.co.uk/ | mosque-000581 |
+| [DONE] Makki Masjid & Madrasa * | 75 Stafford Road, Handsworth, Birmingham, B21 9DU | https://www.makki.org.uk/ | mosque-000435 |
+| [DONE] Manarat Foundation | 155 New Coventry Road, Sheldon, Solihull, B26 3DX | https://manaratfoundation.org.uk/ | mosque-000477 |
 | Masjid Abu Bakr - Billesley * | 713 Yardley Wood Rd, Billesley, Birmingham, B13 0PT | no website listed | mosque-000139 |
-| Masjid Abubakr Siddique * | Unit 5, Grove Street, West Midlands, Smethwick, Birmingham, B66 2QS | https://www.masjidabubakr.org.uk/ | mosque-000066 |
+| [DONE] Masjid Abubakr Siddique * | Unit 5, Grove Street, West Midlands, Smethwick, Birmingham, B66 2QS | https://www.masjidabubakr.org.uk/ | mosque-000066 |
 | Masjid al-Ummah Sandwell * | 215 High Street, West Midlands, Smethwick, B66 3AH | no website listed | mosque-000235 |
-| Masjid Baitul Amaan * | 253 Halfords Lane, Smethwick, B66 1BD | https://masjidbaitulamaan.org.uk/about/ | mosque-000079 |
-| Masjid e Hamza * | 90 Church Road, Birmingham, B13 9AE | https://masjidhamza.co.uk/ | mosque-000319 |
+| [VISION-DEFERRED] Masjid Baitul Amaan * | 253 Halfords Lane, Smethwick, B66 1BD | https://masjidbaitulamaan.org.uk/about/ | mosque-000079 |
+| [DONE] Masjid e Hamza * | 90 Church Road, Birmingham, B13 9AE | https://masjidhamza.co.uk/ | mosque-000319 |
 | Masjid Eesa ibn Maryam * | 14 Etwall Road, Hall Green, Birmingham, B28 0LE | https://arrahma.co.uk/ | mosque-000088 |
 | Masjid Imam Al-Shafi'i & Community Centre * | 238 Anthony Road, Alum Rock, Birmingham, B8 3AN | https://www.masjidimamshafii.com/ | mosque-000206 |
 | Masjid Mujadidia * | 339 Somerville Rd, Birmingham, B10 9DU | no website listed | mosque-000356 |
