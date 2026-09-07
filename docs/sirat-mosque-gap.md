@@ -6,17 +6,17 @@ Generated 2026-09-03 from `https://sirat.uk/mosques/v1/mosques?limit=1000`
 Our registry at time of pull: 212 GB mosques. Matched against Sirat: 74.  
 **As of 2026-09-07:** 259 GB mosques in registry (+47 since pull; includes Sirat gap work and other additions).
 
-**Gap list status (pruned 183 actionable rows from original 500):**
+**Gap list status (pruned 174 actionable rows from original 500):**
 
 | Status | Count |
 |--------|------:|
-| Unprocessed (has website) | 150 |
+| Unprocessed (has website) | 141 |
 | `[VISION-DEFERRED]` — PDF/image only | 33 |
 | Removed — no website | 270 |
 | Removed — already in registry / done | 44 |
 | Removed — invalid website field | 3 |
 
-Original pull had 227 gap mosques with websites; **183 remain** after dedup and no-website removal.
+Original pull had 227 gap mosques with websites; **174 remain** after dedup and no-website removal.
 
 ## Progress report (2026-09-07)
 
@@ -69,6 +69,7 @@ Do not retry without a new source or manual data:
 | Wycombe Mosque / MECAWT | No extractable API on site; MECAWT salahtimes 406 |
 | Aylesbury Vale Islamic Centre | Sky Prayer plugin uses MWL calculation — banned |
 | Shahjalal Ipswich | Drupal daily nodes only (not full year) |
+| Madina Jame Masjid Docklands | DPT returns placeholder 12:00 am times (stale 2023 data) |
 | Gap duplicate rows (Luton/Cardiff/York) | `website` field is a mosque name, not a URL |
 
 ### Recommended next steps
@@ -132,11 +133,23 @@ Work the list top to bottom in batches:
 - [DONE] Scarborough Islamic Centre (YO12) - full year via masjidal.com API (scarbislam.com), visible
 - [DONE] Muslim Welfare Association of Chesterfield (S40) - full year via DPT AJAX (muslimwelfarechesterfield.com), visible
 
+- [DONE] Falkirk Islamic Centre (FK1) - full year via DPT AJAX (falkirkislamiccentre.org), visible
+- [DONE] Lancaster Islamic Society (LA1) - full year via DPT AJAX (lancasterisoc.org), visible
+- [DONE] Maldon District Islamic Cultural Association (CM9) - full year via DPT AJAX (maldonmosque.org.uk), visible
+- [DONE] Forest Gate Central Masjid (E7) - full year via DPT AJAX (forestgatecentralmasjid.org), visible
+- [DONE] Bishops Way Mosque (E2) - full year via DPT AJAX (bishopswaymosque.co.uk), visible
+
+- [DONE] Darul Arqam Educational Trust (LE5) - full year via DPT AJAX (datrust.org), visible
+
+- [DONE] Madrasah Baytul Ilm / Masjid Ibrahim (LE5) - full year via DPT AJAX (baytulilm.org), visible
+
+- [DONE] Turners Road Masjid (E3) - full year via DPT AJAX (turnersroadmasjid.org), visible
+
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked `[DONE]` are complete. **Actionable gap rows remaining: 150** (+ 33 vision-deferred).
+Rows below marked `[DONE]` are complete. **Actionable gap rows remaining: 141** (+ 33 vision-deferred).
 
 ## How to use this file
 
@@ -158,7 +171,7 @@ Pruned the gap list to **actionable rows only** (valid `http(s)` website, not al
 | Invalid website field (not a URL) | 3 |
 | Already extracted (`[DONE]`) | 43 |
 | Duplicate of existing registry mosque | 1 |
-| **Remaining in gap tables** | **183** (33 `[VISION-DEFERRED]`, 150 unprocessed) |
+| **Remaining in gap tables** | **174** (33 `[VISION-DEFERRED]`, 141 unprocessed) |
 
 The former **Possible duplicates** table (31 rows) was reviewed: those Sirat entries either were never in the gap list or were removed by the rules above. Name-only fuzzy matches across different towns (e.g. Sleaford vs Ilford) were not treated as duplicates.
 
@@ -237,12 +250,6 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | Cambourne Jumu’ah Salaah | Cambourne Community Hub, High Street, Cambridge, Cambourne, CB23 6GW | https://www.cambournecrescent.org/ | mosque-000242 |
 
-### CM (1)
-
-| Mosque | Address | Website | Sirat ID |
-|---|---|---|---|
-| Maldon District Islamic Cultural Association * | Muslim Hall, Church Street, Maldon, CM9 5HP | https://maldonmosque.org.uk/ | mosque-000499 |
-
 ### CR (6)
 
 | Mosque | Address | Website | Sirat ID |
@@ -286,17 +293,15 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | NIT Masjid * | 61 Cinder Bank, Netherton, Dudley, DY2 9BH | https://nit.org.uk/ | mosque-000184 |
 
-### E (28)
+### E (25)
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Albirr Foundation | 106 Church Road, London, Leyton, E10 5HG | https://www.albirr.com/ | mosque-000250 |
 | Ashaadibi Masjid & Community Hub * | 167 Cannon Street Road, London, E1 2LX | https://ashaadibi.co.uk/contact/ | mosque-000575 |
 | Baitur Rahman Masjid * | 440 High Street North, Manor Park, London, E12 6RH | https://www.baiturrahmanmasjid.co.uk/ | mosque-000272 |
-| Bishops Way Mosque * | 73 Bishops Way, London, Bethnal Green, E2 9HF | https://bishopswaymosque.co.uk/ | mosque-000438 |
 | Bow Muslim Community Centre * | 515B-517 Roman Road, London, E3 5EL | https://www.bowmosque.co.uk/ | mosque-000076 |
 | Chingford Islamic Society * | 90-92 Chingford Mount Road, London, Chingford, E4 9AA | http://www.chingfordmasjid.com/ | mosque-000617 |
-| Forest Gate Central Masjid * | 447-451 Romford Road, Forest Gate, London, E7 8AB | https://forestgatecentralmasjid.org/ | mosque-000547 |
 | Green Street Masjid * | 88 Green Street, London, E7 8JG | https://greenstreetmasjid.org/contact-us/ | mosque-000157 |
 | Hackney Central Masjid * | 237 Well Street, London, Hackney, E9 6RG | https://www.hackneyjamah.com/jummah | mosque-000198 |
 | Hamlets Way Masjid * | 97-103 Hamlets Way, London, E3 4TL | https://hamletswaymosque.com/ | mosque-000330 |
@@ -315,7 +320,6 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 | Stratford Islamic Association * | 3-5 Brydges Road, Stratford, London, E15 1NA | https://www.stratfordislamicassociation.com | mosque-000197 |
 | The Markazi Masjid London * | 9-11 Christian Street, London, E1 1SE | https://www.markazimasjid.org/ | mosque-000011 |
 | The Shade | Unit 1 Church Road Studios, 62 Church Road, Manor Park, London, E12 6AF | https://theshade.org/contact/ | mosque-000343 |
-| Turners Road Masjid * | 11 Bangla Close, rear of 40 Turners Road, London, E3 4YD | https://turnersroadmasjid.org/ | mosque-000173 |
 | UKIM Masjid Ibrahim & Islamic Centre * | 721-723 Barking Road, London, E13 9EU | https://www.masjidibrahim.co.uk/ | mosque-000459 |
 | Weaversfield Muslim Prayer Hall * | 3A Railway Arch, Brady Street, London, E1 5DT | https://weaversfield-muslim-prayer-hall.ueniweb.com/ | mosque-000437 |
 
@@ -325,18 +329,6 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | Halls4Jumu’ah - Golden Lane | Golden Lane Sport & Fitness, Fann Street, London, EC1Y 0SH | https://www.halls4jumuah.org/zuhr-prayer-times | mosque-000363 |
 | Holborn Mosque * | 33 Brookes Court, Baldwins Gardens, London, EC1N 7RR | https://www.holbornmosque.org/contact-us | mosque-000328 |
-
-### EX (1)
-
-| Mosque | Address | Website | Sirat ID |
-|---|---|---|---|
-| Exeter Mosque * | 12-13 York Road, Devon, Exeter, EX4 6PG | https://exetermosque.org.uk/ | mosque-000588 |
-
-### FK (1)
-
-| Mosque | Address | Website | Sirat ID |
-|---|---|---|---|
-| Falkirk Islamic Centre * | 6-8 Burnhead Lane, Falkirk, FK1 1UG | https://falkirkislamiccentre.org/contact/ | mosque-000054 |
 
 ### G (1)
 
@@ -400,20 +392,12 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | Liverpool Muslim Society / Al Rahma Mosque * | 29-31 Hatherley Street, Liverpool, L8 2TJ | http://www.liverpoolmuslimsociety.org.uk/ | mosque-000002 |
 
-### LA (1)
+### LE (5)
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Lancaster Islamic Society * | 7 Dallas Road, Lancaster, LA1 1TN | https://lancasterisoc.org/ | mosque-000121 |
-
-### LE (7)
-
-| Mosque | Address | Website | Sirat ID |
-|---|---|---|---|
-| Darul Arqam Educational Trust * | 16 Thurmaston Lane, Leicester, LE5 0TE | https://datrust.org/ | mosque-000306 |
 | Madani Masjid * | 77 Evington Valley Road, Evington, Leicester, LE5 5LL | https://madani.school/community | mosque-000228 |
 | Madrasah Abu Hurairah * | 9 Haynes Road, Leicester, LE5 4AR | https://madrasahabuhurairah.co.uk/ | mosque-000371 |
-| Madrasah Baytul ‘Ilm (Masjid Ibrāheem) * | Spinney Hill Road, Leicester, LE5 3GH | https://baytulilm.org/ | mosque-000502 |
 | Tajdaar-e-Madina * | 1A Garendon Street, Leicester, LE2 0AH | https://temadina.co.uk/ | mosque-000240 |
 | The Islamic Foundation * | Ratby Lane, Leicestershire, Markfield, LE67 9SY | https://www.islamic-foundation.org.uk/ | mosque-000153 |
 | The Leicester Central Mosque * | Conduit Street, Leicester, LE2 0JN | https://www.islamiccentre.org/contact-us-topmenu-18/1-the-leicester-central-mosque | mosque-000162 |
