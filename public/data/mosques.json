@@ -2960,6 +2960,20 @@
       "website": "https://thekic.org"
     },
     {
+      "id": "masjid-al-fath-hqiec",
+      "name": "Masjid Al-Fath / Hifzul Quran Islamic Education Centre",
+      "address": "304-306 Burdett Road, London E14 7DQ, United Kingdom",
+      "lat": 51.5158,
+      "lng": -0.0421,
+      "slug": "masjid-al-fath-hqiec",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://hqiec.co.uk/"
+    },
+    {
       "id": "masjid-al-humera",
       "name": "Masjid Al-Humera",
       "address": "183 Green St, London E7 8LL, United Kingdom",

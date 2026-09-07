@@ -6,17 +6,17 @@ Generated 2026-09-03 from `https://sirat.uk/mosques/v1/mosques?limit=1000`
 Our registry at time of pull: 212 GB mosques. Matched against Sirat: 74.  
 **As of 2026-09-07:** 259 GB mosques in registry (+47 since pull; includes Sirat gap work and other additions).
 
-**Gap list status (pruned 174 actionable rows from original 500):**
+**Gap list status (pruned 173 actionable rows from original 500):**
 
 | Status | Count |
 |--------|------:|
-| Unprocessed (has website) | 141 |
+| Unprocessed (has website) | 140 |
 | `[VISION-DEFERRED]` — PDF/image only | 33 |
 | Removed — no website | 270 |
 | Removed — already in registry / done | 44 |
 | Removed — invalid website field | 3 |
 
-Original pull had 227 gap mosques with websites; **174 remain** after dedup and no-website removal.
+Original pull had 227 gap mosques with websites; **173 remain** after dedup and no-website removal.
 
 ## Progress report (2026-09-07)
 
@@ -145,11 +145,13 @@ Work the list top to bottom in batches:
 
 - [DONE] Turners Road Masjid (E3) - full year via DPT AJAX (turnersroadmasjid.org), visible
 
+- [DONE] Masjid Al-Fath / HQIEC (E14) - full year via DPT AJAX (hqiec.co.uk), visible
+
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked `[DONE]` are complete. **Actionable gap rows remaining: 141** (+ 33 vision-deferred).
+Rows below marked `[DONE]` are complete. **Actionable gap rows remaining: 140** (+ 33 vision-deferred).
 
 ## How to use this file
 
@@ -171,7 +173,7 @@ Pruned the gap list to **actionable rows only** (valid `http(s)` website, not al
 | Invalid website field (not a URL) | 3 |
 | Already extracted (`[DONE]`) | 43 |
 | Duplicate of existing registry mosque | 1 |
-| **Remaining in gap tables** | **174** (33 `[VISION-DEFERRED]`, 141 unprocessed) |
+| **Remaining in gap tables** | **173** (33 `[VISION-DEFERRED]`, 140 unprocessed) |
 
 The former **Possible duplicates** table (31 rows) was reviewed: those Sirat entries either were never in the gap list or were removed by the rules above. Name-only fuzzy matches across different towns (e.g. Sleaford vs Ilford) were not treated as duplicates.
 
@@ -293,7 +295,7 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | NIT Masjid * | 61 Cinder Bank, Netherton, Dudley, DY2 9BH | https://nit.org.uk/ | mosque-000184 |
 
-### E (25)
+### E (24)
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
@@ -311,7 +313,6 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 | Limehouse Masjid * | 304-306 Stocks Place, London, E14 8AE | https://www.limehousemasjid.org.uk | mosque-000083 |
 | Madina Jame Masjid Docklands * | 248 Westferry Road, London, E14 3AG | https://madinamasjiddocklands.org.uk/ | mosque-000154 |
 | Masjid Abdul-Aziz Bin Bāz * | East Road, London, West Ham, E15 3QR | https://masjidbinbaz.com/ | mosque-000072 |
-| Masjid Al-Fath / Hifzul Quran Islamic Education Centre * | 304-306 Burdett Road, London, E14 7DQ | https://hqiec.co.uk/ | mosque-000277 |
 | Masjid Darul Ilm * | 16-18 Pilgrims Way, London, East Ham, E6 1HW | https://slmcel.org.uk/ | mosque-000350 |
 | Masjid Ul Hidayah * | 2A Church Road, Manor Park, London, E12 6AQ | https://www.masjidulhidayah.co.uk/ | mosque-000248 |
 | Poplar Central Mosque * | 253 East India Dock Road, Poplar, London, E14 0EG | https://www.poplarmosque.co.uk/ | mosque-000417 |
