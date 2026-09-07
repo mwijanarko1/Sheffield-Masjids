@@ -908,6 +908,20 @@
       "website": "https://cambridgecentralmosque.org/"
     },
     {
+      "id": "five-bells-newmarket-mosque",
+      "name": "Five Bells - Modern Islamic Centre",
+      "address": "16 St Mary's Square, Newmarket CB8 0HZ, United Kingdom",
+      "lat": 52.2392,
+      "lng": 0.4043,
+      "slug": "five-bells-newmarket-mosque",
+      "citySlug": "cambridge",
+      "cityName": "Cambridge",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://newmarketmosque.com/"
+    },
+    {
       "id": "masjid-at-tawheed",
       "name": "Masjid At-Tawheed",
       "address": "Penarth Road, Grangetown, Cardiff CF11 6JU, United Kingdom",
@@ -3465,6 +3479,20 @@
       "website": "https://faizanemadinaderby.co.uk"
     },
     {
+      "id": "muslim-welfare-chesterfield",
+      "name": "Muslim Welfare Association of Chesterfield",
+      "address": "10A Marsden Street, Chesterfield S40 1JY, United Kingdom",
+      "lat": 53.2352,
+      "lng": -1.4263,
+      "slug": "muslim-welfare-chesterfield",
+      "citySlug": "chesterfield",
+      "cityName": "Chesterfield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.muslimwelfarechesterfield.com/"
+    },
+    {
       "id": "redbridge-islamic-centre",
       "name": "Redbridge Islamic Centre",
       "address": "28 Woodford Ave, Gants Hill, Ilford IG2 6XG, United Kingdom",
@@ -4651,6 +4679,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.quranacademy.org.uk/"
+    },
+    {
+      "id": "scarborough-islamic-centre",
+      "name": "Scarborough Islamic Centre",
+      "address": "Unit 62, Roscoe Street, Scarborough YO12 7BY, United Kingdom",
+      "lat": 54.2825,
+      "lng": -0.4021,
+      "slug": "scarborough-islamic-centre",
+      "citySlug": "scarborough",
+      "cityName": "Scarborough",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://scarbislam.com/"
     },
     {
       "id": "islamic-foundation-toronto",

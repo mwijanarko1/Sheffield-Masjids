@@ -55,12 +55,15 @@ Work the list top to bottom in batches:
 - [DONE] Jamiyat Tablighul Islam Coventry Street (BD4) - already as `central-mosque-bradford`, full year via DPT AJAX (jamiyat.org), visible
 - [DONE] TCA & Kotku Mosque (NE4) - full year via my-masjid.com API (mecfoundation.org.uk), visible
 - [DONE] Masjid Al-Aqsa (WS2) - Sep-Dec via go2masjid API (masjid-alaqsa-walsall.co.uk), hidden (rolling 365-day window; Jan-Aug 2026 not available)
+- [DONE] Five Bells - Modern Islamic Centre (CB8) - full year via DPT AJAX (newmarketmosque.com), visible
+- [DONE] Scarborough Islamic Centre (YO12) - full year via masjidal.com API (scarbislam.com), visible
+- [DONE] Muslim Welfare Association of Chesterfield (S40) - full year via DPT AJAX (muslimwelfarechesterfield.com), visible
 
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked [DONE] are complete; remaining count: 462.
+Rows below marked [DONE] are complete; remaining count: 459.
 
 ## How to use this file
 
@@ -286,7 +289,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 |---|---|---|---|
 | Cambourne Jumu’ah Salaah | Cambourne Community Hub, High Street, Cambridge, Cambourne, CB23 6GW | https://www.cambournecrescent.org/ | mosque-000242 |
 | Ely Mosque * | Ely Islamic Centre 34 Broad Street, Ely, CB7 4AH | no website listed | mosque-000283 |
-| Five Bells - Modern Islamic Centre * | 16 St Mary’s Square, Newmarket, CB8 0HZ | https://newmarketmosque.com/?page_id=156 | mosque-000432 |
+| [DONE] Five Bells - Modern Islamic Centre * | 16 St Mary’s Square, Newmarket, CB8 0HZ | https://newmarketmosque.com/?page_id=156 | mosque-000432 |
 | Omar Faruque Mosque and Cultural Centre * | Kirkwood Road, off King's Hedges Road, Cambridge, CB4 2PF | no website listed | mosque-000397 |
 | SHAH-JALAL \| ISLAMIC CENTRE * | 107 Darwin Dr, Arbury, Cambridge, CB4 3HQ | no website listed | mosque-000032 |
 
@@ -861,7 +864,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Baitul Mukarram Jame Masjid * | 358 London Rd, Highfield, Sheffield, S2 4NB | no website listed | mosque-000301 |
 | Gulzar-e-Habib Mosque & Education Centre * | 46-48 Ribston Road, Darnall, Sheffield, S9 3AY | http://www.janathimessage.co.uk/contact.html | mosque-000090 |
 | Makki Mosque Sheffield * | Plantation Road, Sheffield, S8 9TH | no website listed | mosque-000266 |
-| Muslim Welfare Association of Chesterfield and North Derbyshire * | 10A Marsden Street, Chesterfield, S40 1JY | https://www.muslimwelfarechesterfield.com/contact-us/ | mosque-000554 |
+| [DONE] Muslim Welfare Association of Chesterfield and North Derbyshire * | 10A Marsden Street, Chesterfield, S40 1JY | https://www.muslimwelfarechesterfield.com/contact-us/ | mosque-000554 |
 
 ### SA (5)
 
@@ -1095,6 +1098,6 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Scarborough Islamic Centre * | Unit 62, Roscoe Street, Scarborough, YO12 7BY | https://scarbislam.com/ | mosque-000398 |
+| [DONE] Scarborough Islamic Centre * | Unit 62, Roscoe Street, Scarborough, YO12 7BY | https://scarbislam.com/ | mosque-000398 |
 
 *\* = name also appears in `uk-mosque-expansion-shortlist.md` (may already be researched).
