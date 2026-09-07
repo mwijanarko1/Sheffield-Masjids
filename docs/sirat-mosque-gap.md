@@ -53,12 +53,14 @@ Work the list top to bottom in batches:
 - [DONE] BD5 Masjid (BD5) - September only via Amanahfy Next.js (bd5masjid.com), hidden
 - [DONE] Al-Jamia Suffa-Tul-Islam Grand Mosque (BD5) - already as `bradford-grand-mosque`, full year via PDF vision, visible
 - [DONE] Jamiyat Tablighul Islam Coventry Street (BD4) - already as `central-mosque-bradford`, full year via DPT AJAX (jamiyat.org), visible
+- [DONE] TCA & Kotku Mosque (NE4) - full year via my-masjid.com API (mecfoundation.org.uk), visible
+- [DONE] Masjid Al-Aqsa (WS2) - Sep-Dec via go2masjid API (masjid-alaqsa-walsall.co.uk), hidden (rolling 365-day window; Jan-Aug 2026 not available)
 
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked [DONE] are complete; remaining count: 464.
+Rows below marked [DONE] are complete; remaining count: 462.
 
 ## How to use this file
 
@@ -354,7 +356,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Derby Jamia Mosque * | 6 Rose Hill Street, Derby, DE23 8GA | https://derbyjamiamosque.co.uk/ | mosque-000475 |
+| [VISION-DEFERRED] Derby Jamia Mosque * | 6 Rose Hill Street, Derby, DE23 8GA | https://derbyjamiamosque.co.uk/ | mosque-000475 |
 | Makki Masjid Burton * | Address 18 Victoria Crescent, Burton upon Trent, DE14 2QA | no website listed | mosque-000020 |
 
 ### DG (1)
@@ -694,7 +696,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Newcastle Central Mosque / Masjid Al-Tawhid * | The White House, Grainger Park Road, Newcastle upon Tyne, NE4 8RQ | https://www.newcastlecentralmosque.com/ | mosque-000379 |
-| TCA & Kotku Mosque * | 35 Grainger Park Road, Newcastle upon Tyne, NE4 8SA | https://mecfoundation.org.uk/ | mosque-000100 |
+| [DONE] TCA & Kotku Mosque * | 35 Grainger Park Road, Newcastle upon Tyne, NE4 8SA | https://mecfoundation.org.uk/ | mosque-000100 |
 | Whitley Bay Islamic Cultural Centre * | Rinkway, Hillheads Rd, Whitley Bay, NE25 8HR | no website listed | mosque-000280 |
 
 ### NG (7)
@@ -1081,7 +1083,7 @@ the same mosque under a different address/spelling, or genuinely different mosqu
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Jalalia Sunni Jami Masjid & Islamic Education Centre * | 150 Bath St, Walsall, WS1 3BX | no website listed | mosque-000286 |
-| Masjid Al-Aqsa * | Phoenix Business Park, 150 Stafford Street, Walsall, WS2 8EA | https://masjid-alaqsa-walsall.co.uk/ | mosque-000317 |
+| [DONE] Masjid Al-Aqsa * | Phoenix Business Park, 150 Stafford Street, Walsall, WS2 8EA | https://masjid-alaqsa-walsall.co.uk/ | mosque-000317 |
 
 ### WV (1)
 

@@ -2393,6 +2393,20 @@
       "website": "https://www.newcastlecentralmosque.com"
     },
     {
+      "id": "kotku-mosque",
+      "name": "TCA & Kotku Mosque",
+      "address": "35 Grainger Park Road, Newcastle upon Tyne NE4 8SA, United Kingdom",
+      "lat": 54.9739,
+      "lng": -1.6482,
+      "slug": "kotku-mosque",
+      "citySlug": "newcastle-upon-tyne",
+      "cityName": "Newcastle upon Tyne",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://mecfoundation.org.uk/"
+    },
+    {
       "id": "islamic-centre-nottingham",
       "name": "Islamic Centre Nottingham (Nurani Jami Masjid)",
       "address": "3 Curzon Street, Nottingham NG3 1DG, United Kingdom",
@@ -3015,6 +3029,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": ""
+    },
+    {
+      "id": "masjid-al-aqsa-walsall",
+      "name": "Masjid Al-Aqsa",
+      "address": "Phoenix Business Park, 150 Stafford Street, Walsall WS2 8EA, United Kingdom",
+      "lat": 52.5922,
+      "lng": -1.985372,
+      "slug": "masjid-al-aqsa-walsall",
+      "citySlug": "walsall",
+      "cityName": "Walsall",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://masjid-alaqsa-walsall.co.uk/"
     },
     {
       "id": "sandwell-grand-masjid",
