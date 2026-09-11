@@ -4070,7 +4070,7 @@
       "cityName": "Solihull",
       "countryCode": "GB",
       "countryName": "United Kingdom",
-      "isHidden": true,
+      "isHidden": false,
       "website": "https://manaratfoundation.org.uk/"
     },
     {

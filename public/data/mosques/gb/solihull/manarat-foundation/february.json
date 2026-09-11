@@ -1,0 +1,25 @@
+{
+  "month": "FEBRUARY",
+  "prayer_times": [
+    {
+      "date": 28,
+      "fajr": "05:17",
+      "shurooq": "06:56",
+      "dhuhr": "12:25",
+      "asr": "15:54",
+      "maghrib": "17:45",
+      "isha": "19:15"
+    }
+  ],
+  "iqamah_times": [
+    {
+      "date_range": "28",
+      "fajr": "05:37",
+      "dhuhr": "13:00",
+      "asr": "16:15",
+      "maghrib": "17:48",
+      "isha": "20:00"
+    }
+  ],
+  "jummah_iqamah": "13:00"
+}
