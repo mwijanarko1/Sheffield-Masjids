@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  alternates: {
+    types: {
+      "text/plain": "/llms.txt",
+    },
+  },
   icons: {
     icon: "/masjidly/app-icon.png",
     apple: "/masjidly/app-icon.png",

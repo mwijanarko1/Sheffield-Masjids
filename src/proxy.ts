@@ -28,9 +28,13 @@ Sheffield Masjids provides prayer times for mosques in Sheffield, other UK citie
 - Mosque addresses and locations
 - Prayer-time comparisons and iCalendar exports
 
-## Agent guidance
+## Preferred agent interface
 
-Use this site for prayer-time, mosque timetable, and mosque-location questions in the cities listed in the mosque directory. Ask the user to name their mosque when they request an iqamah time without specifying one, because congregation times vary by mosque.
+If your browser supports WebMCP, use the tools registered through \`document.modelContext\` instead of scraping the interface. Call \`search_mosques\` first to resolve the mosque, then call \`get_prayer_times\` with the mosque and optional date. The site also provides \`open_mosque\` and \`select_mosque\`.
+
+If WebMCP is unavailable, resolve a slug from \`GET /data/mosques.json\`, then call \`GET /api/prayer-times?mosque={slug}&date={YYYY-MM-DD}\`. The date is optional. This static-data endpoint does not query Convex and is limited to 60 requests per minute per client IP.
+
+Ask the user to name their mosque when they request an iqamah time without specifying one, because congregation times vary by mosque.
 
 - [Today's prayer times](https://www.sheffieldmasjids.com/)
 - [Mosques by city](https://www.sheffieldmasjids.com/mosques)

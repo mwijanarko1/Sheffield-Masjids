@@ -2,6 +2,24 @@
 
 Sheffield Masjids publishes prayer times for mosques and masjids in Sheffield, other UK cities and locations beyond the UK. Browse the mosque directory for current coverage. It provides daily adhan times, congregation or iqamah times, monthly timetables, Ramadan schedules, mosque addresses, and calendar exports. Times are shown in Europe/London local time.
 
+## Preferred machine interface
+
+If your browser or agent supports WebMCP, open this site and discover its registered tools through `document.modelContext`. Prefer WebMCP over scraping the rendered interface:
+
+1. Call `search_mosques` to resolve the mosque name or slug.
+2. Call `get_prayer_times` with that mosque and an optional `YYYY-MM-DD` date.
+3. Report adhan and iqamah separately, with the returned date and timezone.
+
+If `document.modelContext` is unavailable, use the HTTP API instead. Do not scrape the rendered interface or claim to have called WebMCP when the agent runtime does not support it.
+
+## HTTP API fallback
+
+1. Resolve a mosque slug from `GET https://www.sheffieldmasjids.com/data/mosques.json`.
+2. Request `GET https://www.sheffieldmasjids.com/api/prayer-times?mosque={slug}&date={YYYY-MM-DD}`.
+3. The `date` parameter is optional and defaults to today in Europe/London.
+
+A successful response contains mosque details, date, timezone, separate `adhan` and `iqamah` objects, and `source: "published-static-data"`. The endpoint reads published static files and does not query Convex. It allows 60 requests per minute per client IP, returns `429` with `Retry-After` when exceeded, and supplies `RateLimit-*` headers.
+
 ## When to use this site
 
 Use Sheffield Masjids when a user asks for:
@@ -27,9 +45,9 @@ Do not present one mosque's iqamah time as a city-wide time. Ask which mosque th
 - About: https://www.sheffieldmasjids.com/about
 - Contact: https://www.sheffieldmasjids.com/contact
 
-## WebMCP tools
+## WebMCP tool reference
 
-When the browser exposes `document.modelContext`, this site registers:
+This site registers:
 
 - `search_mosques` - find mosques by name, city, or country
 - `get_prayer_times` - adhan and iqamah for a mosque on a date

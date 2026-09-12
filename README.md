@@ -58,6 +58,16 @@ WEBMCP_ORIGIN_TRIAL_TOKEN=<token>  # Optional - Chrome WebMCP origin trial
 - `NEXT_PUBLIC_CONVEX_URL` - When set, the app queries Convex for mosque registry, monthly prayer times, Ramadan timetables, and UK DST dates. Falls back to static JSON in `public/data/` if unset.
 - `WEBMCP_ORIGIN_TRIAL_TOKEN` - When set, sends an `Origin-Trial` header so Chrome can enable WebMCP without a local flag. Register at https://developer.chrome.com/origintrials. Local testing also works with `chrome://flags/#enable-webmcp-testing`.
 
+## Agent Prayer Times API
+
+HTTP-only agents can resolve a slug from `GET /data/mosques.json`, then request:
+
+```text
+GET /api/prayer-times?mosque=madina-masjid-sheffield&date=2026-04-10
+```
+
+`date` is optional and defaults to today in Europe/London. The endpoint reads published static timetable files, never Convex, caches successful responses, and applies a best-effort per-instance limit of 60 requests per minute per client IP. Production should also enforce the same rule at the hosting firewall for a globally consistent limit.
+
 ## SEO Setup
 
 - Global metadata in `src/app/layout.tsx` (title template, Open Graph, Twitter, robots)
