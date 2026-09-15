@@ -82,7 +82,14 @@ function parseTimetableHtml(html) {
     // Date formats seen in the wild: "1 January 2026", "1-11-2026", "Sun 1-11-2026",
     // "1 Rajab 1448", "Sun 1-11-2026 22 Jumādā al-Ula 1448", "January 1, 2026",
     // "01/12/2026" (dd/mm/yyyy; hijri leaks into cell), "30th September 2026 ..."
-    let dayNum = parseInt(/^(\d{1,2})(?:st|nd|rd|th)?[-\s]/.exec(tds[0] || '')?.[1] ?? '', 10);
+    // Prefer Gregorian "d-m-yyyyAD" (e.g. Moorlands: "Thu 12 Rajab 1447AH 1-1-2026AD")
+    // before leading Hijri day numbers that would otherwise win.
+    let dayNum = NaN;
+    const mGregAd = /\b(\d{1,2})-(\d{1,2})-(\d{4})AD\b/i.exec(tds[0] || '');
+    if (mGregAd) dayNum = parseInt(mGregAd[1], 10);
+    if (!Number.isFinite(dayNum)) {
+      dayNum = parseInt(/^(\d{1,2})(?:st|nd|rd|th)?[-\s]/.exec(tds[0] || '')?.[1] ?? '', 10);
+    }
     if (!Number.isFinite(dayNum)) {
       const m2 = /^\w+\s+(\d{1,2})[-\s]/.exec(tds[0] || '');
       dayNum = m2 ? parseInt(m2[1], 10) : NaN;
