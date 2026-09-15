@@ -175,6 +175,7 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 | `npx tsx scripts/seed-convex.ts` … | Optional flags: `--changed`, `--prod`, `--slug <ids>` |
 | `npm run seed:dev` … | Optional `-- --changed`, `-- --slug <ids>` |
 | `npm run seed:prod` … | Optional `-- --changed`, `-- --slug <ids>` |
+| `npx tsx scripts/verify-mosque-convex.ts --slug <id> [--prod]` | After seeding, verify mosque + month coverage in Convex (what Masjidly reads), not the static site API |
 
 **Not allowed:** any other `npm`/`npx` (`install`, `build`, `convex …`, random packages, etc.). Still require `/build` (or an explicit ask) for those.
 
