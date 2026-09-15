@@ -2470,6 +2470,20 @@
       "website": "https://lancasterisoc.org/"
     },
     {
+      "id": "moorlands-islamic-centre",
+      "name": "Moorlands Islamic Centre",
+      "address": "7 Dumbarton Road, Lancaster LA1 3BX, United Kingdom",
+      "lat": 54.0458,
+      "lng": -2.7926,
+      "slug": "moorlands-islamic-centre",
+      "citySlug": "lancaster",
+      "cityName": "Lancaster",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://moorlandsic.org/"
+    },
+    {
       "id": "bilal-masjid-leeds",
       "name": "Bilal Masjid (Markazi Jamia Masjid Bilal)",
       "address": "Conway Road, Harehills, Leeds LS8 5JH, United Kingdom",
