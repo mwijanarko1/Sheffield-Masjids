@@ -70,7 +70,7 @@ async function main() {
 
   const client = new ConvexHttpClient(convexUrl);
   const listed = await client.query(api.mosques.list, {});
-  const hit = listed.find((m) => m.slug === slug);
+  const hit = listed.find((m: { slug: string; name?: string; cityName?: string; website?: string; isHidden?: boolean }) => m.slug === slug);
   if (!hit) {
     console.error(JSON.stringify({ ok: false, slug, reason: "mosque not in Convex list", host: new URL(convexUrl).host }, null, 2));
     process.exit(1);
