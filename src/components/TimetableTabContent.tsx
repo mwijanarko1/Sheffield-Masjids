@@ -4,10 +4,16 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
-import { isDateInRamadanPeriod } from "@/lib/prayer-times";
+import { getDateInSheffield, isDateInRamadanPeriod } from "@/lib/prayer-times";
 import MasjidlyDayTimetable from "@/components/MasjidlyDayTimetable";
+import MonthlyCalendarExportModal from "@/features/calendar-export/components/MonthlyCalendarExportModal";
 import { useMasjidlyTheme } from "@/contexts/MasjidlyThemeContext";
 import { mutedTextForTheme, textColorForTheme } from "@/lib/masjidly-theme";
+
+const MONTH_LABELS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 interface TimetableTabContentProps {
   mosques: Mosque[];
@@ -20,6 +26,10 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
   const fg = textColorForTheme(theme);
   const fgMuted = mutedTextForTheme(theme);
   const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(
+    () => getDateInSheffield(new Date()).month,
+  );
+  const [currentYear] = useState(() => getDateInSheffield(new Date()).year);
 
   useEffect(() => {
     if (!isHydrated || !mosque) return;
@@ -55,7 +65,23 @@ export default function TimetableTabContent({ mosques }: TimetableTabContentProp
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col px-2 pt-4 sm:px-6 sm:pt-8" style={{ color: fg }}>
       <h1 className="sr-only">Timetable</h1>
-      <MasjidlyDayTimetable mosque={mosque} />
+      <MasjidlyDayTimetable
+        mosque={mosque}
+        selectedMonth={selectedMonth}
+        onSelectedMonthChange={setSelectedMonth}
+      />
+
+      <div className="mt-4 flex justify-center px-4">
+        <MonthlyCalendarExportModal
+          key={mosque.id}
+          mosque={mosque}
+          mosques={mosques}
+          month={selectedMonth}
+          year={currentYear}
+          monthLabel={MONTH_LABELS[selectedMonth - 1] ?? "Month"}
+          triggerClassName="h-10 rounded-full border-0 bg-transparent px-4 text-sm font-medium shadow-none hover:opacity-90"
+        />
+      </div>
 
       {isRamadanPeriod && (
         <p className="mt-4 text-center text-sm">

@@ -283,7 +283,15 @@
   ],
   "iqamah_times": [
     {
-      "date_range": "1-2",
+      "date_range": "1",
+      "fajr": "07:15",
+      "dhuhr": "12:30",
+      "asr": "14:00",
+      "maghrib": "16:07",
+      "isha": "18:45"
+    },
+    {
+      "date_range": "2",
       "fajr": "07:15",
       "dhuhr": "12:30",
       "asr": "14:00",

@@ -255,6 +255,7 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
                   ariaLabel="Select country"
                   disabled={!isHydrated}
                   placeholder={isHydrated ? "Select country" : "Loading…"}
+                  searchPlaceholder="Search countries…"
                 />
               </div>
               <Divider fg={fg} />
@@ -271,6 +272,7 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
                       ariaLabel="Select city"
                       disabled={!isHydrated}
                       placeholder={isHydrated ? "Select city" : "Loading…"}
+                      searchPlaceholder="Search cities…"
                     />
                   </div>
                   <Divider fg={fg} />
@@ -290,6 +292,7 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
                   ariaLabel="Select mosque"
                   disabled={!isHydrated}
                   placeholder={isHydrated ? "Select mosque" : "Loading…"}
+                  searchPlaceholder="Search mosques…"
                 />
               </div>
             </div>
