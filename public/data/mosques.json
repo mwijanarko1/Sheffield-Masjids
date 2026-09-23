@@ -4158,6 +4158,20 @@
       "website": ""
     },
     {
+      "id": "sutton-coldfield-masjid",
+      "name": "Sutton Coldfield Masjid",
+      "address": "Anchorage Road, Sutton Coldfield B74 2PL, United Kingdom",
+      "lat": 52.5699,
+      "lng": -1.825,
+      "slug": "sutton-coldfield-masjid",
+      "citySlug": "sutton-coldfield",
+      "cityName": "Sutton Coldfield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://suttoncoldfieldmasjid.org/"
+    },
+    {
       "id": "aisha-mosque-and-islamic-centre",
       "name": "Aisha Mosque & Islamic Centre",
       "address": "4 Rutter Street, Walsall WS1 4HJ, United Kingdom",
