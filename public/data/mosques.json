@@ -4998,6 +4998,20 @@
       "countryName": "United States",
       "isHidden": false,
       "website": "https://theislamiccenter.com/"
+    },
+    {
+      "id": "whitehaven-mosque",
+      "name": "Whitehaven Mosque",
+      "address": "2 College Street, Whitehaven CA28 7BW, United Kingdom",
+      "lat": 54.5492,
+      "lng": -3.5875,
+      "slug": "whitehaven-mosque",
+      "citySlug": "whitehaven",
+      "cityName": "Whitehaven",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.whitehavenmosque.org.uk/"
     }
   ]
 }
