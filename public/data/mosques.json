@@ -3114,6 +3114,20 @@
       "website": "https://shahporanmasjid.uk/"
     },
     {
+      "id": "tasnim-jamia-masjid",
+      "name": "Tasnim Jamia Masjid",
+      "address": "Gold's Gym, Rainham Rd South, Dagenham RM10 8TX, Greater London, United Kingdom",
+      "lat": 51.549502,
+      "lng": 0.159432,
+      "slug": "tasnim-jamia-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://tasnimjamiamasjid.netlify.app/"
+    },
+    {
       "id": "turners-road-masjid",
       "name": "Turners Road Masjid",
       "address": "11 Bangla Close, rear of 40 Turners Road, London E3 4YD, United Kingdom",
