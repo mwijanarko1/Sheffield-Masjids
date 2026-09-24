@@ -30,6 +30,8 @@ export interface GlassSelectProps {
   searchPlaceholder?: string;
   /** Hide search when the list is shorter than this. Default 5. */
   searchMinOptions?: number;
+  /** Focus the search field when the panel opens. Default true. */
+  autoFocusSearch?: boolean;
 }
 
 function filterOptions(options: GlassSelectOption[], query: string): GlassSelectOption[] {
@@ -55,6 +57,7 @@ export function GlassSelect({
   contentAlign = "start",
   searchPlaceholder = "Search…",
   searchMinOptions = 5,
+  autoFocusSearch = true,
 }: GlassSelectProps) {
   const { theme } = useMasjidlyTheme();
   const lightFg = MASJIDLY_MODERN_SKIES[theme].lightForeground;
@@ -117,9 +120,10 @@ export function GlassSelect({
       setQuery("");
       return;
     }
+    if (!autoFocusSearch) return;
     const id = window.setTimeout(() => searchRef.current?.focus(), 0);
     return () => window.clearTimeout(id);
-  }, [open]);
+  }, [open, autoFocusSearch]);
 
   React.useEffect(() => {
     if (!open) return;

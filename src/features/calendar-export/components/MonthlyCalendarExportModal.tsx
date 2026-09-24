@@ -12,7 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { GlassSelect } from "@/components/ui/glass-select";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { useMasjidlyTheme } from "@/contexts/MasjidlyThemeContext";
+import { cn } from "@/lib/utils";
 import {
   MASJIDLY_MODERN_SKIES,
   glassPanelStyle,
@@ -140,6 +142,42 @@ export default function MonthlyCalendarExportModal({
     "flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold " +
     "transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47A6FF]/60";
 
+  const nativeSelectClass =
+    "h-10 rounded-xl border-0 px-3 text-sm font-medium shadow-sm focus-visible:ring-2 focus-visible:ring-[#47A6FF]/60";
+  const nativeSelectStyle = { ...surface, color: fg } as const;
+
+  const rangeOptions = [
+    { id: "month", name: `${monthLabel} only` },
+    { id: "year", name: "Full year" },
+  ] as const;
+  const modeOptions = [
+    { id: "iqamah", name: "Iqamah" },
+    { id: "adhan", name: "Adhan" },
+    { id: "both", name: "Adhan + Iqamah" },
+  ] as const;
+
+  const renderNativeSelect = (
+    options: ReadonlyArray<{ id: string; name: string }>,
+    value: string,
+    onChange: (value: string) => void,
+    ariaLabel: string,
+    className?: string,
+  ) => (
+    <NativeSelect
+      className={cn(nativeSelectClass, className)}
+      style={nativeSelectStyle}
+      value={value}
+      aria-label={ariaLabel}
+      onChange={(event) => onChange(event.target.value)}
+    >
+      {options.map((opt) => (
+        <NativeSelectOption key={opt.id} value={opt.id}>
+          {opt.name}
+        </NativeSelectOption>
+      ))}
+    </NativeSelect>
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -185,50 +223,73 @@ export default function MonthlyCalendarExportModal({
           </DialogHeader>
 
           <div className="mt-5 flex flex-col gap-2.5" style={{ color: fg }}>
-            <GlassSelect
-              options={cityOptions}
-              value={selectedCitySlug}
-              onChange={handleCityChange}
-              ariaLabel="Select city"
-              placeholder="Select city"
-              searchPlaceholder="Search cities…"
-            />
-            <GlassSelect
-              options={mosqueOptions}
-              value={selectedMosqueId}
-              onChange={setSelectedMosqueId}
-              ariaLabel="Select mosque"
-              placeholder="Select mosque"
-              searchPlaceholder="Search mosques…"
-            />
-            <div className="flex gap-2">
+            {/* Mobile: OS-native pickers. Desktop: glass combobox. */}
+            <div className="sm:hidden flex flex-col gap-2.5">
+              {renderNativeSelect(cityOptions, selectedCitySlug, handleCityChange, "Select city")}
+              {renderNativeSelect(mosqueOptions, selectedMosqueId, setSelectedMosqueId, "Select mosque")}
+              <div className="flex gap-2">
+                {renderNativeSelect(
+                  rangeOptions,
+                  range,
+                  (value) => {
+                    if (value === "month" || value === "year") setRange(value);
+                  },
+                  "Select date range",
+                  "min-w-0 flex-1",
+                )}
+                {renderNativeSelect(
+                  modeOptions,
+                  mode,
+                  (value) => {
+                    if (value === "adhan" || value === "iqamah" || value === "both") {
+                      setMode(value);
+                    }
+                  },
+                  "Select prayer time mode",
+                  "min-w-0 flex-1",
+                )}
+              </div>
+            </div>
+
+            <div className="hidden sm:flex sm:flex-col sm:gap-2.5">
               <GlassSelect
-                className="min-w-0 flex-1"
-                options={[
-                  { id: "month", name: `${monthLabel} only` },
-                  { id: "year", name: "Full year" },
-                ]}
-                value={range}
-                onChange={(value) => {
-                  if (value === "month" || value === "year") setRange(value);
-                }}
-                ariaLabel="Select date range"
+                options={cityOptions}
+                value={selectedCitySlug}
+                onChange={handleCityChange}
+                ariaLabel="Select city"
+                placeholder="Select city"
+                searchPlaceholder="Search cities…"
               />
               <GlassSelect
-                className="min-w-0 flex-1"
-                options={[
-                  { id: "iqamah", name: "Iqamah" },
-                  { id: "adhan", name: "Adhan" },
-                  { id: "both", name: "Adhan + Iqamah" },
-                ]}
-                value={mode}
-                onChange={(value) => {
-                  if (value === "adhan" || value === "iqamah" || value === "both") {
-                    setMode(value);
-                  }
-                }}
-                ariaLabel="Select prayer time mode"
+                options={mosqueOptions}
+                value={selectedMosqueId}
+                onChange={setSelectedMosqueId}
+                ariaLabel="Select mosque"
+                placeholder="Select mosque"
+                searchPlaceholder="Search mosques…"
               />
+              <div className="flex gap-2">
+                <GlassSelect
+                  className="min-w-0 flex-1"
+                  options={[...rangeOptions]}
+                  value={range}
+                  onChange={(value) => {
+                    if (value === "month" || value === "year") setRange(value);
+                  }}
+                  ariaLabel="Select date range"
+                />
+                <GlassSelect
+                  className="min-w-0 flex-1"
+                  options={[...modeOptions]}
+                  value={mode}
+                  onChange={(value) => {
+                    if (value === "adhan" || value === "iqamah" || value === "both") {
+                      setMode(value);
+                    }
+                  }}
+                  ariaLabel="Select prayer time mode"
+                />
+              </div>
             </div>
 
             {error && (

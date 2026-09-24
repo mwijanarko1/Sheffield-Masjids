@@ -292,7 +292,7 @@ export default function MasjidSelectSettings({ mosques }: MasjidSelectSettingsPr
                   ariaLabel="Select mosque"
                   disabled={!isHydrated}
                   placeholder={isHydrated ? "Select mosque" : "Loading…"}
-                  searchPlaceholder="Search mosques…"
+                  searchMinOptions={Number.POSITIVE_INFINITY}
                 />
               </div>
             </div>
