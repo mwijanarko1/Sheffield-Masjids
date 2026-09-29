@@ -3841,6 +3841,20 @@
       "website": "https://attaqwa-masjid.co.uk"
     },
     {
+      "id": "baitul-mukarram-sheffield",
+      "name": "Baitul Mukarram Jame Masjid",
+      "address": "358 London Rd, Highfield, Sheffield S2 4NB, United Kingdom",
+      "lat": 53.3655522,
+      "lng": -1.4734300,
+      "slug": "baitul-mukarram-sheffield",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.baitulmukarramjamemasjid.com"
+    },
+    {
       "id": "darululoom-siddiqia-masjid",
       "name": "Dar Ul Uloom Siddiqia Masjid",
       "address": "24 Burngreave Rd, Sheffield S3 9DD",
