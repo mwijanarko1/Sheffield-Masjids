@@ -2148,6 +2148,20 @@
       "website": "https://www.menatrust.org.uk/"
     },
     {
+      "id": "bishopbriggs-islamic-community-centre",
+      "name": "Bishopbriggs Islamic Community Centre",
+      "address": "173 Auchinairn Road, Bishopbriggs, Glasgow G64 1NG, United Kingdom",
+      "lat": 55.9068,
+      "lng": -4.2069,
+      "slug": "bishopbriggs-islamic-community-centre",
+      "citySlug": "glasgow",
+      "cityName": "Glasgow",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://bishopbriggsicc.org.uk/"
+    },
+    {
       "id": "jamia-islamia-glasgow",
       "name": "Jamia Islamia Glasgow",
       "address": "275 Tantallon Road, Glasgow, G41 3JW, United Kingdom",
