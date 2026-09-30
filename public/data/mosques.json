@@ -146,6 +146,7 @@
       "cityName": "Melbourne",
       "countryCode": "AU",
       "countryName": "Australia",
+      "timezone": "Australia/Melbourne",
       "isHidden": false,
       "website": "https://www.swinis.org/"
     },
@@ -505,6 +506,7 @@
       "cityName": "Strasbourg",
       "countryCode": "FR",
       "countryName": "France",
+      "timezone": "Europe/Paris",
       "isHidden": false,
       "website": "https://www.mosquee-strasbourg.com"
     },
@@ -4561,6 +4563,7 @@
       "cityName": "Lelystad",
       "countryCode": "NL",
       "countryName": "Netherlands",
+      "timezone": "Europe/Amsterdam",
       "isHidden": false,
       "website": "https://moskeeelimaan.nl"
     },
@@ -4575,6 +4578,7 @@
       "cityName": "Rotterdam",
       "countryCode": "NL",
       "countryName": "Netherlands",
+      "timezone": "Europe/Amsterdam",
       "isHidden": false,
       "website": "https://www.essalamrotterdam.nl"
     },
@@ -4828,6 +4832,7 @@
       "cityName": "Boston",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://isbcc.org/"
     },
@@ -4842,6 +4847,7 @@
       "cityName": "Chicago",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://mccchicago.org/"
     },
@@ -4856,6 +4862,7 @@
       "cityName": "Falls Church",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://hijrah.org/"
     },
@@ -4870,6 +4877,7 @@
       "cityName": "Houston",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://www.brandlaneic.com/prayer-timings/"
     },
@@ -4884,6 +4892,7 @@
       "cityName": "Houston",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://www.masjidattaqwa.com/prayers"
     },
@@ -4898,6 +4907,7 @@
       "cityName": "Houston",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://isghmasjidhamza.org/"
     },
@@ -4912,6 +4922,7 @@
       "cityName": "Irving",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://irvingmasjid.org/"
     },
@@ -4926,6 +4937,7 @@
       "cityName": "Lanham",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://diyanetamerica.org/"
     },
@@ -4940,6 +4952,7 @@
       "cityName": "Cordova",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://www.memphisislamiccenter.org/"
     },
@@ -4954,6 +4967,7 @@
       "cityName": "Naperville",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://icnmasjid.org/"
     },
@@ -4968,6 +4982,7 @@
       "cityName": "Orlando",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://icorlando.org/"
     },
@@ -4982,6 +4997,7 @@
       "cityName": "Perrysburg",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://icgt.org/"
     },
@@ -4996,6 +5012,7 @@
       "cityName": "Pittsburgh",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://www.icp-pgh.org/"
     },
@@ -5010,6 +5027,7 @@
       "cityName": "Richardson",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://iant.com/"
     },
@@ -5024,6 +5042,7 @@
       "cityName": "San Antonio",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/Chicago",
       "isHidden": false,
       "website": "https://icsaonline.org/"
     },
@@ -5038,6 +5057,7 @@
       "cityName": "Sterling",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://adamscenter.org/"
     },
@@ -5052,6 +5072,7 @@
       "cityName": "Washington, DC",
       "countryCode": "US",
       "countryName": "United States",
+      "timezone": "America/New_York",
       "isHidden": false,
       "website": "https://theislamiccenter.com/"
     },

@@ -318,7 +318,21 @@ const MosqueSeedSchema = z
     website: z.string().optional(),
     isHidden: z.boolean().optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((m, ctx) => {
+    // Convex stores Europe/London when timezone is omitted, so only UK mosques may omit it.
+    if (!m.timezone) {
+      if (m.countryCode && m.countryCode !== "GB") {
+        ctx.addIssue({ code: "custom", path: ["timezone"], message: `${m.slug}: timezone is required outside GB` });
+      }
+      return;
+    }
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: m.timezone });
+    } catch {
+      ctx.addIssue({ code: "custom", path: ["timezone"], message: `${m.slug}: unknown IANA timezone ${m.timezone}` });
+    }
+  });
 
 const MosquesFileSchema = z.object({
   mosques: z.array(MosqueSeedSchema),
