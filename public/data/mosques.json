@@ -31,6 +31,21 @@
       "website": "https://www.awqaf.gov.ae/prayer-times?lang=en"
     },
     {
+      "id": "bathgate-mosque",
+      "name": "Bathgate Mosque",
+      "address": "5 Whitburn Road, Bathgate EH48 1HE, United Kingdom",
+      "lat": 55.90053,
+      "lng": -3.6422,
+      "slug": "bathgate-mosque",
+      "citySlug": "bathgate",
+      "cityName": "Bathgate",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "timezone": "Europe/London",
+      "isHidden": true,
+      "website": "https://www.bathgatemosque.com"
+    },
+    {
       "id": "dubai-mosques",
       "name": "Dubai Prayer Times",
       "address": "Dubai, United Arab Emirates",
@@ -497,7 +512,7 @@
     },
     {
       "id": "grande-mosquee-de-strasbourg",
-      "name": "Grande Mosqu\u00e9e de Strasbourg",
+      "name": "Grande Mosquée de Strasbourg",
       "address": "5 Boulevard de la Victoire, 67000 Strasbourg, France",
       "lat": 48.5872,
       "lng": 7.7495,
@@ -3861,7 +3876,7 @@
       "name": "Baitul Mukarram Jame Masjid",
       "address": "358 London Rd, Highfield, Sheffield S2 4NB, United Kingdom",
       "lat": 53.3655522,
-      "lng": -1.4734300,
+      "lng": -1.47343,
       "slug": "baitul-mukarram-sheffield",
       "citySlug": "sheffield",
       "cityName": "Sheffield",
