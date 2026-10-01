@@ -42,7 +42,7 @@
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "timezone": "Europe/London",
-      "isHidden": true,
+      "isHidden": false,
       "website": "https://www.bathgatemosque.com"
     },
     {
