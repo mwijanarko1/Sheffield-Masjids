@@ -5118,6 +5118,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.whitehavenmosque.org.uk/"
+    },
+    {
+      "id": "british-muslim-heritage-centre",
+      "name": "British Muslim Heritage Centre",
+      "address": "College Road, Manchester M16 8BP, United Kingdom",
+      "lat": 53.4498583,
+      "lng": -2.2637831,
+      "slug": "british-muslim-heritage-centre",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://bmhc.org.uk/prayers/"
     }
   ]
 }
