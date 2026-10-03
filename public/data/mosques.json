@@ -3858,6 +3858,20 @@
       "isHidden": false
     },
     {
+      "id": "andalus-community-centre",
+      "name": "Andalus Community Centre",
+      "address": "43 Townhead Street, Sheffield S1 2EB, United Kingdom",
+      "lat": 53.3830463,
+      "lng": -1.4740558,
+      "slug": "andalus-community-centre",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.andalus.org.uk/"
+    },
+    {
       "id": "at-taqwa-masjid",
       "name": "At-Taqwa Mosque Sheffield",
       "address": "31-33 Andover Street, Sheffield S3 9EP, United Kingdom",
