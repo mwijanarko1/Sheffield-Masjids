@@ -3075,6 +3075,20 @@
       "website": "https://www.masjideumer.org.uk"
     },
     {
+      "id": "masjid-ezzeitouna",
+      "name": "Masjid Ezzeitouna",
+      "address": "6 Western Avenue, East Acton, London W3 7UD, United Kingdom",
+      "lat": 51.51382,
+      "lng": -0.24922,
+      "slug": "masjid-ezzeitouna",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://ezzeitouna.com/en"
+    },
+    {
       "id": "masjid-quba-stamford-hill",
       "name": "Masjid Quba Stamford Hill",
       "address": "70-72 Cazenove Road, Stamford Hill, London N16 6AA, United Kingdom",
