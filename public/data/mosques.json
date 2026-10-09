@@ -5146,6 +5146,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://bmhc.org.uk/prayers/"
+    },
+    {
+      "id": "taybah-masjid",
+      "name": "Taybah Masjid",
+      "address": "12 Victory Road, Beeston, Nottingham, NG9 1LH, United Kingdom",
+      "lat": 52.9219,
+      "lng": -1.2167,
+      "slug": "taybah-masjid",
+      "citySlug": "nottingham",
+      "cityName": "Nottingham",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.taybahmasjid.co.uk"
     }
   ]
 }
