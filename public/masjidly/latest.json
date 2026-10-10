@@ -1,17 +1,17 @@
 {
   "android": {
-    "version": "1.4.1",
-    "versionCode": 15,
+    "version": "1.5.1",
+    "versionCode": 17,
     "url": "https://play.google.com/store/apps/details?id=com.mikhailspeaks.masjidly&hl=en",
     "sha256": "",
     "minVersionCode": 1
   },
   "ios": {
-    "version": "1.4",
+    "version": "1.5",
     "build": 1,
     "appStoreUrl": "https://apps.apple.com/gb/app/masjidly-masjid-prayer-times/id6767841833"
   },
-  "pub_date": "2026-09-27T16:59:00Z",
+  "pub_date": "2026-10-08T12:56:00Z",
   "notes": {
     "en": "New update available",
     "ar": "تحديث جديد متاح",
