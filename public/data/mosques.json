@@ -5159,6 +5159,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.taybahmasjid.co.uk"
+    },
+    {
+      "id": "eccles-mosque",
+      "name": "Eccles Mosque (Eccles & Salford Islamic Society)",
+      "address": "5 Liverpool Road, Eccles, Salford M30 0WB, United Kingdom",
+      "lat": 53.483179,
+      "lng": -2.34744,
+      "slug": "eccles-mosque",
+      "citySlug": "manchester",
+      "cityName": "Manchester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://ecclesmosque.org.uk"
     }
   ]
 }
