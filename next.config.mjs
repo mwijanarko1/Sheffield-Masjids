@@ -11,6 +11,9 @@ const nextConfig = {
   turbopack: { root: projectRoot },
   // Dev browsers hitting 127.0.0.1 instead of localhost need this for HMR/hydration.
   allowedDevOrigins: ["127.0.0.1", "localhost"],
+  async rewrites() {
+    return [{ source: "/mcp", destination: "/api/mcp" }];
+  },
   async headers() {
     const webMcpOriginTrial = process.env.WEBMCP_ORIGIN_TRIAL_TOKEN?.trim();
     if (!webMcpOriginTrial) return [];
@@ -24,4 +27,5 @@ const nextConfig = {
   },
 };
 
-export default nextConfig; 
+export default nextConfig;
+

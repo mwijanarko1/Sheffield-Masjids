@@ -52,11 +52,36 @@ Create `.env.local` and set:
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 NEXT_PUBLIC_CONVEX_URL=<your-convex-url>  # Optional - enables live backend
 WEBMCP_ORIGIN_TRIAL_TOKEN=<token>  # Optional - Chrome WebMCP origin trial
+OPENAI_APPS_CHALLENGE_TOKEN=<token>  # Optional - OpenAI plugin domain verification
 ```
 
 - `NEXT_PUBLIC_SITE_URL` - Used for canonical URLs, `robots.txt`, and `sitemap.xml`. Falls back to `http://localhost:3000` if unset.
 - `NEXT_PUBLIC_CONVEX_URL` - When set, the app queries Convex for mosque registry, monthly prayer times, Ramadan timetables, and UK DST dates. Falls back to static JSON in `public/data/` if unset.
 - `WEBMCP_ORIGIN_TRIAL_TOKEN` - When set, sends an `Origin-Trial` header so Chrome can enable WebMCP without a local flag. Register at https://developer.chrome.com/origintrials. Local testing also works with `chrome://flags/#enable-webmcp-testing`.
+- `OPENAI_APPS_CHALLENGE_TOKEN` - Exact plain-text token from the OpenAI Plugins portal, served at `/.well-known/openai-apps-challenge`.
+
+## Remote MCP (ChatGPT / Codex plugin)
+
+Streamable HTTP MCP endpoint:
+
+```text
+https://www.sheffieldmasjids.com/mcp
+```
+
+(`/mcp` rewrites to `/api/mcp`.) Tools:
+
+| Tool | Purpose |
+|------|---------|
+| `search_mosques` | Find mosques by name, city, or country |
+| `get_prayer_times` | Adhan + iqamah for a mosque on `YYYY-MM-DD` (default: today Europe/London) |
+
+Auth: none (public published times). Rate limit: 60 requests/minute/IP (same best-effort pattern as the HTTP API).
+
+Plugin package for OpenAI directory submission lives in `openai-plugin/` (`plugin.json`, `mcp.json`, `skills/`). Zip that folder when uploading to [platform.openai.com/plugins](https://platform.openai.com/plugins).
+
+```bash
+bun run test:mcp
+```
 
 ## Agent Prayer Times API
 
@@ -91,6 +116,9 @@ GET /api/prayer-times?mosque=madina-masjid-sheffield&date=2026-04-10
 | `/privacy` | Privacy policy |
 | `/terms` | Terms & conditions |
 | `/new-domain` | Domain redirect notice |
+| `/mcp` | Remote MCP (Streamable HTTP; ChatGPT / Codex) |
+| `/api/mcp` | Same MCP handler without rewrite |
+| `/.well-known/openai-apps-challenge` | OpenAI plugin domain verification token |
 
 ## Data Source Structure
 

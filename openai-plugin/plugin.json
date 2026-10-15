@@ -1,0 +1,86 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "sheffield-masjids",
+  "version": "1.0.2",
+  "description": "Look up published mosque prayer times (adhan and iqamah) from Sheffield Masjids.",
+  "author": {
+    "name": "Sheffield Masjids",
+    "url": "https://www.sheffieldmasjids.com"
+  },
+  "homepage": "https://www.sheffieldmasjids.com",
+  "repository": "https://github.com/mwijanarko1/Sheffield-Masjids",
+  "license": "MIT",
+  "keywords": ["prayer-times", "mosque", "adhan", "iqamah", "sheffield", "masjidly"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Sheffield Masjids",
+        "shortDescription": "Mosque adhan & iqamah times",
+        "longDescription": "Ask for today's or a specific day's prayer times for mosques published on Sheffield Masjids. Search the directory, then get adhan and iqamah with Europe/London timezone. Powered by the same published timetable data used by Masjidly.",
+        "developerName": "Sheffield Masjids",
+        "category": "Productivity",
+        "capabilities": ["Read"],
+        "websiteURL": "https://www.sheffieldmasjids.com",
+        "privacyPolicyURL": "https://www.sheffieldmasjids.com/privacy",
+        "termsOfServiceURL": "https://www.sheffieldmasjids.com/terms",
+        "supportURL": "https://www.sheffieldmasjids.com/contact",
+        "defaultPrompt": [
+          "What are today's prayer times at Madina Masjid Sheffield?",
+          "Search Sheffield mosques named Huda, then get tonight's Maghrib and Isha iqamah.",
+          "When is Maghrib at Muslim Welfare House Sheffield on 2026-04-10?"
+        ]
+      },
+      "review": {
+        "release_notes": "Remote MCP plugin: search_mosques and get_prayer_times over published Sheffield Masjids timetable data, including Ramadan overrides and year coverage checks.",
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Today's times for a known mosque slug",
+              "prompt": "Get today's prayer times for madina-masjid-sheffield",
+              "tools_triggered": "get_prayer_times",
+              "expected_behavior": "Returns adhan and iqamah for Europe/London today with mosque metadata."
+            },
+            {
+              "description": "Resolve mosque by name then fetch a dated timetable",
+              "prompt": "What are Fajr and Maghrib at Madina Masjid Sheffield on 2026-04-10?",
+              "tools_triggered": "search_mosques, get_prayer_times",
+              "expected_behavior": "Resolves the mosque and reports separate adhan and iqamah values for 2026-04-10."
+            },
+            {
+              "description": "City-filtered mosque search",
+              "prompt": "Find Sheffield mosques with Huda in the name",
+              "tools_triggered": "search_mosques",
+              "expected_behavior": "Lists matching Sheffield directory entries with slugs and URLs."
+            },
+            {
+              "description": "Ramadan override day",
+              "prompt": "Prayer times for madina-masjid-sheffield on 2026-02-20",
+              "tools_triggered": "get_prayer_times",
+              "expected_behavior": "Returns the published Ramadan timetable for that day, not the monthly February row."
+            },
+            {
+              "description": "Ambiguous Sheffield iqamah request",
+              "prompt": "What time is Asr iqamah in Sheffield today?",
+              "tools_triggered": "search_mosques",
+              "expected_behavior": "Asks which mosque or lists candidates because iqamah varies by mosque."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Out of scope astronomical calculation",
+              "prompt": "Calculate prayer times for a random GPS coordinate with no mosque"
+            },
+            {
+              "description": "Invalid date format",
+              "prompt": "Prayer times for madina-masjid-sheffield on 10/04/2026"
+            },
+            {
+              "description": "Unrelated booking or payment request",
+              "prompt": "Book me a flight to London and charge my card"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

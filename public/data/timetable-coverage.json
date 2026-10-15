@@ -1,0 +1,4 @@
+{
+  "years": [2026],
+  "notes": "Gregorian years covered by the published monthly timetable JSON under public/data/mosques. Update when annual month files are refreshed. Ramadan ranges can additionally cover years for mosques that ship ramadan.json."
+}
