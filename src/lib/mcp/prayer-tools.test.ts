@@ -65,6 +65,15 @@ test("get_prayer_times rejects unsupported timetable years", async () => {
   assert.match(result.error, /2099|not available/i);
 });
 
+test("get_prayer_times rejects years outside published coverage even if they look current", async () => {
+  const result = await getPrayerTimes({
+    mosque: "madina-masjid-sheffield",
+    date: "2027-04-10",
+  });
+  assert.ok("error" in result);
+  assert.match(result.error, /2027|not available/i);
+});
+
 test("get_prayer_times rejects invalid dates", async () => {
   const result = await getPrayerTimes({
     mosque: "madina-masjid-sheffield",

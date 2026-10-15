@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import mosquesData from "../../public/data/mosques.json";
+import timetableCoverage from "../../public/data/timetable-coverage.json";
 import { getMosqueDataFsDir } from "@/lib/mosque-data-path";
 import { getBaseUrl } from "@/lib/site";
 import type {
@@ -198,9 +199,16 @@ function ramadanDay(start: string, date: string): number {
   );
 }
 
+function publishedMonthlyYears(): Set<number> {
+  const years = new Set<number>();
+  for (const year of timetableCoverage.years ?? []) {
+    if (Number.isInteger(year)) years.add(year);
+  }
+  return years;
+}
+
 function isYearCovered(year: number, ramadan: RamadanData | null): boolean {
-  const currentYear = Number(londonDateKey().slice(0, 4));
-  if (year === currentYear) return true;
+  if (publishedMonthlyYears().has(year)) return true;
   if (!ramadan) return false;
   const startYear = Number(ramadan.gregorian_start.slice(0, 4));
   const endYear = Number(ramadan.gregorian_end.slice(0, 4));
