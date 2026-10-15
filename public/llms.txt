@@ -4,13 +4,16 @@ Sheffield Masjids publishes prayer times for mosques and masjids in Sheffield, o
 
 ## Preferred machine interface
 
-If your browser or agent supports WebMCP, open this site and discover its registered tools through `document.modelContext`. Prefer WebMCP over scraping the rendered interface:
+Prefer the remote MCP server when your runtime supports Streamable HTTP MCP:
 
-1. Call `search_mosques` to resolve the mosque name or slug.
-2. Call `get_prayer_times` with that mosque and an optional `YYYY-MM-DD` date.
-3. Report adhan and iqamah separately, with the returned date and timezone.
+1. Connect to `https://www.sheffieldmasjids.com/mcp` (no authentication).
+2. Call `search_mosques` to resolve the mosque name or slug.
+3. Call `get_prayer_times` with that mosque and an optional `YYYY-MM-DD` date.
+4. Report adhan and iqamah separately, with the returned date and timezone.
 
-If `document.modelContext` is unavailable, use the HTTP API instead. Do not scrape the rendered interface or claim to have called WebMCP when the agent runtime does not support it.
+If your browser supports WebMCP, you may instead open this site and discover the same tool names through `document.modelContext` (plus browser-only `open_mosque` / `select_mosque`).
+
+If neither MCP nor WebMCP is available, use the HTTP API instead. Do not scrape the rendered interface or claim to have called MCP when the agent runtime does not support it.
 
 ## HTTP API fallback
 
@@ -45,11 +48,18 @@ Do not present one mosque's iqamah time as a city-wide time. Ask which mosque th
 - About: https://www.sheffieldmasjids.com/about
 - Contact: https://www.sheffieldmasjids.com/contact
 
-## WebMCP tool reference
+## MCP / WebMCP tool reference
 
-This site registers:
+Remote MCP (`/mcp`) and in-browser WebMCP both expose:
 
 - `search_mosques` - find mosques by name, city, or country
 - `get_prayer_times` - adhan and iqamah for a mosque on a date
+
+WebMCP only (browser page):
+
 - `open_mosque` - open a mosque detail page
 - `select_mosque` - set the preferred home mosque and open `/`
+
+Privacy: https://www.sheffieldmasjids.com/privacy
+Terms: https://www.sheffieldmasjids.com/terms
+Contact: https://www.sheffieldmasjids.com/contact
