@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "sheffield-masjids",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Look up published mosque prayer times (adhan and iqamah) from Sheffield Masjids.",
   "author": {
     "name": "Sheffield Masjids",
@@ -31,55 +31,52 @@
         ]
       },
       "review": {
-        "release_notes": "Initial remote MCP plugin: search_mosques and get_prayer_times over published Sheffield Masjids timetable data.",
+        "release_notes": "Remote MCP plugin: search_mosques and get_prayer_times over published Sheffield Masjids timetable data, including Ramadan overrides and year coverage checks.",
         "test_cases": {
           "positive": [
             {
-              "scenario": "Today's times for a known mosque slug",
+              "description": "Today's times for a known mosque slug",
               "prompt": "Get today's prayer times for madina-masjid-sheffield",
-              "expected_tools": ["get_prayer_times"],
-              "expected_result": "Returns adhan and iqamah for Europe/London today (or the requested date) with mosque metadata."
+              "tools_triggered": "get_prayer_times",
+              "expected_behavior": "Returns adhan and iqamah for Europe/London today with mosque metadata."
             },
             {
-              "scenario": "Resolve mosque by name then fetch times",
+              "description": "Resolve mosque by name then fetch a dated timetable",
               "prompt": "What are Fajr and Maghrib at Madina Masjid Sheffield on 2026-04-10?",
-              "expected_tools": ["search_mosques", "get_prayer_times"],
-              "expected_result": "Resolves the mosque and reports separate adhan and iqamah values for 2026-04-10."
+              "tools_triggered": "search_mosques, get_prayer_times",
+              "expected_behavior": "Resolves the mosque and reports separate adhan and iqamah values for 2026-04-10."
             },
             {
-              "scenario": "City-filtered search",
+              "description": "City-filtered mosque search",
               "prompt": "Find Sheffield mosques with Huda in the name",
-              "expected_tools": ["search_mosques"],
-              "expected_result": "Lists matching Sheffield directory entries with slugs and URLs."
+              "tools_triggered": "search_mosques",
+              "expected_behavior": "Lists matching Sheffield directory entries with slugs and URLs."
             },
             {
-              "scenario": "Explicit date prayer times",
-              "prompt": "Iqamah times for madina-masjid-sheffield on 2026-04-10",
-              "expected_tools": ["get_prayer_times"],
-              "expected_result": "Returns iqamah including Jummah when available, labeled separately from adhan."
+              "description": "Ramadan override day",
+              "prompt": "Prayer times for madina-masjid-sheffield on 2026-02-20",
+              "tools_triggered": "get_prayer_times",
+              "expected_behavior": "Returns the published Ramadan timetable for that day, not the monthly February row."
             },
             {
-              "scenario": "Ambiguous mosque request clarification",
+              "description": "Ambiguous Sheffield iqamah request",
               "prompt": "What time is Asr iqamah in Sheffield today?",
-              "expected_tools": ["search_mosques"],
-              "expected_result": "Asks which mosque or lists candidates because iqamah varies by mosque."
+              "tools_triggered": "search_mosques",
+              "expected_behavior": "Asks which mosque or lists candidates because iqamah varies by mosque."
             }
           ],
           "negative": [
             {
-              "scenario": "Out of scope calculation request",
-              "prompt": "Calculate prayer times for a random GPS coordinate with no mosque",
-              "expected_behavior": "Does not invent astronomical times; explains coverage is limited to listed mosques."
+              "description": "Out of scope astronomical calculation",
+              "prompt": "Calculate prayer times for a random GPS coordinate with no mosque"
             },
             {
-              "scenario": "Invalid date format",
-              "prompt": "Prayer times for madina-masjid-sheffield on 10/04/2026",
-              "expected_behavior": "Refuses the slash date format and asks for YYYY-MM-DD or omits date for today."
+              "description": "Invalid date format",
+              "prompt": "Prayer times for madina-masjid-sheffield on 10/04/2026"
             },
             {
-              "scenario": "Unrelated task",
-              "prompt": "Book me a flight to London and charge my card",
-              "expected_behavior": "Does not call tools for booking or payments; stays within prayer-time lookup."
+              "description": "Unrelated booking or payment request",
+              "prompt": "Book me a flight to London and charge my card"
             }
           ]
         }

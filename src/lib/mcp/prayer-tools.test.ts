@@ -36,6 +36,35 @@ test("get_prayer_times returns adhan and iqamah for a known date", async () => {
   assert.ok(result.iqamah.jummah);
 });
 
+test("get_prayer_times uses Ramadan timetable instead of monthly February", async () => {
+  const result = await getPrayerTimes({
+    mosque: "madina-masjid-sheffield",
+    date: "2026-02-20",
+  });
+  assert.ok(!("error" in result));
+  assert.equal(result.date, "2026-02-20");
+  assert.equal(result.adhan.asr, "14:54");
+});
+
+test("get_prayer_times does not apply UK DST remapping to Houston iqamah", async () => {
+  const result = await getPrayerTimes({
+    mosque: "masjid-at-taqwa",
+    date: "2026-03-30",
+  });
+  assert.ok(!("error" in result));
+  assert.equal(result.timezone, "America/Chicago");
+  assert.equal(result.iqamah.fajr, "06:45");
+});
+
+test("get_prayer_times rejects unsupported timetable years", async () => {
+  const result = await getPrayerTimes({
+    mosque: "madina-masjid-sheffield",
+    date: "2099-04-10",
+  });
+  assert.ok("error" in result);
+  assert.match(result.error, /2099|not available/i);
+});
+
 test("get_prayer_times rejects invalid dates", async () => {
   const result = await getPrayerTimes({
     mosque: "madina-masjid-sheffield",
