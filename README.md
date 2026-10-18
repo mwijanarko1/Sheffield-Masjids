@@ -93,6 +93,40 @@ GET /api/prayer-times?mosque=madina-masjid-sheffield&date=2026-04-10
 
 `date` is optional and defaults to today in Europe/London. The endpoint reads published static timetable files, never Convex, caches successful responses, and applies a best-effort per-instance limit of 60 requests per minute per client IP. Production should also enforce the same rule at the hosting firewall for a globally consistent limit.
 
+## Reporting API Problems
+
+External agents can report integration friction without a GitHub account. `GET /api/feedback` returns the machine-readable contract. Submit with `POST /api/feedback` (`application/json` or `application/x-www-form-urlencoded`, 8 KiB maximum). Clients that cannot POST can use the form at `/report-api-issue`, which shares the same validation and limits.
+
+```json
+{
+  "schemaVersion": 1,
+  "category": "documentation",
+  "summary": "Agent could not discover the supported date format",
+  "request": { "method": "GET", "path": "/api/prayer-times", "query": { "mosque": "madina-masjid-sheffield", "date": "10/04/2026" } },
+  "response": { "status": 400, "contentType": "application/json", "bodyExcerpt": "Date must be a valid YYYY-MM-DD value." },
+  "expected": "Discover the YYYY-MM-DD format before making the request",
+  "actual": "The request used an unsupported date format",
+  "reproduction": ["Request /api/prayer-times with date=10/04/2026"],
+  "agent": { "name": "example-client", "version": "1.0" }
+}
+```
+
+- Categories: `request_error`, `documentation`, `unexpected_response`, `missing_data`.
+- Reportable paths: `/api/prayer-times` (`mosque`, `date`), `/api/calendar-feed` (`mosque`, `range`, `year`, `month`, `mode`), `/data/mosques.json`. Other paths and query keys are rejected.
+- Success is `202` with `{ id, status: "received", duplicate, message, retention }`. Receipt means received only. There is no status polling, callback, or notification.
+- Errors: `400 invalid_json`, `413 body_too_large`, `415 unsupported_media_type`, `422 invalid_report` (with `issues`), `429 rate_limited`, `503 intake_disabled | limiter_unavailable | intake_unavailable | storage_full`. `429` and `503` carry `Retry-After`.
+- Limits: 2 attempts per client per hour and 5 per 24 hours, 10 per minute and 100 per 24 hours globally. Malformed requests and duplicates count. Client identity is the platform-verified IP (IPv6 grouped by /64), stored only as a salted hash.
+- Privacy: do not send credentials, cookies, or personal data. Likely secrets are redacted before storage. Reports are private and deleted after 90 days. Reports are never executed, fetched, or turned into GitHub issues automatically.
+- API error bodies from `/api/prayer-times` and `/api/calendar-feed` include an additive `report` object pointing here.
+
+### Operating the feedback channel
+
+Convex deployment env: `FEEDBACK_INTAKE_SECRET` (required, also set on the Next.js host), optional `FEEDBACK_HASH_SALT`, `FEEDBACK_RETENTION_DAYS` (90), `FEEDBACK_MAX_REPORTS` (500), `FEEDBACK_LIMIT_IP_HOUR`, `FEEDBACK_LIMIT_IP_DAY`, `FEEDBACK_LIMIT_GLOBAL_MINUTE`, `FEEDBACK_LIMIT_GLOBAL_DAY`. Review reports with `bun scripts/feedback-reports.ts [--prod] [--limit 25] [--counters]`.
+
+Kill switch: set `FEEDBACK_INTAKE_DISABLED=true` on **both** the Next.js host (rejects before body work) and the Convex deployment (rejects durable intake). Either alone is incomplete if the other host still accepts work.
+
+Before exposing the endpoint publicly, add a Vercel Firewall rate-limit rule for `POST /api/feedback`, deploy the Convex functions, and alert on the daily `throttled` and `storage_full` counters.
+
 ## SEO Setup
 
 - Global metadata in `src/app/layout.tsx` (title template, Open Graph, Twitter, robots)
@@ -113,6 +147,7 @@ GET /api/prayer-times?mosque=madina-masjid-sheffield&date=2026-04-10
 | `/mosques/[slug]/timetable` | Monthly prayer timetable |
 | `/mosques/[slug]/ramadan-timetable` | Ramadan-only timetable |
 | `/settings` | App settings (mosque preference, legal links) |
+| `/report-api-issue` | Fallback form for reporting API problems |
 | `/privacy` | Privacy policy |
 | `/terms` | Terms & conditions |
 | `/new-domain` | Domain redirect notice |

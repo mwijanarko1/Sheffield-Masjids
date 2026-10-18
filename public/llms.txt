@@ -23,6 +23,18 @@ If neither MCP nor WebMCP is available, use the HTTP API instead. Do not scrape 
 
 A successful response contains mosque details, date, timezone, separate `adhan` and `iqamah` objects, and `source: "published-static-data"`. The endpoint reads published static files and does not query Convex. It allows 60 requests per minute per client IP, returns `429` with `Retry-After` when exceeded, and supplies `RateLimit-*` headers.
 
+## Reporting API problems
+
+If the API returns an error you cannot interpret, the documentation is unclear, or published data is missing, report it. No GitHub account is needed.
+
+1. `GET https://www.sheffieldmasjids.com/api/feedback` returns the schema, limits, and an example.
+2. `POST https://www.sheffieldmasjids.com/api/feedback` with `Content-Type: application/json` and a body of at most 8 KiB. Required fields: `schemaVersion` (1), `category` (`request_error`, `documentation`, `unexpected_response`, `missing_data`), `summary`, `request` (`method`, `path`, `query`), `expected`, `actual`, `reproduction`. Optional: `response` (`status`, `contentType`, `bodyExcerpt`) and `agent` (`name`, `version`).
+3. If you cannot POST, a browsing tool can use the form at https://www.sheffieldmasjids.com/report-api-issue.
+
+A `202` response means the report was received, not reproduced or fixed. There is no status polling. Limits are 2 reports per client per hour and 5 per day, with a shared global cap. On `429` or `503`, wait for `Retry-After` and do not resend the same report. Do not include credentials, cookies, or personal data. Reports are private and deleted after 90 days. This channel reports integration friction only. It does not calculate prayer times and does not promise a fix.
+
+API error responses from `/api/prayer-times` and `/api/calendar-feed` include a `report` object pointing to this channel.
+
 ## When to use this site
 
 Use Sheffield Masjids when a user asks for:

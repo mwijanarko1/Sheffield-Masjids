@@ -37,6 +37,14 @@ export default function PrivacyPage() {
         </section>
 
         <section>
+          <h2>API Problem Reports</h2>
+          <p>
+            If you or an assistant submits an API problem report through <code>/api/feedback</code> or the{" "}
+            <a href="/report-api-issue">reporting form</a>, we store the report text, a salted hash of the network address used to apply rate limits, and a timestamp. Likely credentials and personal data are redacted before storage. Reports are private, reviewed by a maintainer, and deleted after 90 days. We do not store raw IP addresses with reports.
+          </p>
+        </section>
+
+        <section>
           <h2>Analytics</h2>
           <p>
             We use Vercel Analytics to understand how visitors use the site (e.g. page views, referrers). This is privacy-friendly: no personal information or tracking identifiers are collected. Data is aggregated and processed by Vercel.

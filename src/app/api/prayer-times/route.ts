@@ -4,6 +4,7 @@ import {
   isPublishedLookupError,
   parsePublishedDate,
 } from "@/lib/published-prayer-times";
+import { withReportingHint } from "@/lib/feedback/discovery";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 export const runtime = "nodejs";
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const headers = rateHeaders(rate.remaining, rate.resetAt);
   if (!rate.allowed) {
     return NextResponse.json(
-      { error: "Rate limit exceeded. Try again in one minute." },
+      withReportingHint({ error: "Rate limit exceeded. Try again in one minute." }),
       { status: 429, headers: { ...headers, "Retry-After": "60" } },
     );
   }
@@ -41,16 +42,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const slug = request.nextUrl.searchParams.get("mosque")?.trim().toLowerCase();
   const rawDate = request.nextUrl.searchParams.get("date");
   if (!slug || !SLUG_RE.test(slug)) {
-    return NextResponse.json({ error: "A valid mosque slug is required." }, { status: 400, headers });
+    return NextResponse.json(withReportingHint({ error: "A valid mosque slug is required." }), { status: 400, headers });
   }
   if (rawDate !== null && !parsePublishedDate(rawDate)) {
-    return NextResponse.json({ error: "Date must be a valid YYYY-MM-DD value." }, { status: 400, headers });
+    return NextResponse.json(withReportingHint({ error: "Date must be a valid YYYY-MM-DD value." }), { status: 400, headers });
   }
 
   try {
     const result = await getPublishedPrayerTimes({ mosque: slug, date: rawDate });
     if (isPublishedLookupError(result)) {
-      return NextResponse.json({ error: result.error }, { status: result.status, headers });
+      return NextResponse.json(withReportingHint({ error: result.error }), { status: result.status, headers });
     }
 
     return NextResponse.json(result, {
@@ -61,6 +62,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   } catch (error) {
     console.error("Static prayer-times API failed", error);
-    return NextResponse.json({ error: "Unable to load prayer times." }, { status: 500, headers });
+    return NextResponse.json(withReportingHint({ error: "Unable to load prayer times." }), { status: 500, headers });
   }
 }

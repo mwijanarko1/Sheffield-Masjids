@@ -281,6 +281,23 @@
       "isha": "18:07"
     }
   ],
-  "iqamah_times": [],
+  "iqamah_times": [
+    {
+      "date_range": "4",
+      "fajr": "05:54",
+      "dhuhr": "14:00",
+      "asr": "17:00",
+      "maghrib": "18:46",
+      "isha": "20:15"
+    },
+    {
+      "date_range": "18",
+      "fajr": "06:19",
+      "dhuhr": "14:00",
+      "asr": "16:45",
+      "maghrib": "18:13",
+      "isha": "20:00"
+    }
+  ],
   "jummah_iqamah": "13:45 / 14:30"
 }

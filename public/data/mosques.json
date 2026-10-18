@@ -512,7 +512,7 @@
     },
     {
       "id": "grande-mosquee-de-strasbourg",
-      "name": "Grande Mosquée de Strasbourg",
+      "name": "Grande Mosqu\u00e9e de Strasbourg",
       "address": "5 Boulevard de la Victoire, 67000 Strasbourg, France",
       "lat": 48.5872,
       "lng": 7.7495,
@@ -5173,6 +5173,62 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://ecclesmosque.org.uk"
+    },
+    {
+      "id": "gravesend-central-mosque",
+      "name": "Gravesend Central Mosque",
+      "address": "Albion Terrace, Gravesend DA12 2SX, United Kingdom",
+      "lat": 51.4416219,
+      "lng": 0.3802507,
+      "slug": "gravesend-central-mosque",
+      "citySlug": "gravesend",
+      "cityName": "Gravesend",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://gravesendcentralmosque.com/"
+    },
+    {
+      "id": "alhidaya-croydon-masjid",
+      "name": "Alhidaya Croydon Masjid",
+      "address": "177 Brigstock Road, Thornton Heath, London CR7 7JP, United Kingdom",
+      "lat": 51.3934419,
+      "lng": -0.1131359,
+      "slug": "alhidaya-croydon-masjid",
+      "citySlug": "croydon",
+      "cityName": "Croydon",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://alhidayacroydon.org/"
+    },
+    {
+      "id": "green-street-masjid",
+      "name": "Green Street Masjid",
+      "address": "88 Green Street, London E7 8JG, United Kingdom",
+      "lat": 51.54423,
+      "lng": 0.0319608,
+      "slug": "green-street-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://greenstreetmasjid.org/"
+    },
+    {
+      "id": "hamlets-way-masjid",
+      "name": "Hamlets Way Masjid",
+      "address": "97-103 Hamlets Way, London E3 4TL, United Kingdom",
+      "lat": 51.5232645,
+      "lng": -0.0334956,
+      "slug": "hamlets-way-masjid",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://hamletswaymosque.com/"
     }
   ]
 }
