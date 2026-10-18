@@ -9,6 +9,9 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as feedback from "../feedback.js";
+import type * as lib_feedbackIntake from "../lib/feedbackIntake.js";
+import type * as lib_feedbackLimits from "../lib/feedbackLimits.js";
 import type * as lib_iqamahChangeDetect from "../lib/iqamahChangeDetect.js";
 import type * as lib_pushTransport from "../lib/pushTransport.js";
 import type * as mosques from "../mosques.js";
@@ -27,6 +30,9 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  feedback: typeof feedback;
+  "lib/feedbackIntake": typeof lib_feedbackIntake;
+  "lib/feedbackLimits": typeof lib_feedbackLimits;
   "lib/iqamahChangeDetect": typeof lib_iqamahChangeDetect;
   "lib/pushTransport": typeof lib_pushTransport;
   mosques: typeof mosques;

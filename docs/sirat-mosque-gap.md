@@ -4,19 +4,19 @@ Generated 2026-09-03 from `https://sirat.uk/mosques/v1/mosques?limit=1000`
 (605 mosques, health status `degraded`, 103 stale sources at time of pull).
 
 Our registry at time of pull: 212 GB mosques. Matched against Sirat: 74.  
-**As of 2026-09-07:** 259 GB mosques in registry (+47 since pull; includes Sirat gap work and other additions).
+**As of 2026-09-07:** 259 GB mosques in registry (+47 since pull; includes Sirat gap work and other additions).  
+**As of 2026-10-13:** +4 extracted this session (Gravesend, Alhidaya Croydon, Green Street, Hamlets Way). Imam Al-Shafi'i (Ramadan-only) removed as not useful without current months.
 
-**Gap list status (pruned 173 actionable rows from original 500):**
+**Gap list status (updated 2026-10-13):**
 
 | Status | Count |
 |--------|------:|
-| Unprocessed (has website) | 140 |
-| `[VISION-DEFERRED]` — PDF/image only | 33 |
+| Unprocessed (has website) | ~132 |
+| `[VISION-DEFERRED]` — PDF/image only | ~35 |
 | Removed — no website | 270 |
-| Removed — already in registry / done | 44 |
+| Removed — already in registry / done | ~52 |
 | Removed — invalid website field | 3 |
-
-Original pull had 227 gap mosques with websites; **173 remain** after dedup and no-website removal.
+| HTTP blocked / no extractable source | +4 (this session) |
 
 ## Progress report (2026-09-07)
 
@@ -71,6 +71,11 @@ Do not retry without a new source or manual data:
 | Shahjalal Ipswich | Drupal daily nodes only (not full year) |
 | Madina Jame Masjid Docklands | DPT returns placeholder 12:00 am times (stale 2023 data) |
 | Gap duplicate rows (Luton/Cardiff/York) | `website` field is a mosque name, not a URL |
+| Adam Mosque & Dawah Academy (B12) | Site has no prayer times / timetable |
+| Jamiat-us-Salam (B8) | `jamiasalam.com` returns 403 |
+| Soho Hill Muslim School (B19) | Site returns HTTP 500 |
+| Zumunta Community (B19) | Already in registry as `masjid-zumunta`; listed site dead |
+| Masjid Imam Al-Shafi'i (B8) | Site only publishes Ramadan HTML table (no Oct+); skipped |
 
 ### Recommended next steps
 
@@ -147,11 +152,15 @@ Work the list top to bottom in batches:
 
 - [DONE] Masjid Al-Fath / HQIEC (E14) - full year via DPT AJAX (hqiec.co.uk), visible
 
+- [DONE] Gravesend Central Mosque (DA12) - full year via `/namaz-times?month={Name}&year=2026` JSON (month must be full name), visible (source has occasional AM/PM typos; corrected by chronological rules)
+- [DONE] Alhidaya Croydon Masjid (CR7) - full year via Google Sheets API (`asr` + `asr_mithl2`), visible
+- [DONE] Green Street Masjid (E7) - October only via jar-timing HTML table, visible (partial year OK)
+- [DONE] Hamlets Way Masjid (E3) - full year via `/load_prayer_time?month={N}&year=2026` HTML (`asr` + `asr_mithl2`), visible
 ## Done (added outside Sirat gap list)
 
 - [DONE] Darul Elm Masjid and Community Centre (B19) - Jun+Sep 2026 via vision PDF/image (darul-elm.org), hidden (partial year; homepage image is current month)
 
-Rows below marked `[DONE]` are complete. **Actionable gap rows remaining: 140** (+ 33 vision-deferred).
+Rows below marked `[DONE]` are complete. **Actionable gap rows remaining: ~132** (+ ~35 vision-deferred).
 
 ## How to use this file
 
@@ -186,20 +195,16 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | [VISION-DEFERRED] London Colney Islamic Centre * | 174-174A High Street, Hertfordshire, London Colney, AL2 1JY | https://www.lcic.org.uk/ | mosque-000532 |
 
-### B (10)
+### B (6)
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Adam Mosque & Dawah Academy * | 19-31 Brunswick Road, Sparkbrook, Birmingham, B12 8NP | https://dawahacademy.uk/contact-us | mosque-000611 |
+| [SKIP] Masjid Imam Al-Shafi'i & Community Centre * | 238 Anthony Road, Alum Rock, Birmingham, B8 3AN | https://www.masjidimamshafii.com/ | mosque-000206 |
 | [VISION-DEFERRED] As-Suffa | 156 High Street, Birmingham, B6 4UX | https://as-suffa.org/ | mosque-000368 |
 | [VISION-DEFERRED] Great Barr Muslim Foundation * | 394 Walsall Road, Birmingham, B42 2LX | https://gbmf.uk/ | mosque-000501 |
-| Jamiat-us-Salam | 818 Alum Rock Road, Ward End, Birmingham, B8 2TX | https://www.jamiasalam.com/ | mosque-000295 |
 | [VISION-DEFERRED] Masjid Baitul Amaan * | 253 Halfords Lane, Smethwick, B66 1BD | https://masjidbaitulamaan.org.uk/about/ | mosque-000079 |
-| Masjid Imam Al-Shafi'i & Community Centre * | 238 Anthony Road, Alum Rock, Birmingham, B8 3AN | https://www.masjidimamshafii.com/ | mosque-000206 |
 | [VISION-DEFERRED] Masjid Qamarul Islam * | 168-170 Fosbrooke Road, Birmingham, B10 9JP | https://masjidqamarulislam.co.uk/ | mosque-000140 |
 | [VISION-DEFERRED] Paigham-E-Islam Trust Britain * | 423 Stratford Road, Sparkhill, Birmingham, B11 4LB | https://www.paigham-e-islam.co.uk/contact-us/ | mosque-000594 |
-| Soho Hill Muslim School * | 130 Soho Hill, West Midlands, Birmingham, B19 1AF | http://www.sohohillmuslim.org.uk/contact | mosque-000237 |
-| Zumunta Community * | Unit 39, Newtown Shopping Centre, Birmingham, B19 2SS | https://zumuntacommunity.org/ | mosque-000321 |
 
 ### BA (1)
 
@@ -227,7 +232,7 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
-| Azhar Academy Bolton * | Devonshire Education Centre, 20 Devonshire Road, Lancashire, Heaton, Bolton, BL1 4PG | https://www.azharacademybolton.org/about-us | mosque-000469 |
+| [VISION-DEFERRED] Azhar Academy Bolton * | Devonshire Education Centre, 20 Devonshire Road, Lancashire, Heaton, Bolton, BL1 4PG | https://www.azharacademybolton.org/about-us | mosque-000469 |
 | Hulton Lane Centre for Education * | Linnyshaw Close, Bolton, BL3 4WL | https://tafseer-raheemi.com/introduction-raheemi-academy-hulton-lane-centre-hlc-bolton-27119/ | mosque-000336 |
 | [VISION-DEFERRED] Jamia Khizra Mosque and Islamic Centre, Bury * | 21-25 Parker Street, Bury, BL9 0RJ | https://www.khizramosquebury.com/ | mosque-000408 |
 | [VISION-DEFERRED] Khizra Mosque - Walmersley Road * | 85 Walmersley Road, Bury, BL9 5AN | https://www.khizramosquebury.com/ | mosque-000146 |
@@ -252,13 +257,12 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 |---|---|---|---|
 | Cambourne Jumu’ah Salaah | Cambourne Community Hub, High Street, Cambridge, Cambourne, CB23 6GW | https://www.cambournecrescent.org/ | mosque-000242 |
 
-### CR (6)
+### CR (5)
 
 | Mosque | Address | Website | Sirat ID |
 |---|---|---|---|
 | Al-Khair Foundation Prayer Room and Hall * | 109-119 Cherry Orchard Road, Croydon, CR0 6BE | https://www.alkhair.org/ | mosque-000038 |
 | Al-Madina Mitcham Islamic Centre * | 201A Streatham Road, Mitcham, London, CR4 2AJ | https://almadina.cfsites.org/custom.php?pageid=28993 | mosque-000044 |
-| Alhidaya Croydon Masjid * | 177 Brigstock Road, London, CR7 7JP | https://alhidayacroydon.org/ | mosque-000247 |
 | Croydon Mosque & Islamic Centre * | 525 London Road, Surrey, Thornton Heath, London, CR7 6AR | https://www.croydonmosque.com/ | mosque-000057 |
 | Makkah Masjid Mitcham * | 226 London Road, Mitcham, London, CR4 3HD | https://www.makkah-masjid-mitcham.org/ | mosque-000019 |
 | Makkah Masjid Mitcham * | 226 London Rd, Mitcham, London, CR4 3HD | https://www.makkah-masjid-mitcham.org/ | mosque-000584 |
@@ -270,12 +274,6 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 | [VISION-DEFERRED] Faizan-e-Islam * | 202 Lockhurst Lane, Foleshill, Coventry, CV6 5NJ | https://dawateislamimidlands.net/prayer-time-table/ | mosque-000023 |
 | Rugby Mosque * | Grosvenor Road, Rugby, CV21 3LE | https://rugby-mosque.org/contact-us/ | mosque-000410 |
 | [VISION-DEFERRED] Umar Education and Welfare Centre * | 137 Avon Street, Coventry, CV2 3GQ | https://uewt.co.uk/ | mosque-000383 |
-
-### DA (1)
-
-| Mosque | Address | Website | Sirat ID |
-|---|---|---|---|
-| Gravesend Central Mosque * | Albion Terrace, Kent, Gravesend, DA12 2SX | https://gravesendcentralmosque.com/ | mosque-000540 |
 
 ### DE (1)
 
@@ -304,9 +302,7 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 | Baitur Rahman Masjid * | 440 High Street North, Manor Park, London, E12 6RH | https://www.baiturrahmanmasjid.co.uk/ | mosque-000272 |
 | Bow Muslim Community Centre * | 515B-517 Roman Road, London, E3 5EL | https://www.bowmosque.co.uk/ | mosque-000076 |
 | Chingford Islamic Society * | 90-92 Chingford Mount Road, London, Chingford, E4 9AA | http://www.chingfordmasjid.com/ | mosque-000617 |
-| Green Street Masjid * | 88 Green Street, London, E7 8JG | https://greenstreetmasjid.org/contact-us/ | mosque-000157 |
 | Hackney Central Masjid * | 237 Well Street, London, Hackney, E9 6RG | https://www.hackneyjamah.com/jummah | mosque-000198 |
-| Hamlets Way Masjid * | 97-103 Hamlets Way, London, E3 4TL | https://hamletswaymosque.com/ | mosque-000330 |
 | Islamic Dawah Centre * | 398 High Street North, London, E12 6RH | https://idcuk.org/demo/contact/ | mosque-000607 |
 | Lansbury Estate Masjid * | 20 Alton Street, London, E14 6BZ | https://www.lansburymasjid.co.uk | mosque-000036 |
 | Leytonstone Islamic Association * | Dacre Road, Leytonstone, London, E11 3AG | https://www.lia-trust.org/ | mosque-000155 |
@@ -316,7 +312,7 @@ The former **Possible duplicates** table (31 rows) was reviewed: those Sirat ent
 | Masjid Darul Ilm * | 16-18 Pilgrims Way, London, East Ham, E6 1HW | https://slmcel.org.uk/ | mosque-000350 |
 | Masjid Ul Hidayah * | 2A Church Road, Manor Park, London, E12 6AQ | https://www.masjidulhidayah.co.uk/ | mosque-000248 |
 | Poplar Central Mosque * | 253 East India Dock Road, Poplar, London, E14 0EG | https://www.poplarmosque.co.uk/ | mosque-000417 |
-| Quwwat-ul-Islam Society * | 62-66 Upton Lane, Forest Gate, London, E7 9LN | https://quwwatulislam.org/ | mosque-000570 |
+| [VISION-DEFERRED] Quwwat-ul-Islam Society * | 62-66 Upton Lane, Forest Gate, London, E7 9LN | https://quwwatulislam.org/ | mosque-000570 |
 | Shadwell Jame Masjid * | 143-145 Martha Street, London, E1 2QB | https://shadwelljamemasjid.org.uk/ | mosque-000494 |
 | Stratford Islamic Association * | 3-5 Brydges Road, Stratford, London, E15 1NA | https://www.stratfordislamicassociation.com | mosque-000197 |
 | The Markazi Masjid London * | 9-11 Christian Street, London, E1 1SE | https://www.markazimasjid.org/ | mosque-000011 |

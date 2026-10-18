@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildMonthlyCalendarEvents } from "@/features/calendar-export/lib/build-monthly-calendar-events";
 import { buildIcsCalendar } from "@/features/calendar-export/lib/ics";
 import type { CalendarExportMode } from "@/features/calendar-export/types";
+import { withReportingHint } from "@/lib/feedback/discovery";
 import { getMosqueBySlug } from "@/lib/mosques";
 import { getDateInSheffield, loadMonthlyPrayerTimes } from "@/lib/prayer-times";
 
@@ -22,7 +23,7 @@ const MONTH_NAMES = [
 ] as const;
 
 function jsonError(message: string, status: number): NextResponse {
-  return NextResponse.json({ error: message }, { status });
+  return NextResponse.json(withReportingHint({ error: message }), { status });
 }
 
 function parseYear(value: string | null): number {

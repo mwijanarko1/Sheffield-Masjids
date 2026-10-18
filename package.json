@@ -13,6 +13,7 @@
     "lint": "oxlint && tsc --noEmit",
     "test:seo": "tsx --test src/lib/seo.test.tsx",
     "test:calendar-export": "tsx --test src/features/calendar-export/lib/*.test.ts",
+    "test:feedback": "tsx --test src/lib/feedback/*.test.ts",
     "test:iqamah-push": "tsx --test convex/lib/iqamahChangeDetect.test.ts convex/lib/pushTransport.test.ts",
     "test:mcp": "tsx --test src/lib/mcp/*.test.ts src/app/.well-known/openai-apps-challenge/route.test.ts",
     "test:prayer-api": "tsx --test src/app/api/prayer-times/route.test.ts",

@@ -69,13 +69,24 @@ test("getDisplayedPrayerTimes applies March DST adjustment for Sheffield Grand M
     "sheffield-grand-mosque",
   );
 
-  assert.deepEqual(displayed, {
-    ...basePrayerTimes,
-    fajr: "05:22",
-    sunrise: "06:44",
-    dhuhr: "13:11",
-    asr: "16:39",
-    maghrib: "19:38",
-    isha: "21:02",
-  });
+  // Issue #85: Grand Mosque October/March tables embed civil time; skip ±1h.
+  assert.deepEqual(displayed, basePrayerTimes);
+});
+
+test("getDisplayedPrayerTimes skips October DST double-subtract for Madina Masjid Sheffield", () => {
+  const octoberGmt: DailyPrayerTimes = {
+    date: "2026-10-25",
+    fajr: "04:59",
+    sunrise: "06:52",
+    dhuhr: "11:53",
+    asr: "14:56",
+    maghrib: "16:51",
+    isha: "18:37",
+  };
+  const displayed = getDisplayedPrayerTimes(
+    octoberGmt,
+    sheffieldDate(2026, 10, 25),
+    "madina-masjid-sheffield",
+  );
+  assert.deepEqual(displayed, octoberGmt);
 });

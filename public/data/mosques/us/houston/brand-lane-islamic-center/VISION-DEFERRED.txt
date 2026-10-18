@@ -1,0 +1,2 @@
+[VISION-DEFERRED]
+Source https://www.brandlaneic.com/prayer-timings/ exposes a single-day Rawdah/current-prayer embed only (no monthly PDF/table). Do not invent a month file.

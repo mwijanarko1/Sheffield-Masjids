@@ -143,6 +143,60 @@ export default defineSchema({
     completedAt: v.optional(v.number()),
   }).index("by_mosque_event", ["mosqueSlug", "publishEventId"]),
 
+  /**
+   * API friction reports from external agents. Private: only reachable through
+   * the intake secret and admin secret mutations in convex/feedback.ts.
+   * clientKey is a salted hash of the verified client network, never a raw IP.
+   */
+  feedbackReports: defineTable({
+    schemaVersion: v.literal(1),
+    status: v.literal("received"),
+    category: v.union(
+      v.literal("request_error"),
+      v.literal("documentation"),
+      v.literal("unexpected_response"),
+      v.literal("missing_data"),
+    ),
+    summary: v.string(),
+    request: v.object({
+      method: v.union(v.literal("GET"), v.literal("HEAD")),
+      path: v.string(),
+      query: v.array(v.object({ key: v.string(), value: v.string() })),
+    }),
+    response: v.optional(
+      v.object({
+        status: v.number(),
+        contentType: v.optional(v.string()),
+        bodyExcerpt: v.optional(v.string()),
+      }),
+    ),
+    expected: v.string(),
+    actual: v.string(),
+    reproduction: v.array(v.string()),
+    agent: v.optional(v.object({ name: v.string(), version: v.optional(v.string()) })),
+    fingerprint: v.string(),
+    clientKey: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+  })
+    .index("by_fingerprint", ["fingerprint"])
+    .index("by_expires", ["expiresAt"])
+    .index("by_created", ["createdAt"]),
+
+  /** One row per accepted intake attempt per scope ("global" and "ip:<hash>"). */
+  feedbackAttempts: defineTable({
+    scope: v.string(),
+    at: v.number(),
+  })
+    .index("by_scope_at", ["scope", "at"])
+    .index("by_at", ["at"]),
+
+  /** Daily outcome counters: "<yyyy-mm-dd>:<accepted|duplicate|throttled|...>". */
+  feedbackCounters: defineTable({
+    key: v.string(),
+    count: v.number(),
+  }).index("by_key", ["key"]),
+
   /** Simple fixed-window counters for unauthenticated public mutations. */
   rateLimitBuckets: defineTable({
     key: v.string(),
