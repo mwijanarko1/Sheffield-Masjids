@@ -376,6 +376,10 @@ const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>([
   'madrasah-baytul-ilm',
   'hamidiya-leicester',
   'leagrave-hall-masjid-luton',
+  // Issue #85 recheck (19 Oct): March and October tables already embed BST/GMT on the UK change days
+  'alhidaya-croydon-masjid',
+  'green-street-masjid',
+  'hamlets-way-masjid',
 ]);
 
 export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
