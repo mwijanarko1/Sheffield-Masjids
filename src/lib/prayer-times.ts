@@ -380,6 +380,10 @@ const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>([
   'alhidaya-croydon-masjid',
   'green-street-masjid',
   'hamlets-way-masjid',
+  // Issue #85 recheck (20 Oct): October tables already shift to GMT on 25 Oct
+  'al-hashim-academy',
+  'al-ihsan-trust',
+  'al-jamia-darul-quran',
 ]);
 
 export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
