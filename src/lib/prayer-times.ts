@@ -384,6 +384,8 @@ const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>([
   'al-hashim-academy',
   'al-ihsan-trust',
   'al-jamia-darul-quran',
+  // Warrington Islamic Association: October API already shifts to GMT on 25 Oct
+  'warrington-islamic-association',
 ]);
 
 export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
