@@ -5229,6 +5229,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://hamletswaymosque.com/"
+    },
+    {
+      "id": "warrington-islamic-association",
+      "name": "Warrington Islamic Association",
+      "address": "Lockton Lane, Bewsey, Warrington WA5 0BF, United Kingdom",
+      "lat": 53.3978103,
+      "lng": -2.6128044,
+      "slug": "warrington-islamic-association",
+      "citySlug": "warrington",
+      "cityName": "Warrington",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://warringtonislamicassociation.org.uk"
     }
   ]
 }
