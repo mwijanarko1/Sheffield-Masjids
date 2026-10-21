@@ -4,22 +4,9 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDateWithDstMapping, getDateInSheffield, isDateInRamadanPeriod, isInDSTAdjustmentPeriod, isInDSTAdjustmentPeriodSync, adjustPrayerTimeForDSTSync as adjustPrayerTimeForDST, formatTo12Hour, isValidTimeForMarkup, getDSTDatesData, mosqueTimetableAlreadyIncludesDst, resolveIshaIqamahForDisplay, isMasjidRisalah, isAfterMaghribIqamahDisplayLabel } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDateInSheffield, isDateInRamadanPeriod, formatTo12Hour, isValidTimeForMarkup, resolveIshaIqamahForDisplay, isMasjidRisalah, isAfterMaghribIqamahDisplayLabel } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
-
-/** Same fields as the visible prayer rows during UK DST adjustment windows (MWHS). */
-function buildDstAdjustedDailyPrayerTimes(prayerTimes: DailyPrayerTimes, date: Date): DailyPrayerTimes {
-  return {
-    ...prayerTimes,
-    fajr: adjustPrayerTimeForDST(prayerTimes.fajr, date),
-    sunrise: adjustPrayerTimeForDST(prayerTimes.sunrise, date),
-    dhuhr: adjustPrayerTimeForDST(prayerTimes.dhuhr, date),
-    asr: adjustPrayerTimeForDST(prayerTimes.asr, date),
-    maghrib: adjustPrayerTimeForDST(prayerTimes.maghrib, date),
-    isha: adjustPrayerTimeForDST(prayerTimes.isha, date),
-  };
-}
 
 interface PrayerTimesWidgetProps {
   initialMosque: Mosque;
@@ -27,7 +14,6 @@ interface PrayerTimesWidgetProps {
   mosques?: Mosque[];
   initialPrayerTimes?: DailyPrayerTimes | null;
   initialIqamahTimes?: DailyIqamahTimes | null;
-  initialAdjustedIqamahTimes?: DailyIqamahTimes | null;
   initialSelectedDate?: string;
 }
 
@@ -37,7 +23,6 @@ export default function PrayerTimesWidget({
   mosques = [],
   initialPrayerTimes = null,
   initialIqamahTimes = null,
-  initialAdjustedIqamahTimes = null,
   initialSelectedDate,
 }: PrayerTimesWidgetProps) {
   const [mosque, setMosque] = useState<Mosque>(initialMosque);
@@ -66,11 +51,6 @@ export default function PrayerTimesWidget({
     const { year, month, day } = getDateInSheffield(new Date());
     return new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
   });
-  const [dstSettings] = useState<{ enabled: boolean; customTimes: Record<string, string> } | null>(null);
-  const [dstData, setDstData] = useState<{ uk_dst_dates: { year: number; start_date: string; end_date: string }[] } | null>(null);
-  const [adjustedIqamahTimes, setAdjustedIqamahTimes] = useState<DailyIqamahTimes | null>(
-    initialAdjustedIqamahTimes ?? initialIqamahTimes
-  );
   const [isRamadanPeriod, setIsRamadanPeriod] = useState(false);
   const latestFetchRequestRef = useRef(0);
   const shouldUseInitialDataRef = useRef(Boolean(initialPrayerTimes && initialIqamahTimes));
@@ -79,71 +59,6 @@ export default function PrayerTimesWidget({
   const getSheffieldTime = () => {
     return new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
   };
-
-  useEffect(() => {
-    const loadDSTData = async () => {
-      try {
-        const data = await getDSTDatesData();
-        if (data) setDstData(data);
-      } catch (error) {
-        console.error('Failed to load DST data:', error);
-      }
-    };
-    loadDSTData();
-  }, []);
-
-  /** MWHS: client-side adjustment window using loaded DST JSON (sync with table display). */
-  const isInDSTAdjustmentPeriodClient = useCallback((date: Date): boolean => {
-    if (!dstData?.uk_dst_dates) {
-      return isInDSTAdjustmentPeriodSync(date);
-    }
-
-    const checkDate = date;
-    const checkYear = checkDate.getFullYear();
-    const checkMonth = checkDate.getMonth() + 1;
-
-    const yearData = dstData.uk_dst_dates.find((d) => d.year === checkYear);
-    if (!yearData) return false;
-
-    const startDate = new Date(yearData.start_date);
-    const endDate = new Date(yearData.end_date);
-
-    if (checkMonth === 10) {
-      const endDateYear = endDate.getFullYear();
-      const endDateMonth = endDate.getMonth() + 1;
-      const endDateDay = endDate.getDate();
-
-      const checkYearNum = checkDate.getFullYear();
-      const checkMonthNum = checkDate.getMonth() + 1;
-      const checkDayNum = checkDate.getDate();
-
-      const isAfterDSTEnd =
-        checkYearNum > endDateYear ||
-        (checkYearNum === endDateYear && checkMonthNum > endDateMonth) ||
-        (checkYearNum === endDateYear && checkMonthNum === endDateMonth && checkDayNum >= endDateDay);
-
-      return isAfterDSTEnd && checkMonthNum === 10;
-    }
-
-    if (checkMonth === 3) {
-      const startDateYear = startDate.getFullYear();
-      const startDateMonth = startDate.getMonth() + 1;
-      const startDateDay = startDate.getDate();
-
-      const checkYearNum = checkDate.getFullYear();
-      const checkMonthNum = checkDate.getMonth() + 1;
-      const checkDayNum = checkDate.getDate();
-
-      const isAfterDSTStart =
-        checkYearNum > startDateYear ||
-        (checkYearNum === startDateYear && checkMonthNum > startDateMonth) ||
-        (checkYearNum === startDateYear && checkMonthNum === startDateMonth && checkDayNum >= startDateDay);
-
-      return isAfterDSTStart && checkMonthNum === 3;
-    }
-
-    return false;
-  }, [dstData]);
 
   const isToday = useMemo(() => {
     const sel = getDateInSheffield(selectedDate);
@@ -168,8 +83,8 @@ export default function PrayerTimesWidget({
 
     // Add special handling for Jummah on Fridays
     let jummahDate: Date | null = null;
-    if (isFriday && adjustedIqamahTimes?.jummah && adjustedIqamahTimes.jummah !== '-' && adjustedIqamahTimes.jummah !== '--:--') {
-      const [hours, minutes] = adjustedIqamahTimes.jummah.split(':').map(Number);
+    if (isFriday && iqamahTimes?.jummah && iqamahTimes.jummah !== '-' && iqamahTimes.jummah !== '--:--') {
+      const [hours, minutes] = iqamahTimes.jummah.split(':').map(Number);
       jummahDate = new Date(now);
       jummahDate.setHours(hours, minutes, 0, 0);
     }
@@ -208,7 +123,7 @@ export default function PrayerTimesWidget({
     }
 
     return null;
-  }, [adjustedIqamahTimes]);
+  }, [iqamahTimes]);
 
   // Check if we're in the summer period (May 15 - August 15)
   const isSummerPeriod = useMemo(() => {
@@ -221,62 +136,34 @@ export default function PrayerTimesWidget({
   }, []);
 
   // Get next prayer/iqamah and calculate countdown
-  const getNextPrayerAndCountdown = useCallback(async (
+  const getNextPrayerAndCountdown = useCallback((
     prayerTimes: DailyPrayerTimes,
     iqamahTimes: DailyIqamahTimes,
     selectedDate?: Date,
-    /** When set, must match `isInDSTAdjustmentPeriodClient` / `adjustedPrayerTimesForCurrent` so countdown and highlight stay aligned. */
-    inDSTAdjustmentHint?: boolean,
   ) => {
     const now = getSheffieldTime();
-    const isDSTModeEnabled = dstSettings?.enabled;
     const checkDate = selectedDate || new Date();
-    const inDSTAdjustment = mosqueTimetableAlreadyIncludesDst(mosque.slug)
-      ? false
-      : inDSTAdjustmentHint !== undefined
-        ? inDSTAdjustmentHint
-        : await isInDSTAdjustmentPeriod(checkDate);
     const isFriday = checkDate.getDay() === 5;
 
-    // October: 1 hour back on transition window; March: 1 hour forward (MWHS adjustPrayerTimeForDSTSync)
-    const adjustedPrayerTimes = inDSTAdjustment
-      ? buildDstAdjustedDailyPrayerTimes(prayerTimes, checkDate)
-      : prayerTimes;
-
-    const useCustomIqamahTimes = isDSTModeEnabled && inDSTAdjustment;
-
     const prayers = [
-      {
-        name: 'Fajr',
-        adhanTime: adjustedPrayerTimes.fajr,
-        iqamahTime: useCustomIqamahTimes && dstSettings?.customTimes.fajr ? dstSettings.customTimes.fajr : getIqamahTime('fajr', adjustedPrayerTimes.fajr, iqamahTimes)
-      },
+      { name: 'Fajr', adhanTime: prayerTimes.fajr, iqamahTime: getIqamahTime('fajr', prayerTimes.fajr, iqamahTimes) },
       {
         name: isFriday ? 'Jummah' : 'Dhuhr',
-        adhanTime: adjustedPrayerTimes.dhuhr,
-        iqamahTime: isFriday ? (iqamahTimes.jummah || '-') : (useCustomIqamahTimes && dstSettings?.customTimes.dhuhr ? dstSettings.customTimes.dhuhr : getIqamahTime('dhuhr', adjustedPrayerTimes.dhuhr, iqamahTimes))
+        adhanTime: prayerTimes.dhuhr,
+        iqamahTime: isFriday ? (iqamahTimes.jummah || '-') : getIqamahTime('dhuhr', prayerTimes.dhuhr, iqamahTimes)
       },
-      {
-        name: 'Asr',
-        adhanTime: adjustedPrayerTimes.asr,
-        iqamahTime: useCustomIqamahTimes && dstSettings?.customTimes.asr ? dstSettings.customTimes.asr : getIqamahTime('asr', adjustedPrayerTimes.asr, iqamahTimes)
-      },
-      { name: 'Maghrib', adhanTime: adjustedPrayerTimes.maghrib, iqamahTime: getIqamahTime('maghrib', adjustedPrayerTimes.maghrib, iqamahTimes) },
+      { name: 'Asr', adhanTime: prayerTimes.asr, iqamahTime: getIqamahTime('asr', prayerTimes.asr, iqamahTimes) },
+      { name: 'Maghrib', adhanTime: prayerTimes.maghrib, iqamahTime: getIqamahTime('maghrib', prayerTimes.maghrib, iqamahTimes) },
       {
         name: 'Isha',
-        adhanTime: adjustedPrayerTimes.isha,
-        iqamahTime: (() => {
-          if (useCustomIqamahTimes && dstSettings?.customTimes.isha) {
-            return dstSettings.customTimes.isha;
-          }
-          return resolveIshaIqamahForDisplay(
-            mosque.slug,
-            checkDate,
-            adjustedPrayerTimes.isha,
-            iqamahTimes,
-            adjustedPrayerTimes.maghrib,
-          );
-        })()
+        adhanTime: prayerTimes.isha,
+        iqamahTime: resolveIshaIqamahForDisplay(
+          mosque.slug,
+          checkDate,
+          prayerTimes.isha,
+          iqamahTimes,
+          prayerTimes.maghrib,
+        )
       },
     ];
 
@@ -343,7 +230,7 @@ export default function PrayerTimesWidget({
       },
       isIqamah: false
     };
-  }, [dstSettings, mosque.slug]);
+  }, [mosque.slug]);
 
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
@@ -369,20 +256,17 @@ export default function PrayerTimesWidget({
 
     const fetchPrayerTimes = async () => {
       try {
-        if (shouldUseInitialDataRef.current && prayerTimes && adjustedIqamahTimes) {
+        if (shouldUseInitialDataRef.current && prayerTimes && iqamahTimes) {
           shouldUseInitialDataRef.current = false;
           setIsLoading(false);
           setIsTransitioning(false);
           setError(null);
 
           if (isToday) {
-            const inDSTAdjustment =
-              mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : isInDSTAdjustmentPeriodClient(selectedDate);
-            const result = await getNextPrayerAndCountdown(
+            const result = getNextPrayerAndCountdown(
               prayerTimes,
-              adjustedIqamahTimes,
+              iqamahTimes,
               selectedDate,
-              inDSTAdjustment,
             );
             if (!isCurrentRequest()) return;
             setNextPrayer(result.nextPrayer);
@@ -400,23 +284,19 @@ export default function PrayerTimesWidget({
 
         const [prayerTimesForDate, finalIqamahTimes] = await Promise.all([
           isToday ? getTodaysPrayerTimes(mosque.slug) : getPrayerTimesForDate(mosque.slug, selectedDate),
-          isToday ? getTodaysIqamahTimes(mosque.slug) : getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
+          isToday ? getTodaysIqamahTimes(mosque.slug) : getIqamahTimesForSpecificDate(mosque.slug, selectedDate),
         ]);
 
         if (!isCurrentRequest()) return;
 
-        setAdjustedIqamahTimes(finalIqamahTimes);
         setPrayerTimes(prayerTimesForDate);
         setIqamahTimes(finalIqamahTimes);
 
         if (isToday) {
-          const inDSTAdjustment =
-            mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : isInDSTAdjustmentPeriodClient(selectedDate);
-          const result = await getNextPrayerAndCountdown(
+          const result = getNextPrayerAndCountdown(
             prayerTimesForDate,
             finalIqamahTimes,
             selectedDate,
-            inDSTAdjustment,
           );
           if (!isCurrentRequest()) return;
           setNextPrayer(result.nextPrayer);
@@ -450,19 +330,16 @@ export default function PrayerTimesWidget({
     return () => {
       isActive = false;
     };
-  }, [selectedDate, isToday, mosque, dstData, isInDSTAdjustmentPeriodClient]);
+  }, [selectedDate, isToday, mosque]);
 
   useEffect(() => {
     if (!prayerTimes || !iqamahTimes || !isToday) return;
 
-    const interval = setInterval(async () => {
-      const inDSTAdjustment =
-        mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : isInDSTAdjustmentPeriodClient(selectedDate);
-      const result = await getNextPrayerAndCountdown(
+    const interval = setInterval(() => {
+      const result = getNextPrayerAndCountdown(
         prayerTimes,
-        adjustedIqamahTimes || iqamahTimes!,
+        iqamahTimes,
         selectedDate,
-        inDSTAdjustment,
       );
       setNextPrayer(result.nextPrayer);
       setCountdown(result.countdown);
@@ -476,10 +353,8 @@ export default function PrayerTimesWidget({
     iqamahTimes,
     isToday,
     mosque,
-    adjustedIqamahTimes,
     getNextPrayerAndCountdown,
     selectedDate,
-    isInDSTAdjustmentPeriodClient,
   ]);
 
   useEffect(() => {
@@ -502,29 +377,22 @@ export default function PrayerTimesWidget({
   }, [mosque.slug, selectedDate]);
 
   const prayers = useMemo(() => {
-    if (!prayerTimes || !adjustedIqamahTimes) return [];
+    if (!prayerTimes || !iqamahTimes) return [];
 
-    const inDSTAdjustment =
-      mosqueTimetableAlreadyIncludesDst(mosque.slug) ? false : isInDSTAdjustmentPeriodClient(selectedDate);
-
-    const adjustedPT = inDSTAdjustment
-      ? buildDstAdjustedDailyPrayerTimes(prayerTimes, selectedDate)
-      : prayerTimes;
-
-    const iqamahToUse = adjustedIqamahTimes;
+    const iqamahToUse = iqamahTimes;
 
     const getIshaIqamah = () =>
-      resolveIshaIqamahForDisplay(mosque.slug, selectedDate, adjustedPT.isha, iqamahToUse, adjustedPT.maghrib);
+      resolveIshaIqamahForDisplay(mosque.slug, selectedDate, prayerTimes.isha, iqamahToUse, prayerTimes.maghrib);
 
     return [
-      { name: 'FAJR', adhan: adjustedPT.fajr, iqamah: getIqamahTime('fajr', adjustedPT.fajr, iqamahToUse) },
-      { name: 'SUNRISE', adhan: adjustedPT.sunrise, iqamah: '--:--' },
-      { name: 'DHUHR', adhan: adjustedPT.dhuhr, iqamah: getIqamahTime('dhuhr', adjustedPT.dhuhr, iqamahToUse) },
-      { name: 'ASR', adhan: adjustedPT.asr, iqamah: getIqamahTime('asr', adjustedPT.asr, iqamahToUse) },
-      { name: 'MAGHRIB', adhan: adjustedPT.maghrib, iqamah: getIqamahTime('maghrib', adjustedPT.maghrib, iqamahToUse) },
-      { name: 'ISHA', adhan: adjustedPT.isha, iqamah: getIshaIqamah() }
+      { name: 'FAJR', adhan: prayerTimes.fajr, iqamah: getIqamahTime('fajr', prayerTimes.fajr, iqamahToUse) },
+      { name: 'SUNRISE', adhan: prayerTimes.sunrise, iqamah: '--:--' },
+      { name: 'DHUHR', adhan: prayerTimes.dhuhr, iqamah: getIqamahTime('dhuhr', prayerTimes.dhuhr, iqamahToUse) },
+      { name: 'ASR', adhan: prayerTimes.asr, iqamah: getIqamahTime('asr', prayerTimes.asr, iqamahToUse) },
+      { name: 'MAGHRIB', adhan: prayerTimes.maghrib, iqamah: getIqamahTime('maghrib', prayerTimes.maghrib, iqamahToUse) },
+      { name: 'ISHA', adhan: prayerTimes.isha, iqamah: getIshaIqamah() }
     ];
-  }, [prayerTimes, adjustedIqamahTimes, selectedDate, isInDSTAdjustmentPeriodClient, mosque.slug]);
+  }, [prayerTimes, iqamahTimes, selectedDate, mosque.slug]);
 
   const upcomingPrayer = useMemo(() => {
     if (!prayerTimes || !isToday || prayers.length === 0) return null;
@@ -687,7 +555,7 @@ export default function PrayerTimesWidget({
             {isJummahDay && (
               <div className="flex-1 min-w-[200px]">
                 <JummahWidget
-                  jummahTime={adjustedIqamahTimes?.jummah || ''}
+                  jummahTime={iqamahTimes?.jummah || ''}
                   isActive={upcomingPrayer === 'jummah'}
                 />
               </div>

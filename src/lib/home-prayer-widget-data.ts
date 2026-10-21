@@ -1,6 +1,6 @@
 import {
   getDateInSheffield,
-  getIqamahTimesForSpecificDateWithDstMapping,
+  getIqamahTimesForSpecificDate,
   getPrayerTimesForDate,
 } from "@/lib/prayer-times";
 export {
@@ -28,7 +28,7 @@ export async function getInitialHomePrayerWidgetData(
     const selectedDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
     const [prayerTimes, iqamahTimes] = await Promise.all([
       getPrayerTimesForDate(mosque.slug, selectedDate),
-      getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
+      getIqamahTimesForSpecificDate(mosque.slug, selectedDate),
     ]);
 
     return {

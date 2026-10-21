@@ -195,54 +195,6 @@ async function getConvexClient(): Promise<InstanceType<typeof import('convex/bro
   return convexClient;
 }
 
-export interface DSTDateRange {
-  year: number;
-  start_date: string;
-  end_date: string;
-}
-
-export interface DSTDatesData {
-  uk_dst_dates: DSTDateRange[];
-}
-
-function formatIsoDate(year: number, month: number, day: number): string {
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-function getLastSundayOfMonth(year: number, month: number): number {
-  const lastDayAtNoonUtc = new Date(Date.UTC(year, month, 0, 12, 0, 0, 0));
-  return lastDayAtNoonUtc.getUTCDate() - lastDayAtNoonUtc.getUTCDay();
-}
-
-function getSyncDSTDateRange(year: number): DSTDateRange {
-  const cachedRange = dstDatesArrayCache?.find((entry) => entry.year === year);
-  if (cachedRange) {
-    return cachedRange;
-  }
-
-  return {
-    year,
-    start_date: formatIsoDate(year, 3, getLastSundayOfMonth(year, 3)),
-    end_date: formatIsoDate(year, 10, getLastSundayOfMonth(year, 10)),
-  };
-}
-
-/** Day-of-month (March) when UK clocks spring forward (BST starts). */
-function getUkMarchSpringForwardDay(year: number, dstDates: DSTDateRange[]): number {
-  const yearData = dstDates.find((d) => d.year === year);
-  if (yearData?.start_date) {
-    const seg = yearData.start_date.split('-');
-    if (seg.length === 3) {
-      const month = Number(seg[1]);
-      const day = Number(seg[2]);
-      if (month === 3 && Number.isFinite(day) && day >= 1 && day <= 31) {
-        return day;
-      }
-    }
-  }
-  return getLastSundayOfMonth(year, 3);
-}
-
 const RISALAH_SLUG = 'masjid-risalah';
 const MUSLIM_WELFARE_HOUSE_SLUG = 'muslim-welfare-house';
 const LEEDS_GRAND_MOSQUE_SLUG = 'leeds-grand-mosque';
@@ -323,366 +275,8 @@ export function isLeedsGrandMosque(slug: string): boolean {
   }
 }
 
-/** Published timetables already use UK civil time (BST/GMT); skip client ±1h and iqamah month mapping. */
-const MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST = new Set<string>([
-  'masjid-al-huda-sheffield',
-  'abdullah-quilliam-mosque',
-  'burnley-central-mosque',
-  'andalus-community-centre',
-  'british-muslim-heritage-centre',
-  'european-islamic-centre',
-  'al-huda-bolton',
-  'central-mosque-blackpool',
-  'shahjalal-jame-mosque',
-  'al-medinah-mosque',
-  'al-manaar-institute-bradford',
-  'masjid-ezzeitouna',
-  'taybah-masjid',
-  'raza-jamia-masjid',
-  'eccles-mosque',
-  'masjid-e-vali',
-  'masjid-sunnah-sheffield',
-  // Issue #85: October tables already embed GMT (or wrong-day shift; remapping handles mismatch window)
-  'madina-masjid-sheffield',
-  'masjid-umar-yma',
-  'baitul-mukarram-sheffield',
-  'sheffield-grand-mosque',
-  'fatima-community-centre',
-  'masjid-abu-bakr-huddersfield',
-  'masjid-bilal-huddersfield',
-  'masjid-ibrahim-huddersfield',
-  'masjid-iman-huddersfield',
-  'masjid-omar-huddersfield',
-  'masjid-shah-jalal-huddersfield',
-  'masjid-usman-huddersfield',
-  'masjid-e-hidayah',
-  'masjid-e-noor',
-  'muslim-welfare-house-london',
-  'park-royal-community-centre',
-  'preston-city-mosque',
-  'sandwell-grand-masjid',
-  'scarborough-islamic-centre',
-  'sutton-coldfield-masjid',
-  'yca-sandwell-masjid',
-  'york-muslim-association',
-  'bmjm-dundee',
-  'edinburgh-central-mosque',
-  'east-london-mosque',
-  'al-sunnah-mosque',
-  'didsbury-mosque',
-  'al-rawdha-mosque',
-  'manarat-foundation',
-  'aisha-mosque-and-islamic-centre',
-  'madrasah-baytul-ilm',
-  'hamidiya-leicester',
-  'leagrave-hall-masjid-luton',
-]);
-
-export function mosqueTimetableAlreadyIncludesDst(slug: string): boolean {
-  try {
-    return MOSQUE_SLUGS_TIMETABLE_INCLUDES_DST.has(normalizeMosqueSlug(slug));
-  } catch {
-    return false;
-  }
-}
-
-function dhuhrToMinutes(t: PrayerTime): number {
-  const [h, m] = t.dhuhr.split(':').map(Number);
-  if (!Number.isFinite(h) || !Number.isFinite(m)) return NaN;
-  return h * 60 + m;
-}
-
-/** First day in the monthly table where civil times jump to BST (spring forward), or null if unclear. */
-export function detectMarchSummerStartDayInTable(prayerTimes: PrayerTime[]): number | null {
-  const sorted = [...prayerTimes].sort((a, b) => a.date - b.date);
-  let bestDay: number | null = null;
-  let bestJump = 0;
-  for (let i = 1; i < sorted.length; i++) {
-    const prev = sorted[i - 1];
-    const curr = sorted[i];
-    const a = dhuhrToMinutes(prev);
-    const b = dhuhrToMinutes(curr);
-    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
-    const jump = b - a;
-    if (jump > bestJump) {
-      bestJump = jump;
-      bestDay = curr.date;
-    }
-  }
-  return bestJump >= 45 ? bestDay : null;
-}
-
-/** First day in the monthly table where civil times jump to GMT (fall back), or null if unclear. */
-export function detectOctoberWinterStartDayInTable(prayerTimes: PrayerTime[]): number | null {
-  const sorted = [...prayerTimes].sort((a, b) => a.date - b.date);
-  let bestDay: number | null = null;
-  let bestFall = 0;
-  for (let i = 1; i < sorted.length; i++) {
-    const prev = sorted[i - 1];
-    const curr = sorted[i];
-    const a = dhuhrToMinutes(prev);
-    const b = dhuhrToMinutes(curr);
-    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
-    const fall = a - b;
-    if (fall > bestFall) {
-      bestFall = fall;
-      bestDay = curr.date;
-    }
-  }
-  return bestFall >= 45 ? bestDay : null;
-}
-
-function maxPrayerTableDay(prayerTimes: PrayerTime[], year: number, month: number): number {
-  let max = 0;
-  for (const row of prayerTimes) {
-    if (row.date > max) max = row.date;
-  }
-  if (max > 0) return max;
-  return new Date(year, month, 0).getDate();
-}
-
-/**
- * Some mosques publish March/October rows where BST/GMT is already baked in, but the change is on
- * the wrong calendar day vs UK law. Remap only the mismatch window [min(T,U), max(T,U)-1]:
- * use the row for day `calendarDay + (T - U)` (clamped) instead of `calendarDay`.
- */
-export function resolveTimetableDayForUkEmbeddedDst(params: {
-  calendarDay: number;
-  transitionDayInTable: number;
-  ukTransitionDay: number;
-  maxTableDay: number;
-}): number {
-  const { calendarDay, transitionDayInTable: t, ukTransitionDay: u, maxTableDay } = params;
-  if (t === u) return calendarDay;
-  const low = Math.min(t, u);
-  const high = Math.max(t, u) - 1;
-  if (calendarDay < low || calendarDay > high) return calendarDay;
-  return Math.min(maxTableDay, Math.max(1, calendarDay + (t - u)));
-}
-
-async function resolveEmbeddedDstTimetableDayOfMonth(
-  slug: string,
-  month: number,
-  year: number,
-  calendarDay: number,
-  prayerTimes: PrayerTime[],
-): Promise<number> {
-  if (!mosqueTimetableAlreadyIncludesDst(slug)) {
-    return calendarDay;
-  }
-  if (month !== 3 && month !== 10) {
-    return calendarDay;
-  }
-
-  const dstRanges = await loadDSTDates();
-  const maxDay = maxPrayerTableDay(prayerTimes, year, month);
-
-  if (month === 3) {
-    const t = detectMarchSummerStartDayInTable(prayerTimes);
-    if (t === null) return calendarDay;
-    const u = getUkMarchSpringForwardDay(year, dstRanges);
-    return resolveTimetableDayForUkEmbeddedDst({
-      calendarDay,
-      transitionDayInTable: t,
-      ukTransitionDay: u,
-      maxTableDay: maxDay,
-    });
-  }
-
-  const t = detectOctoberWinterStartDayInTable(prayerTimes);
-  if (t === null) return calendarDay;
-  const yearRow = dstRanges.find((d) => d.year === year);
-  let u = getLastSundayOfMonth(year, 10);
-  if (yearRow?.end_date) {
-    const seg = yearRow.end_date.split('-');
-    if (seg.length === 3) {
-      const m = Number(seg[1]);
-      const day = Number(seg[2]);
-      if (m === 10 && Number.isFinite(day) && day >= 1 && day <= 31) {
-        u = day;
-      }
-    }
-  }
-
-  return resolveTimetableDayForUkEmbeddedDst({
-    calendarDay,
-    transitionDayInTable: t,
-    ukTransitionDay: u,
-    maxTableDay: maxDay,
-  });
-}
-
-/**
- * Adhān row (fajr, shuruq/sunrise, dhuhr, …) for a real calendar day, with embedded-DST table
- * realignment in March/October. `iqamahLookupDay` indexes `iqamah_times` date_range bands the same way.
- */
-export async function resolveMonthlyDayDisplay(
-  slug: string,
-  year: number,
-  month: number,
-  calendarDay: number,
-  monthlyData: MonthlyPrayerTimes,
-): Promise<{ adhan: PrayerTime; iqamahLookupDay: number } | null> {
-  const iqamahLookupDay = await resolveEmbeddedDstTimetableDayOfMonth(
-    slug,
-    month,
-    year,
-    calendarDay,
-    monthlyData.prayer_times,
-  );
-  const adhan = findDayData(monthlyData.prayer_times, iqamahLookupDay);
-  if (!adhan) return null;
-  return { adhan, iqamahLookupDay };
-}
-
-/**
- * Masjid Risalah March iqamah: bands 1–10, 11–20, 21–(day before spring forward), spring forward–31.
- * Spring-forward day comes from UK DST data (see public/docs/dst-start-end.json).
- */
-function buildMasjidRisalahMarchIqamahTimes(springForwardMarchDay: number): IqamahTimeRange[] {
-  const maghrib = '5 mins after adhan';
-  const fajrLate = '20 minutes after adhan';
-  const d = Math.min(31, Math.max(1, Math.floor(springForwardMarchDay)));
-
-  const rows: IqamahTimeRange[] = [
-    {
-      date_range: '1-10',
-      fajr: '05:30',
-      dhuhr: '12:45',
-      asr: '15:30',
-      maghrib,
-      isha: '19:45',
-    },
-    {
-      date_range: '11-20',
-      fajr: '05:15',
-      dhuhr: '12:45',
-      asr: '15:45',
-      maghrib,
-      isha: '20:00',
-    },
-  ];
-
-  if (d > 21) {
-    rows.push({
-      date_range: `21-${d - 1}`,
-      fajr: fajrLate,
-      dhuhr: '12:45',
-      asr: '16:00',
-      maghrib,
-      isha: '20:30',
-    });
-  }
-
-  rows.push({
-    date_range: `${d}-31`,
-    fajr: fajrLate,
-    dhuhr: '13:30',
-    asr: '17:00',
-    maghrib,
-    isha: '21:30',
-  });
-
-  return rows;
-}
-
-async function applyMasjidRisalahMarchIqamahIfNeeded(
-  slug: string,
-  monthNum: number,
-  year: number,
-  data: MonthlyPrayerTimes,
-): Promise<MonthlyPrayerTimes> {
-  if (slug !== RISALAH_SLUG || monthNum !== 3) {
-    return data;
-  }
-  const dstDates = await loadDSTDates();
-  const springDay = getUkMarchSpringForwardDay(year, dstDates);
-  return {
-    ...data,
-    iqamah_times: buildMasjidRisalahMarchIqamahTimes(springDay),
-  };
-}
-
-/** DST file: longer TTL than generic monthly JSON (matches MWHS). */
-const CLIENT_DST_CACHE_TTL_MS = 60 * 60 * 1000; // 60 minutes
-const SERVER_DST_REVALIDATE_MS = 15 * 60 * 1000; // 15 minutes
-
-let dstDatesArrayCache: DSTDateRange[] | null = null;
-let dstDatesCacheCheckedAt = 0;
-
 const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyPrayerTimes>>();
 const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyPrayerTimes>>();
-
-async function tryLoadDSTDatesFromConvex(): Promise<DSTDateRange[] | null> {
-  try {
-    const client = await getConvexClient();
-    if (!client) return null;
-    const { api } = await import('../../convex/_generated/api');
-    const data = await client.query(api.prayerTimes.getUkDstDates, {});
-    if (data?.uk_dst_dates && data.uk_dst_dates.length > 0) {
-      return data.uk_dst_dates;
-    }
-  } catch (error) {
-    console.warn('Convex UK DST query failed, falling back to static JSON.', error);
-  }
-  return null;
-}
-
-/**
- * Load DST dates: Convex when configured and seeded, else public/docs JSON.
- */
-async function loadDSTDates(): Promise<DSTDateRange[]> {
-  const now = Date.now();
-  const cacheWindow = typeof window !== 'undefined' ? CLIENT_DST_CACHE_TTL_MS : SERVER_DST_REVALIDATE_MS;
-  if (dstDatesArrayCache && now - dstDatesCacheCheckedAt < cacheWindow) {
-    return dstDatesArrayCache;
-  }
-
-  try {
-    const fromConvex = await tryLoadDSTDatesFromConvex();
-    if (fromConvex && fromConvex.length > 0) {
-      dstDatesArrayCache = fromConvex;
-      dstDatesCacheCheckedAt = now;
-      return dstDatesArrayCache;
-    }
-
-    if (typeof window !== 'undefined') {
-      const response = await fetchWithRetry('/docs/dst-start-end.json');
-      if (!response.ok) {
-        throw new Error(`Failed to load DST dates: ${response.status}`);
-      }
-      const data: DSTDatesData = await response.json();
-      dstDatesArrayCache = data.uk_dst_dates;
-      dstDatesCacheCheckedAt = now;
-      return dstDatesArrayCache;
-    }
-
-    const fs = await import('fs/promises');
-    const path = await import('path');
-    const filePath = path.join(process.cwd(), 'public', 'docs', 'dst-start-end.json');
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const data: DSTDatesData = JSON.parse(fileContent);
-    dstDatesArrayCache = data.uk_dst_dates;
-    dstDatesCacheCheckedAt = now;
-    return dstDatesArrayCache;
-  } catch (error) {
-    console.error('Error loading DST dates:', error);
-    return [];
-  }
-}
-
-/**
- * Full DST payload (Convex when available, else static JSON). Uses same cache as loadDSTDates.
- */
-export async function getDSTDatesData(): Promise<DSTDatesData | null> {
-  try {
-    const dates = await loadDSTDates();
-    if (dates.length === 0) return null;
-    return { uk_dst_dates: dates };
-  } catch {
-    return null;
-  }
-}
 
 // Ramadan data structure (optional per-mosque)
 interface RamadanData {
@@ -943,14 +537,13 @@ export async function loadMonthlyPrayerTimes(
             year,
           });
           if (data) {
-            const resolved = await applyMasjidRisalahMarchIqamahIfNeeded(safeSlug, month, year, data);
             setBoundedCacheEntry(
               monthlyPrayerTimesCache,
               cacheKey,
-              createTimedEntry(resolved),
+              createTimedEntry(data),
               MAX_MONTHLY_CACHE_ENTRIES,
             );
-            return resolved;
+            return data;
           }
         } catch (error) {
           console.warn('Convex monthly query failed, falling back to static JSON.', error);
@@ -975,14 +568,13 @@ export async function loadMonthlyPrayerTimes(
         data = parseTrustedJson<MonthlyPrayerTimes>(await response.text());
       }
 
-      const resolved = await applyMasjidRisalahMarchIqamahIfNeeded(safeSlug, month, year, data);
       setBoundedCacheEntry(
         monthlyPrayerTimesCache,
         cacheKey,
-        createTimedEntry(resolved),
+        createTimedEntry(data),
         MAX_MONTHLY_CACHE_ENTRIES,
       );
-      return resolved;
+      return data;
     } catch (error) {
       console.error(`Error loading prayer times for ${monthFile}:`, error);
       throw error;
@@ -1053,11 +645,10 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const resolved = await resolveMonthlyDayDisplay(slug, year, month, day, monthlyData);
-      if (!resolved) {
+      const adhan = findDayData(monthlyData.prayer_times, day);
+      if (!adhan) {
         throw new Error(`Prayer times not found for date: ${day}`);
       }
-      const { adhan } = resolved;
 
       return {
         date: dateStr,
@@ -1081,12 +672,12 @@ export async function getTodaysPrayerTimes(slug: string): Promise<DailyPrayerTim
 }
 
 /**
- * Get today's Iqamah times (Sheffield calendar), including Mar/Oct DST iqamah mapping (MWHS parity).
+ * Get today's Iqamah times (Sheffield calendar).
  */
 export async function getTodaysIqamahTimes(slug: string): Promise<DailyIqamahTimes> {
   const { year, month, day } = getDateInSheffield(new Date());
   const today = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
-  return getIqamahTimesForSpecificDateWithDstMapping(slug, today);
+  return getIqamahTimesForSpecificDate(slug, today);
 }
 
 /**
@@ -1117,11 +708,10 @@ export async function getPrayerTimesForDate(slug: string, date: Date): Promise<D
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const resolved = await resolveMonthlyDayDisplay(slug, year, month, day, monthlyData);
-      if (!resolved) {
+      const adhan = findDayData(monthlyData.prayer_times, day);
+      if (!adhan) {
         throw new Error(`Prayer times not found for date: ${day}`);
       }
-      const { adhan } = resolved;
 
       return {
         date: dateStr,
@@ -1166,11 +756,10 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      const resolved = await resolveMonthlyDayDisplay(slug, year, month, day, monthlyData);
-      if (!resolved) {
+      if (!findDayData(monthlyData.prayer_times, day)) {
         throw new Error(`No Iqamah times found for date: ${day}`);
       }
-      const iqamahTimes = getIqamahTimesForDate(resolved.iqamahLookupDay, monthlyData.iqamah_times);
+      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times);
 
       return {
         ...iqamahTimes,
@@ -1188,27 +777,6 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
     console.error(`Error getting Iqamah times for date ${date.toDateString()}:`, error);
     throw error;
   }
-}
-
-/**
- * Iqāmah for a Gregorian date, using April/November timetable when in Mar/Oct DST adjustment
- * (same rule as PrayerTimesWidget: `getDSTAdjustmentIqamahDate` + base loader). MWHS: `getIqamahTimesForSpecificDateWithDstMapping`.
- */
-export async function getIqamahTimesForSpecificDateWithDstMapping(
-  slug: string,
-  date: Date,
-): Promise<DailyIqamahTimes> {
-  if (mosqueTimetableAlreadyIncludesDst(slug)) {
-    return getIqamahTimesForSpecificDate(slug, date);
-  }
-
-  const mapped = await getDSTAdjustmentIqamahDate(date);
-  if (mapped) {
-    const { year } = getDateInSheffield(date);
-    const adjustmentDate = new Date(Date.UTC(year, mapped.month - 1, mapped.date, 12, 0, 0, 0));
-    return getIqamahTimesForSpecificDate(slug, adjustmentDate);
-  }
-  return getIqamahTimesForSpecificDate(slug, date);
 }
 
 /**
@@ -1470,326 +1038,6 @@ export function formatDateForDisplay(date: Date, timeZone: string = SHEFFIELD_DI
 
   const shortDay = dayNames.get(weekday) || weekday;
   return `${shortDay} ${day} ${month} ${year}`;
-}
-
-/**
- * Get DST settings (Placeholder for this project as we don't use Firebase)
- */
-export async function getDSTSettingsFromFirestore(): Promise<{ enabled: boolean; customTimes: Record<string, string> } | null> {
-  return null;
-}
-
-/**
- * Check if we're currently in DST period using accurate UK DST dates
- */
-export async function isInDSTPeriod(date?: Date): Promise<boolean> {
-  const checkDate = date || new Date();
-  const checkYear = checkDate.getFullYear();
-
-  try {
-    const dstDates = await loadDSTDates();
-    const yearData = dstDates.find(d => d.year === checkYear);
-
-    if (!yearData) {
-      console.warn(`No DST data found for year ${checkYear}`);
-      return false;
-    }
-
-    const startDate = new Date(yearData.start_date);
-    const endDate = new Date(yearData.end_date);
-
-    // DST is in effect from start_date (inclusive) to end_date (exclusive)
-    return checkDate >= startDate && checkDate < endDate;
-  } catch (error) {
-    console.error('Error checking DST period:', error);
-    return false;
-  }
-}
-
-/**
- * Legacy function for backward compatibility - now uses async version
- */
-export function isInDSTPeriodSync(date?: Date): boolean {
-  const checkDate = date || new Date();
-  const yearData = getSyncDSTDateRange(checkDate.getFullYear());
-
-  const startDate = new Date(yearData.start_date);
-  const endDate = new Date(yearData.end_date);
-
-  return checkDate >= startDate && checkDate < endDate;
-}
-
-/**
- * Subtract 1 hour from a time string (HH:MM format)
- */
-export function subtractOneHour(timeString: string): string {
-  const [hours, minutes] = timeString.split(':').map(Number);
-  let newHours = hours - 1;
-
-  if (newHours < 0) {
-    newHours = 23;
-  }
-
-  return `${newHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-}
-
-/**
- * Add 1 hour to a time string (HH:MM format)
- */
-export function addOneHour(timeString: string): string {
-  const [hours, minutes] = timeString.split(':').map(Number);
-  let newHours = hours + 1;
-
-  if (newHours >= 24) {
-    newHours = 0;
-  }
-
-  return `${newHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-}
-
-/**
- * Check if we're in a DST adjustment period (from DST change date until end of month)
- */
-export async function isInDSTAdjustmentPeriod(date?: Date): Promise<boolean> {
-  const checkDate = date || new Date();
-  const checkYear = checkDate.getFullYear();
-  const checkMonth = checkDate.getMonth() + 1; // 1-12
-
-  try {
-    const dstDates = await loadDSTDates();
-    const yearData = dstDates.find(d => d.year === checkYear);
-
-    if (!yearData) {
-      return false;
-    }
-
-    const startDate = new Date(yearData.start_date);
-    const endDate = new Date(yearData.end_date);
-
-    // October: From DST end date until end of October
-    if (checkMonth === 10) {
-      const endDateYear = endDate.getFullYear();
-      const endDateMonth = endDate.getMonth() + 1;
-      const endDateDay = endDate.getDate();
-
-      const checkYearNum = checkDate.getFullYear();
-      const checkMonthNum = checkDate.getMonth() + 1;
-      const checkDayNum = checkDate.getDate();
-
-      const isAfterDSTEnd =
-        checkYearNum > endDateYear ||
-        (checkYearNum === endDateYear && checkMonthNum > endDateMonth) ||
-        (checkYearNum === endDateYear && checkMonthNum === endDateMonth && checkDayNum >= endDateDay);
-
-      return isAfterDSTEnd && checkMonthNum === 10;
-    }
-
-    // March: From DST start date until end of March
-    if (checkMonth === 3) {
-      const startDateYear = startDate.getFullYear();
-      const startDateMonth = startDate.getMonth() + 1;
-      const startDateDay = startDate.getDate();
-
-      const checkYearNum = checkDate.getFullYear();
-      const checkMonthNum = checkDate.getMonth() + 1;
-      const checkDayNum = checkDate.getDate();
-
-      const isAfterDSTStart =
-        checkYearNum > startDateYear ||
-        (checkYearNum === startDateYear && checkMonthNum > startDateMonth) ||
-        (checkYearNum === startDateYear && checkMonthNum === startDateMonth && checkDayNum >= startDateDay);
-
-      return isAfterDSTStart && checkMonthNum === 3;
-    }
-
-    return false;
-  } catch (error) {
-    console.error('Error checking DST adjustment period:', error);
-    return false;
-  }
-}
-
-/**
- * Check if we're in a DST adjustment period (from DST change date until end of month) - synchronous version
- */
-export function isInDSTAdjustmentPeriodSync(date?: Date): boolean {
-  const checkDate = date || new Date();
-  const checkMonth = checkDate.getMonth() + 1; // 1-12
-  const yearData = getSyncDSTDateRange(checkDate.getFullYear());
-
-  const startDate = new Date(yearData.start_date);
-  const endDate = new Date(yearData.end_date);
-
-  if (checkMonth === 10) {
-    const endDateYear = endDate.getFullYear();
-    const endDateMonth = endDate.getMonth() + 1;
-    const endDateDay = endDate.getDate();
-
-    const checkYearNum = checkDate.getFullYear();
-    const checkMonthNum = checkDate.getMonth() + 1;
-    const checkDayNum = checkDate.getDate();
-
-    const isAfterDSTEnd =
-      checkYearNum > endDateYear ||
-      (checkYearNum === endDateYear && checkMonthNum > endDateMonth) ||
-      (checkYearNum === endDateYear && checkMonthNum === endDateMonth && checkDayNum >= endDateDay);
-
-    return isAfterDSTEnd && checkMonthNum === 10;
-  }
-
-  if (checkMonth === 3) {
-    const startDateYear = startDate.getFullYear();
-    const startDateMonth = startDate.getMonth() + 1;
-    const startDateDay = startDate.getDate();
-
-    const checkYearNum = checkDate.getFullYear();
-    const checkMonthNum = checkDate.getMonth() + 1;
-    const checkDayNum = checkDate.getDate();
-
-    const isAfterDSTStart =
-      checkYearNum > startDateYear ||
-      (checkYearNum === startDateYear && checkMonthNum > startDateMonth) ||
-      (checkYearNum === startDateYear && checkMonthNum === startDateMonth && checkDayNum >= startDateDay);
-
-    return isAfterDSTStart && checkMonthNum === 3;
-  }
-
-  return false;
-}
-
-/**
- * Get DST transition type for a given date
- */
-export async function getDSTTransitionType(date?: Date): Promise<'start' | 'end' | null> {
-  const checkDate = date || new Date();
-  const checkYear = checkDate.getFullYear();
-
-  try {
-    const dstDates = await loadDSTDates();
-    const yearData = dstDates.find(d => d.year === checkYear);
-
-    if (!yearData) return null;
-
-    const startDate = new Date(yearData.start_date);
-    const endDate = new Date(yearData.end_date);
-
-    if (checkDate.toDateString() === startDate.toDateString()) return 'start';
-    if (checkDate.toDateString() === endDate.toDateString()) return 'end';
-
-    return null;
-  } catch (error) {
-    console.error('Error getting DST transition type:', error);
-    return null;
-  }
-}
-
-/**
- * Legacy synchronous helpers used by adjustPrayerTimeForDSTSync (MWHS parity).
- */
-export function isInOctoberTransition(date?: Date): boolean {
-  const checkDate = date || new Date();
-  const currentMonth = checkDate.getMonth() + 1;
-  const currentDay = checkDate.getDate();
-  return currentMonth === 10 && currentDay >= 22;
-}
-
-export function isInMarchTransition(date?: Date): boolean {
-  const checkDate = date || new Date();
-  const currentMonth = checkDate.getMonth() + 1;
-  const currentDay = checkDate.getDate();
-  return currentMonth === 3 && currentDay >= 21;
-}
-
-/**
- * Adjust prayer time based on DST transition period
- */
-export async function adjustPrayerTimeForDST(timeString: string, date?: Date): Promise<string> {
-  const transitionType = await getDSTTransitionType(date);
-
-  if (transitionType === 'end') {
-    return subtractOneHour(timeString);
-  } else if (transitionType === 'start') {
-    return addOneHour(timeString);
-  }
-
-  return timeString;
-}
-
-/**
- * Legacy synchronous version for backward compatibility (MWHS: coarse Mar/Oct windows).
- */
-export function adjustPrayerTimeForDSTSync(timeString: string, date?: Date): string {
-  if (isInOctoberTransition(date)) {
-    return subtractOneHour(timeString);
-  }
-  if (isInMarchTransition(date)) {
-    return addOneHour(timeString);
-  }
-  return timeString;
-}
-
-export function getDisplayedPrayerTimes(
-  prayerTimes: DailyPrayerTimes,
-  date?: Date,
-  mosqueSlug?: string,
-): DailyPrayerTimes {
-  if (mosqueSlug && mosqueTimetableAlreadyIncludesDst(mosqueSlug)) {
-    return prayerTimes;
-  }
-
-  const checkDate = date || new Date();
-
-  if (!isInDSTAdjustmentPeriodSync(checkDate)) {
-    return prayerTimes;
-  }
-
-  return {
-    ...prayerTimes,
-    fajr: adjustPrayerTimeForDSTSync(prayerTimes.fajr, checkDate),
-    sunrise: adjustPrayerTimeForDSTSync(prayerTimes.sunrise, checkDate),
-    dhuhr: adjustPrayerTimeForDSTSync(prayerTimes.dhuhr, checkDate),
-    asr: adjustPrayerTimeForDSTSync(prayerTimes.asr, checkDate),
-    maghrib: adjustPrayerTimeForDSTSync(prayerTimes.maghrib, checkDate),
-    isha: adjustPrayerTimeForDSTSync(prayerTimes.isha, checkDate),
-  };
-}
-
-/**
- * Get the Iqamah date mapping for DST adjustment periods (MWHS parity).
- * October: DST end → Nov 1–30 winter iqāmah rows; March: DST start → Apr 1–30 BST iqāmah rows.
- */
-export async function getDSTAdjustmentIqamahDate(date?: Date): Promise<{ month: number; date: number } | null> {
-  const raw = date ?? new Date();
-  const { year, month: checkMonth, day: checkDay } = getDateInSheffield(raw);
-
-  const noonUtc = new Date(Date.UTC(year, checkMonth - 1, checkDay, 12, 0, 0, 0));
-  const inAdjustmentPeriod = await isInDSTAdjustmentPeriod(noonUtc);
-  if (!inAdjustmentPeriod) return null;
-
-  const dstDates = await loadDSTDates();
-  const yearData = dstDates.find((d) => d.year === year);
-  if (!yearData) return null;
-
-  const dstStartDay = Number(yearData.start_date.slice(8, 10));
-  const dstEndDay = Number(yearData.end_date.slice(8, 10));
-
-  if (checkMonth === 10) {
-    const dayOffset = checkDay - dstEndDay;
-    if (dayOffset >= 0) {
-      const novemberDate = Math.min(dayOffset + 1, 30);
-      return { month: 11, date: novemberDate };
-    }
-  }
-
-  if (checkMonth === 3) {
-    const dayOffset = checkDay - dstStartDay;
-    if (dayOffset >= 0) {
-      const aprilDate = Math.min(dayOffset + 1, 30);
-      return { month: 4, date: aprilDate };
-    }
-  }
-
-  return null;
 }
 
 /**

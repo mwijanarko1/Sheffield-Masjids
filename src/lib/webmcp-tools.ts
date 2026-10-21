@@ -1,6 +1,6 @@
 import {
   getDateInSheffield,
-  getIqamahTimesForSpecificDateWithDstMapping,
+  getIqamahTimesForSpecificDate,
   getPrayerTimesForDate,
 } from "@/lib/prayer-times";
 
@@ -219,7 +219,7 @@ export const webMcpToolDefinitions: WebMcpToolDefinition[] = [
 
       const [adhan, iqamah] = await Promise.all([
         getPrayerTimesForDate(mosque.slug, date),
-        getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, date),
+        getIqamahTimesForSpecificDate(mosque.slug, date),
       ]);
 
       return JSON.stringify({

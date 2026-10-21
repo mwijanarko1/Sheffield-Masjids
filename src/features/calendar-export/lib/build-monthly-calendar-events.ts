@@ -1,7 +1,6 @@
 import {
   getIqamahTime,
   getIqamahTimesForDate,
-  resolveMonthlyDayDisplay,
   resolveIshaIqamahForDisplay,
   isAfterMaghribIqamahDisplayLabel,
 } from "@/lib/prayer-times";
@@ -89,10 +88,7 @@ function buildEvent(
   };
 }
 
-/**
- * One row per calendar day in the monthly JSON, with March/October embedded-DST row realignment
- * (adhān, shuruq, and iqāmah range day) for mosques that need it.
- */
+/** One row per calendar day in the monthly JSON, using the published adhān and iqāmah for that same date. */
 export async function buildMonthlyTimetableRowsAsync({
   slug,
   year,
@@ -104,14 +100,12 @@ export async function buildMonthlyTimetableRowsAsync({
   const rows: MonthlyTimetableRow[] = [];
 
   for (const d of uniqueDays) {
-    const resolved = await resolveMonthlyDayDisplay(slug, year, selectedMonth, d, monthlyData);
-    if (!resolved) continue;
-
-    const { adhan: day, iqamahLookupDay } = resolved;
+    const day = monthlyData.prayer_times.find((p) => p.date === d);
+    if (!day) continue;
 
     let iqamahTimes;
     try {
-      iqamahTimes = getIqamahTimesForDate(iqamahLookupDay, monthlyData.iqamah_times);
+      iqamahTimes = getIqamahTimesForDate(d, monthlyData.iqamah_times);
     } catch {
       iqamahTimes = {
         fajr: "-",

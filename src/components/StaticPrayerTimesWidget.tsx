@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   formatDateForDisplay,
   formatTo12Hour,
-  getDisplayedPrayerTimes,
   getIqamahTime,
   isValidTimeForMarkup,
   resolveIshaIqamahForDisplay,
@@ -29,21 +28,20 @@ export default function StaticPrayerTimesWidget({
   iqamahTimes,
   selectedDate,
 }: StaticPrayerTimesWidgetProps) {
-  const displayedPrayerTimes = getDisplayedPrayerTimes(prayerTimes, selectedDate, mosque.slug);
   const ishaIqamah = resolveIshaIqamahForDisplay(
     mosque.slug,
     selectedDate,
-    displayedPrayerTimes.isha,
+    prayerTimes.isha,
     iqamahTimes,
-    displayedPrayerTimes.maghrib,
+    prayerTimes.maghrib,
   );
   const rows = [
-    { id: "fajr", label: "Fajr", adhan: displayedPrayerTimes.fajr, iqamah: getIqamahTime("fajr", displayedPrayerTimes.fajr, iqamahTimes) },
-    { id: "sunrise", label: "Sunrise", adhan: displayedPrayerTimes.sunrise, iqamah: "--:--" },
-    { id: "dhuhr", label: "Dhuhr", adhan: displayedPrayerTimes.dhuhr, iqamah: getIqamahTime("dhuhr", displayedPrayerTimes.dhuhr, iqamahTimes) },
-    { id: "asr", label: "Asr", adhan: displayedPrayerTimes.asr, iqamah: getIqamahTime("asr", displayedPrayerTimes.asr, iqamahTimes) },
-    { id: "maghrib", label: "Maghrib", adhan: displayedPrayerTimes.maghrib, iqamah: getIqamahTime("maghrib", displayedPrayerTimes.maghrib, iqamahTimes) },
-    { id: "isha", label: "Isha", adhan: displayedPrayerTimes.isha, iqamah: ishaIqamah },
+    { id: "fajr", label: "Fajr", adhan: prayerTimes.fajr, iqamah: getIqamahTime("fajr", prayerTimes.fajr, iqamahTimes) },
+    { id: "sunrise", label: "Sunrise", adhan: prayerTimes.sunrise, iqamah: "--:--" },
+    { id: "dhuhr", label: "Dhuhr", adhan: prayerTimes.dhuhr, iqamah: getIqamahTime("dhuhr", prayerTimes.dhuhr, iqamahTimes) },
+    { id: "asr", label: "Asr", adhan: prayerTimes.asr, iqamah: getIqamahTime("asr", prayerTimes.asr, iqamahTimes) },
+    { id: "maghrib", label: "Maghrib", adhan: prayerTimes.maghrib, iqamah: getIqamahTime("maghrib", prayerTimes.maghrib, iqamahTimes) },
+    { id: "isha", label: "Isha", adhan: prayerTimes.isha, iqamah: ishaIqamah },
   ];
 
   const frameStyle = {

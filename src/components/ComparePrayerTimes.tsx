@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import {
   getPrayerTimesForDate,
-  getIqamahTimesForSpecificDateWithDstMapping,
+  getIqamahTimesForSpecificDate,
   getIqamahTime,
   getDateInSheffield,
-  getDisplayedPrayerTimes,
   formatDateForDisplay,
   formatTo12Hour,
   isValidTimeForMarkup,
@@ -62,7 +61,7 @@ export default function ComparePrayerTimes({
           try {
             const [prayerTimes, iqamahTimes] = await Promise.all([
               getPrayerTimesForDate(mosque.slug, selectedDate),
-              getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
+              getIqamahTimesForSpecificDate(mosque.slug, selectedDate),
             ]);
 
             return { mosque, prayerTimes, iqamahTimes };
@@ -105,7 +104,7 @@ export default function ComparePrayerTimes({
   ): string => {
     if (!mosqueData.prayerTimes || !mosqueData.iqamahTimes) return "-";
 
-    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate, mosqueData.mosque.slug);
+    const pt = mosqueData.prayerTimes;
     const iq = mosqueData.iqamahTimes;
 
     switch (prayerKey) {
@@ -139,7 +138,7 @@ export default function ComparePrayerTimes({
     mosqueData: MosquePrayerData
   ): string => {
     if (!mosqueData.prayerTimes) return "-";
-    const pt = getDisplayedPrayerTimes(mosqueData.prayerTimes, selectedDate, mosqueData.mosque.slug);
+    const pt = mosqueData.prayerTimes;
     switch (prayerKey) {
       case "Fajr":
         return pt.fajr;

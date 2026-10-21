@@ -9,7 +9,7 @@ import type { DailyPrayerTimes } from "@/types/prayer-times";
 export const metadata: Metadata = {
   title: "Masjidly — Official Mosque Prayer Times",
   description:
-    "English-language app for official Sheffield mosque timetables: live adhan and iqamah countdown, full-month and Ramadan views, UK DST handling, optional reminders, Qibla, widgets, and offline-friendly caching. iOS on the App Store; Android via APK.",
+    "English-language app for official Sheffield mosque timetables: live adhan and iqamah countdown, full-month and Ramadan views, optional reminders, Qibla, widgets, and offline-friendly caching. iOS on the App Store; Android via APK.",
   alternates: { canonical: "/masjidly" },
   openGraph: {
     title: "Masjidly — Official Mosque Prayer Times",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Masjidly — Official Mosque Prayer Times",
     description:
-      "Official mosque adhan and iqamah — countdown, timetable, Ramadan, DST, reminders, Qibla, and widgets. English UI; App Store and Android APK.",
+      "Official mosque adhan and iqamah: countdown, timetable, Ramadan, reminders, Qibla, and widgets. English UI; App Store and Android APK.",
   },
 };
 

@@ -6,11 +6,10 @@ import { Mosque } from "@/types/prayer-times";
 import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
 import {
     getPrayerTimesForDate,
-    getIqamahTimesForSpecificDateWithDstMapping,
+    getIqamahTimesForSpecificDate,
     getIqamahTime,
     getCurrentPrayer,
     getDateInSheffield,
-    getDisplayedPrayerTimes,
     getNextPrayerAndCountdown,
     formatDateForDisplay,
     formatTo12Hour,
@@ -66,13 +65,6 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
     const [hijriDate, setHijriDate] = useState("");
     const [selectedPrayerIndex, setSelectedPrayerIndex] = useState(0);
     const [showHeroCountdown, setShowHeroCountdown] = useState(false);
-    const displayedPrayerTimes = useMemo(
-        () =>
-            prayerTimes && mosque
-                ? getDisplayedPrayerTimes(prayerTimes, selectedDate, mosque.slug)
-                : null,
-        [prayerTimes, selectedDate, mosque],
-    );
 
     const SHEFFIELD_TZ = "Europe/London";
 
@@ -139,14 +131,12 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             try {
                 const [times, iqamah] = await Promise.all([
                     getPrayerTimesForDate(activeMosque.slug, selectedDate),
-                    getIqamahTimesForSpecificDateWithDstMapping(activeMosque.slug, selectedDate),
+                    getIqamahTimesForSpecificDate(activeMosque.slug, selectedDate),
                 ]);
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;
                 setPrayerTimes(times);
                 setIqamahTimes(iqamah);
-                setCurrentPrayer(
-                    getCurrentPrayer(getDisplayedPrayerTimes(times, selectedDate, activeMosque.slug)),
-                );
+                setCurrentPrayer(getCurrentPrayer(times));
                 setHijriDate(getHijriDate(selectedDate));
             } catch (e) {
                 if (!isActive || latestFetchRequestRef.current !== requestId) return;
@@ -167,12 +157,12 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             setCountdown(null);
             return;
         }
-        if (!displayedPrayerTimes || !iqamahTimes || !mosque) return;
+        if (!prayerTimes || !iqamahTimes || !mosque) return;
 
         const updateCountdown = () => {
             setCurrentTime(new Date());
-            setCurrentPrayer(getCurrentPrayer(displayedPrayerTimes));
-            const result = getNextPrayerAndCountdown(displayedPrayerTimes, iqamahTimes, {
+            setCurrentPrayer(getCurrentPrayer(prayerTimes));
+            const result = getNextPrayerAndCountdown(prayerTimes, iqamahTimes, {
                 selectedDate,
                 mosqueSlug: mosque.slug,
             });
@@ -185,7 +175,7 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
-    }, [displayedPrayerTimes, iqamahTimes, isToday, selectedDate, mosque]);
+    }, [prayerTimes, iqamahTimes, isToday, selectedDate, mosque]);
 
     // Clock tick when not viewing today (countdown effect handles when isToday)
     useEffect(() => {
@@ -195,26 +185,26 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
     }, [isToday]);
 
     const heroPrayers = useMemo<HeroPrayerItem[]>(() => {
-        if (!displayedPrayerTimes || !mosque) return [];
+        if (!prayerTimes || !mosque) return [];
         const iq = iqamahTimes;
         const getIq = (key: string): string => {
             if (!iq) return "-";
             switch (key) {
                 case "Fajr":
-                    return getIqamahTime("fajr", displayedPrayerTimes.fajr, iq);
+                    return getIqamahTime("fajr", prayerTimes.fajr, iq);
                 case "Dhuhr":
-                    return getIqamahTime("dhuhr", displayedPrayerTimes.dhuhr, iq);
+                    return getIqamahTime("dhuhr", prayerTimes.dhuhr, iq);
                 case "Asr":
-                    return getIqamahTime("asr", displayedPrayerTimes.asr, iq);
+                    return getIqamahTime("asr", prayerTimes.asr, iq);
                 case "Maghrib":
-                    return getIqamahTime("maghrib", displayedPrayerTimes.maghrib, iq);
+                    return getIqamahTime("maghrib", prayerTimes.maghrib, iq);
                 case "Isha":
                     return resolveIshaIqamahForDisplay(
                         mosque.slug,
                         selectedDate,
-                        displayedPrayerTimes.isha,
+                        prayerTimes.isha,
                         iq,
-                        displayedPrayerTimes.maghrib,
+                        prayerTimes.maghrib,
                     );
                 default:
                     return "-";
@@ -223,21 +213,21 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
 
         const dhuhrLabel = isFridaySelected ? "Jummah" : "Dhuhr";
         const dhuhrAdhan = isFridaySelected
-            ? (jummahSummaryTime ?? displayedPrayerTimes.dhuhr)
-            : displayedPrayerTimes.dhuhr;
+            ? (jummahSummaryTime ?? prayerTimes.dhuhr)
+            : prayerTimes.dhuhr;
         const dhuhrIqamah = isFridaySelected
             ? (jummahSummaryTime ?? getIq("Dhuhr"))
             : getIq("Dhuhr");
 
         return [
-            { id: "fajr", label: "Fajr", letter: "F", adhan: displayedPrayerTimes.fajr, iqamah: getIq("Fajr"), theme: "fajr" },
-            { id: "sunrise", label: "Sunrise", letter: "S", adhan: displayedPrayerTimes.sunrise || "-", iqamah: null, theme: "sunrise" },
+            { id: "fajr", label: "Fajr", letter: "F", adhan: prayerTimes.fajr, iqamah: getIq("Fajr"), theme: "fajr" },
+            { id: "sunrise", label: "Sunrise", letter: "S", adhan: prayerTimes.sunrise || "-", iqamah: null, theme: "sunrise" },
             { id: "dhuhr", label: dhuhrLabel, letter: isFridaySelected ? "J" : "D", adhan: dhuhrAdhan, iqamah: dhuhrIqamah, theme: "dhuhr" },
-            { id: "asr", label: "Asr", letter: "A", adhan: displayedPrayerTimes.asr, iqamah: getIq("Asr"), theme: "asr" },
-            { id: "maghrib", label: "Maghrib", letter: "M", adhan: displayedPrayerTimes.maghrib, iqamah: getIq("Maghrib"), theme: "maghrib" },
-            { id: "isha", label: "Isha", letter: "I", adhan: displayedPrayerTimes.isha, iqamah: getIq("Isha"), theme: "isha" },
+            { id: "asr", label: "Asr", letter: "A", adhan: prayerTimes.asr, iqamah: getIq("Asr"), theme: "asr" },
+            { id: "maghrib", label: "Maghrib", letter: "M", adhan: prayerTimes.maghrib, iqamah: getIq("Maghrib"), theme: "maghrib" },
+            { id: "isha", label: "Isha", letter: "I", adhan: prayerTimes.isha, iqamah: getIq("Isha"), theme: "isha" },
         ];
-    }, [displayedPrayerTimes, iqamahTimes, mosque, selectedDate, isFridaySelected, jummahSummaryTime]);
+    }, [prayerTimes, iqamahTimes, mosque, selectedDate, isFridaySelected, jummahSummaryTime]);
 
     // Keep selected index in range when prayer list changes
     useEffect(() => {

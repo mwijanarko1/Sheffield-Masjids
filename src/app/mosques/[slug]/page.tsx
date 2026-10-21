@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getMosqueBySlug } from '@/lib/mosques';
 import {
   getDateInSheffield,
-  getIqamahTimesForSpecificDateWithDstMapping,
+  getIqamahTimesForSpecificDate,
   getPrayerTimesForDate,
 } from '@/lib/prayer-times';
 import { SITE_NAME } from '@/lib/site';
@@ -35,7 +35,7 @@ async function getInitialPrayerWidgetData(mosque: Mosque): Promise<{
     const selectedDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
     const [prayerTimes, iqamahTimes] = await Promise.all([
       getPrayerTimesForDate(mosque.slug, selectedDate),
-      getIqamahTimesForSpecificDateWithDstMapping(mosque.slug, selectedDate),
+      getIqamahTimesForSpecificDate(mosque.slug, selectedDate),
     ]);
 
     return {
@@ -190,7 +190,6 @@ export default async function MosquePage({ params }: MosquePageProps) {
               showDropdown={false}
               initialPrayerTimes={initialPrayerWidgetData?.prayerTimes}
               initialIqamahTimes={initialPrayerWidgetData?.iqamahTimes}
-              initialAdjustedIqamahTimes={initialPrayerWidgetData?.iqamahTimes}
               initialSelectedDate={initialPrayerWidgetData?.selectedDate}
             />
           </section>

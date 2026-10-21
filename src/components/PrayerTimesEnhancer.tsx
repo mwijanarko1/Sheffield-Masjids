@@ -16,7 +16,6 @@ type PrayerTimesEnhancerProps = {
   mosques?: Mosque[];
   initialPrayerTimes?: DailyPrayerTimes | null;
   initialIqamahTimes?: DailyIqamahTimes | null;
-  initialAdjustedIqamahTimes?: DailyIqamahTimes | null;
   initialSelectedDate?: string;
 };
 

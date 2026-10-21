@@ -15,7 +15,7 @@ export interface IqamahTimeRange {
   asr: string;
   maghrib?: string;
   isha: string;
-  /** When set, overrides `jummah_iqamah` for this date band (e.g. month splits around DST). */
+  /** When set, overrides `jummah_iqamah` for this date band (e.g. a mid-month change). */
   jummah?: string;
 }
 
