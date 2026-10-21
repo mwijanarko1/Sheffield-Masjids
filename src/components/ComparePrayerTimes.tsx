@@ -4,12 +4,10 @@ import { useState, useEffect } from "react";
 import {
   getPrayerTimesForDate,
   getIqamahTimesForSpecificDate,
-  getIqamahTime,
   getDateInSheffield,
   formatDateForDisplay,
   formatTo12Hour,
   isValidTimeForMarkup,
-  resolveIshaIqamahForDisplay,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from "@/types/prayer-times";
 import { Button } from "@/components/ui/button";
@@ -104,28 +102,21 @@ export default function ComparePrayerTimes({
   ): string => {
     if (!mosqueData.prayerTimes || !mosqueData.iqamahTimes) return "-";
 
-    const pt = mosqueData.prayerTimes;
     const iq = mosqueData.iqamahTimes;
 
     switch (prayerKey) {
       case "Fajr":
-        return getIqamahTime("fajr", pt.fajr, iq);
+        return iq.fajr;
       case "Sunrise":
         return "-";
       case "Dhuhr":
-        return getIqamahTime("dhuhr", pt.dhuhr, iq);
+        return iq.dhuhr;
       case "Asr":
-        return getIqamahTime("asr", pt.asr, iq);
+        return iq.asr;
       case "Maghrib":
-        return getIqamahTime("maghrib", pt.maghrib, iq);
+        return iq.maghrib;
       case "Isha":
-        return resolveIshaIqamahForDisplay(
-          mosqueData.mosque.slug,
-          selectedDate,
-          pt.isha,
-          iq,
-          pt.maghrib,
-        );
+        return iq.isha;
       case "Jummah":
         return iq.jummah || "-";
       default:

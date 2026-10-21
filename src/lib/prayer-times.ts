@@ -195,86 +195,6 @@ async function getConvexClient(): Promise<InstanceType<typeof import('convex/bro
   return convexClient;
 }
 
-const RISALAH_SLUG = 'masjid-risalah';
-const MUSLIM_WELFARE_HOUSE_SLUG = 'muslim-welfare-house';
-const LEEDS_GRAND_MOSQUE_SLUG = 'leeds-grand-mosque';
-
-/** Isha iqāmah JSON labels that mean congregation follows Maghrib (not a fixed clock time). */
-export function isCombinedWithMaghribIqamahLabel(value: string | undefined): boolean {
-  const normalized = value?.trim().toLowerCase() ?? '';
-  return normalized === 'combined with maghrib' || normalized === 'straight after maghrib';
-}
-
-/** Labels shown as “After Maghrib” in the UI (no numeric countdown). */
-export function isAfterMaghribIqamahDisplayLabel(value: string | undefined): boolean {
-  if (!value?.trim()) return false;
-  if (value.trim() === 'After Maghrib') return true;
-  return isCombinedWithMaghribIqamahLabel(value);
-}
-
-/** May 15–Aug 15 inclusive: Muslim Welfare House shows Isha iqāmah as “After Maghrib” in the app UI. */
-export function isSummerIshaPeriod(date: Date): boolean {
-  const year = date.getFullYear();
-  const may15 = new Date(year, 4, 15);
-  const aug15 = new Date(year, 7, 15);
-  return date >= may15 && date <= aug15;
-}
-
-/**
- * Masjid Risalah: Isha iqāmah follows the printed Isha adhān from 1 May through 31 July inclusive.
- * (Runs from the start of May so early May is not stuck on JSON band times like 21:51.)
- */
-export function isRisalahIshaIqamahMatchesAdhanPeriod(date: Date): boolean {
-  const year = date.getFullYear();
-  const may1 = new Date(year, 4, 1);
-  const july31 = new Date(year, 6, 31);
-  return date >= may1 && date <= july31;
-}
-
-/** Resolve Isha iqāmah clock label: Risalah May–July uses adhān; MWHS summer / JSON “combined” → "After Maghrib"; else JSON iqāmah. */
-export function resolveIshaIqamahForDisplay(
-  slug: string,
-  date: Date,
-  ishaAdhan: string,
-  iqamahTimes: DailyIqamahTimes,
-  maghribAdhan: string,
-): string {
-  if (isMasjidRisalah(slug) && isRisalahIshaIqamahMatchesAdhanPeriod(date)) {
-    return ishaAdhan;
-  }
-  if (isMuslimWelfareHouse(slug) && isSummerIshaPeriod(date)) {
-    return "After Maghrib";
-  }
-  if (isAfterMaghribIqamahDisplayLabel(iqamahTimes.isha)) {
-    return "After Maghrib";
-  }
-  return getIqamahTime("isha", ishaAdhan, iqamahTimes, maghribAdhan);
-}
-
-export function isMasjidRisalah(slug: string): boolean {
-  try {
-    return normalizeMosqueSlug(slug) === RISALAH_SLUG;
-  } catch {
-    return false;
-  }
-}
-
-export function isMuslimWelfareHouse(slug: string): boolean {
-  try {
-    return normalizeMosqueSlug(slug) === MUSLIM_WELFARE_HOUSE_SLUG;
-  } catch {
-    return false;
-  }
-}
-
-export function isLeedsGrandMosque(slug: string): boolean {
-  try {
-    return normalizeMosqueSlug(slug) === LEEDS_GRAND_MOSQUE_SLUG;
-  } catch {
-    return false;
-  }
-}
-
 const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyPrayerTimes>>();
 const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyPrayerTimes>>();
 
@@ -611,8 +531,8 @@ export function getIqamahTimesForDate(date: number, iqamahRanges: IqamahTimeRang
     fajr: range.fajr,
     dhuhr: range.dhuhr,
     asr: range.asr,
-    maghrib: range.maghrib || "sunset", // Use maghrib iqamah from data, fallback to adhan time
-    isha: range.isha, // This will be "Entry Time" for summer months
+    maghrib: range.maghrib ?? "-",
+    isha: range.isha,
     jummah: range.jummah?.trim() ?? "",
   };
 }
@@ -810,17 +730,6 @@ export function getCurrentPrayer(prayerTimes: DailyPrayerTimes): string | null {
   return currentPrayerTime?.prayer || null;
 }
 
-/** Check if a time string is parseable as HH:MM for countdown */
-function isParseableTime(t: string): boolean {
-  if (!t || t === "-" || t === "—" || t === "--:--") return false;
-  if (/after maghrib|entry time|straight after/i.test(t)) return false;
-  const match = t.trim().match(/^(\d{1,2}):(\d{2})$/);
-  if (!match) return false;
-  const h = Number(match[1]);
-  const m = Number(match[2]);
-  return Number.isFinite(h) && Number.isFinite(m) && h >= 0 && h <= 23 && m >= 0 && m <= 59;
-}
-
 export interface NextPrayerCountdownResult {
   nextPrayer: { name: string; time: string };
   countdown: { hours: number; minutes: number; seconds: number };
@@ -835,53 +744,46 @@ export interface NextPrayerCountdownResult {
 export function getNextPrayerAndCountdown(
   prayerTimes: DailyPrayerTimes,
   iqamahTimes: DailyIqamahTimes,
-  options?: { selectedDate?: Date; mosqueSlug?: string }
+  options?: { selectedDate?: Date }
 ): NextPrayerCountdownResult {
   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/London" }));
   const checkDate = options?.selectedDate ?? now;
   const isFriday = checkDate.getDay() === 5;
-  const slug = options?.mosqueSlug ?? "";
 
   const prayers: { name: string; adhanTime: string; iqamahTime: string }[] = [
     {
       name: "Fajr",
       adhanTime: prayerTimes.fajr,
-      iqamahTime: getIqamahTime("fajr", prayerTimes.fajr, iqamahTimes),
+      iqamahTime: iqamahTimes.fajr,
     },
     {
       name: isFriday ? "Jummah" : "Dhuhr",
       adhanTime: prayerTimes.dhuhr,
       iqamahTime: isFriday
         ? (iqamahTimes.jummah || "-")
-        : getIqamahTime("dhuhr", prayerTimes.dhuhr, iqamahTimes),
+        : iqamahTimes.dhuhr,
     },
     {
       name: "Asr",
       adhanTime: prayerTimes.asr,
-      iqamahTime: getIqamahTime("asr", prayerTimes.asr, iqamahTimes),
+      iqamahTime: iqamahTimes.asr,
     },
     {
       name: "Maghrib",
       adhanTime: prayerTimes.maghrib,
-      iqamahTime: getIqamahTime("maghrib", prayerTimes.maghrib, iqamahTimes),
+      iqamahTime: iqamahTimes.maghrib,
     },
     {
       name: "Isha",
       adhanTime: prayerTimes.isha,
-      iqamahTime: resolveIshaIqamahForDisplay(
-        slug,
-        checkDate,
-        prayerTimes.isha,
-        iqamahTimes,
-        prayerTimes.maghrib,
-      ),
+      iqamahTime: iqamahTimes.isha,
     },
   ];
 
   for (const prayer of prayers) {
     const isJummah = prayer.name === "Jummah";
 
-    if (!isJummah) {
+    if (!isJummah && isValidTimeForMarkup(prayer.adhanTime)) {
       const [adhanHours, adhanMinutes] = prayer.adhanTime.split(":").map(Number);
       const adhanTime = new Date(now);
       adhanTime.setHours(adhanHours, adhanMinutes, 0, 0);
@@ -901,7 +803,7 @@ export function getNextPrayerAndCountdown(
     }
 
     if (
-      isParseableTime(prayer.iqamahTime) &&
+      isValidTimeForMarkup(prayer.iqamahTime) &&
       prayer.iqamahTime !== prayer.adhanTime
     ) {
       const [iqamahHours, iqamahMinutes] = prayer.iqamahTime.split(":").map(Number);
@@ -939,65 +841,6 @@ export function getNextPrayerAndCountdown(
     },
     isIqamah: false,
   };
-}
-
-function addMinutesToTime(time: string, minutesToAdd: number): string | null {
-  const [hours, minutes] = time.split(':').map(Number);
-  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
-
-  const totalMinutes = (((hours * 60 + minutes + minutesToAdd) % 1440) + 1440) % 1440;
-  const nextHours = Math.floor(totalMinutes / 60);
-  const nextMinutes = totalMinutes % 60;
-
-  return `${String(nextHours).padStart(2, '0')}:${String(nextMinutes).padStart(2, '0')}`;
-}
-
-function resolveRelativeIqamah(iqamahValue: string, adhanTime: string): string {
-  const value = iqamahValue.trim();
-
-  const adhanPlusMatch = value.match(/^adhan\s*\+\s*(\d+)\s*(?:mins?|minutes?)?$/i);
-  const afterAdhanMatch = value.match(/^(\d+)\s*(?:mins?|minutes?)\s*after\s*adhan$/i);
-  const minutesString = adhanPlusMatch?.[1] ?? afterAdhanMatch?.[1];
-
-  if (!minutesString) return iqamahValue;
-
-  const parsed = Number.parseInt(minutesString, 10);
-  if (!Number.isFinite(parsed)) return iqamahValue;
-
-  return addMinutesToTime(adhanTime, parsed) ?? iqamahValue;
-}
-
-/**
- * Get Iqamah time for a specific prayer using mosque's schedule
- * @param maghribAdhan - Optional Maghrib adhan time, needed when Isha is "Straight after Maghrib"
- */
-export function getIqamahTime(prayer: string, adhanTime: string, iqamahTimes: DailyIqamahTimes, maghribAdhan?: string): string {
-  const prayerLower = prayer.toLowerCase();
-
-  switch (prayerLower) {
-    case 'fajr':
-      // "Various" means time varies - use adhan time as fallback for display/countdown
-      return resolveRelativeIqamah(iqamahTimes.fajr === "Various" ? adhanTime : iqamahTimes.fajr, adhanTime);
-    case 'dhuhr':
-      return resolveRelativeIqamah(iqamahTimes.dhuhr, adhanTime);
-    case 'asr':
-      if ((iqamahTimes.asr?.trim() ?? '').toLowerCase() === 'entry time') return adhanTime;
-      return resolveRelativeIqamah(iqamahTimes.asr, adhanTime);
-    case 'maghrib':
-      // Use the specified iqamah time, fallback to adhan time if not specified
-      return resolveRelativeIqamah(iqamahTimes.maghrib === "sunset" ? adhanTime : iqamahTimes.maghrib, adhanTime);
-    case 'isha':
-      if (iqamahTimes.isha?.trim() === "After Maghrib") return "After Maghrib";
-      // Legacy / MWHS-style combined labels → iqāmah at Maghrib adhān; "Entry Time" → Isha adhān
-      if (isCombinedWithMaghribIqamahLabel(iqamahTimes.isha) && maghribAdhan) return maghribAdhan;
-      if (iqamahTimes.isha === "Entry Time") return adhanTime;
-      if (isCombinedWithMaghribIqamahLabel(iqamahTimes.isha)) return adhanTime;
-      return resolveRelativeIqamah(iqamahTimes.isha, adhanTime);
-    case 'jummah':
-      return iqamahTimes.jummah;
-    default:
-      return '-';
-  }
 }
 
 /**
@@ -1041,44 +884,23 @@ export function formatDateForDisplay(date: Date, timeZone: string = SHEFFIELD_DI
 }
 
 /**
- * Returns true if the string is a valid HH:MM or H:MM time for semantic <time> markup.
+ * True only for a published HH:MM clock time. Any other timetable value is a label
+ * (e.g. "Entry Time", "Adhan+5") that is shown as published and never scheduled.
  */
 export function isValidTimeForMarkup(timeString: string): boolean {
-  if (
-    !timeString ||
-    timeString === '-' ||
-    timeString === '--:--' ||
-    timeString === 'Various' ||
-    timeString === 'Entry Time' ||
-    isAfterMaghribIqamahDisplayLabel(timeString)
-  ) {
-    return false;
-  }
-  const [hours, minutes] = timeString.split(':').map(Number);
-  return !isNaN(hours) && !isNaN(minutes) && hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
+  if (!timeString) return false;
+  const match = timeString.trim().match(/^(\d{1,2}):(\d{2})$/);
+  return match !== null && Number(match[1]) < 24 && Number(match[2]) < 60;
 }
 
 /**
- * Format a 24-hour time string (HH:MM) to 12-hour format (h:mm AM/PM)
+ * Format a 24-hour time string (HH:MM) to 12-hour format (h:mm am/pm); labels pass through unchanged.
  */
 export function formatTo12Hour(timeString: string): string {
-  if (
-    !timeString ||
-    timeString === '-' ||
-    timeString === '--:--' ||
-    timeString === 'Various' ||
-    timeString === 'Entry Time' ||
-    isAfterMaghribIqamahDisplayLabel(timeString)
-  ) {
-    return timeString;
-  }
+  if (!isValidTimeForMarkup(timeString)) return timeString;
 
-  const [hours, minutes] = timeString.split(':').map(Number);
-  if (isNaN(hours) || isNaN(minutes)) return timeString;
-
+  const [hours, minutes] = timeString.trim().split(':').map(Number);
   const ampm = hours >= 12 ? 'pm' : 'am';
   const displayHours = hours % 12 || 12;
-  const displayMinutes = minutes.toString().padStart(2, '0');
-
-  return `${displayHours}:${displayMinutes}${ampm}`;
+  return `${displayHours}:${String(minutes).padStart(2, '0')}${ampm}`;
 }

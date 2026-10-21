@@ -7,13 +7,11 @@ import { usePersistedMosque } from "@/hooks/use-persisted-mosque";
 import {
     getPrayerTimesForDate,
     getIqamahTimesForSpecificDate,
-    getIqamahTime,
     getCurrentPrayer,
     getDateInSheffield,
     getNextPrayerAndCountdown,
     formatDateForDisplay,
     formatTo12Hour,
-    resolveIshaIqamahForDisplay,
 } from "@/lib/prayer-times";
 import { DailyPrayerTimes, DailyIqamahTimes } from "@/types/prayer-times";
 import MasjidlyHomeHero, { type HeroPrayerItem } from "@/components/MasjidlyHomeHero";
@@ -164,7 +162,6 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             setCurrentPrayer(getCurrentPrayer(prayerTimes));
             const result = getNextPrayerAndCountdown(prayerTimes, iqamahTimes, {
                 selectedDate,
-                mosqueSlug: mosque.slug,
             });
             setNextPrayer(result.nextPrayer);
             setCountdown(result.countdown);
@@ -191,21 +188,15 @@ export default function AppHomePage({ mosques, initialPrayerWidgetData = null }:
             if (!iq) return "-";
             switch (key) {
                 case "Fajr":
-                    return getIqamahTime("fajr", prayerTimes.fajr, iq);
+                    return iq.fajr;
                 case "Dhuhr":
-                    return getIqamahTime("dhuhr", prayerTimes.dhuhr, iq);
+                    return iq.dhuhr;
                 case "Asr":
-                    return getIqamahTime("asr", prayerTimes.asr, iq);
+                    return iq.asr;
                 case "Maghrib":
-                    return getIqamahTime("maghrib", prayerTimes.maghrib, iq);
+                    return iq.maghrib;
                 case "Isha":
-                    return resolveIshaIqamahForDisplay(
-                        mosque.slug,
-                        selectedDate,
-                        prayerTimes.isha,
-                        iq,
-                        prayerTimes.maghrib,
-                    );
+                    return iq.isha;
                 default:
                     return "-";
             }

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import Link from 'next/link';
 import JummahWidget from './JummahWidget';
 import { CustomSelect } from './ui/custom-select';
-import { getTodaysPrayerTimes, getTodaysIqamahTimes, getIqamahTime, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDateInSheffield, isDateInRamadanPeriod, formatTo12Hour, isValidTimeForMarkup, resolveIshaIqamahForDisplay, isMasjidRisalah, isAfterMaghribIqamahDisplayLabel } from '@/lib/prayer-times';
+import { getTodaysPrayerTimes, getTodaysIqamahTimes, formatDateForDisplay, getPrayerTimesForDate, getIqamahTimesForSpecificDate, getDateInSheffield, isDateInRamadanPeriod, formatTo12Hour, isValidTimeForMarkup } from '@/lib/prayer-times';
 import { DailyPrayerTimes, DailyIqamahTimes, Mosque } from '@/types/prayer-times';
 import { Button } from '@/components/ui/button';
 
@@ -74,7 +74,7 @@ export default function PrayerTimesWidget({
     // Major prayer indices in the prayers array: FAJR(0), DHUHR(2), ASR(3), MAGHRIB(4), ISHA(5)
     const majorIndices = [0, 2, 3, 4, 5];
     const iqamahDates = prayers.map(p => {
-      if (p.iqamah === '-' || p.iqamah === '--:--' || isAfterMaghribIqamahDisplayLabel(p.iqamah)) return null;
+      if (!isValidTimeForMarkup(p.iqamah)) return null;
       const [hours, minutes] = p.iqamah.split(':').map(Number);
       const d = new Date(now);
       d.setHours(hours, minutes, 0, 0);
@@ -83,7 +83,7 @@ export default function PrayerTimesWidget({
 
     // Add special handling for Jummah on Fridays
     let jummahDate: Date | null = null;
-    if (isFriday && iqamahTimes?.jummah && iqamahTimes.jummah !== '-' && iqamahTimes.jummah !== '--:--') {
+    if (isFriday && iqamahTimes?.jummah && isValidTimeForMarkup(iqamahTimes.jummah)) {
       const [hours, minutes] = iqamahTimes.jummah.split(':').map(Number);
       jummahDate = new Date(now);
       jummahDate.setHours(hours, minutes, 0, 0);
@@ -125,16 +125,6 @@ export default function PrayerTimesWidget({
     return null;
   }, [iqamahTimes]);
 
-  // Check if we're in the summer period (May 15 - August 15)
-  const isSummerPeriod = useMemo(() => {
-    const today = getSheffieldTime();
-    const year = today.getFullYear();
-    const may15 = new Date(year, 4, 15); // May is month 4 (0-indexed)
-    const aug15 = new Date(year, 7, 15); // August is month 7 (0-indexed)
-
-    return today >= may15 && today <= aug15;
-  }, []);
-
   // Get next prayer/iqamah and calculate countdown
   const getNextPrayerAndCountdown = useCallback((
     prayerTimes: DailyPrayerTimes,
@@ -146,31 +136,25 @@ export default function PrayerTimesWidget({
     const isFriday = checkDate.getDay() === 5;
 
     const prayers = [
-      { name: 'Fajr', adhanTime: prayerTimes.fajr, iqamahTime: getIqamahTime('fajr', prayerTimes.fajr, iqamahTimes) },
+      { name: 'Fajr', adhanTime: prayerTimes.fajr, iqamahTime: iqamahTimes.fajr },
       {
         name: isFriday ? 'Jummah' : 'Dhuhr',
         adhanTime: prayerTimes.dhuhr,
-        iqamahTime: isFriday ? (iqamahTimes.jummah || '-') : getIqamahTime('dhuhr', prayerTimes.dhuhr, iqamahTimes)
+        iqamahTime: isFriday ? (iqamahTimes.jummah || '-') : iqamahTimes.dhuhr
       },
-      { name: 'Asr', adhanTime: prayerTimes.asr, iqamahTime: getIqamahTime('asr', prayerTimes.asr, iqamahTimes) },
-      { name: 'Maghrib', adhanTime: prayerTimes.maghrib, iqamahTime: getIqamahTime('maghrib', prayerTimes.maghrib, iqamahTimes) },
+      { name: 'Asr', adhanTime: prayerTimes.asr, iqamahTime: iqamahTimes.asr },
+      { name: 'Maghrib', adhanTime: prayerTimes.maghrib, iqamahTime: iqamahTimes.maghrib },
       {
         name: 'Isha',
         adhanTime: prayerTimes.isha,
-        iqamahTime: resolveIshaIqamahForDisplay(
-          mosque.slug,
-          checkDate,
-          prayerTimes.isha,
-          iqamahTimes,
-          prayerTimes.maghrib,
-        )
+        iqamahTime: iqamahTimes.isha
       },
     ];
 
     for (const prayer of prayers) {
       const isJummah = prayer.name === 'Jummah';
 
-      if (!isJummah) {
+      if (!isJummah && isValidTimeForMarkup(prayer.adhanTime)) {
         const [adhanHours, adhanMinutes] = prayer.adhanTime.split(':').map(Number);
         const adhanTime = new Date(now);
         adhanTime.setHours(adhanHours, adhanMinutes, 0, 0);
@@ -190,10 +174,8 @@ export default function PrayerTimesWidget({
       }
 
       if (
-        prayer.iqamahTime !== '-' &&
-        prayer.iqamahTime !== '--:--' &&
-        prayer.iqamahTime !== prayer.adhanTime &&
-        !isAfterMaghribIqamahDisplayLabel(prayer.iqamahTime)
+        isValidTimeForMarkup(prayer.iqamahTime) &&
+        prayer.iqamahTime !== prayer.adhanTime
       ) {
         const [iqamahHours, iqamahMinutes] = prayer.iqamahTime.split(':').map(Number);
         const iqamahTime = new Date(now);
@@ -230,7 +212,7 @@ export default function PrayerTimesWidget({
       },
       isIqamah: false
     };
-  }, [mosque.slug]);
+  }, []);
 
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
@@ -381,18 +363,15 @@ export default function PrayerTimesWidget({
 
     const iqamahToUse = iqamahTimes;
 
-    const getIshaIqamah = () =>
-      resolveIshaIqamahForDisplay(mosque.slug, selectedDate, prayerTimes.isha, iqamahToUse, prayerTimes.maghrib);
-
     return [
-      { name: 'FAJR', adhan: prayerTimes.fajr, iqamah: getIqamahTime('fajr', prayerTimes.fajr, iqamahToUse) },
+      { name: 'FAJR', adhan: prayerTimes.fajr, iqamah: iqamahToUse.fajr },
       { name: 'SUNRISE', adhan: prayerTimes.sunrise, iqamah: '--:--' },
-      { name: 'DHUHR', adhan: prayerTimes.dhuhr, iqamah: getIqamahTime('dhuhr', prayerTimes.dhuhr, iqamahToUse) },
-      { name: 'ASR', adhan: prayerTimes.asr, iqamah: getIqamahTime('asr', prayerTimes.asr, iqamahToUse) },
-      { name: 'MAGHRIB', adhan: prayerTimes.maghrib, iqamah: getIqamahTime('maghrib', prayerTimes.maghrib, iqamahToUse) },
-      { name: 'ISHA', adhan: prayerTimes.isha, iqamah: getIshaIqamah() }
+      { name: 'DHUHR', adhan: prayerTimes.dhuhr, iqamah: iqamahToUse.dhuhr },
+      { name: 'ASR', adhan: prayerTimes.asr, iqamah: iqamahToUse.asr },
+      { name: 'MAGHRIB', adhan: prayerTimes.maghrib, iqamah: iqamahToUse.maghrib },
+      { name: 'ISHA', adhan: prayerTimes.isha, iqamah: iqamahToUse.isha }
     ];
-  }, [prayerTimes, iqamahTimes, selectedDate, mosque.slug]);
+  }, [prayerTimes, iqamahTimes]);
 
   const upcomingPrayer = useMemo(() => {
     if (!prayerTimes || !isToday || prayers.length === 0) return null;
@@ -550,26 +529,14 @@ export default function PrayerTimesWidget({
           </>
         )}
 
-        {(isJummahDay || isSummerPeriod) && (
+        {isJummahDay && (
           <div className="mb-4 flex gap-3 sm:gap-4 flex-wrap sm:flex-nowrap sm:mb-6">
-            {isJummahDay && (
-              <div className="flex-1 min-w-[200px]">
-                <JummahWidget
-                  jummahTime={iqamahTimes?.jummah || ''}
-                  isActive={upcomingPrayer === 'jummah'}
-                />
-              </div>
-            )}
-            {isSummerPeriod && !isMasjidRisalah(mosque.slug) && (
-              <div className="flex-1 min-w-[200px] bg-white/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-center items-center text-center backdrop-blur-sm border border-white/10 shadow-lg">
-                <p className="text-[10px] sm:text-xs font-medium font-serif italic text-white/40 uppercase tracking-widest mb-0.5 sm:mb-1">
-                  Summer Schedule
-                </p>
-                <p className="text-sm sm:text-base md:text-lg text-white font-bold">
-                  Maghrib & Isha combined
-                </p>
-              </div>
-            )}
+            <div className="flex-1 min-w-[200px]">
+              <JummahWidget
+                jummahTime={iqamahTimes?.jummah || ''}
+                isActive={upcomingPrayer === 'jummah'}
+              />
+            </div>
           </div>
         )}
 

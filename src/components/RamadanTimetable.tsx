@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getIqamahTime, getIqamahTimesForDate, getDateInSheffield } from "@/lib/prayer-times";
+import { getIqamahTimesForDate, getDateInSheffield } from "@/lib/prayer-times";
 import { TimeDisplay } from "@/components/TimeDisplay";
 import { cn } from "@/lib/utils";
 import { IqamahTimeRange, Mosque } from "@/types/prayer-times";
@@ -156,16 +156,16 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
         day,
         dayLabel: formatGregorianLabel(startDate, day),
         fajrAdhan: prayerTimes.fajr,
-        fajrIqamah: getIqamahTime("fajr", prayerTimes.fajr, iqamahTimes),
+        fajrIqamah: iqamahTimes.fajr,
         sunrise: prayerTimes.shurooq,
         dhuhrAdhan: prayerTimes.dhuhr,
-        dhuhrIqamah: getIqamahTime("dhuhr", prayerTimes.dhuhr, iqamahTimes),
+        dhuhrIqamah: iqamahTimes.dhuhr,
         asrAdhan: prayerTimes.asr,
-        asrIqamah: getIqamahTime("asr", prayerTimes.asr, iqamahTimes),
+        asrIqamah: iqamahTimes.asr,
         maghribAdhan: prayerTimes.maghrib,
-        maghribIqamah: getIqamahTime("maghrib", prayerTimes.maghrib, iqamahTimes),
+        maghribIqamah: iqamahTimes.maghrib,
         ishaAdhan: prayerTimes.isha,
-        ishaIqamah: getIqamahTime("isha", prayerTimes.isha, iqamahTimes, prayerTimes.maghrib),
+        ishaIqamah: iqamahTimes.isha,
         jummahIqamah: jummahForRow || "—",
       };
     }).filter((row): row is RamadanRow => row !== null);

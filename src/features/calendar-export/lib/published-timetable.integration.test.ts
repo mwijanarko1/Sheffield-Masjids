@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { NextRequest } from "next/server";
+import { GET } from "@/app/api/prayer-times/route";
 import { buildMonthlyCalendarEvents, buildMonthlyTimetableRowsAsync } from "@/features/calendar-export/lib/build-monthly-calendar-events";
 import { buildIcsCalendar } from "@/features/calendar-export/lib/ics";
 import { getIqamahTimesForSpecificDate, getPrayerTimesForDate } from "@/lib/prayer-times";
@@ -15,7 +17,7 @@ test("published mosque times survive loading, monthly display, and ICS export wi
   for (const slug of ["sheffield-grand-mosque", "madina-masjid-sheffield", "darululoom-siddiqia-masjid", "muslim-welfare-house", "masjid-risalah"]) {
     const mosque = registry.mosques.find((entry) => entry.slug === slug);
     assert.ok(mosque);
-    for (const [month, monthName] of [[3, "march"], [10, "october"]] as const) {
+    for (const [month, monthName] of [[3, "march"], [5, "may"], [7, "july"], [8, "august"], [10, "october"]] as const) {
       await t.test(`${slug} ${monthName}`, async () => {
         const monthlyData: MonthlyPrayerTimes = JSON.parse(await readFile(
           `public/data/mosques/gb/sheffield/${slug}/${monthName}.json`, "utf8",
@@ -50,14 +52,38 @@ test("published mosque times survive loading, monthly display, and ICS export wi
           });
           assert.ok(iqamah);
           const loadedIqamah = await getIqamahTimesForSpecificDate(slug, new Date(`${key}T12:00:00Z`));
-          for (const field of ["fajr", "dhuhr", "asr"] as const) {
+          for (const field of ["fajr", "dhuhr", "asr", "isha"] as const) {
             assert.equal(loadedIqamah[field], iqamah[field], `${key} loaded ${field} jamaat`);
           }
+          assert.equal(loadedIqamah.maghrib, iqamah.maghrib ?? "-", `${key} loaded Maghrib jamaat`);
           assert.equal(displayed.fajrIqamah, iqamah.fajr, `${key} published Fajr jamaat`);
           assert.equal(displayed.dhuhrIqamah, iqamah.dhuhr, `${key} published Dhuhr jamaat`);
           assert.equal(displayed.asrIqamah, iqamah.asr, `${key} published Asr jamaat`);
+          assert.equal(displayed.ishaIqamah, iqamah.isha, `${key} published Isha jamaat`);
+          assert.equal(displayed.maghribIqamah, iqamah.maghrib ?? "-", `${key} published Maghrib jamaat`);
+          for (const field of ["fajr", "dhuhr", "asr", "maghrib", "isha"] as const) {
+            const publishedValue = iqamah[field] ?? "-";
+            const event = events.find((entry) => entry.uid === `${slug}-${key}-${field}-iqamah@sheffieldmasjids`);
+            if (/^\d{1,2}:\d{2}$/.test(publishedValue)) {
+              assert.ok(event, `${key} exported published ${field} jamaat`);
+              assert.equal(event.start.toISOString().slice(11, 16), publishedValue.padStart(5, "0"));
+            } else {
+              assert.equal(event, undefined, `${key} must not invent a clock for ${publishedValue}`);
+            }
+          }
         }
       });
     }
   }
+});
+
+test("the prayer API does not invent a Maghrib iqamah when the published range omits it", async () => {
+  const response = await GET(new NextRequest(
+    "https://www.sheffieldmasjids.com/api/prayer-times?mosque=masjid-al-huda-sheffield&date=2026-08-24",
+    { headers: { "x-forwarded-for": `source-integration-${crypto.randomUUID()}` } },
+  ));
+  const body = await response.text();
+  assert.equal(response.status, 200, body.slice(0, 160));
+  assert.match(response.headers.get("content-type") ?? "", /application\/json/);
+  assert.equal(JSON.parse(body).iqamah.maghrib, "-");
 });

@@ -1,9 +1,4 @@
-import {
-  getIqamahTime,
-  getIqamahTimesForDate,
-  resolveIshaIqamahForDisplay,
-  isAfterMaghribIqamahDisplayLabel,
-} from "@/lib/prayer-times";
+import { getIqamahTimesForDate, isValidTimeForMarkup } from "@/lib/prayer-times";
 import type { MonthlyPrayerTimes } from "@/types/prayer-times";
 import type {
   CalendarEventInput,
@@ -38,10 +33,6 @@ const MONTH_OPTIONS = [
 function formatDayLabel(dayOfMonth: number, month: number): string {
   const monthName = MONTH_OPTIONS.find((option) => option.value === month)?.label ?? "";
   return `${dayOfMonth} ${monthName.slice(0, 3)}`;
-}
-
-function isConcreteCalendarTime(value: string): boolean {
-  return !["", "-", "—", "--:--"].includes(value) && !isAfterMaghribIqamahDisplayLabel(value);
 }
 
 function createWallClockDate(year: number, month: number, day: number, time: string): Date {
@@ -90,8 +81,6 @@ function buildEvent(
 
 /** One row per calendar day in the monthly JSON, using the published adhān and iqāmah for that same date. */
 export async function buildMonthlyTimetableRowsAsync({
-  slug,
-  year,
   monthlyData,
   selectedMonth,
   today,
@@ -120,30 +109,21 @@ export async function buildMonthlyTimetableRowsAsync({
     const jummahForRow =
       iqamahTimes.jummah?.trim() ? iqamahTimes.jummah : monthlyData.jummah_iqamah;
 
-    const rowCalendarDate = new Date(year, selectedMonth - 1, d);
-    const ishaIqamah = resolveIshaIqamahForDisplay(
-      slug,
-      rowCalendarDate,
-      day.isha,
-      iqamahTimes,
-      day.maghrib,
-    );
-
     rows.push({
       day: d,
       dayLabel: formatDayLabel(d, selectedMonth),
       isToday: selectedMonth === today.month && d === today.day,
       fajrAdhan: day.fajr,
-      fajrIqamah: getIqamahTime("fajr", day.fajr, iqamahTimes),
+      fajrIqamah: iqamahTimes.fajr,
       sunrise: day.shurooq,
       dhuhrAdhan: day.dhuhr,
-      dhuhrIqamah: getIqamahTime("dhuhr", day.dhuhr, iqamahTimes),
+      dhuhrIqamah: iqamahTimes.dhuhr,
       asrAdhan: day.asr,
-      asrIqamah: getIqamahTime("asr", day.asr, iqamahTimes),
+      asrIqamah: iqamahTimes.asr,
       maghribAdhan: day.maghrib,
-      maghribIqamah: getIqamahTime("maghrib", day.maghrib, iqamahTimes),
+      maghribIqamah: iqamahTimes.maghrib,
       ishaAdhan: day.isha,
-      ishaIqamah,
+      ishaIqamah: iqamahTimes.isha,
       jummahIqamah: jummahForRow || "—",
     });
   }
@@ -170,14 +150,14 @@ export async function buildMonthlyCalendarEvents(
       adhan: row.fajrAdhan,
       iqamah: row.fajrIqamah,
     };
-    if ((request.mode === "adhan" || request.mode === "both") && isConcreteCalendarTime(fajrEntry.adhan)) {
+    if ((request.mode === "adhan" || request.mode === "both") && isValidTimeForMarkup(fajrEntry.adhan)) {
       events.push(buildEvent(request, row.day, fajrEntry.prayer, "adhan", fajrEntry.adhan));
     }
-    if ((request.mode === "iqamah" || request.mode === "both") && isConcreteCalendarTime(fajrEntry.iqamah)) {
+    if ((request.mode === "iqamah" || request.mode === "both") && isValidTimeForMarkup(fajrEntry.iqamah)) {
       events.push(buildEvent(request, row.day, fajrEntry.prayer, "iqamah", fajrEntry.iqamah));
     }
 
-    if ((request.mode === "adhan" || request.mode === "both") && isConcreteCalendarTime(row.sunrise)) {
+    if ((request.mode === "adhan" || request.mode === "both") && isValidTimeForMarkup(row.sunrise)) {
       events.push(buildEvent(request, row.day, "Sunrise", "adhan", row.sunrise));
     }
 
@@ -189,11 +169,11 @@ export async function buildMonthlyCalendarEvents(
     ];
 
     for (const entry of rest) {
-      if ((request.mode === "adhan" || request.mode === "both") && isConcreteCalendarTime(entry.adhan)) {
+      if ((request.mode === "adhan" || request.mode === "both") && isValidTimeForMarkup(entry.adhan)) {
         events.push(buildEvent(request, row.day, entry.prayer, "adhan", entry.adhan));
       }
 
-      if ((request.mode === "iqamah" || request.mode === "both") && isConcreteCalendarTime(entry.iqamah)) {
+      if ((request.mode === "iqamah" || request.mode === "both") && isValidTimeForMarkup(entry.iqamah)) {
         events.push(buildEvent(request, row.day, entry.prayer, "iqamah", entry.iqamah));
       }
     }

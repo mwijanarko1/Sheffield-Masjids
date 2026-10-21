@@ -160,7 +160,7 @@ function findIqamah(
     fajr: row.fajr,
     dhuhr: row.dhuhr,
     asr: row.asr,
-    maghrib: row.maghrib || "sunset",
+    maghrib: row.maghrib ?? "-",
     isha: row.isha,
     jummah: row.jummah?.trim() || jummah,
   };

@@ -3,9 +3,6 @@ import Link from "next/link";
 import {
   formatDateForDisplay,
   formatTo12Hour,
-  getIqamahTime,
-  isValidTimeForMarkup,
-  resolveIshaIqamahForDisplay,
 } from "@/lib/prayer-times";
 import { DailyIqamahTimes, DailyPrayerTimes, Mosque } from "@/types/prayer-times";
 
@@ -18,7 +15,6 @@ type StaticPrayerTimesWidgetProps = {
 
 function displayTime(value: string): string {
   if (!value || value === "-" || value === "--:--") return "--:--";
-  if (isValidTimeForMarkup(value)) return formatTo12Hour(value);
   return formatTo12Hour(value);
 }
 
@@ -28,20 +24,13 @@ export default function StaticPrayerTimesWidget({
   iqamahTimes,
   selectedDate,
 }: StaticPrayerTimesWidgetProps) {
-  const ishaIqamah = resolveIshaIqamahForDisplay(
-    mosque.slug,
-    selectedDate,
-    prayerTimes.isha,
-    iqamahTimes,
-    prayerTimes.maghrib,
-  );
   const rows = [
-    { id: "fajr", label: "Fajr", adhan: prayerTimes.fajr, iqamah: getIqamahTime("fajr", prayerTimes.fajr, iqamahTimes) },
+    { id: "fajr", label: "Fajr", adhan: prayerTimes.fajr, iqamah: iqamahTimes.fajr },
     { id: "sunrise", label: "Sunrise", adhan: prayerTimes.sunrise, iqamah: "--:--" },
-    { id: "dhuhr", label: "Dhuhr", adhan: prayerTimes.dhuhr, iqamah: getIqamahTime("dhuhr", prayerTimes.dhuhr, iqamahTimes) },
-    { id: "asr", label: "Asr", adhan: prayerTimes.asr, iqamah: getIqamahTime("asr", prayerTimes.asr, iqamahTimes) },
-    { id: "maghrib", label: "Maghrib", adhan: prayerTimes.maghrib, iqamah: getIqamahTime("maghrib", prayerTimes.maghrib, iqamahTimes) },
-    { id: "isha", label: "Isha", adhan: prayerTimes.isha, iqamah: ishaIqamah },
+    { id: "dhuhr", label: "Dhuhr", adhan: prayerTimes.dhuhr, iqamah: iqamahTimes.dhuhr },
+    { id: "asr", label: "Asr", adhan: prayerTimes.asr, iqamah: iqamahTimes.asr },
+    { id: "maghrib", label: "Maghrib", adhan: prayerTimes.maghrib, iqamah: iqamahTimes.maghrib },
+    { id: "isha", label: "Isha", adhan: prayerTimes.isha, iqamah: iqamahTimes.isha },
   ];
 
   const frameStyle = {
