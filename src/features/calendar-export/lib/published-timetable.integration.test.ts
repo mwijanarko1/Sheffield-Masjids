@@ -62,7 +62,7 @@ test("published mosque times survive loading, monthly display, and ICS export wi
           assert.equal(displayed.ishaIqamah, iqamah.isha, `${key} published Isha jamaat`);
           assert.equal(displayed.maghribIqamah, iqamah.maghrib ?? "-", `${key} published Maghrib jamaat`);
           for (const field of ["fajr", "dhuhr", "asr", "maghrib", "isha"] as const) {
-            const publishedValue = iqamah[field] ?? "-";
+            const publishedValue: string = iqamah[field] ?? "-";
             const event = events.find((entry) => entry.uid === `${slug}-${key}-${field}-iqamah@sheffieldmasjids`);
             if (/^\d{1,2}:\d{2}$/.test(publishedValue)) {
               assert.ok(event, `${key} exported published ${field} jamaat`);
