@@ -3760,6 +3760,20 @@
       "website": "https://prestoncitymosque.org.uk"
     },
     {
+      "id": "masjid-e-salaam-preston",
+      "name": "Masjid e Salaam",
+      "address": "49 Watling Street Road, Fulwood, Preston, PR2 8EA, United Kingdom",
+      "lat": 53.7779334,
+      "lng": -2.7018544,
+      "slug": "masjid-e-salaam-preston",
+      "citySlug": "preston",
+      "cityName": "Preston",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidesalaam.org.uk"
+    },
+    {
       "id": "al-quba-jamia-masjid",
       "name": "Al-Quba Jamia Masjid",
       "address": "1 Copenhagen Street, Rochdale OL16 2HD, United Kingdom",
