@@ -3774,6 +3774,20 @@
       "website": "https://masjidesalaam.org.uk"
     },
     {
+      "id": "masjid-e-saliheen-preston",
+      "name": "Masjid E Saliheen",
+      "address": "Preston Muslim Cultural Centre, Grafton Street, Preston, PR1 8JH, United Kingdom",
+      "lat": 53.7540855,
+      "lng": -2.7119291,
+      "slug": "masjid-e-saliheen-preston",
+      "citySlug": "preston",
+      "cityName": "Preston",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.masjidsaliheen.com"
+    },
+    {
       "id": "al-quba-jamia-masjid",
       "name": "Al-Quba Jamia Masjid",
       "address": "1 Copenhagen Street, Rochdale OL16 2HD, United Kingdom",
