@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project stores structured prayer times (adhan + iqamah) for UK mosques and seeds them to a Convex database (dev + prod). This document defines the exact procedure for adding or modifying mosque prayer time data.
+This project stores structured prayer times (adhan + iqamah) for UK mosques and seeds them to the production Convex database. Dev seeding is optional and only runs when explicitly requested. This document defines the exact procedure for adding or modifying mosque prayer time data.
 
 ---
 
@@ -142,27 +142,30 @@ When the **only** source is a PDF or image and vision has not been run, mark the
 
 ## 6. Seeding to Convex
 
-After adding/modifying data, seed both databases:
+When seeding is requested after adding/modifying data, seed **production only** by default. Do not seed dev unless the user explicitly requests it for testing.
+
+Dev deployments count toward team usage: stored data and indexes consume storage even when unused, and seeding consumes function calls and database I/O. Stopping a local dev server does not stop the cloud deployment or scheduled functions. Pausing stops function execution but retains storage; deleting removes the deployment and its data. Neither action is authorized by this policy. Before retiring dev, check dashboard usage, confirm no apps/previews/integrations depend on it, preserve any dev-only data that is needed, and obtain explicit user approval.
 
 ```bash
 # Preferred: target specific mosques by slug (works after committing, no full re-seed)
-npx tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston
 npx tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston --prod
 
 # Incremental: only files changed vs HEAD (use before committing, not after)
-npx tsx scripts/seed-convex.ts --changed
 npx tsx scripts/seed-convex.ts --changed --prod
 
 # Full re-seed (all mosques, all months, slow, avoid unless necessary)
-npx tsx scripts/seed-convex.ts
 npx tsx scripts/seed-convex.ts --prod
+
+# Optional dev seed: only when explicitly requested
+npx tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston
 ```
 
+- **Always pass `--prod` for routine seeding.** The script still defaults to dev when this flag is omitted; retain that capability for explicitly requested testing.
 - `--slug <ids>`: seed only the named mosque(s), comma-separated. Use this after committing fixes.
 - `--changed`: seeds only files that differ from HEAD. Use before committing, not after.
 - Omit both flags for a full re-seed (all 290 mosques x 12 months, takes ~10 min).
-- **Dev**: `upbeat-goat-583.eu-west-1.convex.cloud`, forces `isHidden: false`
-- **Prod**: `zany-mockingbird-207.eu-west-1.convex.cloud`, respects file values
+- **Dev**: `upbeat-goat-583.eu-west-1.convex.cloud`, forces `isHidden: false`. Optional testing only; do not routinely maintain a duplicate dataset.
+- **Prod**: `zany-mockingbird-207.eu-west-1.convex.cloud`, respects file values. Default seeding target.
 
 ### Agent npm/npx allowlist (seed only)
 
@@ -173,9 +176,9 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 | Command | Notes |
 |---------|--------|
 | `npx tsx scripts/seed-convex.ts` … | Optional flags: `--changed`, `--prod`, `--slug <ids>` |
-| `npm run seed:dev` … | Optional `-- --changed`, `-- --slug <ids>` |
+| `npm run seed:dev` … | Only when dev seeding is explicitly requested. Optional `-- --changed`, `-- --slug <ids>` |
 | `npm run seed:prod` … | Optional `-- --changed`, `-- --slug <ids>` |
-| `npx tsx scripts/verify-mosque-convex.ts --slug <id> [--prod]` | After seeding, verify mosque + month coverage in Convex (what Masjidly reads), not the static site API |
+| `npx tsx scripts/verify-mosque-convex.ts --slug <id> [--prod]` | After seeding, verify mosque + month coverage in Convex (what Masjidly reads), not the static site API. Pass `--prod` for production; omit only for explicitly requested dev verification. |
 
 **Not allowed:** any other `npm`/`npx` (`install`, `build`, `convex …`, random packages, etc.). Still require `/build` (or an explicit ask) for those.
 
@@ -212,8 +215,8 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 3. **Create directory** — `public/data/mosques/gb/{citySlug}/{mosque-id}/`
 4. **Create 12 JSON files** — `january.json` through `december.json`
 5. **Add to mosques.json** — with correct lat/lng, address, `isHidden` flag
-6. **Seed dev** — `npx tsx scripts/seed-convex.ts --changed`
-7. **Seed prod** — `npx tsx scripts/seed-convex.ts --changed --prod`
+6. **Seed prod when requested**: `npx tsx scripts/seed-convex.ts --changed --prod`. Skip dev unless explicitly requested.
+7. **Verify production coverage**: `npx tsx scripts/verify-mosque-convex.ts --slug <id> --prod`.
 
 ---
 
@@ -222,7 +225,7 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 - Time format: **always 24h** (`HH:MM`). Convert from 12h on input (PM → +12, 12AM → 00).
 - Month names: **uppercase** in JSON (`"JANUARY"`, `"FEBRUARY"`, etc.)
 - City slugs use `gb/` prefix (country code ISO 3166-1 alpha-2)
-- Always seed **both** dev and prod after any change
+- When seeding is requested, seed **production only** by default. Dev seeding requires an explicit request; never automatically seed both.
 - Use `--changed` for incremental seeding when possible
 
 ---
