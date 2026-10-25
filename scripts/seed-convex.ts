@@ -36,6 +36,7 @@ import { api } from "../convex/_generated/api";
 import * as fs from "fs";
 import * as path from "path";
 import { getMosqueDataFsDir } from "../src/lib/mosque-data-path";
+import { findSuspiciousMonthlyTimes } from "./lib/monthly-times-guard";
 
 loadEnvConfig(process.cwd());
 
@@ -55,6 +56,8 @@ const MONTH_FILES = new Map([
 ]);
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+/** Bypass the plausibility guard (scripts/lib/monthly-times-guard.ts). Use only when the source truly publishes the flagged values. */
+const ALLOW_SUSPICIOUS_TIMES = process.argv.includes("--allow-suspicious-times");
 const MOSQUE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**
@@ -236,6 +239,9 @@ function parseCli(argv: string[]) {
                 (requires git). Skips unchanged months.
   --slug <ids>  Seed only the specified mosque(s) (registry + monthly). Comma-separated for multiple.
                 Skips everything else. Use this after committing fixes to avoid full re-seeds.
+  --allow-suspicious-times
+                Seed months even when the plausibility guard flags them (Dhuhr adhan
+                outside 10:00-15:00, or every adhan/jamaat in a row identical).
   --months A,B  Comma-separated month numbers or names (e.g. 4,5 or april,may).
                 With --changed: only applies to changed monthly files (intersection).
                 Without --changed: only those months for every mosque.
@@ -436,12 +442,32 @@ function newPublishEventId(mosqueSlug: string): string {
   return `seed_${mosqueSlug}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/**
+ * A month with no repo file is skipped, so an older Convex row for it stays live forever
+ * (this is how stale November rows survived for several mosques). Surface it loudly.
+ */
+async function warnIfOrphanMonth(client: ConvexHttpClient, mosqueSlug: string, monthFile: string, year: number) {
+  try {
+    const existing = await client.query(api.prayerTimes.getMonthly, { mosqueSlug, month: monthFile, year });
+    if (existing) {
+      console.warn(
+        `  ! ${monthFile}: Convex has data but the repo has no ${monthFile}.json. ` +
+          `Remove it with --slug ${mosqueSlug} --months ${monthFile}${process.argv.includes("--prod") ? " --prod" : ""} ` +
+          "after confirming the source does not publish this month."
+      );
+    }
+  } catch (err) {
+    console.warn(`  ! ${monthFile}: could not check for an orphan Convex month:`, err instanceof Error ? err.message : err);
+  }
+}
+
 async function seedMonthly(
   client: ConvexHttpClient,
   mosqueSlug: string,
   monthsOnly: Set<number> | null,
   adminSecret: string,
   publishEventId?: string,
+  warnOrphans = false,
 ) {
   const year = new Date().getFullYear();
   for (let monthNum = 1; monthNum <= 12; monthNum++) {
@@ -455,7 +481,10 @@ async function seedMonthly(
     );
     if (!fs.existsSync(filePath)) {
       // Full seed skips gaps. --changed / --months: missing file means delete that Convex month.
-      if (!monthsOnly) continue;
+      if (!monthsOnly) {
+        if (warnOrphans) await warnIfOrphanMonth(client, mosqueSlug, monthFile, year);
+        continue;
+      }
       try {
         const result = await client.mutation(api.seed.removeMonthly, {
           mosqueSlug,
@@ -473,6 +502,18 @@ async function seedMonthly(
     }
 
     const data: MonthlyFile = parseJsonFile(filePath, MonthlyFileSchema);
+
+    const suspicious = findSuspiciousMonthlyTimes(data);
+    if (suspicious.length > 0 && !ALLOW_SUSPICIOUS_TIMES) {
+      console.error(
+        `  ✗ ${monthFile}: refused, ${suspicious.length} implausible time(s): ${suspicious.slice(0, 3).join("; ")}` +
+          `${suspicious.length > 3 ? "; ..." : ""}\n` +
+          "    Re-check the official source (12h AM/PM conversion, blank cells). " +
+          "Pass --allow-suspicious-times only if the source really publishes these values."
+      );
+      process.exitCode = 1;
+      continue;
+    }
 
     try {
       await client.mutation(api.seed.seedMonthly, {
@@ -586,7 +627,7 @@ async function main() {
     for (const slug of slugList) {
       console.log(`Mosque: ${slug}`);
       const publishEventId = isProd ? undefined : newPublishEventId(slug);
-      await seedMonthly(client, slug, monthsOnly, adminSecret, publishEventId);
+      await seedMonthly(client, slug, monthsOnly, adminSecret, publishEventId, true);
       await seedRamadan(client, slug, adminSecret, publishEventId);
       console.log("");
     }

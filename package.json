@@ -18,6 +18,7 @@
     "test:iqamah-push": "tsx --test convex/lib/iqamahChangeDetect.test.ts convex/lib/pushTransport.test.ts",
     "test:mcp": "tsx --test src/lib/mcp/*.test.ts src/app/.well-known/openai-apps-challenge/route.test.ts",
     "test:prayer-api": "tsx --test src/app/api/prayer-times/route.test.ts",
+    "test:seed-guard": "tsx --test scripts/lib/monthly-times-guard.test.ts",
     "seed:dev": "tsx scripts/seed-convex.ts",
     "seed:prod": "tsx scripts/seed-convex.ts --prod"
   },

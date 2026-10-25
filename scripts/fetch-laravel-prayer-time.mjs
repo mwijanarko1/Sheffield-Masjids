@@ -37,7 +37,11 @@ function parseArgs(argv) {
   return { baseUrl, token, citySlug, slug, country };
 }
 
-/** Laravel platform times are 12h without suffix: fajr/sunrise are AM, all other prayers are PM. */
+/**
+ * Laravel platform times are 12h without suffix: fajr/sunrise are AM, asr/maghrib/isha are PM.
+ * Dhuhr straddles noon, so pass pm = 'noon': 10:xx/11:xx stay morning (winter "11:49" is 11:49,
+ * not 23:49), 12:xx stays 12, 1:xx-9:xx become afternoon.
+ */
 function parse12hNoSuffix(s, pm) {
   const t = String(s || '').trim().toLowerCase();
   // Some entries carry two jamaat times "12:30/1:15" — take the first.
@@ -52,7 +56,9 @@ function parse12hNoSuffix(s, pm) {
   const m = first.match(/^(\d{1,2}):(\d{2})$/);
   if (!m) return '';
   let h = parseInt(m[1], 10);
-  if (pm) {
+  if (pm === 'noon') {
+    if (h < 10) h += 12; // 1-9 -> afternoon; 10, 11, 12 stay as written
+  } else if (pm) {
     if (h !== 12) h += 12; // 1-11 PM
   } else {
     if (h === 12) h = 0; // 12 AM
@@ -88,13 +94,13 @@ function convertMonth(json, monthName) {
     const mg = d.maghrib || {};
     const is = d.isha || {};
 
-    if (!jummah && z.jamah) jummah = parse12hNoSuffix(z.jamah, true);
+    if (!jummah && z.jamah) jummah = parse12hNoSuffix(z.jamah, 'noon');
 
     prayerTimes.push({
       date,
       fajr: parse12hNoSuffix(f.begin, false),
       shurooq: parse12hNoSuffix(f.sunrise || f.shurooq, false),
-      dhuhr: parse12hNoSuffix(z.begin, true),
+      dhuhr: parse12hNoSuffix(z.begin, 'noon'),
       asr: parse12hNoSuffix(a.begin, true),
       maghrib: parse12hNoSuffix(mg.begin, true),
       isha: parse12hNoSuffix(is.begin, true)
@@ -102,7 +108,7 @@ function convertMonth(json, monthName) {
     iqamahTimes.push({
       date_range: String(date),
       fajr: parse12hNoSuffix(f.jamah, false),
-      dhuhr: parse12hNoSuffix(z.jamah, true),
+      dhuhr: parse12hNoSuffix(z.jamah, 'noon'),
       asr: parse12hNoSuffix(a.jamah, true),
       maghrib: parse12hNoSuffix(mg.jamah, true) || parse12hNoSuffix(mg.begin, true),
       isha: parse12hNoSuffix(is.jamah, true)
