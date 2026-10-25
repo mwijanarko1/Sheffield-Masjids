@@ -3859,6 +3859,34 @@
       "website": "https://www.madina-masjid.com"
     },
     {
+      "id": "dar-ul-munawar-ghamkol-sharif-crawford-street",
+      "name": "Dar-Ul-Munawar Ghamkol Sharif (Crawford Street)",
+      "address": "Crawford Street, Rochdale OL16 5SX, United Kingdom",
+      "lat": 53.609544,
+      "lng": -2.142668,
+      "slug": "dar-ul-munawar-ghamkol-sharif-crawford-street",
+      "citySlug": "rochdale",
+      "cityName": "Rochdale",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidbox.com/prayer-times/dar-ul-munawar-ghamkol-sharif-1613587873320"
+    },
+    {
+      "id": "dar-ul-munawar-ghamkol-sharif-derby-street",
+      "name": "Dar-Ul-Munawar Ghamkol Sharif (Derby Street)",
+      "address": "1 Derby Street, Rochdale OL11 1LT, United Kingdom",
+      "lat": 53.608319,
+      "lng": -2.150694,
+      "slug": "dar-ul-munawar-ghamkol-sharif-derby-street",
+      "citySlug": "rochdale",
+      "cityName": "Rochdale",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidbox.com/prayer-times/dar-ul-munawar-ghamkol-sharif"
+    },
+    {
       "id": "scarborough-islamic-centre",
       "name": "Scarborough Islamic Centre",
       "address": "Unit 62, Roscoe Street, Scarborough YO12 7BY, United Kingdom",
