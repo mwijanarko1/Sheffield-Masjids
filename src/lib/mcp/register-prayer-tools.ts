@@ -39,7 +39,7 @@ const prayerTimesOutputSchema = z.object({
     maghrib: z.string(),
     isha: z.string(),
     jummah: z.string().nullable(),
-  }),
+  }).nullable(),
 });
 
 const readOnlyAnnotations = {
@@ -85,7 +85,7 @@ function toolResult(
           maghrib: string;
           isha: string;
           jummah: string | null;
-        };
+        } | null;
       },
 ) {
   return {
@@ -144,7 +144,7 @@ export function registerPrayerTools(server: McpServer): void {
     {
       title: "Get prayer times",
       description:
-        "Use this when the user asks for adhan or iqamah prayer times for a mosque on a given date. Prefer a mosque slug from search_mosques. Date is optional and defaults to today in Europe/London. Always label adhan and iqamah separately. Do not invent times or present one mosque's iqamah as a city-wide time.",
+        "Use this when the user asks for adhan or iqamah prayer times for a mosque on a given date. Prefer a mosque slug from search_mosques. Date is optional and defaults to today in Europe/London. Always label adhan and iqamah separately. iqamah is null when the mosque publishes adhan times only for that day; say iqamah is not published rather than estimating it. Do not invent times or present one mosque's iqamah as a city-wide time.",
       inputSchema: z.object({
         mosque: z
           .string()

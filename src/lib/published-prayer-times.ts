@@ -71,7 +71,12 @@ export type PublishedPrayerTimes = {
     maghrib: string;
     isha: string;
   };
-  iqamah: DailyIqamahTimes;
+  /**
+   * Published iqamah (jamaat) times for the day, or `null` when the mosque's
+   * published timetable has adhan times but no iqamah entry for that day
+   * (adhan-only months or days). Never filled in or calculated.
+   */
+  iqamah: DailyIqamahTimes | null;
   source: "published-static-data";
 };
 
@@ -265,7 +270,9 @@ export async function getPublishedPrayerTimes(args: {
       iqamah = findIqamah(date.day, monthly.iqamah_times, monthly.jummah_iqamah);
     }
 
-    if (!prayer || !iqamah) {
+    // A published adhan row without an iqamah entry is returned with `iqamah: null`;
+    // only a missing adhan row means the day is unavailable.
+    if (!prayer) {
       return {
         error: `Prayer times are not available for ${mosque.slug} on ${date.key}.`,
         status: 404,

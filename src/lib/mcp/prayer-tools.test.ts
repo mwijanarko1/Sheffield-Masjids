@@ -32,8 +32,8 @@ test("get_prayer_times returns adhan and iqamah for a known date", async () => {
   assert.equal(result.date, "2026-04-10");
   assert.equal(result.timezone, "Europe/London");
   assert.equal(result.adhan.fajr, "04:09");
-  assert.equal(result.iqamah.fajr, "05:30");
-  assert.ok(result.iqamah.jummah);
+  assert.equal(result.iqamah?.fajr, "05:30");
+  assert.ok(result.iqamah?.jummah);
 });
 
 test("get_prayer_times uses Ramadan timetable instead of monthly February", async () => {
@@ -53,7 +53,7 @@ test("get_prayer_times does not apply UK DST remapping to Houston iqamah", async
   });
   assert.ok(!("error" in result));
   assert.equal(result.timezone, "America/Chicago");
-  assert.equal(result.iqamah.fajr, "06:45");
+  assert.equal(result.iqamah?.fajr, "06:45");
 });
 
 test("get_prayer_times rejects unsupported timetable years", async () => {
@@ -89,4 +89,11 @@ test("get_prayer_times asks callers to search when mosque is unknown", async () 
   });
   assert.ok("error" in result);
   assert.match(result.error, /search_mosques/);
+});
+
+test("get_prayer_times returns adhan with null iqamah for an adhan-only published day", async () => {
+  const result = await getPrayerTimes({ mosque: "essalam-mosque", date: "2026-11-10" });
+  assert.ok(!("error" in result));
+  assert.equal(result.adhan.fajr, "05:56");
+  assert.equal(result.iqamah, null);
 });
