@@ -26,7 +26,7 @@ const recordRejectionRef = makeFunctionReference<
  * missing, which intake reports as unavailable rather than accepting reports.
  */
 export function createConvexFeedbackStore(env: Record<string, string | undefined>): FeedbackStore | null {
-  const url = env.NEXT_PUBLIC_CONVEX_URL?.trim();
+  const url = env.CONVEX_URL?.trim();
   const intakeSecret = env.FEEDBACK_INTAKE_SECRET?.trim();
   if (!url || !intakeSecret) return null;
 

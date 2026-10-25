@@ -1,8 +1,5 @@
-import {
-  getDateInSheffield,
-  getIqamahTimesForSpecificDate,
-  getPrayerTimesForDate,
-} from "@/lib/prayer-times";
+import { getDateInSheffield } from "@/lib/prayer-times";
+import type { PublishedPrayerTimes } from "@/lib/published-prayer-times";
 
 const SELECTED_MOSQUE_STORAGE_KEY = "selected-mosque-id";
 const SELECTED_CITY_STORAGE_KEY = "selected-city-slug";
@@ -217,32 +214,24 @@ export const webMcpToolDefinitions: WebMcpToolDefinition[] = [
         return `ERROR: mosque not found for "${mosqueInput}". Use search_mosques first.`;
       }
 
-      const [adhan, iqamah] = await Promise.all([
-        getPrayerTimesForDate(mosque.slug, date),
-        getIqamahTimesForSpecificDate(mosque.slug, date),
-      ]);
-
-      return JSON.stringify({
-        mosque: summarizeMosque(mosque),
-        date: formatDateKey(date),
-        timezone: mosque.timezone || "Europe/London",
-        adhan: {
-          fajr: adhan.fajr,
-          sunrise: adhan.sunrise,
-          dhuhr: adhan.dhuhr,
-          asr: adhan.asr,
-          maghrib: adhan.maghrib,
-          isha: adhan.isha,
-        },
-        iqamah: {
-          fajr: iqamah.fajr,
-          dhuhr: iqamah.dhuhr,
-          asr: iqamah.asr,
-          maghrib: iqamah.maghrib,
-          isha: iqamah.isha,
-          jummah: iqamah.jummah || null,
-        },
+      // Times come from our own /api/prayer-times, which reads Convex on the
+      // server. The browser never talks to Convex directly. iqamah is null for
+      // adhan-only days, exactly as the API returns it.
+      const params = new URLSearchParams({ mosque: mosque.slug, date: formatDateKey(date) });
+      const response = await fetch(`/api/prayer-times?${params.toString()}`, {
+        headers: { Accept: "application/json" },
       });
+      // SAFETY: Same-origin /api/prayer-times returns PublishedPrayerTimes on 2xx and { error } otherwise.
+      const payload = (await response.json().catch(() => null)) as
+        | (PublishedPrayerTimes & { error?: undefined })
+        | { error: string }
+        | null;
+      if (!payload) return `ERROR: prayer times request failed (${response.status}).`;
+      if (payload.error !== undefined) return `ERROR: ${payload.error}`;
+      if (!response.ok) return `ERROR: prayer times request failed (${response.status}).`;
+
+      const { source: _source, ...result } = payload;
+      return JSON.stringify({ ...result, mosque: summarizeMosque(mosque) });
     },
   },
   {

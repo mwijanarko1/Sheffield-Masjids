@@ -7,9 +7,14 @@ import {
   type MosqueLocation,
 } from '@/lib/mosque-data-path';
 
-// Convex client for prayer times (when NEXT_PUBLIC_CONVEX_URL is set)
-let convexClient: InstanceType<typeof import('convex/browser').ConvexHttpClient> | null = null;
-let convexClientUrl: string | null = null;
+// Data path
+// ---------
+// Server (RSC, route handlers): Convex via src/lib/convex-server.ts, using the
+// server-only CONVEX_URL and CONVEX_READ_SECRET. Repo JSON on disk is the
+// fallback when Convex is not configured, fails, or has no row.
+// Browser (client components): our own /api/timetable route, which runs the
+// server path above. The browser never receives the Convex URL and never calls
+// Convex directly. The public /data JSON is the fallback if that route fails.
 
 const PRAYER_TIMES_CACHE_TTL_MS = 10 * 60 * 1000;
 const MAX_MONTHLY_CACHE_ENTRIES = 180;
@@ -170,29 +175,20 @@ function getCurrentYearInSheffield(): number {
   return getDateInSheffield(new Date()).year;
 }
 
-async function getConvexClient(): Promise<InstanceType<typeof import('convex/browser').ConvexHttpClient> | null> {
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!url) {
-    convexClient = null;
-    convexClientUrl = null;
-    return null;
-  }
+type ServerConvexHandle = NonNullable<ReturnType<typeof import('@/lib/convex-server').getServerConvex>>;
 
-  if (convexClient && convexClientUrl === url) {
-    return convexClient;
-  }
-
+async function getConvexForServer(): Promise<ServerConvexHandle | null> {
+  if (typeof window !== 'undefined') return null;
   try {
-    const { ConvexHttpClient } = await import('convex/browser');
-    convexClient = new ConvexHttpClient(url);
-    convexClientUrl = url;
+    const { getServerConvex } = await import('@/lib/convex-server');
+    return getServerConvex();
   } catch {
-    convexClient = null;
-    convexClientUrl = null;
     return null;
   }
+}
 
-  return convexClient;
+function timetableApiUrl(params: Record<string, string>): string {
+  return `/api/timetable?${new URLSearchParams(params).toString()}`;
 }
 
 const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyPrayerTimes>>();
@@ -236,11 +232,14 @@ export async function loadRamadanCalendar(slug: string): Promise<RamadanData | n
 
   const loadPromise = (async (): Promise<RamadanData | null> => {
     try {
-      const client = await getConvexClient();
-      if (client) {
+      const convex = await getConvexForServer();
+      if (convex) {
         try {
           const { api } = await import('../../convex/_generated/api');
-          const data = await client.query(api.prayerTimes.getRamadan, { mosqueSlug: safeSlug });
+          const data = await convex.client.query(api.prayerTimes.getRamadan, {
+            mosqueSlug: safeSlug,
+            ...convex.readArgs,
+          });
           setBoundedCacheEntry(
             ramadanDataCache,
             safeSlug,
@@ -250,6 +249,24 @@ export async function loadRamadanCalendar(slug: string): Promise<RamadanData | n
           return data;
         } catch (error) {
           console.warn('Convex Ramadan query failed, falling back to static JSON.', error);
+        }
+      }
+
+      if (typeof window !== 'undefined') {
+        try {
+          const apiResponse = await fetchWithRetry(timetableApiUrl({ mosque: safeSlug, ramadan: '1' }));
+          if (apiResponse.ok) {
+            const payload = parseTrustedJson<{ ramadan: RamadanData | null }>(await apiResponse.text());
+            setBoundedCacheEntry(
+              ramadanDataCache,
+              safeSlug,
+              createTimedEntry(payload.ramadan),
+              MAX_RAMADAN_CACHE_ENTRIES,
+            );
+            return payload.ramadan;
+          }
+        } catch (error) {
+          console.warn('Timetable API Ramadan request failed, falling back to static JSON.', error);
         }
       }
 
@@ -447,14 +464,15 @@ export async function loadMonthlyPrayerTimes(
 
   const loadPromise = (async (): Promise<MonthlyPrayerTimes> => {
     try {
-      const client = await getConvexClient();
-      if (client) {
+      const convex = await getConvexForServer();
+      if (convex) {
         try {
           const { api } = await import('../../convex/_generated/api');
-          const data = await client.query(api.prayerTimes.getMonthly, {
+          const data = await convex.client.query(api.prayerTimes.getMonthly, {
             mosqueSlug: safeSlug,
             month: monthFile,
             year,
+            ...convex.readArgs,
           });
           if (data) {
             setBoundedCacheEntry(
@@ -478,6 +496,24 @@ export async function loadMonthlyPrayerTimes(
         const filePath = path.join(getMosqueDataFsDir(process.cwd(), safeSlug, mosqueLocation), `${monthFile}.json`);
         data = parseTrustedJson<MonthlyPrayerTimes>(await fs.readFile(filePath, 'utf-8'));
       } else {
+        try {
+          const apiResponse = await fetchWithRetry(
+            timetableApiUrl({ mosque: safeSlug, month: String(month), year: String(year) }),
+          );
+          if (apiResponse.ok) {
+            const payload = parseTrustedJson<{ monthly: MonthlyPrayerTimes }>(await apiResponse.text());
+            setBoundedCacheEntry(
+              monthlyPrayerTimesCache,
+              cacheKey,
+              createTimedEntry(payload.monthly),
+              MAX_MONTHLY_CACHE_ENTRIES,
+            );
+            return payload.monthly;
+          }
+        } catch (error) {
+          console.warn('Timetable API monthly request failed, falling back to static JSON.', error);
+        }
+
         const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
         const response = await fetchWithRetry(publicUrl);
 

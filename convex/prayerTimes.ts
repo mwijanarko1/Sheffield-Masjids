@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { checkOptionalReadSecret, requireReadSecret } from "./lib/readAccess";
 
 const MOSQUE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const VALID_MONTHS = new Set([
@@ -52,6 +53,21 @@ function parseOptionalDate(date?: string): Date | null {
   return parsed;
 }
 
+/*
+ * Read access
+ * -----------
+ * LEFT PUBLIC (optional readSecret): getMonthly, getRamadan, getDataRevision,
+ * getDataVersions. The shipped Masjidly iOS and Android apps call these
+ * directly with no secret (mwijanarko1/masjidly:
+ * "Masjidly - Official Masjid Prayer Times/Data/Convex/ConvexPrayerRepository.swift"
+ * and apps/android/.../data/convex/ConvexPrayerRepository.kt). Locking them
+ * would break every installed app. The Next.js server sends readSecret anyway,
+ * so these can switch to requireReadSecret once the apps read through a server
+ * endpoint instead.
+ *
+ * LOCKED (readSecret required): getUkDstDates. No external client calls it.
+ */
+
 /**
  * Get monthly prayer times for a mosque.
  * Returns data in the same shape as the static JSON for compatibility with lib/prayer-times.
@@ -61,8 +77,10 @@ export const getMonthly = query({
     mosqueSlug: v.string(),
     month: v.string(),
     year: v.optional(v.number()),
+    readSecret: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    checkOptionalReadSecret(args.readSecret);
     const mosqueSlug = validateMosqueSlug(args.mosqueSlug);
     const month = validateMonth(args.month);
     const year = validateYear(args.year ?? new Date().getFullYear());
@@ -97,8 +115,10 @@ export const getRamadan = query({
   args: {
     mosqueSlug: v.string(),
     date: v.optional(v.string()), // ISO date string YYYY-MM-DD to find Ramadan covering this date
+    readSecret: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    checkOptionalReadSecret(args.readSecret);
     const mosqueSlug = validateMosqueSlug(args.mosqueSlug);
     const targetDate = parseOptionalDate(args.date);
 
@@ -146,8 +166,9 @@ export const getRamadan = query({
 });
 
 export const getDataRevision = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { readSecret: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    checkOptionalReadSecret(args.readSecret);
     const doc = await ctx.db
       .query("dataRevisions")
       .withIndex("by_key", (q) => q.eq("key", "global"))
@@ -169,8 +190,10 @@ export const getDataVersions = query({
     mosqueSlug: v.string(),
     month: v.string(),
     year: v.optional(v.number()),
+    readSecret: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    checkOptionalReadSecret(args.readSecret);
     const mosqueSlug = validateMosqueSlug(args.mosqueSlug);
     const month = validateMonth(args.month);
     const year = validateYear(args.year ?? new Date().getFullYear());
@@ -197,8 +220,9 @@ export const getDataVersions = query({
 });
 
 export const getUkDstDates = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { readSecret: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    requireReadSecret(args.readSecret);
     const doc = await ctx.db
       .query("ukDstCalendar")
       .withIndex("by_key", (q) => q.eq("key", "singleton"))
