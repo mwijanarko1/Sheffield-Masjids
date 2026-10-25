@@ -2,6 +2,15 @@
   "month": "JULY",
   "prayer_times": [
     {
+      "date": 1,
+      "fajr": "01:24",
+      "shurooq": "04:40",
+      "dhuhr": "13:15",
+      "asr": "18:52",
+      "maghrib": "21:44",
+      "isha": "22:40"
+    },
+    {
       "date": 2,
       "fajr": "01:24",
       "shurooq": "04:41",
@@ -274,6 +283,14 @@
   ],
   "iqamah_times": [
     {
+      "date_range": "1",
+      "fajr": "04:10",
+      "dhuhr": "13:45",
+      "asr": "20:00",
+      "maghrib": "21:44",
+      "isha": "22:50"
+    },
+    {
       "date_range": "2",
       "fajr": "04:10",
       "dhuhr": "13:45",
@@ -287,7 +304,8 @@
       "dhuhr": "13:30",
       "asr": "20:00",
       "maghrib": "21:43",
-      "isha": "22:50"
+      "isha": "22:50",
+      "jummah": "13:30"
     },
     {
       "date_range": "4",
@@ -343,7 +361,8 @@
       "dhuhr": "13:30",
       "asr": "20:00",
       "maghrib": "21:38",
-      "isha": "22:45"
+      "isha": "22:45",
+      "jummah": "13:30"
     },
     {
       "date_range": "11",
@@ -399,7 +418,8 @@
       "dhuhr": "13:30",
       "asr": "20:00",
       "maghrib": "21:30",
-      "isha": "22:45"
+      "isha": "22:45",
+      "jummah": "13:30"
     },
     {
       "date_range": "18",
@@ -455,7 +475,8 @@
       "dhuhr": "13:30",
       "asr": "20:00",
       "maghrib": "21:21",
-      "isha": "22:35"
+      "isha": "22:35",
+      "jummah": "13:30"
     },
     {
       "date_range": "25",
@@ -511,7 +532,8 @@
       "dhuhr": "13:30",
       "asr": "20:00",
       "maghrib": "21:09",
-      "isha": "22:30"
+      "isha": "22:30",
+      "jummah": "13:30"
     }
   ],
   "jummah_iqamah": "13:30"
