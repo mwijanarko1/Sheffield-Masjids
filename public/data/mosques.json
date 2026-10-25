@@ -4132,6 +4132,19 @@
       "website": "https://wybournislamiccentre.org"
     },
     {
+      "id": "hanfia-masjid-and-islamic-cultural-centre",
+      "name": "Hanfia Masjid and Islamic Cultural Centre",
+      "address": "372 Sheffield Road, Tinsley, Sheffield S9 1RQ, United Kingdom",
+      "lat": 53.4164508,
+      "lng": -1.3982029,
+      "slug": "hanfia-masjid-and-islamic-cultural-centre",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false
+    },
+    {
       "id": "markaz-muaadh-bin-jabal",
       "name": "Markaz Mu'aadh bin Jabal",
       "address": "Slough SL1 2SA, United Kingdom",
