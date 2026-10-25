@@ -8,7 +8,9 @@ Sources:
 masjidbox.com web bundle, passed via MASJIDBOX_APIKEY).
 
 Both branches publish a single set of times (every MasjidBox iqamah field equals
-the prayer field, to the minute), so adhan and iqamah are stored identically, as published.
+the prayer field, to the minute). Per Mikhail (25 Oct 2026) the published time is
+stored as ADHAN ONLY: iqamah_times is an empty list (adhan-only convention, API
+returns "iqamah": null). The published Friday Jumuah time is kept in jummah_iqamah.
 Times are kept as the published local wall-clock time (BST to 24 Oct, GMT after).
 """
 import json, os, re, sys, urllib.request
@@ -45,7 +47,7 @@ def build(local_slug, SLUG):
 
     OUT.mkdir(parents=True, exist_ok=True)
     for mnum, mname in MONTHS.items():
-        pt, iq, jum = [], [], []
+        pt, jum = [], []
         d = date(2026, mnum, 1)
         while d.month == mnum:
             t = days[d.isoformat()]
@@ -53,15 +55,12 @@ def build(local_slug, SLUG):
             pt.append({"date": d.day, "fajr": hhmm(t["fajr"]), "shurooq": hhmm(t["sunrise"]),
                        "dhuhr": hhmm(t["dhuhr"]), "asr": hhmm(t["asr"]),
                        "maghrib": hhmm(t["maghrib"]), "isha": hhmm(t["isha"])})
-            row = {"date_range": str(d.day), "fajr": hhmm(q.get("fajr")), "dhuhr": hhmm(q.get("dhuhr")),
-                   "asr": hhmm(q.get("asr")), "maghrib": hhmm(q.get("maghrib")), "isha": hhmm(q.get("isha"))}
             js = q.get("jumuah") or t.get("jumuah") or []
             if js:
                 jum.append(" / ".join(hhmm(x) for x in js))
-            iq.append(row)
             d += timedelta(days=1)
         jset = sorted(set(jum))
-        out = {"month": mname.upper(), "prayer_times": pt, "iqamah_times": iq,
+        out = {"month": mname.upper(), "prayer_times": pt, "iqamah_times": [],
                "jummah_iqamah": jset[0] if len(jset) == 1 else ""}
         if len(jset) > 1:
             print(f"{mname}: multiple jummah values {jset}", file=sys.stderr)
