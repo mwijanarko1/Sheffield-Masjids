@@ -3788,6 +3788,20 @@
       "website": "https://www.masjidsaliheen.com"
     },
     {
+      "id": "oasis-faith-and-spirituality-centre-preston",
+      "name": "Oasis Faith & Spirituality Centre (University of Lancashire)",
+      "address": "Kirkham Street (Off Fylde Rd), Preston, PR1 2XQ, United Kingdom",
+      "lat": 53.7636,
+      "lng": -2.7098,
+      "slug": "oasis-faith-and-spirituality-centre-preston",
+      "citySlug": "preston",
+      "cityName": "Preston",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.lancashire.ac.uk/student-life/oasis-centre"
+    },
+    {
       "id": "al-quba-jamia-masjid",
       "name": "Al-Quba Jamia Masjid",
       "address": "1 Copenhagen Street, Rochdale OL16 2HD, United Kingdom",
