@@ -48,7 +48,10 @@ def normalize_time(value: str, prayer: str) -> str:
             hour += 12
         if meridiem == "AM" and hour == 12:
             hour = 0
-    elif prayer in {"dhuhr", "asr", "maghrib", "isha"} and hour < 12:
+    elif prayer == "dhuhr" and hour < 10:
+        # Dhuhr straddles noon: unsuffixed 11:54 is morning, 1:05 is afternoon.
+        hour += 12
+    elif prayer in {"asr", "maghrib", "isha"} and hour < 12:
         hour += 12
     elif prayer == "fajr" and hour == 12:
         hour = 0

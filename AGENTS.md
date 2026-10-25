@@ -162,6 +162,8 @@ npx tsx scripts/seed-convex.ts --slug al-huda-preston,al-ansaar-preston
 
 - **Always pass `--prod` for routine seeding.** The script still defaults to dev when this flag is omitted; retain that capability for explicitly requested testing.
 - `--slug <ids>`: seed only the named mosque(s), comma-separated. Use this after committing fixes.
+- **Plausibility guard**: every month is checked by `scripts/lib/monthly-times-guard.ts` before it is written. A month is refused (exit code 1) when a Dhuhr adhan falls outside 10:00-15:00 (typical 12h AM/PM mistakes: `11:49` -> `23:49`, `1:07` -> `01:07`) or every adhan/jamaat on a row is the same time (e.g. all `01:00`). Fix the conversion from the official source; pass `--allow-suspicious-times` only if the source really publishes those values. `npm run test:seed-guard` checks all repo files against the guard and a documented list of known suspect files.
+- **Orphan months**: `--slug` and full seeds skip months with no repo file, so an old Convex row for that month stays live. `--slug` now prints `! <month>: Convex has data but the repo has no <month>.json`. After confirming the source does not publish that month, remove it with `--slug <id> --months <month> --prod` (a missing file plus `--months` calls `removeMonthly`).
 - `--changed`: seeds only files that differ from HEAD. Use before committing, not after.
 - Omit both flags for a full re-seed (all 290 mosques x 12 months, takes ~10 min).
 - **Dev**: `upbeat-goat-583.eu-west-1.convex.cloud`, forces `isHidden: false`. Optional testing only; do not routinely maintain a duplicate dataset.
