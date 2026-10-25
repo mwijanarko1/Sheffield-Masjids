@@ -32,7 +32,7 @@ Sheffield Masjids provides prayer times for mosques in Sheffield, other UK citie
 
 If your browser supports WebMCP, use the tools registered through \`document.modelContext\` instead of scraping the interface. Call \`search_mosques\` first to resolve the mosque, then call \`get_prayer_times\` with the mosque and optional date. The site also provides \`open_mosque\` and \`select_mosque\`.
 
-If WebMCP is unavailable, resolve a slug from \`GET /data/mosques.json\`, then call \`GET /api/prayer-times?mosque={slug}&date={YYYY-MM-DD}\`. The date is optional. This static-data endpoint does not query Convex and is limited to 60 requests per minute per client IP.
+If WebMCP is unavailable, resolve a slug from \`GET /data/mosques.json\`, then call \`GET /api/prayer-times?mosque={slug}&date={YYYY-MM-DD}\`. The date is optional. This static-data endpoint does not query Convex and is limited to 60 requests per minute per client IP. When a mosque publishes adhan times only for a day, the response has \`iqamah: null\`; do not estimate iqamah.
 
 Ask the user to name their mosque when they request an iqamah time without specifying one, because congregation times vary by mosque.
 

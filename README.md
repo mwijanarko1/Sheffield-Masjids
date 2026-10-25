@@ -91,7 +91,7 @@ HTTP-only agents can resolve a slug from `GET /data/mosques.json`, then request:
 GET /api/prayer-times?mosque=madina-masjid-sheffield&date=2026-04-10
 ```
 
-`date` is optional and defaults to today in Europe/London. The endpoint reads published static timetable files, never Convex, caches successful responses, and applies a best-effort per-instance limit of 60 requests per minute per client IP. Production should also enforce the same rule at the hosting firewall for a globally consistent limit.
+`date` is optional and defaults to today in Europe/London. A `200` response has `adhan` and `iqamah` objects; `iqamah` is `null` on days whose published timetable has adhan times but no iqamah entry (adhan-only months), and is never filled in or calculated. A day with no published adhan row returns `404`. The endpoint reads published static timetable files, never Convex, caches successful responses, and applies a best-effort per-instance limit of 60 requests per minute per client IP. Production should also enforce the same rule at the hosting firewall for a globally consistent limit.
 
 ## Reporting API Problems
 

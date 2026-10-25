@@ -21,7 +21,7 @@ If neither MCP nor WebMCP is available, use the HTTP API instead. Do not scrape 
 2. Request `GET https://www.sheffieldmasjids.com/api/prayer-times?mosque={slug}&date={YYYY-MM-DD}`.
 3. The `date` parameter is optional and defaults to today in Europe/London.
 
-A successful response contains mosque details, date, timezone, separate `adhan` and `iqamah` objects, and `source: "published-static-data"`. The endpoint reads published static files and does not query Convex. It allows 60 requests per minute per client IP, returns `429` with `Retry-After` when exceeded, and supplies `RateLimit-*` headers.
+A successful response contains mosque details, date, timezone, separate `adhan` and `iqamah` objects, and `source: "published-static-data"`. `iqamah` is `null` when the mosque publishes adhan times but no iqamah (congregation) times for that day; report the adhan times and say that iqamah is not published. Never infer iqamah from adhan. Inside an `iqamah` object, `"-"` means that prayer's jamaat cell is blank in the source. A `404` means the mosque or that day's adhan times are not published. The endpoint reads published static files and does not query Convex. It allows 60 requests per minute per client IP, returns `429` with `Retry-After` when exceeded, and supplies `RateLimit-*` headers.
 
 ## Reporting API problems
 
