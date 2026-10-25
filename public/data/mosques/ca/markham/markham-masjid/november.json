@@ -3,12 +3,12 @@
   "prayer_times": [
     {
       "date": 1,
-      "fajr": "06:33",
-      "shurooq": "07:53",
-      "dhuhr": "13:01",
-      "asr": "16:25",
-      "maghrib": "18:11",
-      "isha": "19:29"
+      "fajr": "05:33",
+      "shurooq": "06:53",
+      "dhuhr": "12:01",
+      "asr": "15:25",
+      "maghrib": "17:11",
+      "isha": "18:29"
     },
     {
       "date": 2,
@@ -275,11 +275,11 @@
   "iqamah_times": [
     {
       "date_range": "1",
-      "fajr": "06:45",
-      "dhuhr": "13:45",
-      "asr": "16:45",
-      "maghrib": "18:11",
-      "isha": "20:00"
+      "fajr": "05:45",
+      "dhuhr": "12:45",
+      "asr": "15:45",
+      "maghrib": "17:11",
+      "isha": "19:00"
     },
     {
       "date_range": "2",

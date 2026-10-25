@@ -219,39 +219,39 @@
     },
     {
       "date": 25,
-      "fajr": "06:22",
-      "shurooq": "08:03",
-      "dhuhr": "13:06",
+      "fajr": "05:22",
+      "shurooq": "07:03",
+      "dhuhr": "12:06",
       "asr": "15:07",
-      "maghrib": "18:02",
-      "isha": "19:42"
+      "maghrib": "17:02",
+      "isha": "18:42"
     },
     {
       "date": 26,
-      "fajr": "06:24",
-      "shurooq": "08:06",
-      "dhuhr": "13:06",
+      "fajr": "05:24",
+      "shurooq": "07:06",
+      "dhuhr": "12:06",
       "asr": "15:05",
-      "maghrib": "17:59",
-      "isha": "19:40"
+      "maghrib": "16:59",
+      "isha": "18:40"
     },
     {
       "date": 27,
-      "fajr": "06:26",
-      "shurooq": "08:08",
-      "dhuhr": "13:06",
+      "fajr": "05:26",
+      "shurooq": "07:08",
+      "dhuhr": "12:06",
       "asr": "15:03",
-      "maghrib": "17:57",
-      "isha": "19:38"
+      "maghrib": "16:57",
+      "isha": "18:38"
     },
     {
       "date": 28,
-      "fajr": "06:28",
-      "shurooq": "08:10",
-      "dhuhr": "13:06",
+      "fajr": "05:28",
+      "shurooq": "07:10",
+      "dhuhr": "12:06",
       "asr": "15:01",
-      "maghrib": "17:55",
-      "isha": "19:36"
+      "maghrib": "16:55",
+      "isha": "18:36"
     },
     {
       "date": 29,
@@ -476,35 +476,35 @@
     },
     {
       "date_range": "25",
-      "fajr": "07:15",
-      "dhuhr": "14:00",
+      "fajr": "06:30",
+      "dhuhr": "13:00",
       "asr": "16:30",
-      "maghrib": "18:07",
-      "isha": "20:15"
+      "maghrib": "17:07",
+      "isha": "19:15"
     },
     {
       "date_range": "26",
-      "fajr": "07:15",
-      "dhuhr": "14:00",
+      "fajr": "06:30",
+      "dhuhr": "13:00",
       "asr": "16:30",
-      "maghrib": "18:04",
-      "isha": "20:15"
+      "maghrib": "17:04",
+      "isha": "19:15"
     },
     {
       "date_range": "27",
-      "fajr": "07:30",
-      "dhuhr": "14:00",
+      "fajr": "06:30",
+      "dhuhr": "13:00",
       "asr": "16:30",
-      "maghrib": "18:02",
-      "isha": "20:15"
+      "maghrib": "17:02",
+      "isha": "19:15"
     },
     {
       "date_range": "28",
-      "fajr": "07:30",
-      "dhuhr": "14:00",
+      "fajr": "06:30",
+      "dhuhr": "13:00",
       "asr": "16:15",
-      "maghrib": "18:00",
-      "isha": "20:15"
+      "maghrib": "17:00",
+      "isha": "19:15"
     },
     {
       "date_range": "29",
