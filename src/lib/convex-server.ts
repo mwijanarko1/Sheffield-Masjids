@@ -17,6 +17,12 @@ export type ServerConvex = {
   /** Spread into query args. Empty when no read secret is configured. */
   readArgs: { readSecret?: string };
   readSecret: string | null;
+  /**
+   * Fresh client whose HTTP requests abort with `signal`. The shared `client`
+   * queues mutations and cannot cancel one in flight, so calls that must be
+   * independent and abortable (the rate limiter) use this instead.
+   */
+  clientWithSignal(signal: AbortSignal): ConvexHttpClient;
 };
 
 let cached: { key: string; value: ServerConvex } | null = null;
@@ -32,6 +38,8 @@ export function getServerConvex(env: Record<string, string | undefined> = proces
     client: new ConvexHttpClient(url),
     readArgs: readSecret ? { readSecret } : {},
     readSecret,
+    clientWithSignal: (signal) =>
+      new ConvexHttpClient(url, { fetch: (input, init) => fetch(input, { ...init, signal }) }),
   };
   cached = { key, value };
   return value;

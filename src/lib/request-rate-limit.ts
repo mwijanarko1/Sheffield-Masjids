@@ -72,16 +72,6 @@ export function sharedRateLimitKey(scope: string, ip: string, secret: string): s
   return `api:${scope}:${digest}`;
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error("Shared rate limit timed out")), ms);
-    promise.then(
-      (value) => { clearTimeout(timer); resolve(value); },
-      (error) => { clearTimeout(timer); reject(error); },
-    );
-  });
-}
-
 /**
  * Shared rate limit backed by Convex `rateLimits:consume` (the same
  * `rateLimitBuckets` table the push registration limiter uses), so the limit
@@ -99,19 +89,25 @@ export async function checkSharedRateLimit(args: {
   const ip = clientIp(args.headers);
   const convex = getServerConvex(args.env);
   if (convex?.readSecret) {
+    // One abortable client per call: the shared client would queue this mutation
+    // behind a slow one, and a timeout would leave the HTTP request running.
+    const controller = new AbortController();
+    const timer = setTimeout(
+      () => controller.abort(new Error("Shared rate limit timed out")),
+      SHARED_TIMEOUT_MS,
+    );
     try {
-      const result = await withTimeout(
-        convex.client.mutation(consumeRef, {
-          readSecret: convex.readSecret,
-          key: sharedRateLimitKey(args.scope, ip, convex.readSecret),
-          limit: args.limit,
-          windowMs: args.windowMs,
-        }),
-        SHARED_TIMEOUT_MS,
-      );
+      const result = await convex.clientWithSignal(controller.signal).mutation(consumeRef, {
+        readSecret: convex.readSecret,
+        key: sharedRateLimitKey(args.scope, ip, convex.readSecret),
+        limit: args.limit,
+        windowMs: args.windowMs,
+      });
       return { ...result, store: "shared" };
     } catch (error) {
       console.warn("Shared rate limit unavailable, using per-instance limiter.", error);
+    } finally {
+      clearTimeout(timer);
     }
   }
 
