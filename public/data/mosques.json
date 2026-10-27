@@ -582,6 +582,20 @@
       "website": "https://www.altrinchammosque.org/"
     },
     {
+      "id": "ashton-central-mosque",
+      "name": "Ashton Central Mosque",
+      "address": "Hillgate Street, Ashton-under-Lyne OL6 9JA, United Kingdom",
+      "lat": 53.4925016,
+      "lng": -2.0866321,
+      "slug": "ashton-central-mosque",
+      "citySlug": "ashton-under-lyne",
+      "cityName": "Ashton-under-Lyne",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.ashtoncentralmosque.com/"
+    },
+    {
       "id": "masjid-e-hamzah",
       "name": "Masjid-E-Hamzah",
       "address": "Katherine Street, Ashton-under-Lyne OL7 0AN, United Kingdom",
