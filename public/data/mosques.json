@@ -5341,6 +5341,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://warringtonislamicassociation.org.uk"
+    },
+    {
+      "id": "hyde-jamia-mosque",
+      "name": "Hyde Jamia Mosque",
+      "address": "21 Jackson Street, Hyde SK14 1BX, United Kingdom",
+      "lat": 53.4501164,
+      "lng": -2.0815765,
+      "slug": "hyde-jamia-mosque",
+      "citySlug": "hyde",
+      "cityName": "Hyde",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://hydejamiamasjid.co.uk"
+    },
+    {
+      "id": "faizan-e-madina-leicester",
+      "name": "Faizan e Madina Leicester",
+      "address": "Malabar Road, Leicester LE1 2LG, United Kingdom",
+      "lat": 52.6401659,
+      "lng": -1.1191646,
+      "slug": "faizan-e-madina-leicester",
+      "citySlug": "leicester",
+      "cityName": "Leicester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://faizanemadina.co.uk"
     }
   ]
 }
