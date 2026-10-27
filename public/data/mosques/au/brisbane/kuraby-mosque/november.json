@@ -1,0 +1,42 @@
+{
+  "month": "NOVEMBER",
+  "prayer_times": [
+    {
+      "date": 1,
+      "fajr": "04:05",
+      "shurooq": "04:57",
+      "dhuhr": "12:35",
+      "asr": "16:20",
+      "maghrib": "18:07",
+      "isha": "19:50"
+    },
+    {
+      "date": 2,
+      "fajr": "04:05",
+      "shurooq": "04:56",
+      "dhuhr": "12:35",
+      "asr": "16:20",
+      "maghrib": "18:07",
+      "isha": "19:50"
+    }
+  ],
+  "iqamah_times": [
+    {
+      "date_range": "1",
+      "fajr": "04:15",
+      "dhuhr": "12:45",
+      "asr": "16:30",
+      "maghrib": "18:07",
+      "isha": "20:00"
+    },
+    {
+      "date_range": "2",
+      "fajr": "04:15",
+      "dhuhr": "12:45",
+      "asr": "16:30",
+      "maghrib": "18:07",
+      "isha": "20:00"
+    }
+  ],
+  "jummah_iqamah": "12:45"
+}
