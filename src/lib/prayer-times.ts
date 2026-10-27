@@ -6,17 +6,24 @@ import {
   resolveMosqueLocationForSlug,
   type MosqueLocation,
 } from '@/lib/mosque-data-path';
+import timetableCoverage from '../../public/data/timetable-coverage.json';
 
 // Data path
 // ---------
 // Server (RSC, route handlers): Convex via src/lib/convex-server.ts, using the
-// server-only CONVEX_URL and CONVEX_READ_SECRET. Repo JSON on disk is the
-// fallback when Convex is not configured, fails, or has no row.
+// server-only CONVEX_URL and CONVEX_READ_SECRET. When Convex answers, its answer
+// is final: a month it does not have is unavailable, not a reason to read repo
+// JSON. Repo JSON on disk is the fallback only when Convex is not configured or
+// the call fails, and only for years in timetable-coverage.json (the month files
+// are not year-stamped).
 // Browser (client components): our own /api/timetable route, which runs the
 // server path above. The browser never receives the Convex URL and never calls
-// Convex directly. The public /data JSON is the fallback if that route fails.
+// Convex directly. The public /data JSON is the fallback if that route fails
+// (not when it answers 404), under the same year rule.
 
 const PRAYER_TIMES_CACHE_TTL_MS = 10 * 60 * 1000;
+// Matches the 60s s-maxage on static-fallback responses so recovery is not delayed.
+const STATIC_FALLBACK_CACHE_TTL_MS = 60 * 1000;
 const MAX_MONTHLY_CACHE_ENTRIES = 180;
 const MAX_RAMADAN_CACHE_ENTRIES = 45;
 const FETCH_TIMEOUT_MS = 6_000;
@@ -41,10 +48,10 @@ function parseTrustedJson<T>(source: string): T {
   return JSON.parse(source) as T;
 }
 
-function createTimedEntry<T>(value: T): TimedCacheEntry<T> {
+function createTimedEntry<T>(value: T, ttlMs: number = PRAYER_TIMES_CACHE_TTL_MS): TimedCacheEntry<T> {
   return {
     value,
-    expiresAt: Date.now() + PRAYER_TIMES_CACHE_TTL_MS,
+    expiresAt: Date.now() + ttlMs,
   };
 }
 
@@ -191,8 +198,18 @@ function timetableApiUrl(params: Record<string, string>): string {
   return `/api/timetable?${new URLSearchParams(params).toString()}`;
 }
 
-const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyPrayerTimes>>();
-const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyPrayerTimes>>();
+/** "static-fallback" means repo JSON answered instead of Convex. */
+export type MonthlyDataSource = 'convex' | 'static-fallback';
+export type MonthlyLoadResult = { data: MonthlyPrayerTimes; source: MonthlyDataSource };
+
+const monthlyPrayerTimesCache = new Map<string, TimedCacheEntry<MonthlyLoadResult>>();
+const monthlyPrayerTimesInFlight = new Map<string, Promise<MonthlyLoadResult>>();
+
+function assertStaticYearCovered(year: number): void {
+  if (!timetableCoverage.years.includes(year)) {
+    throw new Error(`No static timetable for ${year}.`);
+  }
+}
 
 // Ramadan data structure (optional per-mosque)
 interface RamadanData {
@@ -435,14 +452,14 @@ function findDayData(prayerTimes: PrayerTime[], dayOfMonth: number): PrayerTime 
 }
 
 /**
- * Load monthly prayer times from JSON file
+ * Load monthly prayer times, with whether Convex or the repo JSON fallback answered.
  */
-export async function loadMonthlyPrayerTimes(
+export async function loadMonthlyPrayerTimesWithSource(
   slug: string,
   month: number,
   year: number = getCurrentYearInSheffield(),
   location?: MosqueLocation,
-): Promise<MonthlyPrayerTimes> {
+): Promise<MonthlyLoadResult> {
   const safeSlug = normalizeMosqueSlug(slug);
   const mosqueLocation = location ?? resolveMosqueLocationForSlug(safeSlug);
   const monthFile = MONTH_FILES.get(month);
@@ -462,9 +479,20 @@ export async function loadMonthlyPrayerTimes(
     return inFlight;
   }
 
-  const loadPromise = (async (): Promise<MonthlyPrayerTimes> => {
+  const cacheResult = (result: MonthlyLoadResult): MonthlyLoadResult => {
+    setBoundedCacheEntry(
+      monthlyPrayerTimesCache,
+      cacheKey,
+      createTimedEntry(result, result.source === 'static-fallback' ? STATIC_FALLBACK_CACHE_TTL_MS : undefined),
+      MAX_MONTHLY_CACHE_ENTRIES,
+    );
+    return result;
+  };
+
+  const loadPromise = (async (): Promise<MonthlyLoadResult> => {
     try {
       const convex = await getConvexForServer();
+      let convexHasNoMonth = false;
       if (convex) {
         try {
           const { api } = await import('../../convex/_generated/api');
@@ -475,62 +503,59 @@ export async function loadMonthlyPrayerTimes(
             ...convex.readArgs,
           });
           if (data) {
-            setBoundedCacheEntry(
-              monthlyPrayerTimesCache,
-              cacheKey,
-              createTimedEntry(data),
-              MAX_MONTHLY_CACHE_ENTRIES,
-            );
-            return data;
+            return cacheResult({ data, source: 'convex' });
           }
+          convexHasNoMonth = true;
         } catch (error) {
           console.warn('Convex monthly query failed, falling back to static JSON.', error);
         }
       }
 
-      let data: MonthlyPrayerTimes;
+      if (convexHasNoMonth) {
+        throw new Error(`Prayer times for ${monthFile} ${year} are not published.`);
+      }
 
       if (typeof window === 'undefined') {
+        assertStaticYearCovered(year);
         const fs = await import('fs/promises');
         const path = await import('path');
         const filePath = path.join(getMosqueDataFsDir(process.cwd(), safeSlug, mosqueLocation), `${monthFile}.json`);
-        data = parseTrustedJson<MonthlyPrayerTimes>(await fs.readFile(filePath, 'utf-8'));
-      } else {
-        try {
-          const apiResponse = await fetchWithRetry(
-            timetableApiUrl({ mosque: safeSlug, month: String(month), year: String(year) }),
-          );
-          if (apiResponse.ok) {
-            const payload = parseTrustedJson<{ monthly: MonthlyPrayerTimes }>(await apiResponse.text());
-            setBoundedCacheEntry(
-              monthlyPrayerTimesCache,
-              cacheKey,
-              createTimedEntry(payload.monthly),
-              MAX_MONTHLY_CACHE_ENTRIES,
-            );
-            return payload.monthly;
-          }
-        } catch (error) {
-          console.warn('Timetable API monthly request failed, falling back to static JSON.', error);
-        }
-
-        const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
-        const response = await fetchWithRetry(publicUrl);
-
-        if (!response.ok) {
-          throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
-        }
-
-        data = parseTrustedJson<MonthlyPrayerTimes>(await response.text());
+        const data = parseTrustedJson<MonthlyPrayerTimes>(await fs.readFile(filePath, 'utf-8'));
+        return cacheResult({ data, source: 'static-fallback' });
       }
 
-      setBoundedCacheEntry(
-        monthlyPrayerTimesCache,
-        cacheKey,
-        createTimedEntry(data),
-        MAX_MONTHLY_CACHE_ENTRIES,
-      );
-      return data;
+      let apiHasNoMonth = false;
+      try {
+        const apiResponse = await fetchWithRetry(
+          timetableApiUrl({ mosque: safeSlug, month: String(month), year: String(year) }),
+        );
+        if (apiResponse.ok) {
+          const payload = parseTrustedJson<{ monthly: MonthlyPrayerTimes }>(await apiResponse.text());
+          return cacheResult({
+            data: payload.monthly,
+            source: apiResponse.headers.get('X-Data-Source') === 'static-fallback' ? 'static-fallback' : 'convex',
+          });
+        }
+        apiHasNoMonth = apiResponse.status === 404;
+      } catch (error) {
+        console.warn('Timetable API monthly request failed, falling back to static JSON.', error);
+      }
+
+      if (apiHasNoMonth) {
+        throw new Error(`Prayer times for ${monthFile} ${year} are not available.`);
+      }
+      assertStaticYearCovered(year);
+      const publicUrl = getMosqueMonthlyJsonUrl(mosqueLocation, safeSlug, monthFile);
+      const response = await fetchWithRetry(publicUrl);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load prayer times for ${monthFile}. Status: ${response.status}`);
+      }
+
+      return cacheResult({
+        data: parseTrustedJson<MonthlyPrayerTimes>(await response.text()),
+        source: 'static-fallback',
+      });
     } catch (error) {
       console.error(`Error loading prayer times for ${monthFile}:`, error);
       throw error;
@@ -544,6 +569,15 @@ export async function loadMonthlyPrayerTimes(
   } finally {
     monthlyPrayerTimesInFlight.delete(cacheKey);
   }
+}
+
+/**
+ * Load monthly prayer times from Convex, or the covered-year repo JSON fallback.
+ */
+export async function loadMonthlyPrayerTimes(
+  ...args: Parameters<typeof loadMonthlyPrayerTimesWithSource>
+): Promise<MonthlyPrayerTimes> {
+  return (await loadMonthlyPrayerTimesWithSource(...args)).data;
 }
 
 /**

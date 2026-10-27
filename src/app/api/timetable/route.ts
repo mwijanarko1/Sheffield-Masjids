@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import mosquesData from "../../../../public/data/mosques.json";
-import { loadMonthlyPrayerTimes, loadRamadanCalendar } from "@/lib/prayer-times";
+import { loadMonthlyPrayerTimesWithSource, loadRamadanCalendar } from "@/lib/prayer-times";
 import { publishedDateWindow } from "@/lib/published-prayer-times";
 import {
   checkSharedRateLimit,
@@ -13,7 +13,7 @@ import {
  * (monthly table, home widget, compare page, Ramadan table).
  *
  * It runs the server data path in src/lib/prayer-times.ts (Convex with the
- * server-only read secret, repo JSON fallback), so browsers get Convex data
+ * server-only read secret, covered-year repo JSON fallback), so browsers get Convex data
  * without the Convex URL ever being shipped to them.
  *
  * Inputs are strict so the CDN cache cannot be bypassed: only registry slugs,
@@ -26,6 +26,8 @@ export const runtime = "nodejs";
 const RATE_LIMIT = 240;
 const RATE_WINDOW_MS = 60_000;
 const CACHE = "public, max-age=60, s-maxage=300, stale-while-revalidate=86400";
+// Repo JSON fallback answers stay short-lived so the CDN returns to Convex soon after it recovers.
+const CACHE_FALLBACK = "public, max-age=30, s-maxage=60";
 const MONTHLY_PARAMS = new Set(["mosque", "month", "year"]);
 const RAMADAN_PARAMS = new Set(["mosque", "ramadan"]);
 const REGISTRY_SLUGS = new Set((mosquesData.mosques ?? []).map((mosque) => mosque.slug));
@@ -89,8 +91,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const ramadan = await loadRamadanCalendar(slug);
       return NextResponse.json({ ramadan }, { headers: { ...headers, "Cache-Control": CACHE } });
     }
-    const monthly = await loadMonthlyPrayerTimes(slug, month, year);
-    return NextResponse.json({ monthly }, { headers: { ...headers, "Cache-Control": CACHE } });
+    const { data: monthly, source } = await loadMonthlyPrayerTimesWithSource(slug, month, year);
+    const fromConvex = source === "convex";
+    return NextResponse.json({ monthly }, {
+      headers: {
+        ...headers,
+        "X-Data-Source": fromConvex ? "convex" : "static-fallback",
+        "Cache-Control": fromConvex ? CACHE : CACHE_FALLBACK,
+      },
+    });
   } catch {
     return NextResponse.json(
       { error: "Timetable not available." },
