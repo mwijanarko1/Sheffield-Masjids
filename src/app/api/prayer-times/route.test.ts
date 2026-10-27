@@ -3,7 +3,12 @@ import test from "node:test";
 import { NextRequest } from "next/server";
 import { GET } from "./route";
 
-test("returns prayer times from published static data", async () => {
+// These cases cover the repo JSON fallback (no Convex configured).
+// convex-read.test.ts covers the Convex read path.
+delete process.env.CONVEX_URL;
+delete process.env.CONVEX_READ_SECRET;
+
+test("falls back to published static data when Convex is not configured", async () => {
   const request = new NextRequest(
     "https://www.sheffieldmasjids.com/api/prayer-times?mosque=madina-masjid-sheffield&date=2026-04-10",
     { headers: { "x-forwarded-for": `test-${crypto.randomUUID()}` } },
@@ -90,5 +95,20 @@ test("days with no published adhan row still return 404", async () => {
     const { status, body } = await getApi(query);
     assert.equal(status, 404, query);
     assert.match(body.error, /not available|not found/, query);
+  }
+});
+
+test("rejects malformed and out-of-range dates with 400 before any lookup", async () => {
+  for (const date of ["2026-02-30", "2026-13-01", "2026-1-05", "26-01-05", "2026-01-05T00:00", "1999-01-01", "2200-06-01"]) {
+    const { status, body } = await getApi(`mosque=madina-masjid-sheffield&date=${encodeURIComponent(date)}`);
+    assert.equal(status, 400, date);
+    assert.match(body.error, /YYYY-MM-DD|between/, date);
+  }
+});
+
+test("rejects over-long or malformed mosque slugs with 400", async () => {
+  for (const mosque of ["", "Bad Slug", "a".repeat(65), "--x"]) {
+    const { status } = await getApi(`mosque=${encodeURIComponent(mosque)}&date=2026-10-30`);
+    assert.equal(status, 400, mosque);
   }
 });

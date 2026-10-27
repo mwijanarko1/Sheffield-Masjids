@@ -1,6 +1,6 @@
 import "server-only";
 
-import { ConvexHttpClient } from "convex/browser";
+import { getServerConvex } from "@/lib/convex-server";
 import { makeFunctionReference } from "convex/server";
 import mosquesData from "../../public/data/mosques.json";
 import { HIDDEN_MOSQUE_SLUGS } from "@/lib/site";
@@ -90,12 +90,11 @@ const STATIC_MOSQUES = dedupeMosques(
 );
 
 async function loadMosquesFromConvex(): Promise<Mosque[]> {
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
-  if (!convexUrl) return [];
+  const convex = getServerConvex();
+  if (!convex) return [];
 
   try {
-    const client = new ConvexHttpClient(convexUrl);
-    const data = await client.query(listMosquesQuery, {});
+    const data = await convex.client.query(listMosquesQuery, { ...convex.readArgs });
     if (!Array.isArray(data)) return [];
 
     return dedupeMosques(

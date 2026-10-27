@@ -117,7 +117,7 @@ function createHarness(configOverride: Partial<IntakeConfig> = {}) {
   };
 }
 
-const ENV = { VERCEL: "1", FEEDBACK_INTAKE_SECRET: "test-secret", NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud" };
+const ENV = { VERCEL: "1", FEEDBACK_INTAKE_SECRET: "test-secret", CONVEX_URL: "https://example.convex.cloud" };
 
 let reportCounter = 0;
 

@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdmin } from "./admin";
+import { checkOptionalReadSecret, requireReadSecret } from "./lib/readAccess";
 
 const DEFAULT_CITY = {
   slug: "sheffield",
@@ -78,17 +79,28 @@ async function bumpDataRevision(ctx) {
   });
 }
 
+/*
+ * Read access
+ * -----------
+ * LEFT PUBLIC (optional readSecret): list. The shipped Masjidly iOS and Android
+ * apps call mosques:list directly with no secret (mwijanarko1/masjidly
+ * ConvexPrayerRepository.swift line 18, ConvexPrayerRepository.kt line 31).
+ * LOCKED (readSecret required): listByCity, listCities. No external client
+ * calls them.
+ */
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { readSecret: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    checkOptionalReadSecret(args.readSecret);
     const mosques = await ctx.db.query("mosques").collect();
     return sortMosques(mosques.map(mosqueResponse));
   },
 });
 
 export const listByCity = query({
-  args: { citySlug: v.string() },
+  args: { citySlug: v.string(), readSecret: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    requireReadSecret(args.readSecret);
     const citySlug = normalizeCitySlug(args.citySlug);
     const mosques = await ctx.db.query("mosques").collect();
 
@@ -101,8 +113,9 @@ export const listByCity = query({
 });
 
 export const listCities = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { readSecret: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    requireReadSecret(args.readSecret);
     const storedCities = await ctx.db.query("cities").collect();
     const bySlug = new Map();
 

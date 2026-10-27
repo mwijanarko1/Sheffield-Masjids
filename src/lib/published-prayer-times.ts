@@ -1,5 +1,34 @@
+/**
+ * Published prayer times for /api/prayer-times, /api/mcp and the WebMCP
+ * get_prayer_times tool.
+ *
+ * Source of truth: Convex (prayerTimes:getMonthly / prayerTimes:getRamadan),
+ * read server-side with CONVEX_URL and CONVEX_READ_SECRET, the same way the
+ * mosque pages load data through src/lib/prayer-times.ts. When Convex answers,
+ * its answer is final: a month Convex does not have is a 404, even if a repo
+ * JSON file exists, so seeding Convex is the only step needed to publish or
+ * correct times.
+ *
+ * Fallback decision: the repository JSON under public/data/mosques stays as a
+ * fallback, used only when Convex is not configured (CONVEX_URL unset, for
+ * example local dev, tests, or a preview without env vars) or the Convex call
+ * fails (network error, outage, rejected secret). Reasons:
+ *   - The repo JSON is the seed input, so it is never newer than Convex; at
+ *     worst it is a few commits behind while builds for data-only changes are
+ *     skipped. A slightly stale timetable during an outage is better than no
+ *     timetable at prayer time.
+ *   - It keeps the rollout safe: if the new env vars are missing or wrong, the
+ *     API keeps answering instead of returning 500s.
+ *   - Fallback responses are labelled `source: "published-static-data"`, send
+ *     `X-Data-Source: static-fallback`, log a warning and use a shorter CDN
+ *     cache, so they are visible and recover quickly once Convex is back.
+ * Mosque resolution (slug, name, city, timezone, hidden flag) still uses the
+ * bundled public/data/mosques.json registry; registry edits trigger a deploy.
+ */
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { makeFunctionReference } from "convex/server";
+import { getServerConvex } from "@/lib/convex-server";
 import mosquesData from "../../public/data/mosques.json";
 import timetableCoverage from "../../public/data/timetable-coverage.json";
 import { getMosqueDataFsDir } from "@/lib/mosque-data-path";
@@ -77,8 +106,11 @@ export type PublishedPrayerTimes = {
    * (adhan-only months or days). Never filled in or calculated.
    */
   iqamah: DailyIqamahTimes | null;
-  source: "published-static-data";
+  /** "convex" normally; "published-static-data" when the repo JSON fallback answered. */
+  source: PublishedDataSourceName;
 };
+
+export type PublishedDataSourceName = "convex" | "published-static-data";
 
 export type PublishedLookupError = {
   error: string;
@@ -111,6 +143,39 @@ export function parsePublishedDate(
     return null;
   }
   return { key, year, month, day };
+}
+
+/**
+ * Accepted date window: from the first year in timetable-coverage.json to the
+ * year after the later of (last covered year, current London year). Anything
+ * else is a 400, so the CDN cache key space stays bounded and cannot be
+ * bypassed cheaply with arbitrary dates.
+ */
+export type PublishedDateWindow = { minYear: number; maxYear: number };
+
+export function publishedDateWindow(now = new Date()): PublishedDateWindow {
+  const covered = Array.from(publishedMonthlyYears());
+  const currentYear = Number(londonDateKey(now).slice(0, 4));
+  const minYear = covered.length > 0 ? Math.min(...covered) : currentYear;
+  const maxYear = Math.max(currentYear, ...covered) + 1;
+  return { minYear, maxYear };
+}
+
+export type PublishedDateCheck =
+  | { ok: true; date: { key: string; year: number; month: number; day: number } }
+  | { ok: false; error: string };
+
+export function validatePublishedDate(value: string | null | undefined, now = new Date()): PublishedDateCheck {
+  const date = parsePublishedDate(value);
+  if (!date) return { ok: false, error: "Date must be a valid YYYY-MM-DD value." };
+  const { minYear, maxYear } = publishedDateWindow(now);
+  if (date.year < minYear || date.year > maxYear) {
+    return {
+      ok: false,
+      error: `Date ${date.key} is not available: dates must be between ${minYear}-01-01 and ${maxYear}-12-31.`,
+    };
+  }
+  return { ok: true, date };
 }
 
 function publicMosques(): MosqueRecord[] {
@@ -180,11 +245,17 @@ function isMissingFile(error: NodeJS.ErrnoException): boolean {
   return error.code === "ENOENT";
 }
 
-async function readMonth(directory: string, month: number): Promise<MonthlyPrayerTimes> {
-  return readJson<MonthlyPrayerTimes>(join(directory, `${MONTH_FILES[month - 1]}.json`));
+async function readStaticMonth(directory: string, month: number): Promise<MonthlyPrayerTimes | null> {
+  try {
+    return await readJson<MonthlyPrayerTimes>(join(directory, `${MONTH_FILES[month - 1]}.json`));
+  } catch (error) {
+    // SAFETY: Node fs errors are ErrnoException; ENOENT means the month file is missing.
+    if (error instanceof Error && isMissingFile(error as NodeJS.ErrnoException)) return null;
+    throw error;
+  }
 }
 
-async function readRamadan(directory: string): Promise<RamadanData | null> {
+async function readStaticRamadan(directory: string): Promise<RamadanData | null> {
   try {
     return await readJson<RamadanData>(join(directory, "ramadan.json"));
   } catch (error) {
@@ -212,28 +283,67 @@ function publishedMonthlyYears(): Set<number> {
   return years;
 }
 
-function isYearCovered(year: number, ramadan: RamadanData | null): boolean {
-  if (publishedMonthlyYears().has(year)) return true;
-  if (!ramadan) return false;
-  const startYear = Number(ramadan.gregorian_start.slice(0, 4));
-  const endYear = Number(ramadan.gregorian_end.slice(0, 4));
-  return year >= startYear && year <= endYear;
+const getMonthlyRef = makeFunctionReference<
+  "query",
+  { mosqueSlug: string; month: string; year?: number; readSecret?: string },
+  MonthlyPrayerTimes | null
+>("prayerTimes:getMonthly");
+
+const getRamadanRef = makeFunctionReference<
+  "query",
+  { mosqueSlug: string; date?: string; readSecret?: string },
+  RamadanData | null
+>("prayerTimes:getRamadan");
+
+type DayTimetable = { monthly: MonthlyPrayerTimes | null; ramadan: RamadanData | null };
+
+async function loadFromConvex(
+  env: Record<string, string | undefined>,
+  slug: string,
+  date: { key: string; year: number; month: number },
+): Promise<DayTimetable | null> {
+  const convex = getServerConvex(env);
+  if (!convex) return null;
+  const [monthly, ramadan] = await Promise.all([
+    convex.client.query(getMonthlyRef, {
+      mosqueSlug: slug,
+      month: MONTH_FILES[date.month - 1],
+      year: date.year,
+      ...convex.readArgs,
+    }),
+    convex.client.query(getRamadanRef, { mosqueSlug: slug, date: date.key, ...convex.readArgs }),
+  ]);
+  return { monthly, ramadan };
+}
+
+async function loadFromRepoJson(
+  directory: string,
+  date: { year: number; month: number },
+): Promise<DayTimetable> {
+  const [ramadan, monthly] = await Promise.all([
+    readStaticRamadan(directory),
+    // The repo JSON month files are not year-stamped; only serve them for covered years.
+    publishedMonthlyYears().has(date.year) ? readStaticMonth(directory, date.month) : Promise.resolve(null),
+  ]);
+  return { monthly, ramadan };
 }
 
 export async function getPublishedPrayerTimes(args: {
   mosque: string;
   date?: string | null;
   projectRoot?: string;
+  env?: Record<string, string | undefined>;
 }): Promise<PublishedPrayerTimes | PublishedLookupError> {
   const mosqueInput = args.mosque.trim();
   if (!mosqueInput) {
     return { error: "A valid mosque slug or name is required.", status: 400 };
   }
 
-  const date = parsePublishedDate(args.date);
-  if (!date) {
-    return { error: "Date must be a valid YYYY-MM-DD value.", status: 400 };
+  const dateCheck = validatePublishedDate(args.date);
+  if (!dateCheck.ok) {
+    return { error: dateCheck.error, status: 400 };
   }
+  const { date } = dateCheck;
 
   const mosque = findPublishedMosque(mosqueInput);
   if (!mosque) {
@@ -248,62 +358,59 @@ export async function getPublishedPrayerTimes(args: {
     citySlug: mosque.citySlug || "sheffield",
   });
 
+  let source: PublishedDataSourceName = "convex";
+  let timetable: DayTimetable | null = null;
   try {
-    const ramadan = await readRamadan(directory);
-    if (!isYearCovered(date.year, ramadan)) {
-      return {
-        error: `Prayer times are not available for ${mosque.slug} in ${date.year}.`,
-        status: 404,
-      };
-    }
-
-    let prayer: PrayerTime | undefined;
-    let iqamah: DailyIqamahTimes | null = null;
-
-    if (ramadan && date.key >= ramadan.gregorian_start && date.key <= ramadan.gregorian_end) {
-      const day = ramadanDay(ramadan.gregorian_start, date.key);
-      prayer = ramadan.prayer_times.find((row) => row.ramadan_day === day);
-      iqamah = findIqamah(day, ramadan.iqamah_times, ramadan.jummah_iqamah);
-    } else {
-      const monthly = await readMonth(directory, date.month);
-      prayer = monthly.prayer_times.find((row) => row.date === date.day);
-      iqamah = findIqamah(date.day, monthly.iqamah_times, monthly.jummah_iqamah);
-    }
-
-    // A published adhan row without an iqamah entry is returned with `iqamah: null`;
-    // only a missing adhan row means the day is unavailable.
-    if (!prayer) {
-      return {
-        error: `Prayer times are not available for ${mosque.slug} on ${date.key}.`,
-        status: 404,
-      };
-    }
-
-    return {
-      mosque: summarizeMosque(mosque),
-      date: date.key,
-      timezone: mosque.timezone || "Europe/London",
-      adhan: {
-        fajr: prayer.fajr,
-        sunrise: prayer.shurooq,
-        dhuhr: prayer.dhuhr,
-        asr: prayer.asr,
-        maghrib: prayer.maghrib,
-        isha: prayer.isha,
-      },
-      iqamah,
-      source: "published-static-data",
-    };
+    timetable = await loadFromConvex(args.env ?? process.env, mosque.slug, date);
   } catch (error) {
-    // SAFETY: Node fs errors are ErrnoException; ENOENT means the month file is missing.
-    if (error instanceof Error && isMissingFile(error as NodeJS.ErrnoException)) {
-      return {
-        error: `Prayer times are not available for ${mosque.slug} on ${date.key}.`,
-        status: 404,
-      };
-    }
-    throw error;
+    console.warn(
+      `Convex prayer-times read failed for ${mosque.slug} on ${date.key}; serving repo JSON fallback.`,
+      error,
+    );
   }
+  if (!timetable) {
+    source = "published-static-data";
+    timetable = await loadFromRepoJson(directory, date);
+  }
+
+  const { monthly, ramadan } = timetable;
+  let prayer: PrayerTime | undefined;
+  let iqamah: DailyIqamahTimes | null = null;
+
+  if (ramadan && date.key >= ramadan.gregorian_start && date.key <= ramadan.gregorian_end) {
+    const day = ramadanDay(ramadan.gregorian_start, date.key);
+    prayer = ramadan.prayer_times.find((row) => row.ramadan_day === day);
+    iqamah = findIqamah(day, ramadan.iqamah_times ?? [], ramadan.jummah_iqamah);
+  } else if (monthly) {
+    prayer = monthly.prayer_times.find((row) => row.date === date.day);
+    iqamah = findIqamah(date.day, monthly.iqamah_times ?? [], monthly.jummah_iqamah);
+  }
+
+  // A published adhan row without an iqamah entry is returned with `iqamah: null`
+  // (adhan-only months have an empty iqamah_times list); only a missing adhan
+  // row means the day is unavailable.
+  if (!prayer) {
+    return {
+      error: `Prayer times are not available for ${mosque.slug} on ${date.key}.`,
+      status: 404,
+    };
+  }
+
+  return {
+    mosque: summarizeMosque(mosque),
+    date: date.key,
+    timezone: mosque.timezone || "Europe/London",
+    adhan: {
+      fajr: prayer.fajr,
+      sunrise: prayer.shurooq,
+      dhuhr: prayer.dhuhr,
+      asr: prayer.asr,
+      maghrib: prayer.maghrib,
+      isha: prayer.isha,
+    },
+    iqamah,
+    source,
+  };
 }
 
 export function isPublishedLookupError(

@@ -11,7 +11,6 @@ import {
   SITE_TITLE,
 } from "@/lib/site";
 import WebMcpTools from "@/components/WebMcpTools";
-import { ConvexProvider } from "@/providers/ConvexProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -93,27 +92,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased text-foreground">
-        <ConvexProvider>
-          <MasjidlyThemeProvider>
-            <MasjidlyPromoOverlayProvider>
-              <DynamicBackground />
-              <WebMcpTools />
-              <a
-                href="#main-content"
-                className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#47A6FF] px-4 py-2 font-medium text-white focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#1D2433]"
-              >
-                Skip to main content
-              </a>
-              <div
-                id="main-content"
-                tabIndex={-1}
-                className="relative z-10 h-[100dvh] min-h-0 overflow-y-auto overflow-x-hidden"
-              >
-                {children}
-              </div>
-            </MasjidlyPromoOverlayProvider>
-          </MasjidlyThemeProvider>
-        </ConvexProvider>
+        <MasjidlyThemeProvider>
+          <MasjidlyPromoOverlayProvider>
+            <DynamicBackground />
+            <WebMcpTools />
+            <a
+              href="#main-content"
+              className="absolute -left-[9999px] top-4 z-[100] rounded bg-[#47A6FF] px-4 py-2 font-medium text-white focus:left-4 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#1D2433]"
+            >
+              Skip to main content
+            </a>
+            <div
+              id="main-content"
+              tabIndex={-1}
+              className="relative z-10 h-[100dvh] min-h-0 overflow-y-auto overflow-x-hidden"
+            >
+              {children}
+            </div>
+          </MasjidlyPromoOverlayProvider>
+        </MasjidlyThemeProvider>
         <Analytics />
       </body>
     </html>

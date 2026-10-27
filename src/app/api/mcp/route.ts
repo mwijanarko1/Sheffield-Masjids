@@ -1,6 +1,10 @@
 import { createMcpHandler } from "mcp-handler";
 import { registerPrayerTools } from "@/lib/mcp/register-prayer-tools";
-import { checkRequestRateLimit } from "@/lib/request-rate-limit";
+import {
+  checkSharedRateLimit,
+  rateLimitHeaders,
+  retryAfterSeconds,
+} from "@/lib/request-rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -22,16 +26,14 @@ const handler = createMcpHandler(
   },
 );
 
-function clientKey(request: Request): string {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip")?.trim() ||
-    "unknown"
-  );
-}
-
 async function withRateLimit(request: Request): Promise<Response> {
-  const rate = checkRequestRateLimit(clientKey(request), RATE_LIMIT, RATE_WINDOW_MS);
+  const rate = await checkSharedRateLimit({
+    scope: "mcp",
+    headers: request.headers,
+    limit: RATE_LIMIT,
+    windowMs: RATE_WINDOW_MS,
+  });
+  const limitHeaders = rateLimitHeaders(RATE_LIMIT, rate);
   if (!rate.allowed) {
     return new Response(
       JSON.stringify({ error: "Rate limit exceeded. Try again in one minute." }),
@@ -39,10 +41,8 @@ async function withRateLimit(request: Request): Promise<Response> {
         status: 429,
         headers: {
           "Content-Type": "application/json",
-          "Retry-After": "60",
-          "RateLimit-Limit": String(RATE_LIMIT),
-          "RateLimit-Remaining": "0",
-          "RateLimit-Reset": String(Math.ceil(rate.resetAt / 1000)),
+          "Retry-After": retryAfterSeconds(rate.resetAt),
+          ...limitHeaders,
         },
       },
     );
@@ -50,9 +50,7 @@ async function withRateLimit(request: Request): Promise<Response> {
 
   const response = await handler(request);
   const headers = new Headers(response.headers);
-  headers.set("RateLimit-Limit", String(RATE_LIMIT));
-  headers.set("RateLimit-Remaining", String(rate.remaining));
-  headers.set("RateLimit-Reset", String(Math.ceil(rate.resetAt / 1000)));
+  for (const [name, value] of Object.entries(limitHeaders)) headers.set(name, value);
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,

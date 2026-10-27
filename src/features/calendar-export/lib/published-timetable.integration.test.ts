@@ -11,7 +11,7 @@ import type { MonthlyPrayerTimes, Mosque } from "@/types/prayer-times";
 // Integration uses bundled JSON, the real timetable loader, export builder, and ICS serializer.
 // Browser-only coverage cannot cheaply exercise both transition months for several source schedules.
 test("published mosque times survive loading, monthly display, and ICS export without DST corrections", async (t) => {
-  process.env.NEXT_PUBLIC_CONVEX_URL = "";
+  process.env.CONVEX_URL = "";
   const registry: { mosques: Mosque[] } = JSON.parse(await readFile("public/data/mosques.json", "utf8"));
 
   for (const slug of ["sheffield-grand-mosque", "madina-masjid-sheffield", "darululoom-siddiqia-masjid", "muslim-welfare-house", "masjid-risalah"]) {

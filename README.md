@@ -50,13 +50,15 @@ Create `.env.local` and set:
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
-NEXT_PUBLIC_CONVEX_URL=<your-convex-url>  # Optional - enables live backend
+CONVEX_URL=<your-convex-url>  # Optional, server only - enables live backend
+CONVEX_READ_SECRET=<secret>  # Optional, server only - must match CONVEX_READ_SECRET on the Convex deployment
 WEBMCP_ORIGIN_TRIAL_TOKEN=<token>  # Optional - Chrome WebMCP origin trial
 OPENAI_APPS_CHALLENGE_TOKEN=<token>  # Optional - OpenAI plugin domain verification
 ```
 
 - `NEXT_PUBLIC_SITE_URL` - Used for canonical URLs, `robots.txt`, and `sitemap.xml`. Falls back to `http://localhost:3000` if unset.
-- `NEXT_PUBLIC_CONVEX_URL` - When set, the app queries Convex for mosque registry, monthly prayer times, Ramadan timetables, and UK DST dates. Falls back to static JSON in `public/data/` if unset.
+- `CONVEX_URL` - Server-only Convex deployment URL. When set, the server reads mosques, monthly prayer times and Ramadan timetables from Convex (pages, `/api/prayer-times`, `/api/mcp`, and `/api/timetable`, which client components use). Browsers never get this URL. Falls back to static JSON in `public/data/` if unset or if Convex fails. `NEXT_PUBLIC_CONVEX_URL` is no longer read by the web app (local scripts still accept it).
+- `CONVEX_READ_SECRET` - Server-only secret sent as `readSecret` to Convex reads and to the shared API rate limiter (`rateLimits:consume`). Separate from `ADMIN_SECRET`, which must never be set in the web runtime.
 - `WEBMCP_ORIGIN_TRIAL_TOKEN` - When set, sends an `Origin-Trial` header so Chrome can enable WebMCP without a local flag. Register at https://developer.chrome.com/origintrials. Local testing also works with `chrome://flags/#enable-webmcp-testing`.
 - `OPENAI_APPS_CHALLENGE_TOKEN` - Exact plain-text token from the OpenAI Plugins portal, served at `/.well-known/openai-apps-challenge`.
 
@@ -181,7 +183,7 @@ Each monthly JSON file contains:
 
 ### Convex Integration (Optional)
 
-When `NEXT_PUBLIC_CONVEX_URL` is set, the app uses a live backend:
+When `CONVEX_URL` is set, the server uses a live backend:
 
 | Convex Table | Purpose |
 |-------------|---------|
@@ -192,11 +194,13 @@ When `NEXT_PUBLIC_CONVEX_URL` is set, the app uses a live backend:
 
 | Convex Function | Type | Purpose |
 |----------------|------|---------|
-| `mosques:list` | Query | Fetch all mosques |
+| `mosques:list` | Query | Fetch all mosques (public: Masjidly apps call it) |
 | `mosques:upsert` | Mutation | Add/update a mosque |
-| `prayerTimes:getMonthly` | Query | Get monthly prayer times |
-| `prayerTimes:getRamadan` | Query | Get Ramadan timetable |
-| `prayerTimes:getUkDstDates` | Query | Get UK DST dates |
+| `prayerTimes:getMonthly` | Query | Get monthly prayer times (public: Masjidly apps call it) |
+| `prayerTimes:getRamadan` | Query | Get Ramadan timetable (public: Masjidly apps call it) |
+| `prayerTimes:getUkDstDates` | Query | Get UK DST dates (requires `readSecret`) |
+| `mosques:listByCity`, `mosques:listCities` | Query | City views (require `readSecret`) |
+| `rateLimits:consume` | Mutation | Shared API rate limit (requires `readSecret`) |
 | `seed.*` | Mutations | Seed data from JSON |
 
 **Data flow:** All data access tries Convex first, falls back to static JSON. When Convex is configured, new masjids can be added without redeploying the site.

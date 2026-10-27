@@ -1,4 +1,4 @@
-import { mutation, internalMutation, query } from "./_generated/server";
+import { mutation, internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdmin } from "./admin";
 
@@ -292,8 +292,11 @@ export const listEnabledForMosque = internalMutation({
   },
 });
 
-/** Debug/admin count — does not expose tokens. */
-export const stats = query({
+/**
+ * Debug/admin count. Does not expose tokens. Internal: run it from the Convex
+ * dashboard or `npx convex run pushSubscriptions:stats --prod`. No client calls it.
+ */
+export const stats = internalQuery({
   args: {},
   handler: async (ctx) => {
     const sample = await ctx.db.query("pushSubscriptions").take(1000);

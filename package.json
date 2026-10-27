@@ -17,7 +17,8 @@
     "test:feedback": "tsx --test src/lib/feedback/*.test.ts",
     "test:iqamah-push": "tsx --test convex/lib/iqamahChangeDetect.test.ts convex/lib/pushTransport.test.ts",
     "test:mcp": "tsx --test src/lib/mcp/*.test.ts src/app/.well-known/openai-apps-challenge/route.test.ts",
-    "test:prayer-api": "tsx --test src/app/api/prayer-times/route.test.ts",
+    "test:prayer-api": "tsx --test src/app/api/prayer-times/*.test.ts src/app/api/timetable/route.test.ts src/lib/request-rate-limit.test.ts",
+    "test:convex-read-lock": "tsx --test convex/lib/readAccess.test.ts convex/lib/rateLimitBuckets.test.ts",
     "test:seed-guard": "tsx --test scripts/lib/monthly-times-guard.test.ts",
     "seed:dev": "tsx scripts/seed-convex.ts",
     "seed:prod": "tsx scripts/seed-convex.ts --prod"
