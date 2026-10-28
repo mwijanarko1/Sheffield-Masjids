@@ -88,7 +88,7 @@ test("mosques with published iqamah keep the same response shape", async () => {
 
 test("days with no published adhan row still return 404", async () => {
   for (const query of [
-    "mosque=essalam-mosque&date=2026-11-24", // past the last published November row
+    "mosque=essalam-mosque&date=2026-11-30", // past the last published November row (26th)
     "mosque=essalam-mosque&date=2026-12-10", // no December file
     "mosque=not-a-real-mosque&date=2026-10-30",
   ]) {
