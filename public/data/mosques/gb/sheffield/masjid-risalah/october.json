@@ -320,7 +320,8 @@
       "dhuhr": "12:45",
       "asr": "14:45",
       "maghrib": "5 mins after adhan",
-      "isha": "19:00"
+      "isha": "19:00",
+      "jummah": "12:45"
     }
   ],
   "jummah_iqamah": "13:15"
