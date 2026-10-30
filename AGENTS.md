@@ -205,6 +205,7 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 | Cheadle Masjid | Cloudflare blocked — manual data from user | Table text |
 | Al Furqan | Framer site — image timetable (OCR if permitted) | Image |
 | Newham Mosques | Google Sheets published CSV | CSV |
+| Muslim Welfare House Sheffield | `https://docs.google.com/spreadsheets/d/1Bb4x6ilumnvlmZSvpg6s1i3AQ1rNkWyrib3BQ2n3-M4` (`gid=1913640521` Entry & Iqamah; see `sheffield/muslim-welfare-house/SOURCE.md`) | Google Sheets CSV (live day) |
 | Croydon ICT | REST API JSON | JSON |
 | Masjid Faizul Islam (Birmingham) | Facebook posts (timetable images/PDFs) — website `faizulislam.co.uk` is down/unusable | Facebook / manual from user |
 
