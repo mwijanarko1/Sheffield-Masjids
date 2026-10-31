@@ -3901,6 +3901,20 @@
       "website": "https://masjidbox.com/prayer-times/dar-ul-munawar-ghamkol-sharif"
     },
     {
+      "id": "neeli-mosque-rochdale",
+      "name": "Neeli Mosque and Islamic Centre",
+      "address": "25-27 Hare Street, Rochdale OL11 1JL, United Kingdom",
+      "lat": 53.6086664,
+      "lng": -2.1524488,
+      "slug": "neeli-mosque-rochdale",
+      "citySlug": "rochdale",
+      "cityName": "Rochdale",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.neelimosque.com"
+    },
+    {
       "id": "scarborough-islamic-centre",
       "name": "Scarborough Islamic Centre",
       "address": "Unit 62, Roscoe Street, Scarborough YO12 7BY, United Kingdom",
