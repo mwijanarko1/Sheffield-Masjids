@@ -136,7 +136,7 @@ export default function RamadanTimetable({ mosque }: RamadanTimetableProps) {
 
       let iqamahTimes;
       try {
-        iqamahTimes = getIqamahTimesForDate(day, ramadanData.iqamah_times);
+        iqamahTimes = getIqamahTimesForDate(day, ramadanData.iqamah_times, prayerTimes);
       } catch {
         iqamahTimes = {
           fajr: "-",
