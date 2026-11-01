@@ -208,6 +208,18 @@ Default: do **not** run `npm` / `npx` (tell the user to run it), except when the
 | Muslim Welfare House Sheffield | `https://docs.google.com/spreadsheets/d/1Bb4x6ilumnvlmZSvpg6s1i3AQ1rNkWyrib3BQ2n3-M4` (`gid=1913640521` Entry & Iqamah; see `sheffield/muslim-welfare-house/SOURCE.md`) | Google Sheets CSV (live day) |
 | Croydon ICT | REST API JSON | JSON |
 | Masjid Faizul Islam (Birmingham) | Facebook posts (timetable images/PDFs) — website `faizulislam.co.uk` is down/unusable | Facebook / manual from user |
+| Batley mosques (12) | `https://batleysalaahtimes.com/api/monthly-timetable.php?mosque_id={id}&month={YYYY-MM}` (list: `/api/mosques.php`) | JSON |
+| Dewsbury mosques (15) | `https://dewsburysalaahtimes.com/management/api/v1/prayers/monthly-timetable.php?mosque_id={id}&month={YYYY-MM}` (list: `…/mosques.php`) | JSON |
+| Scunthorpe Central Mosque | `https://time.scunthorpemosque.co.uk/api/display/SCM/monthly?month={M}&year={Y}` (PrayDisplay screen) | JSON |
+
+Batley/Dewsbury/Scunthorpe are the three iOS "Salaah Times" apps (Dewsbury and Batley are native, Scunthorpe is Flutter). Source them from the HTTP feeds above via `scripts/extract-salaah-times-apps.py`, then check the result against the live feed with `python3 scripts/verify-salaah-times-apps.py --months <M,M>` (defaults to the current and next month). Per-city notes live in `public/data/mosques/gb/{batley,dewsbury}/SOURCE.md` and `.../scunthorpe/scunthorpe-central-mosque/SOURCE.md`. Traps:
+
+- **Rolling window.** The Batley feed only publishes the current month and the next; older months return `monthly_schedule: {}`, so it cannot backfill. Run the extractor monthly.
+- **Dewsbury 12h Dhuhr.** Madrasah Al-Amanah publishes Dhuhr `23:55`; `normalize_dhuhr` rewrites it to `11:55` and `assert_plausible` refuses any month whose Dhuhr lands outside 10:00–15:00. The seed guard rejects `23:55` too.
+- **Fridays without Dhuhr.** Dewsbury Madrasah Islamiyah omits the Dhuhr row on Fridays; the extractor carries the previous day's Dhuhr across and sets `jummah` from it.
+- **Cross-listed mosques.** The Batley feed also lists Masjid Quba (Thornhill) and Madressah Al Hira. Masjid Quba is published by both feeds with different jamat times, so the Dewsbury feed wins and the Batley copy is skipped; Madressah Al Hira exists only in the Batley feed and is written to `dewsbury/madressah-al-hira`.
+- **Curated cells survive.** Blank jamat cells (Al-Ihsan Trust's Friday Dhuhr `"-"`) and extra Jumu'ah sittings (Zakaria Masjid `12:15 / 14:00`) are absent from the feeds; the extractor keeps the existing repo value instead of overwriting it.
+- **Scunthorpe.** The feed's `jummahTime` is the Friday Dhuhr **adhan** (use `dhuhrIqamah` for `jummah_iqamah`).
 
 ---
 

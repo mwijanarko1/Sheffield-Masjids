@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
-"""Extract monthly prayer JSON from Dewsbury/Batley/Scunthorpe Salaah Times apps."""
+"""Extract monthly prayer JSON for the Batley / Dewsbury / Scunthorpe mosques.
+
+Each of the three iOS "Salaah Times" apps reads a public HTTP timetable, so this
+sources the JSON from those endpoints directly rather than from the app builds:
+  * Batley    -> batleysalaahtimes.com/api
+  * Dewsbury  -> dewsburysalaahtimes.com/management/api/v1/prayers
+  * Scunthorpe-> time.scunthorpemosque.co.uk/api/display/SCM (PrayDisplay)
+"""
 from __future__ import annotations
 
 import argparse
 import json
-import plistlib
 import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from collections import defaultdict
 from datetime import date as date_cls
 from pathlib import Path
 
@@ -19,11 +25,12 @@ UA = {"User-Agent": "Sheffield-Masjids/1.0 (salaah-times-app extract)"}
 
 BATLEY_BASE = "https://batleysalaahtimes.com/api"
 DEWSBURY_BASE = "https://dewsburysalaahtimes.com/management/api/v1/prayers"
-# Runner.app (SCM Scunthorpe) caches dated keys in the App Group prefs.
-SCM_PLIST = (
-    Path.home()
-    / "Library/Group Containers/group.homeScreenscm/Library/Preferences/group.homeScreenscm.plist"
-)
+# Scunthorpe Central Mosque app talks to scmm.scunthorpecentral.com
+# (/api/today-prayer-time, POST + auth-gated `type`), which only serves today.
+# The mosque's own public PrayDisplay screen at time.scunthorpemosque.co.uk
+# exposes the same timetable as a full month, so source from that instead of
+# scraping the app's App Group cache.
+SCM_DISPLAY_BASE = "https://time.scunthorpemosque.co.uk/api/display/SCM"
 SCM_CITY = "scunthorpe"
 SCM_SLUG = "scunthorpe-central-mosque"
 
@@ -43,10 +50,18 @@ MONTH_UPPER = {
 }
 MONTH_FILE = {n: name.lower() for n, name in MONTH_UPPER.items()}
 
-def fetch_json(url: str) -> dict:
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read().decode("utf-8", errors="replace"))
+def fetch_json(url: str, attempts: int = 3) -> dict:
+    """GET a JSON feed, retrying transient TLS/connection failures."""
+    for attempt in range(1, attempts + 1):
+        req = urllib.request.Request(url, headers=UA)
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read().decode("utf-8", errors="replace"))
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+            if attempt == attempts:
+                raise
+            time.sleep(attempt)
+    raise AssertionError("unreachable")
 
 
 def hhmm(value: str | None) -> str:
@@ -58,17 +73,51 @@ def hhmm(value: str | None) -> str:
     return f"{int(m.group(1)):02d}:{m.group(2)}"
 
 
-def build_month(payload: dict) -> dict | None:
+DHUHR_OPEN, DHUHR_CLOSE = 10 * 60, 15 * 60
+
+
+def normalize_dhuhr(value: str) -> str:
+    """Undo the Dewsbury feed's 12-hour conversion bug (`23:55` -> `11:55`)."""
+    if not value:
+        return ""
+    hours, minutes = (int(part) for part in value.split(":"))
+    if hours >= 20:                  # an AM time that had 12h added to it
+        return f"{hours - 12:02d}:{minutes:02d}"
+    return value
+
+
+def assert_plausible(day: int, dhuhr: str) -> None:
+    """Refuse a row whose Dhuhr is outside any real UK timetable slot."""
+    hours, minutes = (int(part) for part in dhuhr.split(":"))
+    if not DHUHR_OPEN <= hours * 60 + minutes <= DHUHR_CLOSE:
+        raise ValueError(f"implausible Dhuhr {dhuhr} on day {day}")
+
+
+def build_month(payload: dict, previous: dict | None = None) -> dict | None:
+    """Build one month of repo JSON from a feed payload.
+
+    `previous` is the month file already in the repo. The feeds leave some
+    jamat cells blank (e.g. Al-Ihsan's Friday Dhuhr) and omit extra Jumu'ah
+    sittings, so curated values are kept when the feed has nothing to say.
+    """
     schedule = payload.get("monthly_schedule") or {}
     if not schedule:
         return None
     prayer_times = []
     iqamah_times = []
     friday_jummah: list[str] = []
+    prev_iqamah = {
+        row["date_range"]: row for row in (previous or {}).get("iqamah_times") or []
+    }
+    # Some feeds (Dewsbury Madrasah Islamiyah) omit the Dhuhr row entirely on
+    # Fridays; the repo convention is to carry the previous day's Dhuhr across.
+    last_dhuhr: tuple[str, str] | None = None
 
     for date_key in sorted(schedule):
         day = int(date_key.split("-")[2])
+        is_friday = date_cls.fromisoformat(date_key).weekday() == 4
         by_name = {row["prayer_name"].strip().lower(): row for row in schedule[date_key]}
+        prev_row = prev_iqamah.get(str(day), {})
 
         def start(name: str) -> str:
             return hhmm((by_name.get(name) or {}).get("start_time"))
@@ -76,11 +125,23 @@ def build_month(payload: dict) -> dict | None:
         def jamaat(name: str) -> str:
             return hhmm((by_name.get(name) or {}).get("jamaat_time"))
 
+        def jamaat_or_curated(name: str, fallback: str) -> str:
+            published = jamaat(name)
+            if published:
+                return published
+            return prev_row.get(name) or fallback
+
         fajr_s, sun_s = start("fajr"), start("sunrise")
-        dhuhr_s, asr_s = start("dhuhr"), start("asr")
+        dhuhr_s, asr_s = normalize_dhuhr(start("dhuhr")), start("asr")
         magh_s, isha_s = start("maghrib"), start("isha")
+        dhuhr_j_source = jamaat("dhuhr")
+        carried_jamaat = ""
+        if not dhuhr_s and is_friday and last_dhuhr:
+            dhuhr_s, carried_jamaat = last_dhuhr
         if not all([fajr_s, sun_s, dhuhr_s, asr_s, magh_s, isha_s]):
             continue
+        assert_plausible(day, dhuhr_s)
+        last_dhuhr = (dhuhr_s, carried_jamaat or dhuhr_j_source or dhuhr_s)
 
         prayer_times.append(
             {
@@ -94,11 +155,11 @@ def build_month(payload: dict) -> dict | None:
             }
         )
 
-        fajr_j = jamaat("fajr") or fajr_s
-        dhuhr_j = jamaat("dhuhr") or dhuhr_s
-        asr_j = jamaat("asr") or asr_s
-        magh_j = jamaat("maghrib") or magh_s
-        isha_j = jamaat("isha") or isha_s
+        fajr_j = jamaat_or_curated("fajr", fajr_s)
+        dhuhr_j = carried_jamaat or jamaat_or_curated("dhuhr", dhuhr_s)
+        asr_j = jamaat_or_curated("asr", asr_s)
+        magh_j = jamaat_or_curated("maghrib", magh_s)
+        isha_j = jamaat_or_curated("isha", isha_s)
         row = {
             "date_range": str(day),
             "fajr": fajr_j,
@@ -107,9 +168,13 @@ def build_month(payload: dict) -> dict | None:
             "maghrib": magh_j,
             "isha": isha_j,
         }
-        # Only set jummah from an explicit Friday Dhuhr jamaat (not begin/start).
-        if date_cls.fromisoformat(date_key).weekday() == 4:
-            jummah = jamaat("dhuhr")
+        # Only set jummah from an explicit Friday Dhuhr jamaat (not begin/start),
+        # or from the carried one when the feed omits the Friday Dhuhr row.
+        if is_friday:
+            jummah = carried_jamaat or dhuhr_j_source
+            previous_jummah = prev_row.get("jummah", "")
+            if jummah and previous_jummah.startswith(jummah):
+                jummah = previous_jummah     # feed omits extra sittings
             if jummah:
                 row["jummah"] = jummah
                 friday_jummah.append(jummah)
@@ -184,25 +249,33 @@ def rebuild_dewsbury_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
 
 
 def rebuild_batley_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
+    """Map Batley API names onto registry slugs.
+
+    The Batley feed also lists two Dewsbury mosques. *Masjid Quba* (Thornhill)
+    is published by both feeds with slightly different jamat times, and the
+    Dewsbury feed is authoritative, so it is skipped here. *Madressah Al Hira*
+    appears only in the Batley feed and is mapped across to its Dewsbury slug.
+    """
     reg = json.loads((ROOT / "public/data/mosques.json").read_text())["mosques"]
-    batley = {m["id"]: m for m in reg if m.get("citySlug") == "batley"}
-    dewsbury = {m["id"]: m for m in reg if m.get("citySlug") == "dewsbury"}
+    batley_slugs = {m["id"] for m in reg if m.get("citySlug") == "batley"}
+    dewsbury_slugs = {m["id"] for m in reg if m.get("citySlug") == "dewsbury"}
     alias = {
-        "al hashim academy": ("batley", "al-hashim-academy"),
-        "al ihsan trust": ("batley", "al-ihsan-trust"),
-        "dawatal islam mosque": ("batley", "dawatal-islam-mosque"),
-        "jame masjid": ("batley", "jame-masjid"),
-        "jumma masjid": ("batley", "jumma-masjid"),
-        "madina masjid": ("batley", "madina-masjid"),
-        "masjid ali": ("batley", "masjid-ali"),
-        "masjid hilal": ("batley", "masjid-hilal"),
-        "masjid mahmoodia": ("batley", "masjid-mahmoodia"),
-        "masjid noor": ("batley", "masjid-noor"),
-        "masjid noor ul islam": ("batley", "masjid-noor-ul-islam"),
-        "masjid taqwa": ("batley", "masjid-taqwa"),
-        # Published via Batley API but registry city is Dewsbury.
-        "madressah al hira": ("dewsbury", "madressah-al-hira"),
-        "madrasah al hira": ("dewsbury", "madressah-al-hira"),
+        "al hashim academy": "al-hashim-academy",
+        "al ihsan trust": "al-ihsan-trust",
+        "dawatal islam mosque": "dawatal-islam-mosque",
+        "jame masjid": "jame-masjid",
+        "jumma masjid": "jumma-masjid",
+        "madina masjid": "madina-masjid",
+        "masjid ali": "masjid-ali",
+        "masjid hilal": "masjid-hilal",
+        "masjid mahmoodia": "masjid-mahmoodia",
+        "masjid noor": "masjid-noor",
+        "masjid noor ul islam": "masjid-noor-ul-islam",
+        "masjid taqwa": "masjid-taqwa",
+    }
+    cross_listed = {
+        "madressah al hira": "madressah-al-hira",
+        "madrasah al hira": "madressah-al-hira",
     }
 
     def norm(s: str) -> str:
@@ -211,14 +284,14 @@ def rebuild_batley_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
 
     out: dict[int, tuple[str, str]] = {}
     for m in mosques:
-        n = norm(m["name"])
-        mapped = alias.get(n)
-        if not mapped:
+        name = norm(m["name"])
+        slug = cross_listed.get(name)
+        if slug in dewsbury_slugs:
+            out[int(m["id"])] = ("dewsbury", slug)
             continue
-        city, slug = mapped
-        registry = batley if city == "batley" else dewsbury
-        if slug in registry:
-            out[int(m["id"])] = (city, slug)
+        slug = alias.get(name)
+        if slug in batley_slugs:
+            out[int(m["id"])] = ("batley", slug)
     return out
 
 
@@ -235,10 +308,24 @@ def extract_city(base: str, mapping: dict[int, tuple[str, str]], year: int, mont
             except urllib.error.HTTPError as err:
                 print(f"SKIP {slug} {month_token}: HTTP {err.code}")
                 continue
+            except urllib.error.URLError as err:
+                print(f"SKIP {slug} {month_token}: {err}")
+                continue
             if payload.get("status") != "success":
                 print(f"SKIP {slug} {month_token}: {payload}")
                 continue
-            built = build_month(payload)
+            path = out_dir / f"{MONTH_FILE[month]}.json"
+            previous = None
+            if path.exists():
+                try:
+                    previous = json.loads(path.read_text())
+                except json.JSONDecodeError:
+                    previous = None
+            try:
+                built = build_month(payload, previous)
+            except ValueError as err:
+                print(f"SKIP {slug} {month_token}: {err}")
+                continue
             if not built:
                 print(f"SKIP {slug} {month_token}: empty schedule")
                 continue
@@ -246,14 +333,8 @@ def extract_city(base: str, mapping: dict[int, tuple[str, str]], year: int, mont
             if len(built["prayer_times"]) < 14:
                 print(f"SKIP {slug} {month_token}: only {len(built['prayer_times'])} days")
                 continue
-            path = out_dir / f"{MONTH_FILE[month]}.json"
-            if not built["jummah_iqamah"] and path.exists():
-                try:
-                    prev = json.loads(path.read_text()).get("jummah_iqamah", "")
-                except json.JSONDecodeError:
-                    prev = ""
-                if prev:
-                    built["jummah_iqamah"] = prev
+            if not built["jummah_iqamah"] and previous:
+                built["jummah_iqamah"] = previous.get("jummah_iqamah", "")
             # Leave jummah empty when the source has no Friday Dhuhr jamaat
             # (e.g. Al-Ihsan) — do not invent from weekday begin/iqamah.
             path.write_text(json.dumps(built, indent=2) + "\n")
@@ -263,67 +344,57 @@ def extract_city(base: str, mapping: dict[int, tuple[str, str]], year: int, mont
 
 
 def extract_scunthorpe(year: int, months: list[int], min_days: int = 7) -> list[str]:
-    """Read Runner.app App Group cache into monthly JSON (partial months OK)."""
-    if not SCM_PLIST.exists():
-        print(f"SKIP {SCM_SLUG}: missing app cache {SCM_PLIST}")
-        return []
+    """Read the mosque's public PrayDisplay monthly feed into monthly JSON.
 
-    with SCM_PLIST.open("rb") as fh:
-        data = plistlib.load(fh)
-
-    pat = re.compile(
-        r"^(\d{4})-(\d{2})-(\d{2})_(fajr|sunrise|zuhr|asr|maghrib|isha)(_jamat)?$"
-    )
-    by_month: dict[int, dict[int, dict[str, str]]] = defaultdict(lambda: defaultdict(dict))
-    for key, value in data.items():
-        m = pat.match(str(key))
-        if not m:
-            continue
-        y, mo, day, prayer, jamat = m.groups()
-        if int(y) != year:
-            continue
-        field = {"zuhr": "dhuhr", "sunrise": "shurooq"}.get(prayer, prayer)
-        by_month[int(mo)][int(day)][field + ("_iqamah" if jamat else "")] = str(value)
-
+    `jummahTime` in the feed is the Friday Dhuhr *start*, not the iqamah, so
+    Jumu'ah is taken from that day's Dhuhr iqamah. Partial months are fine.
+    """
     out_dir = DATA / SCM_CITY / SCM_SLUG
     out_dir.mkdir(parents=True, exist_ok=True)
     written: list[str] = []
 
     for month in months:
-        days = by_month.get(month, {})
+        try:
+            payload = fetch_json(f"{SCM_DISPLAY_BASE}/monthly?month={month}&year={year}")
+        except urllib.error.HTTPError as err:
+            print(f"SKIP {SCM_SLUG} {year}-{month:02d}: HTTP {err.code}")
+            continue
+        except (urllib.error.URLError, json.JSONDecodeError) as err:
+            print(f"SKIP {SCM_SLUG} {year}-{month:02d}: {err}")
+            continue
+
         prayer_times = []
         iqamah_times = []
         friday_jummah: list[str] = []
-        for day in sorted(days):
-            row = days[day]
-            needed = ["fajr", "shurooq", "dhuhr", "asr", "maghrib", "isha"]
-            if not all(k in row for k in needed):
+        for row in payload.get("times") or []:
+            day = int(row["day"])
+            adhan = {
+                "fajr": hhmm(row.get("fajrStart")),
+                "shurooq": hhmm(row.get("sunrise")),
+                "dhuhr": hhmm(row.get("dhuhrStart")),
+                "asr": hhmm(row.get("asrStart")),
+                "maghrib": hhmm(row.get("maghribStart")),
+                "isha": hhmm(row.get("ishaStart")),
+            }
+            if not all(adhan.values()):
                 continue
-            prayer_times.append(
-                {
-                    "date": day,
-                    "fajr": row["fajr"],
-                    "shurooq": row["shurooq"],
-                    "dhuhr": row["dhuhr"],
-                    "asr": row["asr"],
-                    "maghrib": row["maghrib"],
-                    "isha": row["isha"],
-                }
-            )
+            prayer_times.append({"date": day, **adhan})
+
+            # Fall back to the adhan when an iqamah cell is blank.
             iq = {
                 "date_range": str(day),
-                "fajr": row.get("fajr_iqamah", row["fajr"]),
-                "dhuhr": row.get("dhuhr_iqamah", row["dhuhr"]),
-                "asr": row.get("asr_iqamah", row["asr"]),
-                "maghrib": row.get("maghrib_iqamah", row["maghrib"]),
-                "isha": row.get("isha_iqamah", row["isha"]),
+                "fajr": hhmm(row.get("fajrIqamah")) or adhan["fajr"],
+                "dhuhr": hhmm(row.get("dhuhrIqamah")) or adhan["dhuhr"],
+                "asr": hhmm(row.get("asrIqamah")) or adhan["asr"],
+                "maghrib": hhmm(row.get("maghribIqamah")) or adhan["maghrib"],
+                "isha": hhmm(row.get("ishaIqamah")) or adhan["isha"],
             }
             if date_cls(year, month, day).weekday() == 4:
                 friday_jummah.append(iq["dhuhr"])
             iqamah_times.append(iq)
 
         if len(prayer_times) < min_days:
-            print(f"SKIP {SCM_SLUG} {year}-{month:02d}: only {len(prayer_times)} cached days")
+            print(f"SKIP {SCM_SLUG} {year}-{month:02d}: only {len(prayer_times)} published days")
             continue
 
         # Prefer first Friday in the month (pre-DST when clocks change mid-month).
@@ -346,25 +417,37 @@ def main() -> None:
     parser.add_argument("--year", type=int, default=2026)
     parser.add_argument("--months", default="10", help="comma-separated month numbers, e.g. 10,11")
     parser.add_argument(
+        "--skip-batley", action="store_true", help="skip the batleysalaahtimes.com API"
+    )
+    parser.add_argument(
+        "--skip-dewsbury",
+        action="store_true",
+        help="skip the dewsburysalaahtimes.com management API",
+    )
+    parser.add_argument(
         "--skip-scunthorpe",
         action="store_true",
-        help="skip Runner.app App Group cache extract",
+        help="skip the Scunthorpe PrayDisplay monthly feed",
     )
     args = parser.parse_args()
     months = [int(x) for x in args.months.split(",") if x.strip()]
 
-    batley_mosques = fetch_json(f"{BATLEY_BASE}/mosques.php")["data"]
-    dewsbury_mosques = fetch_json(f"{DEWSBURY_BASE}/mosques.php")["data"]
-    batley_map = rebuild_batley_map(batley_mosques)
-    dewsbury_map = rebuild_dewsbury_map(dewsbury_mosques)
-    print("Batley mapped:", batley_map)
-    print("Dewsbury mapped:", dewsbury_map)
-
     slugs = []
-    slugs += extract_city(BATLEY_BASE, batley_map, args.year, months)
-    slugs += extract_city(DEWSBURY_BASE, dewsbury_map, args.year, months)
+    if not args.skip_batley:
+        batley_map = rebuild_batley_map(fetch_json(f"{BATLEY_BASE}/mosques.php")["data"])
+        print("Batley mapped:", batley_map)
+        slugs += extract_city(BATLEY_BASE, batley_map, args.year, months)
+
+    if not args.skip_dewsbury:
+        dewsbury_map = rebuild_dewsbury_map(
+            fetch_json(f"{DEWSBURY_BASE}/mosques.php")["data"]
+        )
+        print("Dewsbury mapped:", dewsbury_map)
+        slugs += extract_city(DEWSBURY_BASE, dewsbury_map, args.year, months)
+
     if not args.skip_scunthorpe:
         slugs += extract_scunthorpe(args.year, months)
+
     print("Slugs updated:", ",".join(sorted(set(slugs))))
 
 
