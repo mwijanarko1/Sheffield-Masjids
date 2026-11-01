@@ -580,10 +580,34 @@ export async function loadMonthlyPrayerTimes(
   return (await loadMonthlyPrayerTimesWithSource(...args)).data;
 }
 
+type AdhanTimesForIqamah = Pick<PrayerTime, 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'>;
+
 /**
- * Get Iqamah times for a specific date
+ * Resolve a relative iqamah label ("Adhan+5", "10 mins after adhan") to a clock time.
+ * Any other value, or a non-clock adhan, is returned unchanged.
  */
-export function getIqamahTimesForDate(date: number, iqamahRanges: IqamahTimeRange[]): DailyIqamahTimes {
+export function resolveRelativeIqamah(iqamah: string | undefined, adhan: string | undefined): string {
+  const value = iqamah?.trim() ?? '';
+  if (!adhan || !isValidTimeForMarkup(adhan)) return iqamah ?? '';
+
+  const minutesText =
+    value.match(/^adhan\s*\+\s*(\d+)\s*(?:mins?|minutes?)?$/i)?.[1] ??
+    value.match(/^(\d+)\s*(?:mins?|minutes?)\s*after\s*adhan$/i)?.[1];
+  if (minutesText === undefined) return iqamah ?? '';
+
+  const [hours, minutes] = adhan.trim().split(':').map(Number);
+  const total = (((hours * 60 + minutes + Number(minutesText)) % 1440) + 1440) % 1440;
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+/**
+ * Get Iqamah times for a specific date. Pass that day's adhan times to resolve relative labels like "Adhan+5".
+ */
+export function getIqamahTimesForDate(
+  date: number,
+  iqamahRanges: IqamahTimeRange[],
+  adhan?: AdhanTimesForIqamah,
+): DailyIqamahTimes {
   // Find the appropriate date range (supports "1-21", "22-29", "30" formats)
   const range = iqamahRanges.find(range => {
     const parts = range.date_range.split('-').map(Number);
@@ -598,11 +622,11 @@ export function getIqamahTimesForDate(date: number, iqamahRanges: IqamahTimeRang
   }
 
   return {
-    fajr: range.fajr,
-    dhuhr: range.dhuhr,
-    asr: range.asr,
-    maghrib: range.maghrib ?? "-",
-    isha: range.isha,
+    fajr: resolveRelativeIqamah(range.fajr, adhan?.fajr),
+    dhuhr: resolveRelativeIqamah(range.dhuhr, adhan?.dhuhr),
+    asr: resolveRelativeIqamah(range.asr, adhan?.asr),
+    maghrib: resolveRelativeIqamah(range.maghrib ?? "-", adhan?.maghrib),
+    isha: resolveRelativeIqamah(range.isha, adhan?.isha),
     jummah: range.jummah?.trim() ?? "",
   };
 }
@@ -735,7 +759,11 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
     const ramadanResult = await loadRamadanData(slug, dateAtNoon);
     if (ramadanResult?.inRange) {
       const ramadanDay = getRamadanDay(dateAtNoon, ramadanResult.data);
-      const iqamahTimes = getIqamahTimesForDate(ramadanDay, ramadanResult.data.iqamah_times);
+      const iqamahTimes = getIqamahTimesForDate(
+        ramadanDay,
+        ramadanResult.data.iqamah_times,
+        findRamadanDayData(ramadanResult.data.prayer_times, ramadanDay),
+      );
       return {
         ...iqamahTimes,
         jummah: iqamahTimes.jummah?.trim()
@@ -746,10 +774,22 @@ export async function getIqamahTimesForSpecificDate(slug: string, date: Date): P
 
     try {
       const monthlyData = await loadMonthlyPrayerTimes(slug, month, year);
-      if (!findDayData(monthlyData.prayer_times, day)) {
+      const adhanDay = findDayData(monthlyData.prayer_times, day);
+      if (!adhanDay) {
         throw new Error(`No Iqamah times found for date: ${day}`);
       }
-      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times);
+      // Adhan-only month: the mosque published no iqamah, so show adhan with no iqamah line.
+      if (monthlyData.iqamah_times.length === 0) {
+        return {
+          fajr: "-",
+          dhuhr: "-",
+          asr: "-",
+          maghrib: "-",
+          isha: "-",
+          jummah: monthlyData.jummah_iqamah,
+        };
+      }
+      const iqamahTimes = getIqamahTimesForDate(day, monthlyData.iqamah_times, adhanDay);
 
       return {
         ...iqamahTimes,

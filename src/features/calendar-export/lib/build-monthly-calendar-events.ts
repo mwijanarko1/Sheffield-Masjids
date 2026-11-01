@@ -94,7 +94,7 @@ export async function buildMonthlyTimetableRowsAsync({
 
     let iqamahTimes;
     try {
-      iqamahTimes = getIqamahTimesForDate(d, monthlyData.iqamah_times);
+      iqamahTimes = getIqamahTimesForDate(d, monthlyData.iqamah_times, day);
     } catch {
       iqamahTimes = {
         fajr: "-",
