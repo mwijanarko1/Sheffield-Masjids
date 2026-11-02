@@ -5425,6 +5425,34 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://nmic.co.uk/prayer-times/"
+    },
+    {
+      "id": "masjid-umar-leicester",
+      "name": "Masjid Umar",
+      "address": "1-3 Evington Drive, Leicester LE5 5PF, United Kingdom",
+      "lat": 52.6242084,
+      "lng": -1.1018273,
+      "slug": "masjid-umar-leicester",
+      "citySlug": "leicester",
+      "cityName": "Leicester",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjid-umar.org/masjid/prayer-times/"
+    },
+    {
+      "id": "somers-town-mosque",
+      "name": "Somers Town Mosque",
+      "address": "68 Churchway, London NW1 1LT, United Kingdom",
+      "lat": 51.5296019,
+      "lng": -0.1306907,
+      "slug": "somers-town-mosque",
+      "citySlug": "london",
+      "cityName": "London",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.somerstownmosque.com/prayer-times/"
     }
   ]
 }
