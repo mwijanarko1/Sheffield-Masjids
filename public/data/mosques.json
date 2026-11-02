@@ -5383,6 +5383,48 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://faizanemadina.co.uk"
+    },
+    {
+      "id": "al-ihsaan-academy",
+      "name": "Al-Ihsaan Academy",
+      "address": "785 High Rd, London IG3 8RW, United Kingdom",
+      "lat": 51.5662213,
+      "lng": 0.1066643,
+      "slug": "al-ihsaan-academy",
+      "citySlug": "ilford",
+      "cityName": "Ilford",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.al-ihsaan.org/"
+    },
+    {
+      "id": "bushey-islamic-circle",
+      "name": "Bushey Islamic Circle",
+      "address": "The Bushey Centre, Bushey Country Club, Bushey High Street, Bushey WD23 1TT, United Kingdom",
+      "lat": 51.643412,
+      "lng": -0.362285,
+      "slug": "bushey-islamic-circle",
+      "citySlug": "bushey",
+      "cityName": "Bushey",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.busheyislamiccircle.org.uk/timetable/"
+    },
+    {
+      "id": "newton-mearns-islamic-centre",
+      "name": "Newton Mearns Islamic Centre",
+      "address": "8 Langrig Road, Newton Mearns, Glasgow G77 5AA, United Kingdom",
+      "lat": 55.7697132,
+      "lng": -4.336666,
+      "slug": "newton-mearns-islamic-centre",
+      "citySlug": "glasgow",
+      "cityName": "Glasgow",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://nmic.co.uk/prayer-times/"
     }
   ]
 }
