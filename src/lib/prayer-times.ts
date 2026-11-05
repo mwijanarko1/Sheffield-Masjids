@@ -583,12 +583,20 @@ export async function loadMonthlyPrayerTimes(
 type AdhanTimesForIqamah = Pick<PrayerTime, 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'>;
 
 /**
- * Resolve a relative iqamah label ("Adhan+5", "10 mins after adhan") to a clock time.
- * Any other value, or a non-clock adhan, is returned unchanged.
+ * Relative iqamah labels that mean "immediately at the adhan" (zero delay).
+ * Mosques publish these as prose ("After Adhan") instead of a clock time.
+ */
+const IQAMAH_AT_ADHAN_LABELS = /^(?:after\s+|at\s+|upon\s+)?(?:adhan|adhaan|azan|athan)$/i;
+
+/**
+ * Resolve a relative iqamah label ("Adhan+5", "10 mins after adhan", "After Adhan")
+ * to a clock time. Any other value, or a non-clock adhan, is returned unchanged.
  */
 export function resolveRelativeIqamah(iqamah: string | undefined, adhan: string | undefined): string {
   const value = iqamah?.trim() ?? '';
   if (!adhan || !isValidTimeForMarkup(adhan)) return iqamah ?? '';
+
+  if (IQAMAH_AT_ADHAN_LABELS.test(value)) return adhan.trim();
 
   const minutesText =
     value.match(/^adhan\s*\+\s*(\d+)\s*(?:mins?|minutes?)?$/i)?.[1] ??

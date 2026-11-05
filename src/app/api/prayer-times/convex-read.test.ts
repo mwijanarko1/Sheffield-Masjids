@@ -76,6 +76,38 @@ test("adhan-only day from Convex (empty iqamah_times) returns 200 with iqamah nu
   });
 });
 
+test("relative iqamah labels are resolved to clock times in the API response", async () => {
+  // Al-Huda Academy publishes maghrib as "After Adhan" and often "Adhan+N".
+  // The API must not hand a publication label to clients as if it were a time.
+  reset();
+  fake.handlers.set("prayerTimes:getMonthly", () => ({
+    ...CONVEX_OCTOBER,
+    iqamah_times: [
+      {
+        date_range: "30",
+        fajr: "Adhan+0",
+        dhuhr: "Adhan+10",
+        asr: "Adhan+14",
+        maghrib: "After Adhan",
+        isha: "Adhan+50",
+      },
+    ],
+  }));
+  await withConvexEnv({ CONVEX_URL: fake.url, CONVEX_READ_SECRET: SECRET }, async () => {
+    const { status, body } = await getApi("mosque=madina-masjid-sheffield&date=2026-10-30");
+    assert.equal(status, 200);
+    assert.deepEqual(body.iqamah, {
+      // adhan 05:11, 11:55, 14:30, 16:40, 18:10
+      fajr: "05:11",
+      dhuhr: "12:05",
+      asr: "14:44",
+      maghrib: "16:40",
+      isha: "19:00",
+      jummah: "13:15",
+    });
+  });
+});
+
 test("Convex is authoritative: a month Convex does not have is 404, not the repo JSON", async () => {
   reset();
   fake.handlers.set("prayerTimes:getMonthly", () => null);

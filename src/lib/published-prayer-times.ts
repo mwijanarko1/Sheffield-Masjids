@@ -39,6 +39,7 @@ import type {
   MonthlyPrayerTimes,
   PrayerTime,
 } from "@/types/prayer-times";
+import { resolveRelativeIqamah } from "@/lib/prayer-times";
 
 const MONTH_FILES = [
   "january",
@@ -220,18 +221,21 @@ function findIqamah(
   day: number,
   ranges: IqamahTimeRange[],
   jummah: string,
+  adhan?: PrayerTime,
 ): DailyIqamahTimes | null {
   const row = ranges.find(({ date_range }) => {
     const [start, end = start] = date_range.split("-").map(Number);
     return day >= start && day <= end;
   });
   if (!row) return null;
+  // Resolve relative labels ("Adhan+10", "After Adhan") against that same day's
+  // adhan, so the API returns a clock time instead of the raw publication label.
   return {
-    fajr: row.fajr,
-    dhuhr: row.dhuhr,
-    asr: row.asr,
-    maghrib: row.maghrib ?? "-",
-    isha: row.isha,
+    fajr: resolveRelativeIqamah(row.fajr, adhan?.fajr),
+    dhuhr: resolveRelativeIqamah(row.dhuhr, adhan?.dhuhr),
+    asr: resolveRelativeIqamah(row.asr, adhan?.asr),
+    maghrib: resolveRelativeIqamah(row.maghrib ?? "-", adhan?.maghrib),
+    isha: resolveRelativeIqamah(row.isha, adhan?.isha),
     jummah: row.jummah?.trim() || jummah,
   };
 }
@@ -380,10 +384,10 @@ export async function getPublishedPrayerTimes(args: {
   if (ramadan && date.key >= ramadan.gregorian_start && date.key <= ramadan.gregorian_end) {
     const day = ramadanDay(ramadan.gregorian_start, date.key);
     prayer = ramadan.prayer_times.find((row) => row.ramadan_day === day);
-    iqamah = findIqamah(day, ramadan.iqamah_times ?? [], ramadan.jummah_iqamah);
+    iqamah = findIqamah(day, ramadan.iqamah_times ?? [], ramadan.jummah_iqamah, prayer);
   } else if (monthly) {
     prayer = monthly.prayer_times.find((row) => row.date === date.day);
-    iqamah = findIqamah(date.day, monthly.iqamah_times ?? [], monthly.jummah_iqamah);
+    iqamah = findIqamah(date.day, monthly.iqamah_times ?? [], monthly.jummah_iqamah, prayer);
   }
 
   // A published adhan row without an iqamah entry is returned with `iqamah: null`
