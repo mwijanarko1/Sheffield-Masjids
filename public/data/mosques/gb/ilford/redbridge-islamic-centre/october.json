@@ -305,6 +305,24 @@
       "asr": "15:15",
       "maghrib": "16:52",
       "isha": "19:30"
+    },
+    {
+      "date_range": "28",
+      "maghrib": "16:50"
+    },
+    {
+      "date_range": "29",
+      "maghrib": "16:48"
+    },
+    {
+      "date_range": "30",
+      "dhuhr": "12:30",
+      "maghrib": "16:46"
+    },
+    {
+      "date_range": "31",
+      "dhuhr": "13:00",
+      "maghrib": "16:44"
     }
   ],
   "jummah_iqamah": "13:30"
