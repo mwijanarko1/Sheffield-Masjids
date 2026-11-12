@@ -375,7 +375,8 @@
       "dhuhr": "13:00",
       "asr": "13:48",
       "maghrib": "16:14",
-      "isha": "19:00"
+      "isha": "19:00",
+      "jummah": "13:00"
     },
     {
       "date_range": "14",
@@ -514,5 +515,5 @@
       "isha": "19:30"
     }
   ],
-  "jummah_iqamah": "13:00"
+  "jummah_iqamah": "14:00"
 }
