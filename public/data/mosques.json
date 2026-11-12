@@ -4065,6 +4065,20 @@
       "isHidden": false
     },
     {
+      "id": "jamia-masjid-usmania-sheffield",
+      "name": "Jamia Masjid & Usmania Education Centre",
+      "address": "22 Leyburn Road, Sheffield S8 0XA, United Kingdom",
+      "lat": 53.3573665,
+      "lng": -1.4825076,
+      "slug": "jamia-masjid-usmania-sheffield",
+      "citySlug": "sheffield",
+      "cityName": "Sheffield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.jamiamasjiduec.org.uk/"
+    },
+    {
       "id": "madina-masjid-sheffield",
       "name": "Madina Masjid Sheffield",
       "address": "24 Wolseley Rd, Lowfield, Sheffield S8 0ZU, United Kingdom",
