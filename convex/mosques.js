@@ -223,6 +223,28 @@ export const upsert = mutation({
     };
 
     if (existing) {
+      const keys = [
+        "id",
+        "name",
+        "address",
+        "lat",
+        "lng",
+        "slug",
+        "citySlug",
+        "cityName",
+        "countryCode",
+        "countryName",
+        "timezone",
+        "website",
+        "isHidden",
+      ];
+      const unchanged = keys.every(
+        (key) => JSON.stringify(existing[key] ?? null) === JSON.stringify(doc[key] ?? null),
+      );
+      if (unchanged) {
+        // Skip timestamp/revision bumps when registry payload is identical (#192).
+        return { unchanged: existing._id };
+      }
       await ctx.db.patch(existing._id, doc);
       await bumpDataRevision(ctx);
       return { updated: existing._id };

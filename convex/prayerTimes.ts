@@ -198,7 +198,7 @@ export const getDataVersions = query({
     const month = validateMonth(args.month);
     const year = validateYear(args.year ?? new Date().getFullYear());
 
-    const [monthly, ramadanDocs, dst, mosques] = await Promise.all([
+    const [monthly, ramadanDocs, dst, latestMosque] = await Promise.all([
       ctx.db
         .query("monthlyPrayerTimes")
         .withIndex("by_mosque_month_year", (q) =>
@@ -207,11 +207,12 @@ export const getDataVersions = query({
         .unique(),
       ctx.db.query("ramadanTimetables").withIndex("by_mosque", (q) => q.eq("mosqueSlug", mosqueSlug)).collect(),
       ctx.db.query("ukDstCalendar").withIndex("by_key", (q) => q.eq("key", "singleton")).unique(),
-      ctx.db.query("mosques").collect(),
+      // Prefer indexed max(updatedAt) over collecting every mosque row (#192).
+      ctx.db.query("mosques").withIndex("by_updatedAt").order("desc").first(),
     ]);
 
     return {
-      mosquesUpdatedAt: Math.max(0, ...mosques.map((m) => m.updatedAt ?? 0)),
+      mosquesUpdatedAt: latestMosque?.updatedAt ?? 0,
       monthlyUpdatedAt: monthly?.updatedAt ?? 0,
       ramadanUpdatedAt: Math.max(0, ...ramadanDocs.map((r) => r.updatedAt ?? 0)),
       dstUpdatedAt: dst?.updatedAt ?? 0,

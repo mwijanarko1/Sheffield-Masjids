@@ -66,7 +66,8 @@ export default defineSchema({
   })
     .index("by_slug", ["slug"])
     .index("by_city_slug", ["citySlug"])
-    .index("by_mosque_id", ["id"]),
+    .index("by_mosque_id", ["id"])
+    .index("by_updatedAt", ["updatedAt"]),
 
   monthlyPrayerTimes: defineTable({
     mosqueSlug: v.string(),
