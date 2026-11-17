@@ -64,6 +64,20 @@ async function bumpDataRevision(ctx: any) {
   });
 }
 
+/** Compare persisted business fields only (ignore _id / updatedAt). */
+function sameBusinessFields(
+  existing: Record<string, unknown>,
+  next: Record<string, unknown>,
+  keys: string[],
+): boolean {
+  for (const key of keys) {
+    if (JSON.stringify(existing[key] ?? null) !== JSON.stringify(next[key] ?? null)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 async function scheduleIfNeeded(
   ctx: any,
   mosqueSlug: string,
@@ -150,6 +164,23 @@ export const seedMonthly = mutation({
     };
 
     if (existing) {
+      if (
+        sameBusinessFields(existing as Record<string, unknown>, doc, [
+          "mosqueSlug",
+          "month",
+          "year",
+          "monthDisplay",
+          "prayerTimes",
+          "iqamahTimes",
+          "jummahIqamah",
+        ])
+      ) {
+        // Identical timetable: keep updatedAt/revision so version queries stay cacheable (#192).
+        return {
+          unchanged: existing._id,
+          iqamahChangeAlertScheduled: false as const,
+        };
+      }
       await ctx.db.patch(existing._id, doc);
       await bumpDataRevision(ctx);
       const alert = await scheduleIfNeeded(ctx, data.mosqueSlug, publishEventId, shouldNotify);
@@ -256,6 +287,22 @@ export const seedRamadan = mutation({
     };
 
     if (existing) {
+      if (
+        sameBusinessFields(existing as Record<string, unknown>, doc, [
+          "mosqueSlug",
+          "month",
+          "gregorianStart",
+          "gregorianEnd",
+          "prayerTimes",
+          "iqamahTimes",
+          "jummahIqamah",
+        ])
+      ) {
+        return {
+          unchanged: existing._id,
+          iqamahChangeAlertScheduled: false as const,
+        };
+      }
       await ctx.db.patch(existing._id, doc);
       await bumpDataRevision(ctx);
       const alert = await scheduleIfNeeded(ctx, data.mosqueSlug, publishEventId, shouldNotify);
@@ -297,6 +344,9 @@ export const seedUkDstCalendar = mutation({
       .unique();
 
     if (existing) {
+      if (sameBusinessFields(existing as Record<string, unknown>, data, ["ukDstDates"])) {
+        return { unchanged: existing._id };
+      }
       await ctx.db.patch(existing._id, { ukDstDates: data.ukDstDates, updatedAt: Date.now() });
       await bumpDataRevision(ctx);
       return { updated: existing._id };
