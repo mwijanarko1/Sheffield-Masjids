@@ -228,6 +228,14 @@ def rebuild_dewsbury_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
         "masjid uthman": "masjid-uthman",
         "masjid umar": "masjid-umar",
         "masjid e umar": "masjid-umar",
+        "madni jamia masjid": "madni-jamia-masjid",
+        "masjid noor": "masjid-noor-dewsbury",
+        "masjid al hidayah": "masjid-al-hidayah",
+        "masjid e heera": "masjid-e-heera",
+        "masjid heera": "masjid-e-heera",
+        "salahuddin masjid": "salahuddin-masjid",
+        # Madressah Mahmoodia / Masjid Rahman are Batley-feed natives (Dewsbury
+        # lists them as is_external) — mapped in rebuild_batley_map only.
         # Skip Dale Street / other campuses unless registry has a distinct slug.
     }
     by_slug = {m["id"]: m for m in dewsbury}
@@ -251,10 +259,10 @@ def rebuild_dewsbury_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
 def rebuild_batley_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
     """Map Batley API names onto registry slugs.
 
-    The Batley feed also lists two Dewsbury mosques. *Masjid Quba* (Thornhill)
-    is published by both feeds with slightly different jamat times, and the
-    Dewsbury feed is authoritative, so it is skipped here. *Madressah Al Hira*
-    appears only in the Batley feed and is mapped across to its Dewsbury slug.
+    The Batley feed also lists Dewsbury mosques. Prefer the Dewsbury feed when
+    both publish the same place. Exceptions written from Batley: Madressah Al
+    Hira, Madressah Mahmoodia, Masjid Rahman, Markazul Ilmi, and Batley's own
+    Masjid Quba (Healey Lane — distinct from Thornhill Quba).
     """
     reg = json.loads((ROOT / "public/data/mosques.json").read_text())["mosques"]
     batley_slugs = {m["id"] for m in reg if m.get("citySlug") == "batley"}
@@ -272,10 +280,29 @@ def rebuild_batley_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
         "masjid noor": "masjid-noor",
         "masjid noor ul islam": "masjid-noor-ul-islam",
         "masjid taqwa": "masjid-taqwa",
+        "madrasah islamiyah": "madrasah-islamiyah-batley",
+        "madressah islamiyah": "madrasah-islamiyah-batley",
+        "makki masjid": "makki-masjid-heckmondwike",
+        "masjid quba": "masjid-quba-batley",
+        "masjid rashideen": "masjid-rashideen",
+        "masjid ummah": "masjid-ummah-batley",
+        "upper soothill islamic centre": "upper-soothill-islamic-centre",
     }
     cross_listed = {
         "madressah al hira": "madressah-al-hira",
         "madrasah al hira": "madressah-al-hira",
+        "madressah mahmoodia": "madressah-mahmoodia",
+        "madrasah mahmoodia": "madressah-mahmoodia",
+        "masjid rahman": "masjid-rahman",
+        "markazul ilmi": "markazul-ilmi",
+    }
+    dewsbury_feed_wins = {
+        "ilahi masjid",
+        "islamic tarbiyah academy",
+        "masjid salaam",
+        "masjid talha",
+        "masjid umar",
+        "masjid uthman",
     }
 
     def norm(s: str) -> str:
@@ -285,6 +312,8 @@ def rebuild_batley_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
     out: dict[int, tuple[str, str]] = {}
     for m in mosques:
         name = norm(m["name"])
+        if name in dewsbury_feed_wins:
+            continue
         slug = cross_listed.get(name)
         if slug in dewsbury_slugs:
             out[int(m["id"])] = ("dewsbury", slug)
@@ -293,6 +322,7 @@ def rebuild_batley_map(mosques: list[dict]) -> dict[int, tuple[str, str]]:
         if slug in batley_slugs:
             out[int(m["id"])] = ("batley", slug)
     return out
+
 
 
 def extract_city(base: str, mapping: dict[int, tuple[str, str]], year: int, months: list[int]) -> list[str]:
@@ -329,8 +359,8 @@ def extract_city(base: str, mapping: dict[int, tuple[str, str]], year: int, mont
             if not built:
                 print(f"SKIP {slug} {month_token}: empty schedule")
                 continue
-            # Require reasonable coverage (at least half the month) to avoid partial junk.
-            if len(built["prayer_times"]) < 14:
+            # Require a usable week+ of days; thinner than that is usually a stub.
+            if len(built["prayer_times"]) < 7:
                 print(f"SKIP {slug} {month_token}: only {len(built['prayer_times'])} days")
                 continue
             if not built["jummah_iqamah"] and previous:
