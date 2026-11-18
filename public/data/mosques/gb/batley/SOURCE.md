@@ -51,3 +51,6 @@ python3 scripts/verify-salaah-times-apps.py --months 10,11
 `scripts/extract-salaah-times-apps.py` writes `january.json`–`december.json` here;
 `scripts/verify-salaah-times-apps.py` compares every written month against the live
 feed and exits non-zero on a mismatch.
+
+- **Masjid Quba (Batley)** at Healey Lane is distinct from Dewsbury Thornhill Quba; both are kept.
+- Additional Batley-feed mosques mapped into the registry include Makki Masjid (Heckmondwike), Rashideen, Ummah, Upper Soothill, and Madrasah Islamiyah (Batley).

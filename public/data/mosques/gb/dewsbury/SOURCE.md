@@ -49,3 +49,6 @@ python3 scripts/verify-salaah-times-apps.py --months 10,11
 `scripts/extract-salaah-times-apps.py` writes `january.json`–`december.json` here;
 `scripts/verify-salaah-times-apps.py` compares every written month against the live
 feed and exits non-zero on a mismatch.
+
+- Native Dewsbury additions: Madni Jamia, Masjid Noor (Thornhill Lees), Masjid-Al-Hidayah, Masjid-e-Heera, Salahuddin.
+- From Batley feed: Madressah Mahmoodia, Masjid Rahman, Markazul Ilmi (stub until a full month publishes).
