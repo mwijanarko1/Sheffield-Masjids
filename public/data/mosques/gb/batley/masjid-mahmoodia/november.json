@@ -2,15 +2,6 @@
   "month": "NOVEMBER",
   "prayer_times": [
     {
-      "date": 1,
-      "fajr": "05:07",
-      "shurooq": "07:06",
-      "dhuhr": "11:55",
-      "asr": "14:42",
-      "maghrib": "16:37",
-      "isha": "18:12"
-    },
-    {
       "date": 2,
       "fajr": "05:08",
       "shurooq": "07:08",
@@ -274,14 +265,6 @@
   ],
   "iqamah_times": [
     {
-      "date_range": "1",
-      "fajr": "06:45",
-      "dhuhr": "13:00",
-      "asr": "15:30",
-      "maghrib": "16:37",
-      "isha": "18:30"
-    },
-    {
       "date_range": "2",
       "fajr": "06:45",
       "dhuhr": "13:00",
@@ -478,7 +461,7 @@
     },
     {
       "date_range": "26",
-      "fajr": "07:30",
+      "fajr": "07:20",
       "dhuhr": "13:00",
       "asr": "15:00",
       "maghrib": "15:58",
@@ -486,7 +469,7 @@
     },
     {
       "date_range": "27",
-      "fajr": "07:30",
+      "fajr": "07:20",
       "dhuhr": "13:00",
       "asr": "15:00",
       "maghrib": "15:57",
@@ -495,15 +478,15 @@
     },
     {
       "date_range": "28",
-      "fajr": "07:30",
+      "fajr": "07:20",
       "dhuhr": "13:00",
       "asr": "14:45",
       "maghrib": "15:56",
-      "isha": "18:30"
+      "isha": "18:00"
     },
     {
       "date_range": "29",
-      "fajr": "07:30",
+      "fajr": "07:20",
       "dhuhr": "13:00",
       "asr": "14:45",
       "maghrib": "15:56",
@@ -511,7 +494,7 @@
     },
     {
       "date_range": "30",
-      "fajr": "07:30",
+      "fajr": "07:20",
       "dhuhr": "13:00",
       "asr": "14:45",
       "maghrib": "15:55",

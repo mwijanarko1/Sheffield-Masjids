@@ -2,15 +2,6 @@
   "month": "NOVEMBER",
   "prayer_times": [
     {
-      "date": 1,
-      "fajr": "05:07",
-      "shurooq": "07:06",
-      "dhuhr": "11:55",
-      "asr": "14:42",
-      "maghrib": "16:37",
-      "isha": "18:12"
-    },
-    {
       "date": 2,
       "fajr": "05:08",
       "shurooq": "07:08",
@@ -273,14 +264,6 @@
     }
   ],
   "iqamah_times": [
-    {
-      "date_range": "1",
-      "fajr": "06:50",
-      "dhuhr": "13:30",
-      "asr": "15:15",
-      "maghrib": "16:37",
-      "isha": "18:30"
-    },
     {
       "date_range": "2",
       "fajr": "06:50",
