@@ -139,6 +139,33 @@ def build_month(payload: dict, previous: dict | None = None) -> dict | None:
         if not dhuhr_s and is_friday and last_dhuhr:
             dhuhr_s, carried_jamaat = last_dhuhr
         if not all([fajr_s, sun_s, dhuhr_s, asr_s, magh_s, isha_s]):
+            # Friday-only Dhuhr/Jummah publishers (e.g. Madrasah Islamiyah Batley,
+            # Madressah Mahmoodia, Markazul Ilmi). Do not invent other prayers.
+            if is_friday and dhuhr_s:
+                assert_plausible(day, dhuhr_s)
+                dhuhr_j = dhuhr_j_source or dhuhr_s
+                prayer_times.append(
+                    {
+                        "date": day,
+                        "fajr": "-",
+                        "shurooq": "-",
+                        "dhuhr": dhuhr_s,
+                        "asr": "-",
+                        "maghrib": "-",
+                        "isha": "-",
+                    }
+                )
+                row = {
+                    "date_range": str(day),
+                    "fajr": "-",
+                    "dhuhr": dhuhr_j,
+                    "asr": "-",
+                    "maghrib": "-",
+                    "isha": "-",
+                    "jummah": dhuhr_j,
+                }
+                friday_jummah.append(dhuhr_j)
+                iqamah_times.append(row)
             continue
         assert_plausible(day, dhuhr_s)
         last_dhuhr = (dhuhr_s, carried_jamaat or dhuhr_j_source or dhuhr_s)
