@@ -51,7 +51,22 @@ def compare_city_feed(city: str, slug: str, month: int, schedule: dict, problems
         day = int(date_key.split("-")[2])
         by_name = {row["prayer_name"].strip().lower(): row for row in schedule[date_key]}
         if not REQUIRED.issubset(by_name):
-            partial.append(day)          # Friday-only Dhuhr row
+            # Friday-only Dhuhr/Jummah row — still compare the published Dhuhr.
+            partial.append(day)
+            row_adhan, row_iqamah = adhan.get(day), iqamah.get(str(day))
+            if "dhuhr" not in by_name:
+                continue
+            if not row_adhan or not row_iqamah:
+                missing.append(day)
+                continue
+            api_dhuhr = ext.normalize_dhuhr(ext.hhmm(by_name["dhuhr"]["start_time"]))
+            if api_dhuhr != row_adhan.get("dhuhr"):
+                diffs.append(f"{day}.dhuhr api={api_dhuhr} repo={row_adhan.get('dhuhr')}")
+            api_j = ext.hhmm(by_name["dhuhr"].get("jamaat_time"))
+            if api_j and api_j != row_iqamah.get("dhuhr"):
+                diffs.append(f"{day}.dhuhrI api={api_j} repo={row_iqamah.get('dhuhr')}")
+            if api_j and row_iqamah.get("jummah") and api_j != row_iqamah.get("jummah"):
+                diffs.append(f"{day}.jummah api={api_j} repo={row_iqamah.get('jummah')}")
             continue
         row_adhan, row_iqamah = adhan.get(day), iqamah.get(str(day))
         if not row_adhan or not row_iqamah:
