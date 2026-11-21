@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 import { makeFunctionReference } from "convex/server";
 import { getServerConvex } from "@/lib/convex-server";
+import { isTrustedPlatform, platformClientIp } from "@/lib/feedback/client-identity";
 
 type RateLimitBucket = {
   count: number;
@@ -18,7 +19,7 @@ export type RateLimitResult = {
 const buckets = new Map<string, RateLimitBucket>();
 
 /**
- * Per-instance in-memory limiter. Only a fallback now: each Vercel instance
+ * Per-instance in-memory limiter. Only a fallback now: each server instance
  * has its own map, so on its own it does not bound traffic across instances.
  */
 export function checkRequestRateLimit(
@@ -57,7 +58,8 @@ const consumeRef = makeFunctionReference<
 const SHARED_TIMEOUT_MS = 1_500;
 const SCOPE_RE = /^[a-z0-9-]{1,32}$/;
 
-export function clientIp(headers: Headers): string {
+export function clientIp(headers: Headers, env: Record<string, string | undefined> = process.env): string {
+  if (isTrustedPlatform(env)) return platformClientIp(headers, env) ?? "unknown";
   return (
     headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     headers.get("x-real-ip")?.trim() ||
@@ -75,7 +77,7 @@ export function sharedRateLimitKey(scope: string, ip: string, secret: string): s
 /**
  * Shared rate limit backed by Convex `rateLimits:consume` (the same
  * `rateLimitBuckets` table the push registration limiter uses), so the limit
- * holds across every Vercel instance. Falls back to the per-instance limiter
+ * holds across every server instance. Falls back to the per-instance limiter
  * when Convex is not configured, errors, or is slow, so a Convex problem never
  * takes the API down.
  */

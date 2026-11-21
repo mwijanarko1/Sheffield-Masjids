@@ -12,7 +12,10 @@ const nextConfig = {
   // Dev browsers hitting 127.0.0.1 instead of localhost need this for HMR/hydration.
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   async rewrites() {
-    return [{ source: "/mcp", destination: "/api/mcp" }];
+    return [
+      { source: "/mcp", destination: "/api/mcp" },
+      { source: "/opengraph-image", destination: "/opengraph-image.png" },
+    ];
   },
   async headers() {
     const webMcpOriginTrial = process.env.WEBMCP_ORIGIN_TRIAL_TOKEN?.trim();

@@ -517,10 +517,10 @@ export async function loadMonthlyPrayerTimesWithSource(
 
       if (typeof window === 'undefined') {
         assertStaticYearCovered(year);
-        const fs = await import('fs/promises');
         const path = await import('path');
+        const { readRepoFile } = await import('@/lib/read-repo-file');
         const filePath = path.join(getMosqueDataFsDir(process.cwd(), safeSlug, mosqueLocation), `${monthFile}.json`);
-        const data = parseTrustedJson<MonthlyPrayerTimes>(await fs.readFile(filePath, 'utf-8'));
+        const data = parseTrustedJson<MonthlyPrayerTimes>(await readRepoFile(filePath));
         return cacheResult({ data, source: 'static-fallback' });
       }
 

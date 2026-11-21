@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/react";
 import DynamicBackground from "@/components/DynamicBackground";
 import { MasjidlyPromoOverlayProvider } from "@/contexts/MasjidlyPromoOverlayContext";
 import { MasjidlyThemeProvider } from "@/contexts/MasjidlyThemeContext";
@@ -12,6 +11,8 @@ import {
 } from "@/lib/site";
 import WebMcpTools from "@/components/WebMcpTools";
 import "./globals.css";
+
+const cloudflareBeaconToken = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN?.trim();
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -111,7 +112,13 @@ export default function RootLayout({
             </div>
           </MasjidlyPromoOverlayProvider>
         </MasjidlyThemeProvider>
-        <Analytics />
+        {cloudflareBeaconToken ? (
+          <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: cloudflareBeaconToken })}
+          />
+        ) : null}
       </body>
     </html>
   );

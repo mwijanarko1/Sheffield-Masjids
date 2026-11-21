@@ -47,7 +47,7 @@ export default function PrivacyPage() {
         <section>
           <h2>Analytics</h2>
           <p>
-            We use Vercel Analytics to understand how visitors use the site (e.g. page views, referrers). This is privacy-friendly: no personal information or tracking identifiers are collected. Data is aggregated and processed by Vercel.
+            We use Cloudflare Web Analytics to understand how visitors use the site (e.g. page views, referrers). This is privacy-friendly: no cookies are used, and no personal information or tracking identifiers are collected. Data is aggregated and processed by Cloudflare.
           </p>
         </section>
 
