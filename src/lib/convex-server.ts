@@ -3,8 +3,8 @@ import { ConvexHttpClient } from "convex/browser";
 /**
  * Server-side Convex access for the Next.js runtime.
  *
- * Reads `CONVEX_URL` and `CONVEX_READ_SECRET`, which are server-only Vercel
- * env vars (no NEXT_PUBLIC_ prefix), so neither the deployment URL nor the
+ * Reads `CONVEX_URL` and `CONVEX_READ_SECRET`, which are server-only
+ * host env vars (no NEXT_PUBLIC_ prefix), so neither the deployment URL nor the
  * secret is inlined into browser bundles. Never import this from a client
  * component; client code reaches Convex data through our own API routes.
  *

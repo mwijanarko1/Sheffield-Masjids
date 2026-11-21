@@ -25,10 +25,10 @@
  * Mosque resolution (slug, name, city, timezone, hidden flag) still uses the
  * bundled public/data/mosques.json registry; registry edits trigger a deploy.
  */
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { makeFunctionReference } from "convex/server";
 import { getServerConvex } from "@/lib/convex-server";
+import { readRepoFile } from "@/lib/read-repo-file";
 import mosquesData from "../../public/data/mosques.json";
 import timetableCoverage from "../../public/data/timetable-coverage.json";
 import { getMosqueDataFsDir } from "@/lib/mosque-data-path";
@@ -242,7 +242,7 @@ function findIqamah(
 
 async function readJson<T>(path: string): Promise<T> {
   // SAFETY: Mosque timetable files are trusted, repository-owned JSON validated by project checks.
-  return JSON.parse(await readFile(path, "utf8")) as T;
+  return JSON.parse(await readRepoFile(path)) as T;
 }
 
 function isMissingFile(error: NodeJS.ErrnoException): boolean {

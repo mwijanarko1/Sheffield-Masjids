@@ -11,6 +11,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "test:smoke": "node scripts/smoke-site.mjs",
     "lint": "oxlint && tsc --noEmit",
     "test:seo": "tsx --test src/lib/seo.test.tsx",
     "test:calendar-export": "tsx --test src/features/calendar-export/lib/*.test.ts",
@@ -25,11 +28,11 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2",
+    "@opennextjs/cloudflare": "1.20.17",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.3.3",
-    "@vercel/analytics": "^2.0.1",
     "baseline-browser-mapping": "^2.11.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -59,6 +62,7 @@
     "postcss": "^8.5.30",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.12",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "wrangler": "4.162.0"
   }
 }

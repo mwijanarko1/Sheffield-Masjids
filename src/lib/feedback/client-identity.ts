@@ -58,9 +58,22 @@ export function normalizeClientIp(raw: string): string | null {
  * shares one budget, which fails safe.
  */
 export function verifiedClientIdentity(headers: Headers, env: Env): string {
-  if (!env.VERCEL) return UNVERIFIED;
-  const verified = headers.get("x-vercel-forwarded-for")?.split(",")[0] ?? "";
-  return normalizeClientIp(verified) ?? UNVERIFIED;
+  return platformClientIp(headers, env) ?? UNVERIFIED;
+}
+
+/** True when the platform sets a client IP header that callers cannot forge. */
+export function isTrustedPlatform(env: Env): boolean {
+  return Boolean(env.VERCEL) || env.HOST_PLATFORM === "cloudflare";
+}
+
+/** Normalised client IP from the platform's verified header, or null. */
+export function platformClientIp(headers: Headers, env: Env): string | null {
+  const forwarded = env.VERCEL
+    ? headers.get("x-vercel-forwarded-for")
+    : env.HOST_PLATFORM === "cloudflare"
+      ? headers.get("cf-connecting-ip")
+      : null;
+  return normalizeClientIp(forwarded?.split(",")[0] ?? "");
 }
 
 /** Salted HMAC so storage holds an opaque key, never a raw address. */
