@@ -109,17 +109,32 @@ async function check(name, run) {
   }
 }
 
-function security(result) {
+function security(result, embeddable = false) {
   const headers = result.response.headers;
+  if (embeddable) {
+    expect(!headers.has('x-frame-options'), 'embeddable page must not send X-Frame-Options');
+  } else {
+    expect(headers.get('x-frame-options') === 'DENY', 'missing or incorrect x-frame-options');
+  }
   for (const [name, value] of [
-    ['x-frame-options', 'DENY'],
     ['x-content-type-options', 'nosniff'],
     ['referrer-policy', 'strict-origin-when-cross-origin'],
     ['permissions-policy', 'camera=(), microphone=(), geolocation=(self)'],
   ]) expect(headers.get(name) === value, `missing or incorrect ${name}`);
   const csp = headers.get('content-security-policy') || '';
-  for (const directive of ["default-src 'self' https:", "frame-ancestors 'none'", "object-src 'none'", "connect-src 'self' https: wss:"]) {
-    expect(csp.split(';').map((value) => value.trim()).includes(directive), `missing CSP directive: ${directive}`);
+  // Fetch joins duplicate CSP headers with commas. Multiple policies intersect
+  // and could silently prevent the portfolio from framing an allowed page.
+  expect(csp.length > 0 && !csp.includes(','), 'expected exactly one enforced CSP policy');
+  const directives = csp.split(';').map((value) => value.trim());
+  const frameAncestors = directives.filter((value) => /^frame-ancestors(?:\s|$)/i.test(value));
+  expect(frameAncestors.length === 1, 'expected exactly one frame-ancestors directive');
+  const ancestors = frameAncestors[0].split(/\s+/).slice(1).sort();
+  const expectedAncestors = embeddable
+    ? ['https://mikhailwijanarko.com', 'https://www.mikhailwijanarko.com']
+    : ["'none'"];
+  expect(JSON.stringify(ancestors) === JSON.stringify(expectedAncestors), `incorrect frame-ancestors: ${frameAncestors[0]}`);
+  for (const directive of ["default-src 'self' https:", "object-src 'none'", "connect-src 'self' https: wss:"]) {
+    expect(directives.includes(directive), `missing CSP directive: ${directive}`);
   }
   if (base.protocol === 'https:') {
     expect(headers.get('strict-transport-security') === 'max-age=31536000; includeSubDomains; preload', 'missing production HTTPS HSTS');
@@ -147,13 +162,23 @@ for (const [path, texts] of [
       expect(result.contentType.includes('text/html'), 'expected text/html');
       const text = visibleText(result.body);
       for (const expected of texts) expect(text.includes(expected), `missing visible text: ${expected}`);
+      security(result, path === '/' || path === '/masjidly');
     }
     if (path === '/') {
-      security(normal);
-      security(cookie);
       expect(normal.response.headers.get('vary')?.toLowerCase().includes('accept'), 'home must Vary on Accept');
     }
     return 'HTTP 200 with and without Cookie';
+  });
+}
+
+for (const [path, expectedStatus] of [['/masjidly/privacy', 200], ['/masjidly/admin', 404]]) {
+  await check(`non-embeddable ${path} + Cookie regression`, async () => {
+    for (const headers of [{ Accept: 'text/html' }, { Accept: 'text/html', Cookie: 'a=b' }]) {
+      const result = await request(path, { headers });
+      status(result, expectedStatus);
+      security(result);
+    }
+    return `HTTP ${expectedStatus}, framing denied with and without Cookie`;
   });
 }
 
@@ -165,7 +190,7 @@ await check('home Markdown proxy + Cookie regression', async () => {
     expect(result.body.startsWith('# Sheffield Masjids\n'), 'missing Markdown heading');
     expect(result.body.includes('## Preferred agent interface'), 'missing agent instructions');
     expect(result.response.headers.get('vary')?.toLowerCase().includes('accept'), 'Markdown must Vary on Accept');
-    security(result);
+    security(result, true);
   }
   return 'HTTP 200 with and without Cookie';
 });
