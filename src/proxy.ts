@@ -4,18 +4,29 @@ import type { NextRequest } from 'next/server';
 const DEFAULT_LEGACY_DOMAIN = 'sheffield-masjids.netlify.app';
 const STATIC_ASSET_PATH_RE =
   /\.(?:avif|bmp|css|gif|ico|jpeg|jpg|js|json|map|mjs|mp3|mp4|png|svg|txt|webp|woff2?)$/i;
-const PROD_CONTENT_SECURITY_POLICY = [
-  "default-src 'self' https:",
-  "base-uri 'self'",
-  "frame-ancestors 'none'",
-  "object-src 'none'",
-  "img-src 'self' data: https:",
-  "script-src 'self' 'unsafe-inline' https:",
-  "style-src 'self' 'unsafe-inline' https:",
-  "connect-src 'self' https: wss:",
-  "font-src 'self' data: https:",
-  "frame-src 'self' https://www.google.com https://www.openstreetmap.org",
-].join('; ');
+const PORTFOLIO_FRAME_ANCESTORS = [
+  'https://mikhailwijanarko.com',
+  'https://www.mikhailwijanarko.com',
+].join(' ');
+const EMBEDDABLE_PATHS = new Set(['/', '/masjidly']);
+
+function buildContentSecurityPolicy(frameAncestors: string): string {
+  return [
+    "default-src 'self' https:",
+    "base-uri 'self'",
+    `frame-ancestors ${frameAncestors}`,
+    "object-src 'none'",
+    "img-src 'self' data: https:",
+    "script-src 'self' 'unsafe-inline' https:",
+    "style-src 'self' 'unsafe-inline' https:",
+    "connect-src 'self' https: wss:",
+    "font-src 'self' data: https:",
+    "frame-src 'self' https://www.google.com https://www.openstreetmap.org",
+  ].join('; ');
+}
+
+const PROD_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy("'none'");
+const EMBEDDABLE_PROD_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy(PORTFOLIO_FRAME_ANCESTORS);
 const HOME_MARKDOWN = `# Sheffield Masjids
 
 Sheffield Masjids provides prayer times for mosques in Sheffield, other UK cities and locations beyond the UK. The site separates adhan times from iqamah or congregation times and displays dates in the Europe/London timezone.
@@ -54,14 +65,28 @@ function normalizeDomain(value: string): string {
     .replace(/\.$/, '');
 }
 
-function applySecurityHeaders(response: NextResponse, request: NextRequest): NextResponse {
-  response.headers.set('X-Frame-Options', 'DENY');
+function applySecurityHeaders(
+  response: NextResponse,
+  request: NextRequest,
+  allowPortfolioEmbed = false,
+): NextResponse {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const embeddable = isProduction && allowPortfolioEmbed;
+
+  if (embeddable) {
+    response.headers.delete('X-Frame-Options');
+  } else {
+    response.headers.set('X-Frame-Options', 'DENY');
+  }
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
 
-  if (process.env.NODE_ENV === 'production') {
-    response.headers.set('Content-Security-Policy', PROD_CONTENT_SECURITY_POLICY);
+  if (isProduction) {
+    response.headers.set(
+      'Content-Security-Policy',
+      embeddable ? EMBEDDABLE_PROD_CONTENT_SECURITY_POLICY : PROD_CONTENT_SECURITY_POLICY,
+    );
 
     const forwardedProto = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim();
     const isHttps = forwardedProto === 'https' || request.nextUrl.protocol === 'https:';
@@ -92,6 +117,8 @@ export function proxy(request: NextRequest) {
     }
   }
 
+  const allowPortfolioEmbed = EMBEDDABLE_PATHS.has(request.nextUrl.pathname);
+
   if (
     request.nextUrl.pathname === '/' &&
     request.headers.get('accept')?.includes('text/markdown')
@@ -104,10 +131,11 @@ export function proxy(request: NextRequest) {
         },
       }),
       request,
+      allowPortfolioEmbed,
     );
   }
 
-  const response = applySecurityHeaders(NextResponse.next(), request);
+  const response = applySecurityHeaders(NextResponse.next(), request, allowPortfolioEmbed);
   if (request.nextUrl.pathname === '/') response.headers.append('Vary', 'Accept');
   return response;
 }
