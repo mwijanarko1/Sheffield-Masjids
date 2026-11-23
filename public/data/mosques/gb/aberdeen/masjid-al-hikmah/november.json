@@ -500,18 +500,18 @@
     {
       "date_range": "29",
       "fajr": "07:00",
-      "dhuhr": "12:30",
+      "dhuhr": "12:45",
       "asr": "13:21",
       "maghrib": "15:44",
-      "isha": "20:00"
+      "isha": "20:15"
     },
     {
       "date_range": "30",
       "fajr": "07:00",
-      "dhuhr": "12:30",
+      "dhuhr": "12:45",
       "asr": "13:21",
       "maghrib": "15:43",
-      "isha": "20:00"
+      "isha": "20:15"
     }
   ],
   "jummah_iqamah": "13:30"
