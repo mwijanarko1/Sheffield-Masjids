@@ -5733,6 +5733,20 @@
       "countryName": "United Kingdom",
       "isHidden": true,
       "website": "https://markazijamiamosquewakefield.org.uk/"
+    },
+    {
+      "id": "abu-bakr-siddique-masjid",
+      "name": "Abu Bakr Siddique Masjid",
+      "address": "Unit A, Tadman Street, Wakefield WF1 5QU, United Kingdom",
+      "lat": 53.6734452,
+      "lng": -1.4967163,
+      "slug": "abu-bakr-siddique-masjid",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://abu-bakr.yolasite.com/"
     }
   ]
 }
