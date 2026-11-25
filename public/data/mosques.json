@@ -5663,6 +5663,76 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://www.somerstownmosque.com/prayer-times/"
+    },
+    {
+      "id": "wakefield-central-mosque",
+      "name": "Wakefield Central Mosque",
+      "address": "South Street, Eastmoor, Wakefield WF1 4PG, United Kingdom",
+      "lat": 53.6794129,
+      "lng": -1.4889638,
+      "slug": "wakefield-central-mosque",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://wakefieldcentralmosque.co.uk/"
+    },
+    {
+      "id": "ghausia-masjid-institute",
+      "name": "Ghausia Masjid Institute",
+      "address": "38 Duke of York Street, Wakefield WF1 3PD, United Kingdom",
+      "lat": 53.6875669,
+      "lng": -1.4925591,
+      "slug": "ghausia-masjid-institute",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://www.gmiwakefield.co.uk/"
+    },
+    {
+      "id": "jamia-masjid-swafia",
+      "name": "Jamia Masjid Swafia",
+      "address": "Park Hill Lane, Eastmoor, Wakefield WF1 4NJ, United Kingdom",
+      "lat": 53.680829,
+      "lng": -1.485885,
+      "slug": "jamia-masjid-swafia",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://www.swafia.org.uk/"
+    },
+    {
+      "id": "masjid-zakariya",
+      "name": "Masjid Zakariya",
+      "address": "167 Agbrigg Road, Agbrigg, Wakefield WF1 5BN, United Kingdom",
+      "lat": 53.6683614,
+      "lng": -1.4761639,
+      "slug": "masjid-zakariya",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://masjidzakariya.co.uk/"
+    },
+    {
+      "id": "markazi-jamia-mosque-wakefield",
+      "name": "Markazi Jamia Mosque Wakefield",
+      "address": "12 Grange Street, Wakefield WF2 8TF, United Kingdom",
+      "lat": 53.6782718,
+      "lng": -1.5132882,
+      "slug": "markazi-jamia-mosque-wakefield",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": true,
+      "website": "https://markazijamiamosquewakefield.org.uk/"
     }
   ]
 }
