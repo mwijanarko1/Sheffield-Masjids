@@ -43,9 +43,9 @@ Mapping to the repo monthly format:
 ## Rebuild
 
 ```
-python3 scripts/extract-salaah-times-apps.py --year 2026 --months 10,11 \
+python3 scripts/extract-salaah-times-apps.py --year 2026 --months 11,12 \
     --skip-dewsbury --skip-scunthorpe
-python3 scripts/verify-salaah-times-apps.py --months 10,11
+python3 scripts/verify-salaah-times-apps.py --months 11,12
 ```
 
 `scripts/extract-salaah-times-apps.py` writes `january.json`–`december.json` here;

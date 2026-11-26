@@ -3,6 +3,7 @@
 Masjid Umar (`leicester/masjid-umar-leicester`), 1-3 Evington Drive, Leicester LE5 5PF.
 
 - November 2026 PDF timetable: `https://masjid-umar.org/wp-content/uploads/2026/09/November-2026.pdf` (header "MASJID UMAR 1-3 EVINGTON DRIVE LEICESTER LE5 5PF … NOVEMBER 2026"). Linked from `https://masjid-umar.org/masjid/prayer-times/`.
+- December 2026 PDF timetable: `https://masjid-umar.org/wp-content/uploads/2026/11/Masjid-Umar-December-2026-Timetable.pdf` (header "DECEMBER 2026"). Same column mapping as November.
 - Read visually. Times are 12h; Fajr and Sunrise are morning times, the rest are afternoon or evening.
 - Start times: Subh Sadiq → `fajr`, Sunrise → `shurooq`, Noon Zawal → `dhuhr`, Asr → `asr`, Esha → `isha`.
 - Jamaat times: Fajr, Zuhr, Asr, Maghrib and Esha → `iqamah_times`.
