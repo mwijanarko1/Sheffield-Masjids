@@ -12,6 +12,8 @@ values to 24-hour time.
 | --- | --- | --- | --- | --- |
 | 17 November | 11:51 | 12:45 | 16:15 | 19:15 |
 | 18 November | 11:51 | 12:45 | 16:13 | 19:15 |
+| 25 November | 11:53 | 12:45 | 16:05 | (unchanged) |
+| 26 November | 11:53 | 12:45 | 16:04 | (unchanged) |
 
 The 17 November correction was merged in PR #209. The 18 November page was
 fetched at 07:04 UTC on that date. Its Fajr, Asr and Maghrib begins also match
