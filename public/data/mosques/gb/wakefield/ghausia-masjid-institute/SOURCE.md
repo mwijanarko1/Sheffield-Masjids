@@ -1,7 +1,5 @@
-# Ghausia Masjid Institute (Wakefield) — [VISION-DEFERRED]
+# Ghausia Masjid Institute (Wakefield)
 
-Capacity ~500 (mosquedirectory). Website https://www.gmiwakefield.co.uk/prayertimes
-has no monthly HTTP timetable (Wix page + My Masjid app only). Ramadan PDF link
-on the site is not a full-year source.
+Source: MasjidBox `https://api.masjidbox.com/1.0/masjidbox/landing/athany/ghausia-masjid-institute-1714673625274` (also linked from https://www.gmiwakefield.co.uk/prayertimes).
 
-Add monthly JSON when a published timetable (PDF/image/API) is available.
+Times converted to Europe/London. Dual Jummah preserved as `HH:MM / HH:MM`.

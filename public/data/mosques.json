@@ -5689,7 +5689,7 @@
       "cityName": "Wakefield",
       "countryCode": "GB",
       "countryName": "United Kingdom",
-      "isHidden": true,
+      "isHidden": false,
       "website": "https://www.gmiwakefield.co.uk/"
     },
     {
@@ -5747,6 +5747,20 @@
       "countryName": "United Kingdom",
       "isHidden": false,
       "website": "https://abu-bakr.yolasite.com/"
+    },
+    {
+      "id": "bab-ul-islam-wakefield",
+      "name": "Bab-ul-Islam Wakefield",
+      "address": "Victoria Works, Benjamin Street, Wakefield WF2 9AN, United Kingdom",
+      "lat": 53.6853752,
+      "lng": -1.5143329,
+      "slug": "bab-ul-islam-wakefield",
+      "citySlug": "wakefield",
+      "cityName": "Wakefield",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "isHidden": false,
+      "website": "https://buislam.org.uk/"
     }
   ]
 }
